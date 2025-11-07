@@ -1,0 +1,8 @@
+body {
+    background-image: url("View/Home/Public/velzon/assets/images/portada_tasking.png");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center center;
+    background-attachment: fixed;
+    background-color: #3f0d66;
+}
