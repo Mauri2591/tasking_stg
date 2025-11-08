@@ -11,7 +11,7 @@ class Reportes
         $sheet = $spreadsheet->getActiveSheet();
 
         // Encabezados
-        $headers = ['ID','CLIENTE', 'TITULO', 'RECURRENTE', 'RECHEQUEO', 'RECHEQUEO DE',  'FECHA VANTIVE', 'FECHA INICIO', 'FECHA FINALIZACION', 'SECTOR', 'PRODUCTO', 'HORAS', 'ESTADO'];
+        $headers = ['ID','CLIENTE', 'TITULO', 'RECURRENTE', 'RECHEQUEO', 'RECHEQUEO DE PROYECTO',  'FECHA VANTIVE', 'FECHA INICIO', 'FECHA FINALIZACION', 'SECTOR', 'PRODUCTO', 'HORAS', 'ESTADO'];
         $sheet->fromArray($headers, NULL, 'A1');
 
         $rowNum = 2;

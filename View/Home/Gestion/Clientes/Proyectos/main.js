@@ -471,7 +471,9 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
                                 },
                                 "json"
                             );
-                            $.post("../../../../../Controller/ctrProyectos.php?proy=get_datos_proyecto_creado", {id: $("#mdl_id_proyecto_gestionado").val()},
+                            $.post("../../../../../Controller/ctrProyectos.php?proy=get_datos_proyecto_creado", {
+                                    id: $("#mdl_id_proyecto_gestionado").val()
+                                },
                                 function (data, textStatus, jqXHR) {
                                     console.log(data);
                                     $("#titulo_client_rs_alta_proy").val(data.titulo);
@@ -1794,6 +1796,7 @@ function crearRechequeo(id) {
                     // Agregamos lo que el backend necesita
                     data.id_proyecto_gestionado = ID_ORIGINAL;
                     data.posicion_recurrencia = POSICION_RECURRENCIA;
+                    data.id_proyecto_gestionado_del_que_hace_rechequeo = id;
 
                     // 🚀 Insertamos el rechequeo
                     $.post(

@@ -1561,7 +1561,7 @@ switch ($_GET['proy']) {
             );
 
             // 2️ Inserto en la tabla de relación
-            $proyecto->insert_proyecto_rechequeo($id_proyecto_gestionado);
+            $proyecto->insert_proyecto_rechequeo($id_proyecto_gestionado,$_POST['id_proyecto_gestionado_del_que_hace_rechequeo']);
 
             // 3️ Inserto dimensionamiento
             $proyecto->insert_dimensionamiento_de_rechequeo($id_proyecto_gestionado, $dimensionamiento);

@@ -1674,7 +1674,7 @@ ORDER BY cantidad_proyectos DESC";
     public function get_proyectos_total_x_client_id($client_id)
     {
         $conn = parent::get_conexion();
-        $sql = "SELECT 
+        $sql = "SELECT  
     pg.id,
     pg.titulo,
     pg.fech_vantive,
@@ -1689,7 +1689,7 @@ ORDER BY cantidad_proyectos DESC";
     pcs.id AS id_proyecto_cantidad_servicios,
     prc.posicion_recurrencia,
     IF(pr.id IS NULL, NULL, 'SI') AS rechequeo,
-    pg_rel.id AS rechequeo_de,  
+    pr.id_proyecto_gestionado_del_que_hace_rechequeo AS rechequeo_de,  
     SUM(d.hs_dimensionadas) AS dimensionamiento
 FROM proyecto_gestionado pg
 LEFT JOIN sectores s 
@@ -1710,12 +1710,6 @@ LEFT JOIN tm_estados
     ON pg.estados_id = tm_estados.estados_id
 LEFT JOIN proyecto_rechequeo pr 
     ON pg.id = pr.id_proyecto_gestionado
-LEFT JOIN proyecto_gestionado pg_rel 
-    ON pr.posicion_recurrencia = (
-        SELECT prc2.posicion_recurrencia 
-        FROM proyecto_recurrencia prc2 
-        WHERE prc2.id_proyecto_gestionado = pg_rel.id
-    )
 WHERE cl.client_id = :client_id
 GROUP BY 
     pg.id, 
@@ -2262,12 +2256,13 @@ WHERE pg.id_proyecto_cantidad_servicios = :id_proyecto_cantidad_servicios";
         $stmt->execute();
     }
 
-    public function insert_proyecto_rechequeo($id_proyecto_gestionado)
+    public function insert_proyecto_rechequeo($id_proyecto_gestionado, $id_proyecto_gestionado_del_que_hace_rechequeo)
     {
         $conn = parent::get_conexion();
-        $sql = "INSERT INTO proyecto_rechequeo (id_proyecto_gestionado) VALUES (:id_proyecto_gestionado)";
+        $sql = "INSERT INTO proyecto_rechequeo (id_proyecto_gestionado,id_proyecto_gestionado_del_que_hace_rechequeo) VALUES (:id_proyecto_gestionado,:id_proyecto_gestionado_del_que_hace_rechequeo)";
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(":id_proyecto_gestionado", $id_proyecto_gestionado, PDO::PARAM_INT);
+        $stmt->bindValue(":id_proyecto_gestionado_del_que_hace_rechequeo", $id_proyecto_gestionado_del_que_hace_rechequeo, PDO::PARAM_INT);
         $stmt->execute();
     }
 
