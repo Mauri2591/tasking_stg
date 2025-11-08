@@ -627,19 +627,19 @@ ORDER BY id_proyecto_cantidad_servicios ASC";
     {
         $conn = parent::get_conexion();
         $sql = "SELECT 
-                tm_usuario.usu_nom, 
-                usuario_proyecto.usu_asignado, 
-                sectores.sector_nombre,
-                sectores.sector_id,
-                proyecto_gestionado.estados_id
-            FROM usuario_proyecto 
-            LEFT JOIN tm_usuario 
-                ON usuario_proyecto.usu_asignado = tm_usuario.usu_id 
-            LEFT JOIN sectores 
-                ON tm_usuario.sector_id = sectores.sector_id
-            LEFT JOIN proyecto_gestionado 
-                ON usuario_proyecto.id_proyecto_gestionado = proyecto_gestionado.id
-            WHERE proyecto_gestionado.id = :id_proyecto_gestionado";
+    tm_usuario.usu_nom,
+    usuario_proyecto.usu_asignado,
+    sectores.sector_nombre,
+    sectores.sector_id,
+    proyecto_gestionado.estados_id
+FROM proyecto_gestionado
+LEFT JOIN usuario_proyecto 
+    ON usuario_proyecto.id_proyecto_gestionado = proyecto_gestionado.id
+LEFT JOIN tm_usuario 
+    ON usuario_proyecto.usu_asignado = tm_usuario.usu_id
+LEFT JOIN sectores 
+    ON tm_usuario.sector_id = sectores.sector_id
+WHERE proyecto_gestionado.id = :id_proyecto_gestionado";
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(':id_proyecto_gestionado', $id_proyecto_gestionado, PDO::PARAM_INT);
         $stmt->execute();
@@ -1565,15 +1565,16 @@ WHERE
         $conn = parent::get_conexion();
         $sql = "SELECT proyecto_gestionado.*, 
                    tm_categoria.cat_nom, 
-                   tm_subcategoria.cats_nom 
+                   tm_subcategoria.cats_nom,
+                   if(proyecto_rechequeo.id, 'SI','NO') AS rechequeo
             FROM proyecto_gestionado 
             LEFT JOIN tm_categoria 
                    ON proyecto_gestionado.cat_id = tm_categoria.cat_id 
             LEFT JOIN tm_subcategoria 
-                   ON proyecto_gestionado.cats_id = tm_subcategoria.cats_id 
+                   ON proyecto_gestionado.cats_id = tm_subcategoria.cats_id
+                   LEFT JOIN proyecto_rechequeo ON proyecto_rechequeo.id_proyecto_gestionado=proyecto_gestionado.id
             WHERE proyecto_gestionado.id = :id 
               AND proyecto_gestionado.est = 1";
-
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(':id', $id, PDO::PARAM_INT);
         $stmt->execute();
@@ -1662,7 +1663,7 @@ LEFT JOIN proyecto_cantidad_servicios pcs
     ON pcs.proy_id = p.proy_id
 LEFT JOIN proyecto_gestionado pg 
     ON pg.id_proyecto_cantidad_servicios = pcs.id
-WHERE pcs.est = 1  -- 🔹 solo servicios activos
+WHERE pcs.est = 1 
 GROUP BY c.client_id, c.client_rs
 ORDER BY cantidad_proyectos DESC";
         $stmt = $conn->prepare($sql);
@@ -1686,9 +1687,9 @@ ORDER BY cantidad_proyectos DESC";
     cl.client_rs AS cliente,
     tm_estados.estados_nombre AS estado,
     pcs.id AS id_proyecto_cantidad_servicios,
-    proyecto_recurrencia.posicion_recurrencia,
-    IF(pr.id IS NULL, 'NO', 'SI') AS rechequeo,
-    pr.posicion_recurrencia AS rechequeo_de,  -- 🔹 acá traemos el valor si existe
+    prc.posicion_recurrencia,
+    IF(pr.id IS NULL, NULL, 'SI') AS rechequeo,
+    pg_rel.id AS rechequeo_de,  
     SUM(d.hs_dimensionadas) AS dimensionamiento
 FROM proyecto_gestionado pg
 LEFT JOIN sectores s 
@@ -1701,14 +1702,20 @@ LEFT JOIN proyecto_cantidad_servicios pcs
     ON pg.id_proyecto_cantidad_servicios = pcs.id
 LEFT JOIN proyectos p 
     ON pcs.proy_id = p.proy_id
-LEFT JOIN proyecto_recurrencia 
-    ON pg.id = proyecto_recurrencia.id_proyecto_gestionado
+LEFT JOIN proyecto_recurrencia prc 
+    ON pg.id = prc.id_proyecto_gestionado
 LEFT JOIN clientes cl 
     ON p.client_id = cl.client_id
 LEFT JOIN tm_estados 
     ON pg.estados_id = tm_estados.estados_id
 LEFT JOIN proyecto_rechequeo pr 
-    ON pg.id = pr.id_proyecto_gestionado  -- 🔹 relación directa con rechequeo
+    ON pg.id = pr.id_proyecto_gestionado
+LEFT JOIN proyecto_gestionado pg_rel 
+    ON pr.posicion_recurrencia = (
+        SELECT prc2.posicion_recurrencia 
+        FROM proyecto_recurrencia prc2 
+        WHERE prc2.id_proyecto_gestionado = pg_rel.id
+    )
 WHERE cl.client_id = :client_id
 GROUP BY 
     pg.id, 
@@ -2189,8 +2196,6 @@ WHERE pg.id_proyecto_cantidad_servicios = :id_proyecto_cantidad_servicios";
         $titulo,
         $descripcion,
         $refProy,
-        $recurrencia,
-        $fech_fin,
         $fech_vantive,
         $archivo,
         $captura_imagen
@@ -2208,8 +2213,6 @@ WHERE pg.id_proyecto_cantidad_servicios = :id_proyecto_cantidad_servicios";
                 titulo,
                 descripcion,
                 refProy,
-                recurrencia,
-                fech_fin,
                 fech_vantive,
                 archivo,
                 captura_imagen
@@ -2225,8 +2228,6 @@ WHERE pg.id_proyecto_cantidad_servicios = :id_proyecto_cantidad_servicios";
                 :titulo,
                 :descripcion,
                 :refProy,
-                :recurrencia,
-                :fech_fin,
                 :fech_vantive,
                 :archivo,
                 :captura_imagen
@@ -2244,8 +2245,6 @@ WHERE pg.id_proyecto_cantidad_servicios = :id_proyecto_cantidad_servicios";
         $stmt->bindValue(":titulo", $titulo, PDO::PARAM_STR);
         $stmt->bindValue(":descripcion", $descripcion, PDO::PARAM_STR);
         $stmt->bindValue(":refProy", $refProy, PDO::PARAM_STR);
-        $stmt->bindValue(":recurrencia", $recurrencia, PDO::PARAM_INT);
-        $stmt->bindValue(":fech_fin", $fech_fin, PDO::PARAM_STR);
         $stmt->bindValue(":fech_vantive", $fech_vantive, PDO::PARAM_STR);
         $stmt->bindValue(":archivo", $archivo, PDO::PARAM_STR);
         $stmt->bindValue(":captura_imagen", $captura_imagen, PDO::PARAM_STR);

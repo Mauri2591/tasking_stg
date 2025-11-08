@@ -1,7 +1,0 @@
-1_QUE EN LA VISTA https://127.0.0.1/tasking/View/Home/Gestion/Clientes/ ME MUESTRE SUS TAREAS Y AGREGAR NUEVAS
-2_QUE CALIDAD FINALICEN EL PROYECTO GENERAL UNA VEZ QUE CADA AREA LA HAYA FINALIZADO, ELLOS DEBERIAN PODER VER ESO
-3_TABLA DE SUBPROYECTOS ATADO AL PROYECTO_ID DONDE CONVERGEN VARIAS AREAS
-
-
-
-4_La referencia no va en la vista clientes, va en la vista Borrador. En la columna de la tabla Borrador que diga Producto. Si es IR que figuren todos los usuarios

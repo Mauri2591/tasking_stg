@@ -85,25 +85,29 @@ if (isset($_SESSION['usu_id'])) {
 
                                         <div class="col-xl-5 bg-success" style="margin-right: 5px; border-radius: 5px;">
                                             <div class="d-flex align-items-center">
-                                                <div class="d-flex align-items-center ms-auto mt-1">
-                                                    <span id="prioridad" class="badge ml-2 mx-1"></span>
+                                                <div class="d-flex align-items-center mt-1">
+                                                    <span id="prioridad" class="badge mx-1"></span>
                                                     <span id="titulo_categoria"
                                                         class="badge bg-light text-dark border border-primary mx-2"></span>
                                                     <span id="titulo_subCategoria"
                                                         class="badge bg-light text-dark border border-primary mx-2"></span>
                                                     <span
                                                         class="me-2 badge bg-light text-primary border border-primary">Desde:
-                                                        <span id="fech_inicio" class="text-dark">01-02-2025</span>
+                                                        <span id="fech_inicio" class="text-dark"></span>
                                                     </span>
                                                     <span
                                                         class="me-2 badge bg-light text-primary border border-primary">Hasta:
-                                                        <span id="fech_fin" class="text-dark">01-12-2025</span>
+                                                        <span id="fech_fin" class="text-dark"></span>
                                                     </span>
                                                 </div>
                                             </div>
 
-                                            <span
-                                                class="badge bg-light border border-dark text-dark mx-2 mb-1">Detalle:</span>
+                                            <div style="display: flex; margin-top: .2rem; margin-bottom: .2rem;">
+                                                <span id="rechequeo" style="display: none; color:orangered" class="badge ml-1 border border-dark bg-light"></span>
+                                                <span
+                                                    class="badge bg-light border border-dark text-dark mx-2 mb-1">Detalle:</span>
+                                            </div>
+
                                             <div class="card-body p-0">
                                                 <div data-simplebar="init" style="max-height: 200px;">
                                                     <div class="simplebar-wrapper"
@@ -280,7 +284,6 @@ if (isset($_SESSION['usu_id'])) {
 } ?>
 
     <script>
-
         var id_proyecto_gestionado =
             "<?php echo isset($_GET['pg']) ? Openssl::get_ssl_decrypt($_GET['pg']) : ''; ?>"
 
@@ -325,12 +328,12 @@ if (isset($_SESSION['usu_id'])) {
                     id_proyecto_gestionado: id_proyecto_gestionado
                 }, function(data) {
                     let mostrar = false;
-                    if(sector_usu_id == "4"){
-                   mostrar = true;
-                    }else{
-                     mostrar = false;
+                    if (sector_usu_id == "4") {
+                        mostrar = true;
+                    } else {
+                        mostrar = false;
                     }
-
+                    
                     data.forEach(elem => {
                         if (elem.usu_asignado == session_usu_id || sector_usu_id == "4") {
                             mostrar = true;
@@ -349,7 +352,7 @@ if (isset($_SESSION['usu_id'])) {
                                 },
                                 "html"
                             );
-                        } 
+                        }
                     });
                     const contenedor = document.getElementById("sect_descrip");
                     if (contenedor) {
@@ -364,6 +367,13 @@ if (isset($_SESSION['usu_id'])) {
                     id: id_proyecto_gestionado
                 },
                 function(data, textStatus, jqXHR) {
+                    
+                    if (data.rechequeo == "SI") {
+                        document.getElementById("rechequeo").style.display = "flex";
+                        $("#rechequeo").text("Rechequeo");
+                    } else {
+                        document.getElementById("rechequeo").style.display = "none";
+                    }
 
                     $("#prioridad")
                         .removeClass("border-success border-warning border-danger")

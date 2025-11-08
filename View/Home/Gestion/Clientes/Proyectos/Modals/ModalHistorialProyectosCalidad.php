@@ -11,8 +11,9 @@
                     <table id="tablelHistorialProyectosCalidad" style="text-align: center; width: 100%;">
                         <thead style="text-align: center;">
                             <tr style="text-align: center;">
+                                <th style="width: 5%;text-align: center;">ID</th>
                                 <th style="width: 45%;text-align: center;">TITULO</th>
-                                <th style="width: 5%;text-align: center;">RECURRENTE</th>
+                                <th style="width: 5%;text-align: center;">REC</th>
                                 <th style="width: 5%;text-align: center;">RECH</th>
                                 <th style="width: 5%;text-align: center;">REF</th>
                                 <th style="width: 5px;text-align: center;">FECHA <br>VANTIVE</th>
@@ -27,6 +28,7 @@
                         </thead>
                         <tbody style="text-align: center;">
                             <tr style="text-align: center;">
+                                <td style="width: 5%;"></td>
                                 <td style="width: 45%;"></td>
                                 <td style="width: 5%;"></td>
                                 <td style="width: 5%;"></td>

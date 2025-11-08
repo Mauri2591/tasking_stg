@@ -471,9 +471,16 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
                                 },
                                 "json"
                             );
+                            $.post("../../../../../Controller/ctrProyectos.php?proy=get_datos_proyecto_creado", {id: $("#mdl_id_proyecto_gestionado").val()},
+                                function (data, textStatus, jqXHR) {
+                                    console.log(data);
+                                    $("#titulo_client_rs_alta_proy").val(data.titulo);
+                                },
+                                "json"
+                            );
                             setTimeout(() => {
                                 Toastify({
-                                    text: "Proyecto agregado a la recurrencia",
+                                    text: "Proyecto agregado a la recurrencia correctamente",
                                     duration: 2000,
                                     gravity: "top",
                                     position: "right",
@@ -586,11 +593,11 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
             recurrencia = recurrencia ? recurrencia.toString().trim().toUpperCase() : "";
 
             // Convertir la fecha de YYYY-MM-DD a DD/MM/YYYY
-            let fechaFormateada = "";
-            if (fechaInput) {
-                const [year, month, day] = fechaInput.split("-");
-                fechaFormateada = `${day}/${month}/${year}`;
-            }
+            // let fechaFormateada = "";
+            // if (fechaInput) {
+            //     const [year, month, day] = fechaInput.split("-");
+            //     fechaFormateada = `${day}/${month}/${year}`;
+            // }
 
             // 🔄 Reconstruir el título desde cero
             let nuevoTitulo = tituloDefault;
@@ -599,7 +606,7 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
             if (recurrencia !== "" && recurrencia !== "NO" && recurrencia !== "0") {
                 nuevoTitulo += `_Recurrente SI`;
             }
-            if (fechaFormateada) nuevoTitulo += `_Fecha ${fechaFormateada}`;
+            // if (fechaFormateada) nuevoTitulo += `_Fecha ${fechaFormateada}`;
 
             $("#titulo_client_rs_alta_proy").val(nuevoTitulo);
         }
@@ -1014,7 +1021,7 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
                 Swal.fire({
                     icon: "success",
                     title: "Bien",
-                    text: "Proyecto agregado con exito",
+                    text: "Proyecto creado con exito",
                     showConfirmButton: false,
                     timer: 1300
                 });
@@ -1098,7 +1105,7 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
             Swal.fire({
                 icon: "warning",
                 title: "Error!",
-                text: "Campo HS Dimensionadas vacío",
+                text: "Error en el campo Dimensionamiento",
                 showConfirmButton: true,
                 showCancelButton: false
             });
@@ -1110,7 +1117,7 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
             Swal.fire({
                 icon: "warning",
                 title: "Error!",
-                text: "El campo HS Dimensionadas debe ser un número entero positivo.",
+                text: "Error en el campo Dimensionamiento",
                 showConfirmButton: true,
                 showCancelButton: false
             });
@@ -1778,6 +1785,8 @@ function crearRechequeo(id) {
                     delete data.fech_crea;
                     delete data.est;
                     delete data.fech_inicio;
+                    delete data.fech_fin;
+                    delete data.recurrencia;
 
                     if (data.id_proyecto_recurrencia === null) data.id_proyecto_recurrencia = 0;
                     if (data.archivo === null) data.archivo = "";

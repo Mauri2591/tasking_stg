@@ -11,18 +11,19 @@ class Reportes
         $sheet = $spreadsheet->getActiveSheet();
 
         // Encabezados
-        $headers = ['CLIENTE', 'TITULO', 'RECURRENTE', 'RECHEQUEO', 'RECHEQUEO DE',  'FECHA VANTIVE', 'FECHA INICIO', 'FECHA FINALIZACION', 'SECTOR', 'PRODUCTO', 'HORAS', 'ESTADO'];
+        $headers = ['ID','CLIENTE', 'TITULO', 'RECURRENTE', 'RECHEQUEO', 'RECHEQUEO DE',  'FECHA VANTIVE', 'FECHA INICIO', 'FECHA FINALIZACION', 'SECTOR', 'PRODUCTO', 'HORAS', 'ESTADO'];
         $sheet->fromArray($headers, NULL, 'A1');
 
         $rowNum = 2;
-        foreach ($data as $row) {
+        foreach ($data as $key => $row) {
             if (!in_array($row['estado'], ["FIN SIN IMPLEM", "ELIMINADO", "CANCELADO"])) {
                 $sheet->fromArray([
+                    $key+1,
                     $row['cliente'],
                     $row['titulo'],
-                    (empty($row['posicion_recurrencia']) ? 'NO' : $row['posicion_recurrencia']),
-                    (empty($row['rechequeo']) ? 'NO' : $row['rechequeo']),
-                    (empty($row['rechequeo_de']) ? 'NO' : $row['rechequeo_de']),
+                    (empty($row['posicion_recurrencia']) ? '-' : $row['posicion_recurrencia']),
+                    (empty($row['rechequeo']) ? '-' : $row['rechequeo']),
+                    (empty($row['rechequeo_de']) ? '-' : $row['rechequeo_de']),
                     (!empty($row['fech_vantive']) ? date('d/m/Y', strtotime($row['fech_vantive'])) : 'SIN FECHA'),
                     (!empty($row['fech_inicio']) ? date('d/m/Y', strtotime($row['fech_inicio'])) : 'SIN FECHA'),
                     (!empty($row['fech_fin']) ? date('d/m/Y', strtotime($row['fech_fin'])) : 'SIN FECHA'),

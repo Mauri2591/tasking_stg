@@ -233,7 +233,7 @@ switch ($_GET['proy']) {
         break;
 
     case 'update_proyecto_recurrencia':
-        $proyecto->update_proyecto_recurrencia($_POST['id'],$_POST['id_proyecto_gestionado']);
+        $proyecto->update_proyecto_recurrencia($_POST['id'], $_POST['id_proyecto_gestionado']);
         break;
 
     case 'get_proyectos_nuevos_borrador':
@@ -988,7 +988,7 @@ switch ($_GET['proy']) {
             $sub_array[] = $row['fech_fin'] == '' ? 'Sin fecha' : $row['fech_fin'];
             $sub_array[] = $row['creador_proy'];
 
-            $sub_array[] = $row['posicion_recurrencia'] == '' ? '-' : '<span class="badge bg-success">'.$row['posicion_recurrencia'].'</span>';
+            $sub_array[] = $row['posicion_recurrencia'] == '' ? '-' : '<span class="badge bg-success">' . $row['posicion_recurrencia'] . '</span>';
 
             $sub_array[] = $row['rechequeo'] == 'NO' ? '-' : '<span class="badge bg-danger">SI</span>';
 
@@ -1411,11 +1411,12 @@ switch ($_GET['proy']) {
             "CALIDAD Y PROCESOS" => "bg-light text-dark",
             "INCIDENT RESPONSE" => "bg-danger text-light"
         );
-        foreach ($datos as $row) {
+        foreach ($datos as $key => $row) {
             $sub_array = array();
+            $sub_array[] = '<span class="badge bg-light text-dark">' . ($key + 1) . '</span>';
             $sub_array[] = $row['titulo'];
-            $sub_array[] = $row['posicion_recurrencia'] == '' ? '-' : '<span class="badge bg-success">'.$row['posicion_recurrencia'].'</span>';
-            $sub_array[] = $row['rechequeo'] == "SI" ? '<span class="badge bg-danger">SI</span>' : '-';
+            $sub_array[] = $row['posicion_recurrencia'] == '' ? '-' : '<span class="badge bg-success">' . $row['posicion_recurrencia'] . '</span>';
+            $sub_array[] = $row['rechequeo'] == "SI" ? '<span class="mx-1 badge bg-danger">SI</span>' . '<span class="badge bg-light text-dark">' . $row['rechequeo_de'] . '</span>' : '-';
             $sub_array[] = strlen($row['refProy']) > 20
                 ? '<p class="text-center m-0 p-0">' . wordwrap($row['refProy'], 20, '<br>', true) . '</p>'
                 : '<p class="text-center m-0 p-0">' . $row['refProy'] . '</p>';
@@ -1440,17 +1441,17 @@ switch ($_GET['proy']) {
 
             $sub_array[] = '<p class="p-0 m-0 text-center">' . $row['estado'] . '</p>';
 
-            if ($row['estado'] == "FIN SIN IMPLEM" || $row['estado'] == "ELIMINADO" || $row['estado'] == "CANCELADO") {
-                $sub_array[] = '<span><i class="ri-subtract-line fw-bold fs-18" style="color:gray"></i>
+            if ($row['estado'] == "FIN SIN IMPLEM" || $row['estado'] == "ELIMINADO" || $row['estado'] == "CANCELADO" || $row['rechequeo'] == "SI") {
+                $sub_array[] = '<span><i class="ri-subtract-line" style="color:gray"></i>
                         </span>';
             } else {
                 $sub_array[] = '<span type="button" onclick="crearRechequeo(' . $row['id'] . ')" data-placement="top" title="Agregar rechequeo">
-                            <i class="ri-add-fill text-danger fw-bold fs-18"></i>
+                            <i class="ri-add-fill text-danger fs-18"></i>
                         </span>';
             }
 
             if ($row['estado'] == "FIN SIN IMPLEM" || $row['estado'] == "ELIMINADO" || $row['estado'] == "CANCELADO") {
-                $sub_array[] = '<span><i class="ri-subtract-line fw-bold fs-19" style="color:gray"></i>
+                $sub_array[] = '<span><i class="ri-subtract-line" style="color:gray"></i>
                         </span>';
             } else {
                 $sub_array[] = '<a href="' . URL . '/View/Home/Gestion/Sectores/GestionarProy/?p=' . Openssl::set_ssl_encrypt($row['id_proyecto_cantidad_servicios']) . '&pg=' . Openssl::set_ssl_encrypt($row['id']) . '" target="_blank" rel="noopener noreferrer" title="Ver proyecto"><i class="ri-send-plane-fill text-primary fs-18"></i></a>';
@@ -1522,67 +1523,66 @@ switch ($_GET['proy']) {
         echo json_encode($proyecto->get_datos_para_insert_rechequeo($_POST['id']));
         break;
 
-case 'insert_rechequeo':
-    $id_proyecto_cantidad_servicios = $_POST['id_proyecto_cantidad_servicios'];
-    $id_proyecto_recurrencia = $_POST['id_proyecto_recurrencia'];
-    $cat_id = $_POST['cat_id'];
-    $cats_id = $_POST['cats_id'];
-    $sector_id = $_POST['sector_id'];
-    $usu_crea = $_POST['usu_crea'];
-    $prioridad_id = $_POST['prioridad_id'];
-    $estados_id = 14;
-    $titulo = $_POST['titulo'];
-    $descripcion = $_POST['descripcion'];
-    $refProy = $_POST['refProy'];
-    $recurrencia = $_POST['recurrencia'];
-    $fech_fin = $_POST['fech_fin'];
-    $fech_vantive = $_POST['fech_vantive'];
-    $archivo = $_POST['archivo'];
-    $captura_imagen = $_POST['captura_imagen'];
-    $dimensionamiento = $_POST['dimensionamiento'];
-    $posicion_recurrencia = $_POST['posicion_recurrencia']; // ✅ ahora lo tomamos del POST
+    case 'insert_rechequeo':
+        $id_proyecto_cantidad_servicios = $_POST['id_proyecto_cantidad_servicios'];
+        $id_proyecto_recurrencia = $_POST['id_proyecto_recurrencia'];
+        $cat_id = $_POST['cat_id'];
+        $cats_id = $_POST['cats_id'];
+        $sector_id = $_POST['sector_id'];
+        $usu_crea = $_POST['usu_crea'];
+        $prioridad_id = $_POST['prioridad_id'];
+        $estados_id = 14;
+        $titulo = $_POST['titulo'];
+        $descripcion = $_POST['descripcion'];
+        $refProy = $_POST['refProy'];
+        $fech_vantive = $_POST['fech_vantive'];
+        $archivo = $_POST['archivo'];
+        $captura_imagen = $_POST['captura_imagen'];
+        $dimensionamiento = $_POST['dimensionamiento'];
+        $posicion_recurrencia = $_POST['posicion_recurrencia']; // ✅ ahora lo tomamos del POST
 
-    try {
-        // 1️⃣ Insertamos el nuevo proyecto rechequeo
-        $id_proyecto_gestionado = $proyecto->insert_rechequeo(
-            $id_proyecto_cantidad_servicios,
-            $id_proyecto_recurrencia,
-            $cat_id,
-            $cats_id,
-            $sector_id,
-            $usu_crea,
-            $prioridad_id,
-            $estados_id,
-            $titulo,
-            $descripcion,
-            $refProy,
-            $recurrencia,
-            $fech_fin,
-            $fech_vantive,
-            $archivo,
-            $captura_imagen
-        );
+        try {
+            // 1️⃣ Insertamos el nuevo proyecto rechequeo
+            $id_proyecto_gestionado = $proyecto->insert_rechequeo(
+                $id_proyecto_cantidad_servicios,
+                $id_proyecto_recurrencia,
+                $cat_id,
+                $cats_id,
+                $sector_id,
+                $usu_crea,
+                $prioridad_id,
+                $estados_id,
+                $titulo,
+                $descripcion,
+                $refProy,
+                $fech_vantive,
+                $archivo,
+                $captura_imagen
+            );
 
-        // 2️⃣ Insertamos en la tabla de relación
+            // 2️ Inserto en la tabla de relación
             $proyecto->insert_proyecto_rechequeo($id_proyecto_gestionado);
 
-        // 3️⃣ Insertamos dimensionamiento
-        $proyecto->insert_dimensionamiento_de_rechequeo($id_proyecto_gestionado, $dimensionamiento);
+            // 3️ Inserto dimensionamiento
+            $proyecto->insert_dimensionamiento_de_rechequeo($id_proyecto_gestionado, $dimensionamiento);
 
-        // 4️⃣ Actualizamos posición de recurrencia sobre el NUEVO ID
-        $proyecto->update_proyecto_rechequeo_posicion_recurrencia($posicion_recurrencia,$id_proyecto_gestionado);
+            // 4 Inserto en usuario_asignado
+            $proyecto->insert_usuarios_proyecto($id_proyecto_gestionado, null);
 
-        echo json_encode([
-            'status' => 'success',
-            'msg' => 'Rechequeo insertado correctamente'
-        ]);
-    } catch (Exception $e) {
-        echo json_encode([
-            'status' => 'error',
-            'msg' => 'Error al insertar el rechequeo: ' . $e->getMessage()
-        ]);
-    }
-    break;
+            // 5 Actualizo posición de recurrencia sobre el NUEVO ID
+            $proyecto->update_proyecto_rechequeo_posicion_recurrencia($posicion_recurrencia, $id_proyecto_gestionado);
+
+            echo json_encode([
+                'status' => 'success',
+                'msg' => 'Rechequeo insertado correctamente'
+            ]);
+        } catch (Exception $e) {
+            echo json_encode([
+                'status' => 'error',
+                'msg' => 'Error al insertar el rechequeo: ' . $e->getMessage()
+            ]);
+        }
+        break;
 
 
     default:
