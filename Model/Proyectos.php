@@ -1689,7 +1689,7 @@ ORDER BY cantidad_proyectos DESC";
     pcs.id AS id_proyecto_cantidad_servicios,
     prc.posicion_recurrencia,
     IF(pr.id IS NULL, NULL, 'SI') AS rechequeo,
-    pr.id_proyecto_gestionado_del_que_hace_rechequeo AS rechequeo_de,  
+    pr.id_proyecto_gestionado_origen AS rechequeo_de,  
     SUM(d.hs_dimensionadas) AS dimensionamiento
 FROM proyecto_gestionado pg
 LEFT JOIN sectores s 
@@ -2256,13 +2256,13 @@ WHERE pg.id_proyecto_cantidad_servicios = :id_proyecto_cantidad_servicios";
         $stmt->execute();
     }
 
-    public function insert_proyecto_rechequeo($id_proyecto_gestionado, $id_proyecto_gestionado_del_que_hace_rechequeo)
+    public function insert_proyecto_rechequeo($id_proyecto_gestionado, $id_proyecto_gestionado_origen)
     {
         $conn = parent::get_conexion();
-        $sql = "INSERT INTO proyecto_rechequeo (id_proyecto_gestionado,id_proyecto_gestionado_del_que_hace_rechequeo) VALUES (:id_proyecto_gestionado,:id_proyecto_gestionado_del_que_hace_rechequeo)";
+        $sql = "INSERT INTO proyecto_rechequeo (id_proyecto_gestionado,id_proyecto_gestionado_origen) VALUES (:id_proyecto_gestionado,:id_proyecto_gestionado_origen)";
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(":id_proyecto_gestionado", $id_proyecto_gestionado, PDO::PARAM_INT);
-        $stmt->bindValue(":id_proyecto_gestionado_del_que_hace_rechequeo", $id_proyecto_gestionado_del_que_hace_rechequeo, PDO::PARAM_INT);
+        $stmt->bindValue(":id_proyecto_gestionado_origen", $id_proyecto_gestionado_origen, PDO::PARAM_INT);
         $stmt->execute();
     }
 

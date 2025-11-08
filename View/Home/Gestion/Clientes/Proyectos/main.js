@@ -1759,7 +1759,7 @@ function verProyPorIdCliente(client_id) {
     });
 }
 
-function verDetallesProyPorIdCliente(id) {
+function verInfo(id) {
     alert(id)
 }
 
@@ -1796,7 +1796,7 @@ function crearRechequeo(id) {
                     // Agregamos lo que el backend necesita
                     data.id_proyecto_gestionado = ID_ORIGINAL;
                     data.posicion_recurrencia = POSICION_RECURRENCIA;
-                    data.id_proyecto_gestionado_del_que_hace_rechequeo = id;
+                    data.id_proyecto_gestionado_origen = id;
 
                     // 🚀 Insertamos el rechequeo
                     $.post(
@@ -1817,6 +1817,7 @@ function crearRechequeo(id) {
                                 setTimeout(() => {
                                     if ($.fn.DataTable.isDataTable('#tablelHistorialProyectosCalidad')) {
                                         $('#tablelHistorialProyectosCalidad').DataTable().ajax.reload(null, false);
+                                        $("#table_proyectos_total_calidad").DataTable().ajax.reload(null,false);
                                         $('#table_proyectos_borrador').DataTable().ajax.reload(null, false);
                                     }
                                 }, 1000);

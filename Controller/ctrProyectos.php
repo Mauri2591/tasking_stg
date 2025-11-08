@@ -1403,27 +1403,45 @@ switch ($_GET['proy']) {
 
     case 'get_proyectos_total_x_client_id':
         $datos = $proyecto->get_proyectos_total_x_client_id($_POST['client_id']);
-        $data = array();
-        $colores = array(
+
+        // 🔹 Crear mapa de IDs => posición visual
+        $id_to_pos = [];
+        foreach ($datos as $index => $fila) {
+            $id_to_pos[$fila['id']] = $index + 1;
+        }
+
+        $data = [];
+        $colores = [
             "ETHICAL HACKING" => "bg-warning text-dark",
             "SOC" => "bg-dark text-light",
             "SASE" => "bg-info text-light",
             "CALIDAD Y PROCESOS" => "bg-light text-dark",
             "INCIDENT RESPONSE" => "bg-danger text-light"
-        );
+        ];
+
         foreach ($datos as $key => $row) {
-            $sub_array = array();
+            $sub_array = [];
+
             $sub_array[] = '<span class="badge bg-light text-dark">' . ($key + 1) . '</span>';
             $sub_array[] = $row['titulo'];
-            $sub_array[] = $row['posicion_recurrencia'] == '' ? '-' : '<span class="badge bg-success">' . $row['posicion_recurrencia'] . '</span>';
-            $sub_array[] = $row['rechequeo'] == "SI" ? '<span class="mx-1 badge bg-danger">SI</span>' . '<span class="badge bg-light text-dark">' . $row['rechequeo_de'] . '</span>' : '-';
+            $sub_array[] = $row['posicion_recurrencia'] == ''
+                ? '-'
+                : '<span class="badge bg-success">' . $row['posicion_recurrencia'] . '</span>';
+
+            // 🔹 Si tiene rechequeo, mostrar el número visual (no el id real)
+            if ($row['rechequeo'] == "SI") {
+                $num_rechequeo_de = isset($id_to_pos[$row['rechequeo_de']])
+                    ? $id_to_pos[$row['rechequeo_de']]
+                    : $row['rechequeo_de']; // fallback al id real si no se encuentra
+                $sub_array[] = '<span class="mx-1 badge bg-danger">SI</span>' .
+                    '<span class="badge bg-light text-dark">' . $num_rechequeo_de . '</span>';
+            } else {
+                $sub_array[] = '-';
+            }
+
             $sub_array[] = strlen($row['refProy']) > 20
                 ? '<p class="text-center m-0 p-0">' . wordwrap($row['refProy'], 20, '<br>', true) . '</p>'
                 : '<p class="text-center m-0 p-0">' . $row['refProy'] . '</p>';
-
-            $sub_array[] = !empty($row['fech_vantive'])
-                ? '<p class="text-center m-0 p-0">' . date('d/m/Y', strtotime($row['fech_vantive'])) . '</p>'
-                : '<p class="text-center m-0 p-0">SIN FECHA</p>';
 
             $sub_array[] = !empty($row['fech_crea'])
                 ? '<p class="text-center m-0 p-0">' . date('d/m/Y', strtotime($row['fech_crea'])) . '</p>'
@@ -1449,6 +1467,10 @@ switch ($_GET['proy']) {
                             <i class="ri-add-fill text-danger fs-18"></i>
                         </span>';
             }
+
+            $sub_array[] = '<span type="button" onclick="verInfo(' . $row['id'] . ')" data-placement="top" title="Ver Informacion del proyecto">
+                            <i class="ri-eye-fill text-info fs-18"></i>
+                        </span>';
 
             if ($row['estado'] == "FIN SIN IMPLEM" || $row['estado'] == "ELIMINADO" || $row['estado'] == "CANCELADO") {
                 $sub_array[] = '<span><i class="ri-subtract-line" style="color:gray"></i>
@@ -1561,7 +1583,7 @@ switch ($_GET['proy']) {
             );
 
             // 2️ Inserto en la tabla de relación
-            $proyecto->insert_proyecto_rechequeo($id_proyecto_gestionado,$_POST['id_proyecto_gestionado_del_que_hace_rechequeo']);
+            $proyecto->insert_proyecto_rechequeo($id_proyecto_gestionado, $_POST['id_proyecto_gestionado_origen']);
 
             // 3️ Inserto dimensionamiento
             $proyecto->insert_dimensionamiento_de_rechequeo($id_proyecto_gestionado, $dimensionamiento);
