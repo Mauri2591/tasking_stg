@@ -23,11 +23,10 @@ switch ($_GET['case'] ?? null) {
         $reporte::get_reporte_excel($data, "PROYECTOS_{$nombre_cliente}");
         break;
 
-    // case 'total_excel':
-    //     // Traemos todos los proyectos
-    //     $data = $proyecto->get_proyectos_total();
-    //     $reporte::total_excel($data, "PROYECTOS_TOTAL");
-    //     break;
+    case 'total_excel':
+        $data = $proyecto->get_proyectos_total_excel();
+        $reporte::total_excel($data, "PROYECTOS_TOTAL");
+        break;
 
     default:
         echo "Acción no reconocida";

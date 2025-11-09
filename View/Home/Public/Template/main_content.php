@@ -155,7 +155,7 @@
                                             <a href="<?php echo URL . "View/Home/Gestion/Sectores/Ethical_hacking/"; ?>"
                                                 class="nav-link" data-key="t-mailbox">Ethical Hacking</a>
                                         </li>
-                                      
+
                                         <li class="nav-item">
                                             <a href="<?php echo URL . "View/Home/Gestion/Sectores/SOC/"; ?>"
                                                 class="nav-link" data-key="t-mailbox">SOC</a>
@@ -256,6 +256,11 @@
                                                 <a href="<?php echo URL . "View/Home/Gestion/Sectores/Ethical_hacking/IR/"; ?>"
                                                     class="nav-link" data-key="t-mailbox">Incident Response</a>
                                             </li>
+
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Clientes/Proyectos/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">TOTAL</a>
+                                            </li>
                                         </ul>
                                     </div>
                                 </li>
@@ -312,7 +317,10 @@
                                                 <a href="<?php echo URL . "View/Home/Gestion/Sectores/SOC/IR/"; ?>"
                                                     class="nav-link" data-key="t-mailbox">INCIDENT RESPONSE</a>
                                             </li>
-
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Clientes/Proyectos/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">TOTAL</a>
+                                            </li>
                                         </ul>
                                     </div>
                                 </li>
@@ -389,7 +397,7 @@
                                                     class="nav-link" data-key="t-mailbox">Soporte</a>
                                             </li>
 
-                                                 <li class="nav-item">
+                                            <li class="nav-item">
                                                 <a href="<?php echo URL . "View/Home/Gestion/Sectores/SASE/Mitigacion_ddos/"; ?>"
                                                     class="nav-link" data-key="t-mailbox">Mitigacion DDOS</a>
                                             </li>
@@ -399,7 +407,7 @@
                                                     class="nav-link" data-key="t-mailbox">Proyecto no Estandar</a>
                                             </li>
 
-                                                  <li class="nav-item">
+                                            <li class="nav-item">
                                                 <a href="<?php echo URL . "View/Home/Gestion/Sectores/SASE/Soluciones_fortinet/"; ?>"
                                                     class="nav-link" data-key="t-mailbox">Soluciones Fortinet</a>
                                             </li>
@@ -415,6 +423,10 @@
                                             <li class="nav-item">
                                                 <a href="<?php echo URL . "View/Home/Gestion/Sectores/SASE/IR/"; ?>"
                                                     class="nav-link" data-key="t-mailbox">INCIDENT RESPONSE</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Clientes/Proyectos/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">TOTAL</a>
                                             </li>
                                         </ul>
                                     </div>
@@ -451,7 +463,7 @@
                                                     <a href="<?php echo URL . "View/Home/Gestion/Sectores/Ethical_hacking/"; ?>"
                                                         class="nav-link" data-key="t-mailbox">Ethical Hacking</a>
                                                 </li>
-                                                
+
                                                 <li class="nav-item">
                                                     <a href="<?php echo URL . "View/Home/Gestion/Sectores/SOC/"; ?>"
                                                         class="nav-link" data-key="t-mailbox">SOC</a>

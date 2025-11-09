@@ -1671,6 +1671,50 @@ ORDER BY cantidad_proyectos DESC";
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+      public function get_proyectos_total_excel_x_sector($sector_id)
+    {
+        $conn = parent::get_conexion();
+        $sql = "SELECT 
+    c.client_id,
+    c.client_rs,
+    tc.cat_nom AS categoria,
+    COUNT(DISTINCT pg.id) AS cantidad_proyectos
+        FROM clientes c
+        LEFT JOIN proyectos p ON p.client_id = c.client_id
+        LEFT JOIN proyecto_cantidad_servicios pcs ON pcs.proy_id = p.proy_id
+        LEFT JOIN proyecto_gestionado pg ON pg.id_proyecto_cantidad_servicios = pcs.id
+        LEFT JOIN tm_categoria tc ON pg.cat_id = tc.cat_id
+        LEFT JOIN sectores s ON pg.sector_id = s.sector_id
+        WHERE s.sector_id = :sector_id OR tc.cat_id = 26
+        AND pcs.est = 1
+        GROUP BY c.client_id, c.client_rs, tc.cat_nom
+        ORDER BY c.client_rs, tc.cat_nom";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue(":sector_id", $sector_id, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+    public function get_proyectos_total_excel()
+    {
+        $conn = parent::get_conexion();
+        $sql = "SELECT 
+    c.client_id,
+    c.client_rs,
+    tc.cat_nom AS categoria,
+    COUNT(DISTINCT pg.id) AS cantidad_proyectos
+        FROM clientes c
+        LEFT JOIN proyectos p ON p.client_id = c.client_id
+        LEFT JOIN proyecto_cantidad_servicios pcs ON pcs.proy_id = p.proy_id
+        LEFT JOIN proyecto_gestionado pg ON pg.id_proyecto_cantidad_servicios = pcs.id
+        LEFT JOIN tm_categoria tc ON pg.cat_id = tc.cat_id
+        WHERE pcs.est = 1
+        GROUP BY c.client_id, c.client_rs, tc.cat_nom
+        ORDER BY c.client_rs, tc.cat_nom";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
     public function get_proyectos_total_x_client_id($client_id)
     {
         $conn = parent::get_conexion();
