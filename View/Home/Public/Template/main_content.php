@@ -418,11 +418,11 @@
                                             </li>
                                             <li class="nav-item">
                                                 <a href="<?php echo URL . "View/Home/Gestion/Sectores/SASE/Servicios_profesionales/"; ?>"
-                                                    class="nav-link" data-key="t-mailbox">SERVICIOS PROFESIONALES</a>
+                                                    class="nav-link" data-key="t-mailbox">Servicios Profesionales</a>
                                             </li>
                                             <li class="nav-item">
                                                 <a href="<?php echo URL . "View/Home/Gestion/Sectores/SASE/IR/"; ?>"
-                                                    class="nav-link" data-key="t-mailbox">INCIDENT RESPONSE</a>
+                                                    class="nav-link" data-key="t-mailbox">Incident Response</a>
                                             </li>
                                             <li class="nav-item">
                                                 <a href="<?php echo URL . "View/Home/Gestion/Clientes/Proyectos/"; ?>"
