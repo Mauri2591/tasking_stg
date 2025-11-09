@@ -162,10 +162,10 @@ switch ($_GET['accion']) {
                 <td class="px-1 text-center fw-bold text-success">' . $val['hs_dimensionadas'] . '</td>
                 <td class="px-1 text-center fw-bold">' . $val['horas_consumidas'] . '</td>
                 ' . (
-                                $val['comparacion_horas'] == "HORAS_TOTAL_MENOR_QUE_DIM"
-                                ? '<td class="px-1 text-center fw-bold text-success">' . $val['horas_total'] . '</td>'
-                                : '<td class="px-1 text-center fw-bold text-danger">' . $val['horas_total'] . '</td>'
-                            ) . '
+                    $val['comparacion_horas'] == "HORAS_TOTAL_MENOR_QUE_DIM"
+                    ? '<td class="px-1 text-center fw-bold text-success">' . $val['horas_total'] . '</td>'
+                    : '<td class="px-1 text-center fw-bold text-danger">' . $val['horas_total'] . '</td>'
+                ) . '
             </tr>';
                 $proyectos_mostrados[] = $id_proyecto;
             }
@@ -183,7 +183,7 @@ switch ($_GET['accion']) {
         } else {
         ?>
             <span class="badge" style="background-color: gray;color:white;">Sin proyectos activos</span>
-<?php
+        <?php
         }
         break;
 
@@ -264,9 +264,70 @@ switch ($_GET['accion']) {
         }
         break;
 
+    case 'get_sectores':
+        $data = $tymesummary->get_sectores();
+        foreach ($data as $val) {
+            // marcar activo el sector ETHICAL HACKING (id = 1)
+            $activeClass = ($val['sector_id'] == 1) ? 'active' : '';
+            $ariaSelected = ($val['sector_id'] == 1) ? 'true' : 'false';
+            $tabId = strtolower(str_replace(' ', '_', $val['sector_nombre']));
+        ?>
+            <li class="nav-item">
+                <a class="py-1 px-2 nav-link <?php echo $activeClass; ?>"
+                    data-sector-id="<?php echo $val['sector_id']; ?>"
+                    data-bs-toggle="tab"
+                    href="#tab_<?php echo $tabId; ?>"
+                    role="tab"
+                    aria-selected="<?php echo $ariaSelected; ?>">
+                    <?php echo htmlspecialchars($val['sector_nombre'], ENT_QUOTES, 'UTF-8'); ?>
+                </a>
+            </li>
+            <?php
+        }
+        break;
 
+    case 'get_usuarios_por_sector':
+        $sector_id = $_POST['sector_id'];
+        $data = $tymesummary->get_usuarios_por_sector($sector_id);
 
+        if (empty($data)) {
+            echo "<span class='text-muted'>No hay usuarios en este sector.</span>";
+        } else {
+            foreach ($data as $val) {
+            ?>
+                <span type="button" onclick="verTareasUsuario(<?php echo $val['usu_id'] ?>)" class="me-2 bg-primary badge border border-secondary text-light">
+                    <?php echo htmlspecialchars($val['usu_nom'] . ' ' . $val['usu_ape'], ENT_QUOTES, 'UTF-8'); ?>
+                </span>
+<?php
+            }
+        }
+        break;
 
+    case 'get_tareas_x_usuario':
+        $datos = $tymesummary->get_tareas_x_usuario($_POST['usu_id']);
+        $data = array();
+        foreach ($datos as $row) {
+            $sub_array = array();
+            $sub_array[] = $row['cliente'];
+            $sub_array[] = $row['referencia'];
+            $sub_array[] = $row['producto'];
+            $sub_array[] = $row['tarea'];
+            $sub_array[] = date('d-m-Y', strtotime($row['fecha']));
+            $sub_array[] = $row['hora_desde'];
+            $sub_array[] = $row['hora_hasta'];
+            $sub_array[] = $row['horas_consumidas'];
+            $sub_array[] = $row['descripcion'];
+            $sub_array[] = $row['usu_nom'];
+            $data[] = $sub_array;
+        }
+        $results = array(
+            "sEcho" => 1,
+            "iTotalRecords" => count($data),
+            "iTotalDisplayRecords" => count($data),
+            "aaData" => $data
+        );
+        echo json_encode($results);
+        break;
 
     default:
         http_response_code(404);

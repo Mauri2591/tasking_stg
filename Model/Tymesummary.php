@@ -324,4 +324,66 @@ ORDER BY
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    public function get_sectores()
+    {
+        $conn = parent::get_conexion();
+        $sql = "SELECT sector_id, sector_nombre FROM sectores WHERE est=1 AND sector_id != 5";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function get_usuarios_todos_los_sectores()
+    {
+        $conn = parent::get_conexion();
+        $sql = "SELECT usu_id, usu_nom, usu_ape, usu_correo, sectores.sector_id, sectores.sector_nombre FROM tm_usuario INNER JOIN sectores ON tm_usuario.sector_id=sectores.sector_id WHERE tm_usuario.est=1";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function get_usuarios_por_sector($sector_id)
+    {
+        $conn = parent::get_conexion();
+        $sql = "SELECT usu_id, usu_nom, usu_ape, usu_correo 
+            FROM tm_usuario 
+            WHERE est=1 AND sector_id = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute([$sector_id]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function get_tareas_x_usuario($usu_id)
+    {
+        $conn = parent::get_conexion();
+        $sql = "SELECT 
+    tm_categoria.cat_nom AS producto,
+    tareas.nombre AS tarea,
+    timesummary_carga.fecha,
+    TIME_FORMAT(timesummary_carga.hora_desde, '%H:%i') AS hora_desde,
+    TIME_FORMAT(timesummary_carga.hora_hasta, '%H:%i') AS hora_hasta,
+    TIME_FORMAT(TIMEDIFF(timesummary_carga.hora_hasta, timesummary_carga.hora_desde), '%H:%i') AS horas_consumidas,
+    timesummary_carga.descripcion,
+    timesummary_carga.fech_crea AS fecha_carga,
+    clientes.client_rs AS cliente,
+    proyecto_gestionado.refProy AS referencia,
+    tm_usuario.usu_nom
+FROM timesummary_carga
+LEFT JOIN tm_categoria 
+    ON timesummary_carga.id_producto = tm_categoria.cat_id
+LEFT JOIN tareas 
+    ON timesummary_carga.id_tarea = tareas.id
+LEFT JOIN clientes 
+    ON timesummary_carga.id_proyecto_gestionado = clientes.client_id
+LEFT JOIN proyecto_gestionado 
+    ON timesummary_carga.id_proyecto_gestionado = proyecto_gestionado.id
+INNER JOIN tm_usuario 
+    ON timesummary_carga.usu_id = tm_usuario.usu_id
+WHERE timesummary_carga.usu_id = :usu_id";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue(":usu_id", $usu_id, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }

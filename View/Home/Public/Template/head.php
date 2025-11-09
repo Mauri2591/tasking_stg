@@ -20,7 +20,11 @@
         rel="stylesheet" type="text/css" />
 
     <!-- Datatables -->
-    <link rel="stylesheet" href="https://cdn.datatables.net/2.2.2/css/dataTables.dataTables.css" />
+    <!-- <link rel="stylesheet" href="https://cdn.datatables.net/2.2.2/css/dataTables.dataTables.css" /> -->
+
+    <!-- DataTables 1.13 compatible con Buttons -->
+<link rel="stylesheet" href="https://cdn.datatables.net/2.2.2/css/dataTables.dataTables.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.1.1/css/buttons.dataTables.css">
 
     <!-- Icons Css -->
     <link href="<?php echo URL ?>/View/Home/Public/velzon/assets/css/icons.min.css?sheet=<?php echo rand(); ?>"
@@ -107,7 +111,7 @@
         #dt-search-4,
         #dt-search-5,
         #dt-search-6,
-        #dt-search-7  {
+        #dt-search-7 {
             height: 20px;
         }
 
@@ -119,7 +123,8 @@
             white-space: normal !important;
             word-break: break-word;
         }
-        tbody{
+
+        tbody {
             color: #505050ff;
             font-size: .9em;
             font-weight: 500;
