@@ -1759,10 +1759,6 @@ function verProyPorIdCliente(client_id) {
     });
 }
 
-function verInfo(id) {
-    alert(id)
-}
-
 function crearRechequeo(id) {
     $.post(
         "../../../../../Controller/ctrProyectos.php?proy=get_datos_para_insert_rechequeo", {

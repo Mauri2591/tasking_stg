@@ -32,7 +32,6 @@
                                     <th style="width: 5px;text-align: center;">HS</th>
                                     <th style="width: 5px;text-align: center;">EST</th>
                                     <th style="width: 5px;text-align: center;">AGREGAR <br>RECHEQUEO</th>
-                                    <th style="width: 5px;text-align: center;">INFO</th>
                                     <th style="width: 5px;text-align: center;"></th>
                                 </tr>
                             </thead>
@@ -40,7 +39,6 @@
                                 <tr style="text-align: center;">
                                     <td style="width: 5%;"></td>
                                     <td style="width: 45%;"></td>
-                                    <td style="width: 5%;"></td>
                                     <td style="width: 5%;"></td>
                                     <td style="width: 5%;"></td>
                                     <td style="width: 5%;"></td>
@@ -72,7 +70,6 @@
                                     <th style="width: 5px;text-align: center;">PROD</th>
                                     <th style="width: 5px;text-align: center;">HS</th>
                                     <th style="width: 5px;text-align: center;">EST</th>
-                                    <th style="width: 5px;text-align: center;">INFO</th>
                                     <th style="width: 5px;text-align: center;"></th>
                                 </tr>
                             </thead>
@@ -89,14 +86,13 @@
                                     <td style="width: 5%;"></td>
                                     <td style="width: 5%;"></td>
                                     <td style="width: 5%;"></td>
-                                    <td style="width: 5%;"></td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
-                    
+
                 <?php endif; ?>
-                
+
             </div>
         </div>
     </div>

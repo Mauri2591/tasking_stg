@@ -1638,12 +1638,6 @@ switch ($_GET['proy']) {
                 }
             }
 
-            $sub_array[] = '
-        <span type="button" onclick="verInfo(' . $row['id'] . ')" 
-              data-placement="top" title="Ver Información del proyecto">
-            <i class="ri-eye-fill text-info fs-18"></i>
-        </span>';
-
             if ($row['estado'] == "FIN SIN IMPLEM" || $row['estado'] == "ELIMINADO" || $row['estado'] == "CANCELADO") {
                 $sub_array[] = '<span><i class="ri-subtract-line" style="color:gray"></i></span>';
             } else {
