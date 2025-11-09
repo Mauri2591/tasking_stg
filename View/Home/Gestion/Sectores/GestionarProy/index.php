@@ -823,15 +823,15 @@ if (isset($_SESSION['usu_id'])) {
         });
 
 
-        function agregarUsuario(proy_id) {
+        function agregarUsuario() {
             $("#ModalAgregarUsuarioProy").modal("show");
 
             $.post("../../../../../Controller/ctrProyectos.php?proy=get_sector_x_proy", {
-                    id: proy_id
+                    id: id_proyecto_gestionado
                 },
                 function(data, textStatus, jqXHR) {
+                    
                     let SECTOR_ID = data.sector_id;
-
                     $.post("../../../../../Controller/ctrProyectos.php?proy=get_usuarios_x_sector_agregar_a_proy", {
                             sector_id: SECTOR_ID
                         },
