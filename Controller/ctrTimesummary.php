@@ -150,19 +150,29 @@ switch ($_GET['accion']) {
     case 'datos_tabla_ts':
         $datos = $tymesummary->get_titulos_proyectos($_SESSION['usu_id']);
         $htmlTable = '';
-        foreach ($datos as $key => $val) {
-            $htmlTable .= '
+        $proyectos_mostrados = []; //array para controlar duplicados
 
-                    <tr>
-                        <td class="px-3 text-center">' . substr($val['titulo'], 0, 20) . '</td>
-                        <td class="px-3 text-center">' . $val['producto'] . '</td>
-                        <td class="px-3 text-center">' . $val['hs_dimensionadas'] . '</td>
-                        <td class="px-3 text-center"><a type="button" title="Desea inactivar esta tarea?" onclick="editarTarea(' . $val['id_timesummary_estados'] . ')" class="ri-edit-fill text-danger"></a></td>
-                    </tr>          
-            ';
+        foreach ($datos as $key => $val) {
+            $id_proyecto = $val['id_proyecto_gestionado'];
+            if (!in_array($id_proyecto, $proyectos_mostrados)) {
+                $htmlTable .= '
+            <tr>
+                <td class="px-1 text-center">' . substr($val['titulo'], 0, 30) . '</td>
+                <td class="px-1 text-center">' . substr($val['producto'], 0, 10) . '</td>
+                <td class="px-1 text-center fw-bold text-success">' . $val['hs_dimensionadas'] . '</td>
+                <td class="px-1 text-center fw-bold">' . $val['horas_consumidas'] . '</td>
+                ' . (
+                                $val['comparacion_horas'] == "HORAS_TOTAL_MENOR_QUE_DIM"
+                                ? '<td class="px-1 text-center fw-bold text-success">' . $val['horas_total'] . '</td>'
+                                : '<td class="px-1 text-center fw-bold text-danger">' . $val['horas_total'] . '</td>'
+                            ) . '
+            </tr>';
+                $proyectos_mostrados[] = $id_proyecto;
+            }
         }
         echo $htmlTable;
         break;
+
 
     case 'get_validar_si_hay_tareas_activas':
         $data = $tymesummary->get_validar_si_hay_tareas_activas($_SESSION['usu_id']);
@@ -196,16 +206,25 @@ switch ($_GET['accion']) {
     case 'get_titulos_proyectos_total':
         $datos = $tymesummary->get_titulos_proyectos_total($_SESSION['usu_id']);
         $data = array();
-        foreach ($datos as $row) {
-            $sub_array = array();
-            $sub_array[] = $row['titulo'];
-            $sub_array[] = '<p class="text-center p-0 m-0"><span class="badge border border-dark bg-light text-dark">' . $row['hs_dimensionadas'] . '</span></p>';
-            $sub_array[] = '<span class="text-center badge border border-dark bg-light text-dark">' . $row['producto'] . '</span>';
-            $sub_array[] = $row['est'] == 1 ? '<span class="text-center badge bg-success text-light"> Activo </span>' : '<span class="badge" style="background-color:gray;color:white"> Inactivo </span>';
-            $sub_array[] = '<a type="button" title="Desea inactivar esta tarea?" onclick="cambiarEstadoTareaHistorial(' . $row['id_timesummary_estados'] . ')" class="ri-edit-fill text-danger"></a>';
+        $proyectos_vistos = [];
 
-            $data[] = $sub_array;
+        foreach ($datos as $row) {
+            // Evita duplicados por id_proyecto_gestionado
+            if (!in_array($row['id_proyecto_gestionado'], $proyectos_vistos)) {
+                $sub_array = array();
+                $sub_array[] = $row['titulo'];
+                $sub_array[] = '<p class="text-center p-0 m-0"><span class="badge border border-dark bg-light text-dark">' . $row['hs_dimensionadas'] . '</span></p>';
+                $sub_array[] = '<span class="text-center badge border border-dark bg-light text-dark">' . $row['producto'] . '</span>';
+                $sub_array[] = $row['est'] == 1
+                    ? '<span class="text-center badge bg-success text-light"> Activo </span>'
+                    : '<span class="badge" style="background-color:gray;color:white"> Inactivo </span>';
+                $sub_array[] = '<a type="button" title="Desea inactivar esta tarea?" onclick="cambiarEstadoTareaHistorial(' . $row['id_timesummary_estados'] . ')" class="ri-edit-fill text-danger"></a>';
+
+                $data[] = $sub_array;
+                $proyectos_vistos[] = $row['id_proyecto_gestionado'];
+            }
         }
+
         $results = array(
             "sEcho" => 1,
             "iTotalRecords" => count($data),
@@ -215,16 +234,27 @@ switch ($_GET['accion']) {
         echo json_encode($results);
         break;
 
+
     case 'get_estado_tarea':
         $datos = $tymesummary->get_estado_tarea($_POST['id_timesummary_estados']);
         echo json_encode($datos);
         break;
 
+
     case 'cambiar_estado_tarea':
         try {
-            $tymesummary->cambiar_estado_tarea($_POST['id_timesummary_estados'], $_POST['est']);
+            // ✅ Obtener el usuario actual desde la sesión
+            $usuario_asignado = $_SESSION['usu_id'];
+
+            // ✅ Llamada al modelo con el filtro por usuario
+            $tymesummary->cambiar_estado_tarea(
+                $_POST['id_timesummary_estados'],
+                $_POST['est'],
+                $usuario_asignado
+            );
+
             http_response_code(200);
-            echo json_encode(["Success" => "Tarea inactivada correctamente"]);
+            echo json_encode(["Success" => "Tarea actualizada correctamente"]);
         } catch (PDOException $e) {
             http_response_code(400);
             echo json_encode(["Error" => "Error SQL: " . $e->getMessage()]);
@@ -233,6 +263,9 @@ switch ($_GET['accion']) {
             echo json_encode(["Error" => "Error general: " . $e->getMessage()]);
         }
         break;
+
+
+
 
 
     default:

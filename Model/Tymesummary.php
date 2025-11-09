@@ -106,63 +106,119 @@ class Tymesummary extends Conexion
     tse.id AS id_timesummary_estados,
     pg.id AS id_proyecto_gestionado,
     pg.titulo,
-    up.usu_asignado,
-    SUM(d.hs_dimensionadas) AS hs_dimensionadas,
     tm_categoria.cat_nom AS producto,
+
+    -- 🔹 Total de horas dimensionadas
+    IFNULL(dim.total_hs_dimensionadas, 0) AS hs_dimensionadas,
+
+    -- 🔹 Horas consumidas por el usuario actual
+    IFNULL(
+        (
+            SELECT 
+                TIME_FORMAT(SEC_TO_TIME(SUM(TIME_TO_SEC(tc2.horas_consumidas))), '%H:%i')
+            FROM timesummary_carga tc2
+            WHERE 
+                tc2.id_proyecto_gestionado = pg.id
+                AND tc2.usu_id = :usu_asignado
+                AND tc2.est = 1
+        ),
+        '00:00'
+    ) AS horas_consumidas,
+
+    -- 🔹 Total de horas consumidas por todos los usuarios
+    IFNULL(
+        (
+            SELECT 
+                TIME_FORMAT(SEC_TO_TIME(SUM(TIME_TO_SEC(tc3.horas_consumidas))), '%H:%i')
+            FROM timesummary_carga tc3
+            WHERE 
+                tc3.id_proyecto_gestionado = pg.id
+                AND tc3.est = 1
+        ),
+        '00:00'
+    ) AS horas_total,
+
+    -- 🔹 Comparación entre horas_total y horas_dimensionadas
+    CASE 
+        WHEN (
+            -- Convertimos las horas totales a segundos
+            (SELECT SUM(TIME_TO_SEC(tc4.horas_consumidas)) 
+             FROM timesummary_carga tc4 
+             WHERE tc4.id_proyecto_gestionado = pg.id AND tc4.est = 1)
+        ) > (dim.total_hs_dimensionadas * 3600) 
+        THEN 'HORAS_TOTAL_MAYOR_QUE_DIM'
+        ELSE 'HORAS_TOTAL_MENOR_QUE_DIM'
+    END AS comparacion_horas,
+
     tse.est
+
 FROM proyecto_gestionado pg
-LEFT JOIN usuario_proyecto up 
-    ON pg.id = up.id_proyecto_gestionado
+
 LEFT JOIN tm_estados e 
     ON pg.estados_id = e.estados_id
-LEFT JOIN dimensionamiento d 
-    ON pg.id = d.id_proyecto_gestionado
+
 LEFT JOIN tm_categoria 
     ON pg.cat_id = tm_categoria.cat_id
+
 INNER JOIN timesummary_estados tse 
-    ON pg.id = tse.id_proyecto_gestionado 
-WHERE 
-    up.usu_asignado = :usu_asignado
-    AND e.estados_id IN (1, 2, 3, 4)
+    ON pg.id = tse.id_proyecto_gestionado
+    AND tse.usuario_asignado = :usu_asignado
     AND tse.est = 1
+
+-- 🔹 Subconsulta para total dimensionadas
+LEFT JOIN (
+    SELECT 
+        id_proyecto_gestionado,
+        SUM(hs_dimensionadas) AS total_hs_dimensionadas
+    FROM dimensionamiento
+    GROUP BY id_proyecto_gestionado
+) AS dim 
+    ON dim.id_proyecto_gestionado = pg.id
+
+WHERE 
+    e.estados_id IN (1, 2, 3, 4)
+
 GROUP BY 
-    tse.id, pg.id, pg.titulo, up.usu_asignado, tm_categoria.cat_nom, tse.est";
+    tse.id, pg.id, pg.titulo, tm_categoria.cat_nom, dim.total_hs_dimensionadas, tse.est
+
+ORDER BY 
+    pg.titulo";
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(":usu_asignado", $usu_asignado, PDO::PARAM_INT);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-
     public function get_titulos_proyectos_total($usu_asignado)
     {
-        $conn = parent::get_conexion();
+        $conexion = parent::get_conexion();
         $sql = "SELECT 
-    tse.id AS id_timesummary_estados,
-    pg.id AS id_proyecto_gestionado,
-    pg.titulo,
-    up.usu_asignado,
-    SUM(d.hs_dimensionadas) AS hs_dimensionadas,
-    tm_categoria.cat_nom AS producto,
-    tse.est
-FROM proyecto_gestionado pg
-LEFT JOIN usuario_proyecto up 
-    ON pg.id = up.id_proyecto_gestionado
-LEFT JOIN tm_estados e 
-    ON pg.estados_id = e.estados_id
-LEFT JOIN dimensionamiento d 
-    ON pg.id = d.id_proyecto_gestionado
-LEFT JOIN tm_categoria 
-    ON pg.cat_id = tm_categoria.cat_id
-INNER JOIN timesummary_estados tse 
-    ON pg.id = tse.id_proyecto_gestionado 
-WHERE 
-    up.usu_asignado = :usu_asignado
-    AND e.estados_id IN (1, 2, 3, 4)
-GROUP BY 
-    tse.id, pg.id, pg.titulo, up.usu_asignado, tm_categoria.cat_nom, tse.est";
-        $stmt = $conn->prepare($sql);
-        $stmt->bindValue(":usu_asignado", $usu_asignado, PDO::PARAM_INT);
+            tse.id AS id_timesummary_estados,
+            pg.id AS id_proyecto_gestionado,
+            pg.titulo,
+            tm_categoria.cat_nom AS producto,
+            IFNULL(dim.total_hs_dimensionadas, 0) AS hs_dimensionadas,
+            tse.est
+        FROM proyecto_gestionado pg
+        LEFT JOIN tm_estados e 
+            ON pg.estados_id = e.estados_id
+        LEFT JOIN tm_categoria 
+            ON pg.cat_id = tm_categoria.cat_id
+        INNER JOIN timesummary_estados tse 
+            ON pg.id = tse.id_proyecto_gestionado
+            AND tse.usuario_asignado = :usu_asignado 
+        LEFT JOIN (
+            SELECT 
+                id_proyecto_gestionado,
+                SUM(hs_dimensionadas) AS total_hs_dimensionadas
+            FROM dimensionamiento
+            GROUP BY id_proyecto_gestionado
+        ) AS dim 
+            ON dim.id_proyecto_gestionado = pg.id
+        WHERE e.estados_id IN (1, 2, 3, 4)
+        ORDER BY pg.titulo";
+        $stmt = $conexion->prepare($sql);
+        $stmt->bindParam(':usu_asignado', $usu_asignado, PDO::PARAM_INT);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -224,14 +280,30 @@ GROUP BY
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function cambiar_estado_tarea($id_timesummary_estados, $est)
+    public function cambiar_estado_tarea($id_timesummary_estados, $est, $usuario_asignado)
     {
-        $conn = parent::get_conexion();
-        $sql = "UPDATE timesummary_estados SET est= :est WHERE id=:id_timesummary_estados";
-        $stmt = $conn->prepare($sql);
-        $stmt->bindValue(":id_timesummary_estados", $id_timesummary_estados, PDO::PARAM_INT);
-        $stmt->bindValue(":est", $est, PDO::PARAM_INT);
-        $stmt->execute();
+        try {
+            $conexion = parent::get_conexion();
+            $query = "UPDATE timesummary_estados 
+                  SET est = :est 
+                  WHERE id = :id_timesummary_estados 
+                  AND usuario_asignado = :usuario_asignado";
+
+            $stmt = $conexion->prepare($query);
+            $stmt->bindParam(':est', $est, PDO::PARAM_INT);
+            $stmt->bindParam(':id_timesummary_estados', $id_timesummary_estados, PDO::PARAM_INT);
+            $stmt->bindParam(':usuario_asignado', $usuario_asignado, PDO::PARAM_INT);
+            $stmt->execute();
+
+            // ✅ Validación: asegura que solo actualice la tarea del usuario actual
+            if ($stmt->rowCount() === 0) {
+                throw new Exception("No se encontró una tarea asociada al usuario actual.");
+            }
+
+            return true;
+        } catch (PDOException $e) {
+            throw new PDOException($e->getMessage());
+        }
     }
 
     public function get_tareas_total()

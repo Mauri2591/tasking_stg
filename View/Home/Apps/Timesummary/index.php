@@ -25,56 +25,64 @@ if (isset($_SESSION['usu_id'])) {
             </div>
             <!-- Fin título -->
 
-            <div class="row" style="gap: 1rem;">
-
+            <!-- Contenido principal -->
+            <div class="row g-3">
+                <!-- Calendario -->
                 <div class="col-lg-7"
-                    style="border:.1rem solid gainsboro; padding:1rem; border-radius: 6px; background:#fff;">
+                    style="border: 1px solid gainsboro; padding: 1rem; border-radius: 6px; background: #fff;">
                     <div id="calendar"></div>
                 </div>
 
-                <div class="col-lg-4"
+                <!-- Tabla lateral -->
+                <div class="col-lg-5 border border-light"
                     style="
-                background: #fff; 
-                border:.1rem solid gainsboro; 
-                border-radius: 6px; 
-                padding: .8rem;
-                height: 100%;">
-                    <div style="display: flex; justify-content: space-between;">
-                        <div id="caption_tareas">
+                    background: #fff; 
+                    border: 1px solid gainsboro; 
+                    border-radius: 6px; 
+                    padding: 1rem;
+                    display: flex;
+                    flex-direction: column;
+                    height: fit-content;">
 
-                        </div>
-                        <i id="btnVerHistorialTimesummary" type="button" title="Ver todos" class="ri-history-line" style="font-size: 1.2rem;"></i>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: .5rem;">
+                        <div id="caption_tareas"></div>
+                        <i id="btnVerHistorialTimesummary" type="button" title="Ver todos"
+                            class="ri-history-line" style="font-size: 1.2rem; cursor: pointer;"></i>
                     </div>
-                    <div style="display: flex; justify-content: end;">
-                        <input id="id_tareas_x_similitud" type="text" style="width: 50%;" class="form-control form-control-sm">
+
+                    <div style="display: flex; justify-content: end; margin-bottom: .5rem;">
+                        <input id="id_tareas_x_similitud" type="text" class="form-control form-control-sm" style="width: 60%;">
                     </div>
-                    <table
-                        style="
-                    margin-top: 1rem;
-                    width: 100%;
-                    border-collapse: collapse;
-                    table-layout: fixed;
-                    text-align: center;
-                    font-size: 0.85rem;
-                    color: #333;
-                    border: 1px solid gainsboro;
-                    border-radius: 6px;">
-                        <thead style="background: #f8f9fa; font-weight: bold;">
-                            <tr>
-                                <th style="width: 75%; border: 1px solid gainsboro;">Proyecto</th>
-                                <th style="width: 25%; border: 1px solid gainsboro;">Producto</th>
-                                <th style="width: 20%; border: 1px solid gainsboro;">Hs</th>
-                                <th style="width: 15%; border: 1px solid gainsboro;"></th>
-                            </tr>
-                        </thead>
-                        <tbody id="tbody_tabla_timasummary" style="border-top: 1px solid gainsboro; font-size:.7rem">
-                        </tbody>
-                    </table>
+
+                    <div style="overflow-x: auto;">
+                        <table style="
+                        width: 100%;
+                        border-collapse: collapse;
+                        text-align: center;
+                        font-size: 0.75rem;
+                        color: #333;
+                        border: 1px solid gainsboro;
+                        border-radius: 6px;">
+                            <thead style="background: #f8f9fa; font-weight: bold;">
+                                <tr>
+                                    <th style="width: 40%; border: 1px solid gainsboro;">Proyecto</th>
+                                    <th style="width: 5%; border: 1px solid gainsboro;">Producto</th>
+                                    <th style="width: 5%; border: 1px solid gainsboro;">Dim</th>
+                                    <th style="width: 5%; border: 1px solid gainsboro;">Mis Hs</th>
+                                    <th style="width: 5%; border: 1px solid gainsboro;">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbody_tabla_timasummary"
+                                style="border-top: 1px solid gainsboro; font-size: .7rem;">
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
             <!-- Fin contenido principal -->
         </div>
     </div>
+
     <?php
     include_once __DIR__ . "/Modales/mdlCarga.php";
     include_once __DIR__ . "/Modales/mdlHostorial.php";
@@ -159,10 +167,9 @@ if (isset($_SESSION['usu_id'])) {
                             text: "Ya existe una tarea en ese rango horario.",
                             showConfirmButton: true
                         });
-                        return; 
+                        return;
                     }
 
-                    // ✅ Si no hay conflicto, sigue normalmente
                     let data = {
                         id_proyecto_gestionado: $("#id_proyecto_gestionado").val(),
                         id_producto: $("#id_producto").val(),
@@ -184,7 +191,7 @@ if (isset($_SESSION['usu_id'])) {
                                 title: "Bien",
                                 text: response.success,
                                 showConfirmButton: false,
-                                timer: 1100
+                                timer: 900
                             });
 
                             setTimeout(() => {
@@ -192,6 +199,9 @@ if (isset($_SESSION['usu_id'])) {
                                 $("#mdlCarcaTimesummary").modal("hide");
                                 $("#id_proyecto_gestionado, #id_producto, #id_tarea, #hora_desde, #hora_hasta, #descripcion").val('');
                             }, 500);
+                            setTimeout(() => {
+                                window.location.reload();
+                            }, 900);
                         },
                         error: function(error) {
                             Swal.fire({

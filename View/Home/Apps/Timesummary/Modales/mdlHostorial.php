@@ -20,10 +20,6 @@
 
                     </tbody>
                 </table>
-                <!-- <div class="modal-footer">
-        <button type="button" class="btn btn-sm btn-light" data-bs-dismiss="modal">Cerrar</button>
-        <button type="button" id="btnGuardarTarea" class="btn btn-sm btn-primary">Guardar</button>
-    </div> -->
             </div>
         </div>
     </div>
