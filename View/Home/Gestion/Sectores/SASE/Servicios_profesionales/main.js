@@ -18,7 +18,7 @@ $(document).ready(function () {
             dataType: "json",
             data: {
                 sector_id: 3, // eh
-                cat_id: 34, //servicios_profesionales 
+                cat_id: 76, //servicios_profesionales 
                 estados_id: 1 //nuevos
             },
             error: function (e) {
@@ -75,7 +75,7 @@ $(document).ready(function () {
             dataType: "json",
             data: {
                 sector_id: 3, // eh
-                cat_id: 34, //servicios_profesionales 
+                cat_id: 76, //servicios_profesionales 
                 estados_id: 2 //abierto
             },
             error: function (e) {
@@ -132,7 +132,7 @@ $(document).ready(function () {
             dataType: "json",
             data: {
                 sector_id: 3, // eh
-                cat_id: 34, //servicios_profesionales 
+                cat_id: 76, //servicios_profesionales 
                 estados_id: 3 //realizado
             },
             error: function (e) {
@@ -189,7 +189,7 @@ $(document).ready(function () {
             dataType: "json",
             data: {
                 sector_id: 3, // eh
-                cat_id: 34, //servicios_profesionales 
+                cat_id: 76, //servicios_profesionales 
                 estados_id: 4 //cerrados calidad
             },
             error: function (e) {

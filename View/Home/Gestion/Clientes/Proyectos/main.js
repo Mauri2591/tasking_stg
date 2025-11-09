@@ -483,7 +483,7 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
                             setTimeout(() => {
                                 Toastify({
                                     text: "Proyecto agregado a la recurrencia correctamente",
-                                    duration: 2000,
+                                    duration: 1000,
                                     gravity: "top",
                                     position: "right",
                                     backgroundColor: "#0ab39c",

@@ -61,7 +61,7 @@ if (isset($_SESSION['usu_id'])) {
         <div class="col-xl-12">
             <div class="card crm-widget">
                 <div class="card-body p-0">
-                    <p class="text-center"> <span class="badge bg-light text-primary mt-1">Proyectos Nuevos</span>
+                    <p class="text-center"> <span class="badge bg-light text-primary mt-1">Proyectos para trabajar</span>
                     </p>
                     <div class="d-flex flex-row flex-nowrap scroll-fina" style="gap: 1rem;"
                         id="cont_get_categorias_x_sector">

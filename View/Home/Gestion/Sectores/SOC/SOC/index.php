@@ -73,12 +73,14 @@ if (isset($_SESSION['usu_id'])) {
                                                 <th style="width: 300px;text-align: center;">TITULO</th>
                                                 <th style="width: 300px;text-align: center;">INICIO</th>
                                                 <th style="width: 30px;text-align: center;">FIN</th>
+                                                <th style="width: 30px;text-align: center;">REC</th>
+                                                <th style="width: 30px;text-align: center;">RECH</th>
                                                 <th style="width: 30px;text-align: center;">CREADOR</th>
                                                 <th style="width: 30px;text-align: center;">TIPO</th>
                                                 <th style="width: 30px;text-align: center;">HS</th>
                                                 <th style="width: 30px;text-align: center;">ASIGNADO</th>
                                                 <th style="width: 30px;text-align: center;">HOSTS</th>
-                                                <th style="width: 30px;text-align: center;"></th>
+                                                <th style="width: 40px;text-align: center;"></th>
                                             </tr>
                                         </thead>
                                         <tbody style="text-align: center;">
@@ -92,6 +94,8 @@ if (isset($_SESSION['usu_id'])) {
                                                 <td style="width: 30px;"></td>
                                                 <td style="width: 30px;"></td>
                                                 <td style="width: 30px;"></td>
+                                                <td style="width: 30px;"></td>
+                                                <td style="width: 40px;"></td>
                                             </tr>
                                         </tbody>
                                     </table>
