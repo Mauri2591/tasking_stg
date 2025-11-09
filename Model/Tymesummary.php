@@ -224,15 +224,6 @@ GROUP BY
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function get_tarea_para_proyectos()
-    {
-        $conn = parent::get_conexion();
-        $sql = "SELECT id,nombre,definicion FROM tareas WHERE id=:id est=1";
-        $stmt = $conn->prepare($sql);
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-
     public function cambiar_estado_tarea($id_timesummary_estados, $est)
     {
         $conn = parent::get_conexion();

@@ -1416,7 +1416,6 @@ switch ($_GET['proy']) {
     case 'get_proyectos_total_x_client_id':
         $datos = $proyecto->get_proyectos_total_x_client_id($_POST['client_id']);
 
-        // 🔹 Crear mapa de IDs => posición visual
         $id_to_pos = [];
         foreach ($datos as $index => $fila) {
             $id_to_pos[$fila['id']] = $index + 1;
@@ -1431,82 +1430,79 @@ switch ($_GET['proy']) {
             "INCIDENT RESPONSE" => "bg-danger text-light"
         ];
 
-foreach ($datos as $key => $row) {
-    $sub_array = [];
+        foreach ($datos as $key => $row) {
+            $sub_array = [];
 
-    $sub_array[] = '<span class="badge bg-light text-dark">' . ($key + 1) . '</span>';
-    $sub_array[] = $row['titulo'];
-    $sub_array[] = $row['posicion_recurrencia'] == ''
-        ? '-'
-        : '<span class="badge bg-success">' . $row['posicion_recurrencia'] . '</span>';
+            $sub_array[] = '<span class="badge bg-light text-dark">' . ($key + 1) . '</span>';
+            $sub_array[] = $row['titulo'];
+            $sub_array[] = $row['posicion_recurrencia'] == ''
+                ? '-'
+                : '<span class="badge bg-success">' . $row['posicion_recurrencia'] . '</span>';
 
-    if ($row['rechequeo'] == "SI") {
-        $num_rechequeo_de = isset($id_to_pos[$row['rechequeo_de']])
-            ? $id_to_pos[$row['rechequeo_de']]
-            : $row['rechequeo_de'];
-        $sub_array[] = '<span class="mx-1 badge bg-danger">SI</span>' .
-                       '<span class="badge bg-light text-dark">' . $num_rechequeo_de . '</span>';
-    } else {
-        $sub_array[] = '-';
-    }
+            if ($row['rechequeo'] == "SI") {
+                $num_rechequeo_de = isset($id_to_pos[$row['rechequeo_de']])
+                    ? $id_to_pos[$row['rechequeo_de']]
+                    : $row['rechequeo_de'];
+                $sub_array[] = '<span class="mx-1 badge bg-danger">SI</span>' .
+                    '<span class="badge bg-light text-dark">' . $num_rechequeo_de . '</span>';
+            } else {
+                $sub_array[] = '-';
+            }
 
-    $sub_array[] = strlen($row['refProy']) > 20
-        ? '<p class="text-center m-0 p-0">' . wordwrap($row['refProy'], 20, '<br>', true) . '</p>'
-        : '<p class="text-center m-0 p-0">' . $row['refProy'] . '</p>';
+            $sub_array[] = strlen($row['refProy']) > 20
+                ? '<p class="text-center m-0 p-0">' . wordwrap($row['refProy'], 20, '<br>', true) . '</p>'
+                : '<p class="text-center m-0 p-0">' . $row['refProy'] . '</p>';
 
-    $sub_array[] = !empty($row['fech_crea'])
-        ? '<p class="text-center m-0 p-0">' . date('d/m/Y', strtotime($row['fech_crea'])) . '</p>'
-        : '<p class="text-center m-0 p-0">SIN FECHA</p>';
+            $sub_array[] = !empty($row['fech_crea'])
+                ? '<p class="text-center m-0 p-0">' . date('d/m/Y', strtotime($row['fech_crea'])) . '</p>'
+                : '<p class="text-center m-0 p-0">SIN FECHA</p>';
 
-    $clase = array_key_exists($row['sector_nombre'], $colores)
-        ? $colores[$row['sector_nombre']]
-        : "bg-secondary text-light";
+            $clase = array_key_exists($row['sector_nombre'], $colores)
+                ? $colores[$row['sector_nombre']]
+                : "bg-secondary text-light";
 
-    $sub_array[] = '<p class="text-center m-0 p-0">
+            $sub_array[] = '<p class="text-center m-0 p-0">
                     <span class="badge ' . $clase . ' border border-dark">' . $row['sector_nombre'] . '</span>
                 </p>';
 
-    $sub_array[] = '<span class="badge bg-light border border-dark text-dark">' . $row['producto'] . '</span>';
-    $sub_array[] = '<p class="text-center p-0 m-0"><span class="badge bg-light border border-dark text-dark">' . ($row['dimensionamiento'] ?? 0) . '</span></p>';
-    $sub_array[] = '<p class="p-0 m-0 text-center">' . $row['estado'] . '</p>';
+            $sub_array[] = '<span class="badge bg-light border border-dark text-dark">' . $row['producto'] . '</span>';
+            $sub_array[] = '<p class="text-center p-0 m-0"><span class="badge bg-light border border-dark text-dark">' . ($row['dimensionamiento'] ?? 0) . '</span></p>';
+            $sub_array[] = '<p class="p-0 m-0 text-center">' . $row['estado'] . '</p>';
 
-    // 🔹 Solo agregar columna de “Agregar rechequeo” si el usuario es sector 4
-    if ($_SESSION['sector_id'] == "4") {
-        if (
-            $row['estado'] != "FIN SIN IMPLEM" &&
-            $row['estado'] != "ELIMINADO" &&
-            $row['estado'] != "CANCELADO" &&
-            $row['rechequeo'] != "SI"
-        ) {
-            $sub_array[] = '
+            if ($_SESSION['sector_id'] == "4") {
+                if (
+                    $row['estado'] != "FIN SIN IMPLEM" &&
+                    $row['estado'] != "ELIMINADO" &&
+                    $row['estado'] != "CANCELADO" &&
+                    $row['rechequeo'] != "SI"
+                ) {
+                    $sub_array[] = '
                 <span type="button" onclick="crearRechequeo(' . $row['id'] . ')" 
                       data-placement="top" title="Agregar rechequeo">
                     <i class="ri-add-fill text-danger fs-18"></i>
                 </span>';
-        } else {
-            $sub_array[] = '<span><i class="ri-subtract-line" style="color:gray"></i></span>';
-        }
-    }
+                } else {
+                    $sub_array[] = '<span><i class="ri-subtract-line" style="color:gray"></i></span>';
+                }
+            }
 
-    $sub_array[] = '
+            $sub_array[] = '
         <span type="button" onclick="verInfo(' . $row['id'] . ')" 
               data-placement="top" title="Ver Información del proyecto">
             <i class="ri-eye-fill text-info fs-18"></i>
         </span>';
 
-    if ($row['estado'] == "FIN SIN IMPLEM" || $row['estado'] == "ELIMINADO" || $row['estado'] == "CANCELADO") {
-        $sub_array[] = '<span><i class="ri-subtract-line" style="color:gray"></i></span>';
-    } else {
-        $sub_array[] = '<a href="' . URL . '/View/Home/Gestion/Sectores/GestionarProy/?p=' .
-            Openssl::set_ssl_encrypt($row['id_proyecto_cantidad_servicios']) .
-            '&pg=' . Openssl::set_ssl_encrypt($row['id']) .
-            '" target="_blank" rel="noopener noreferrer" title="Ver proyecto">
+            if ($row['estado'] == "FIN SIN IMPLEM" || $row['estado'] == "ELIMINADO" || $row['estado'] == "CANCELADO") {
+                $sub_array[] = '<span><i class="ri-subtract-line" style="color:gray"></i></span>';
+            } else {
+                $sub_array[] = '<a href="' . URL . '/View/Home/Gestion/Sectores/GestionarProy/?p=' .
+                    Openssl::set_ssl_encrypt($row['id_proyecto_cantidad_servicios']) .
+                    '&pg=' . Openssl::set_ssl_encrypt($row['id']) .
+                    '" target="_blank" rel="noopener noreferrer" title="Ver proyecto">
             <i class="ri-send-plane-fill text-primary fs-18"></i></a>';
-    }
-
-    $data[] = $sub_array;
-}
-
+            }
+            $data[] = $sub_array;
+        }
         $results = array(
             "sEcho" => 1,
             "iTotalRecords" => count($data),

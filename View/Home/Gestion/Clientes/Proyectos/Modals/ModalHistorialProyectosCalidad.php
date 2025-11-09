@@ -4,17 +4,14 @@
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="card-body">
-
                 <div class="p-2 border bg-light" style="margin-bottom: .5rem;">
                     <span class="badge bg-primary text-light fs-12">Cliente: <span id="idCliente" style="text-transform: uppercase;"></span></span>
                     <input type="hidden" hidden id="inputHiddenIdCliente">
                     <span><i onclick="descargarExcel(document.getElementById('inputHiddenIdCliente').value)" class="ri-file-excel-2-fill text-success fs-22" type="button" title="Descargar documento"></i></span>
-
                     <div style="display: flex; width: 15%; align-items: center; gap: 8px; margin-top: .5rem;margin-bottom: .5rem">
                         <label for="anio" class="form-label mb-0">AÑO:</label>
                         <input type="number" id="anio" name="anio" class="form-control form-control-sm"
                             min="1900" max="2099" step="1" placeholder="2025">
-
                     </div>
                 </div>
 
@@ -58,7 +55,9 @@
                             </tbody>
                         </table>
                     </div>
+
                 <?php else: ?>
+
                     <div class="card card-body">
                         <table id="tablelHistorialProyectosCalidad" style="text-align: center; width: 100%;">
                             <thead style="text-align: center;">
@@ -95,7 +94,9 @@
                             </tbody>
                         </table>
                     </div>
+                    
                 <?php endif; ?>
+                
             </div>
         </div>
     </div>

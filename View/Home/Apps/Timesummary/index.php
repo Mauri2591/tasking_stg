@@ -118,14 +118,6 @@ if (isset($_SESSION['usu_id'])) {
                     "html"
                 );
 
-                $.post("../../../../Controller/ctrTimesummary.php?accion=get_tarea_para_proyectos",
-                    function(data, textStatus, jqXHR) {
-                        $("#id_tarea").html(data)
-
-                    },
-                    "html"
-                );
-
                 $.post("../../../../Controller/ctrTimesummary.php?accion=get_tareas_total",
                     function(data, textStatus, jqXHR) {
 
@@ -134,17 +126,52 @@ if (isset($_SESSION['usu_id'])) {
                     "html"
                 );
 
-                $("#btnGuardarTarea").click(function(e) {
+                $("#btnGuardarTarea").off("click").on("click", function(e) {
                     e.preventDefault();
+
+                    let FECHA = info.dateStr;
+                    let horaDesde = $("#hora_desde").val();
+                    let horaHasta = $("#hora_hasta").val();
+
+                    let nuevoInicio = new Date(`${FECHA}T${horaDesde}`);
+                    let nuevoFin = new Date(`${FECHA}T${horaHasta}`);
+
+                    // Buscar si hay eventos que se solapan
+                    let existeConflicto = calendar.getEvents().some(evento => {
+                        let inicio = evento.start;
+                        let fin = evento.end;
+
+                        // mismo día y horarios que se cruzan
+                        return (
+                            inicio.toISOString().split("T")[0] === FECHA &&
+                            (
+                                (nuevoInicio >= inicio && nuevoInicio < fin) ||
+                                (nuevoFin > inicio && nuevoFin <= fin) ||
+                                (nuevoInicio <= inicio && nuevoFin >= fin)
+                            )
+                        );
+                    });
+
+                    if (existeConflicto) {
+                        Swal.fire({
+                            icon: "warning",
+                            title: "Error",
+                            text: "Ya existe una tarea en ese rango horario.",
+                            showConfirmButton: true
+                        });
+                        return; 
+                    }
+
+                    // ✅ Si no hay conflicto, sigue normalmente
                     let data = {
                         id_proyecto_gestionado: $("#id_proyecto_gestionado").val(),
                         id_producto: $("#id_producto").val(),
                         id_tarea: $("#id_tarea").val(),
                         fecha: FECHA,
-                        hora_desde: $("#hora_desde").val(),
-                        hora_hasta: $("#hora_hasta").val(),
+                        hora_desde: horaDesde,
+                        hora_hasta: horaHasta,
                         descripcion: $("#descripcion").val()
-                    }
+                    };
 
                     $.ajax({
                         type: "POST",
@@ -157,25 +184,27 @@ if (isset($_SESSION['usu_id'])) {
                                 title: "Bien",
                                 text: response.success,
                                 showConfirmButton: false,
-                                timer: 1300
-                            })
+                                timer: 1100
+                            });
+
                             setTimeout(() => {
-                                window.location.reload();
-                            }, 1300);
+                                calendar.refetchEvents();
+                                $("#mdlCarcaTimesummary").modal("hide");
+                                $("#id_proyecto_gestionado, #id_producto, #id_tarea, #hora_desde, #hora_hasta, #descripcion").val('');
+                            }, 500);
                         },
                         error: function(error) {
-                            console.log(error);
-
                             Swal.fire({
                                 icon: "error",
                                 title: "Error",
                                 text: error.responseJSON.error,
                                 showConfirmButton: false,
                                 timer: 1500
-                            })
+                            });
                         }
                     });
                 });
+
             },
             eventClick: function(info) {
                 const EVENTO = info.event;

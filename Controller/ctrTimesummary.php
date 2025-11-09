@@ -120,15 +120,6 @@ switch ($_GET['accion']) {
         echo $htmlOption;
         break;
 
-    case 'get_tarea_para_proyectos':
-        $datos = $tymesummary->get_tarea_para_proyectos();
-        $htmlOption = '';
-        foreach ($datos as $val) {
-            $htmlOption .= '<option value="' . $val['id'] . '">' . $val['nombre'] . '</option>';
-        }
-        echo $htmlOption;
-        break;
-
     case 'get_tareas_total';
         $datos = $tymesummary->get_tareas_total();
         $htmlOption = '';
