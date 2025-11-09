@@ -277,6 +277,10 @@
                                                 <a href="<?php echo URL . "View/Home/Apps/Timesummary/"; ?>"
                                                     class="nav-link" data-key="t-mailbox">Calendario</a>
                                             </li>
+                                             <li class="nav-item">
+                                                    <a href="<?php echo URL . "View/Home/Apps/Timesummary/Consultas.php"; ?>"
+                                                        class="nav-link" data-key="t-mailbox">Consultas</a>
+                                                </li>
                                         </ul>
                                     </div>
                                 </li>
@@ -338,6 +342,10 @@
                                                 <a href="<?php echo URL . "View/Home/Apps/Timesummary/"; ?>"
                                                     class="nav-link" data-key="t-mailbox">Calendario</a>
                                             </li>
+                                             <li class="nav-item">
+                                                    <a href="<?php echo URL . "View/Home/Apps/Timesummary/Consultas.php"; ?>"
+                                                        class="nav-link" data-key="t-mailbox">Consultas</a>
+                                                </li>
                                         </ul>
                                     </div>
                                 </li>
@@ -445,6 +453,10 @@
                                                 <a href="<?php echo URL . "View/Home/Apps/Timesummary/"; ?>"
                                                     class="nav-link" data-key="t-mailbox">Calendario</a>
                                             </li>
+                                             <li class="nav-item">
+                                                    <a href="<?php echo URL . "View/Home/Apps/Timesummary/Consultas.php"; ?>"
+                                                        class="nav-link" data-key="t-mailbox">Consultas</a>
+                                                </li>
                                         </ul>
                                     </div>
                                 </li>

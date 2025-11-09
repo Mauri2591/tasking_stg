@@ -329,6 +329,32 @@ switch ($_GET['accion']) {
         echo json_encode($results);
         break;
 
+         case 'get_tareas_x_usuario_x_usu_id':
+        $datos = $tymesummary->get_tareas_x_usuario_x_usu_id($_SESSION['usu_id']);
+        $data = array();
+        foreach ($datos as $row) {
+            $sub_array = array();
+            $sub_array[] = $row['cliente'];
+            $sub_array[] = $row['referencia'];
+            $sub_array[] = $row['producto'];
+            $sub_array[] = $row['tarea'];
+            $sub_array[] = date('d-m-Y', strtotime($row['fecha']));
+            $sub_array[] = $row['hora_desde'];
+            $sub_array[] = $row['hora_hasta'];
+            $sub_array[] = $row['horas_consumidas'];
+            $sub_array[] = $row['descripcion'];
+            $sub_array[] = $row['usu_nom'];
+            $data[] = $sub_array;
+        }
+        $results = array(
+            "sEcho" => 1,
+            "iTotalRecords" => count($data),
+            "iTotalDisplayRecords" => count($data),
+            "aaData" => $data
+        );
+        echo json_encode($results);
+        break;
+
     default:
         http_response_code(404);
         echo json_encode(["Error" => "Acción no reconocida"]);
