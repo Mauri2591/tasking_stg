@@ -556,394 +556,373 @@ switch ($_GET['proy']) {
         break;
 
     case 'get_proyectos_eh':
-    $datos = $proyecto->get_proyectos_eh($_POST['sector_id'], $_POST['cat_id'], $_POST['estados_id']);
-    $data = array();
-    $colores = array(
-        "ETHICAL HACKING" => "bg-warning text-dark",
-        "SOC" => "bg-dark text-light",
-        "SASE" => "bg-info text-light",
-        "CALIDAD Y PROCESOS" => "bg-light text-dark",
-        "INCIDENT RESPONSE" => "bg-danger text-light"
-    );
+        $datos = $proyecto->get_proyectos_eh($_POST['sector_id'], $_POST['cat_id'], $_POST['estados_id']);
+        $data = array();
+        $colores = array(
+            "ETHICAL HACKING" => "bg-warning text-dark",
+            "SOC" => "bg-dark text-light",
+            "SASE" => "bg-info text-light",
+            "CALIDAD Y PROCESOS" => "bg-light text-dark",
+            "INCIDENT RESPONSE" => "bg-danger text-light"
+        );
+        foreach ($datos as $row) {
+            $sub_array = array();
+            $session_usu_id = $_SESSION['usu_id'];
+            $session_sector_id = $_SESSION['sector_id'];
+            $ids_asignados = explode(',', $row['usu_id_asignado'] ?? '');
+            $puede_cambiar_estado = in_array($session_usu_id, $ids_asignados) || $session_sector_id == "4";
 
-    foreach ($datos as $row) {
-        $sub_array = array();
-        $session_usu_id = $_SESSION['usu_id'];
-        $session_sector_id = $_SESSION['sector_id'];
-        $ids_asignados = explode(',', $row['usu_id_asignado'] ?? '');
-        $puede_cambiar_estado = in_array($session_usu_id, $ids_asignados) || $session_sector_id == "4";
+            $sub_array[] = $row['titulo'];
+            $sub_array[] = $row['fech_inicio'] == ''
+                ? 'Sin fecha'
+                : '<span class="badge bg-light text-dark">' . $row['fech_inicio'] . '</span>';
+            $sub_array[] = $row['fech_fin'] == ''
+                ? 'Sin fecha'
+                : '<span class="badge bg-light text-dark">' . $row['fech_fin'] . '</span>';
 
-        $sub_array[] = $row['titulo'];
-        $sub_array[] = $row['fech_inicio'] == '' 
-            ? 'Sin fecha' 
-            : '<span class="badge bg-light text-dark">' . $row['fech_inicio'] . '</span>';
-        $sub_array[] = $row['fech_fin'] == '' 
-            ? 'Sin fecha' 
-            : '<span class="badge bg-light text-dark">' . $row['fech_fin'] . '</span>';
+            // 🔹 Mostrar solo si estado_id = 1 → rechequeo y posicion_recurrencia
+            if ($row['estados_id'] == 1) {
+                // Posición recurrencia
+                if (!empty($row['posicion_recurrencia'])) {
+                    $sub_array[] = '<span class="badge bg-success text-light border border-success">'
+                        . $row['posicion_recurrencia'] . '</span>';
+                } else if (is_null($row['posicion_recurrencia']) && $row['id_proyecto_recurrencia'] > 0) {
+                    $sub_array[] = '<span class="badge bg-light text-success border border-success">Actualizar<br>Recurrente</span>';
+                } else {
+                    $sub_array[] = '-';
+                }
 
-        // 🔹 Mostrar solo si estado_id = 1 → rechequeo y posicion_recurrencia
-        if ($row['estados_id'] == 1) {
-            // Posición recurrencia
-            if (!empty($row['posicion_recurrencia'])) {
-                $sub_array[] = '<span class="badge bg-success text-light border border-success">' 
-                    . $row['posicion_recurrencia'] . '</span>';
-            } else if (is_null($row['posicion_recurrencia']) && $row['id_proyecto_recurrencia'] > 0) {
-                $sub_array[] = '<span class="badge bg-light text-success border border-success">Actualizar<br>Recurrente</span>';
-            } else {
-                $sub_array[] = '-';
+                // Rechequeo
+                $sub_array[] = $row['rechequeo'] == "SI"
+                    ? '<span class="badge bg-danger">SI</span>'
+                    : '-';
             }
 
-            // Rechequeo
-            $sub_array[] = $row['rechequeo'] == "SI" 
-                ? '<span class="badge bg-danger">SI</span>'
-                : '-';
-        }
+            $sub_array[] = '<span class="badge bg-light text-dark">' . $row['creador_proy'] . '</span>';
+            $sub_array[] = strlen($row['cats_nom']) > 20
+                ? '<span class="badge bg-light text-dark">' . substr($row['cats_nom'], 0, 17) . '...</span>'
+                : '<span class="badge bg-light text-dark">' . $row['cats_nom'] . '</span>';
+            $sub_array[] = $row['hs_dimensionadas'] == ""
+                ? "Sin hs"
+                : '<span class="badge bg-light text-dark">' . $row['hs_dimensionadas'] . '</span>';
 
-        $sub_array[] = '<span class="badge bg-light text-dark">' . $row['creador_proy'] . '</span>';
-        $sub_array[] = strlen($row['cats_nom']) > 20
-            ? '<span class="badge bg-light text-dark">' . substr($row['cats_nom'], 0, 17) . '...</span>'
-            : '<span class="badge bg-light text-dark">' . $row['cats_nom'] . '</span>';
-        $sub_array[] = $row['hs_dimensionadas'] == "" 
-            ? "Sin hs" 
-            : '<span class="badge bg-light text-dark">' . $row['hs_dimensionadas'] . '</span>';
+            if (!empty($row['usu_nom_asignado'])) {
+                $sub_array[] = '<span class="badge bg-info text-light">' . $row['usu_nom_asignado'] . '</span>';
+            } else {
+                $sub_array[] = '<span type="button" onclick="asignar_proyecto('
+                    . $row['id_proyecto_gestionado']
+                    . ')" title="Asignarme el proyecto" class="badge bg-light border border-dark text-dark">Sin asignar</span>';
+            }
 
-        if (!empty($row['usu_nom_asignado'])) {
-            $sub_array[] = '<span class="badge bg-info text-light">' . $row['usu_nom_asignado'] . '</span>';
-        } else {
-            $sub_array[] = '<span type="button" onclick="asignar_proyecto(' 
-                . $row['id_proyecto_gestionado'] 
-                . ')" title="Asignarme el proyecto" class="badge bg-light border border-dark text-dark">Sin asignar</span>';
-        }
-
-        $sub_array[] = '<span type="button" onclick="ver_hosts_eh(' 
-            . $row['id_proyecto_gestionado'] 
-            . ')">
+            $sub_array[] = '<span type="button" onclick="ver_hosts_eh('
+                . $row['id_proyecto_gestionado']
+                . ')">
             <i class="text-secondary fs-18 ri-global-line" title="Ver hosts"></i>
         </span>';
 
-        if (in_array($row['estados_id'], [2, 3, 4])) {
-            $sub_array[] = '<a href="' . URL . '/View/Home/Gestion/Sectores/GestionarProy/?p=' 
-                . Openssl::set_ssl_encrypt($row['id_proyecto_cantidad_servicios']) 
-                . '&pg=' . Openssl::set_ssl_encrypt($row['id_proyecto_gestionado']) 
-                . '" title="Ver proyecto">
+            if (in_array($row['estados_id'], [2, 3, 4])) {
+                $sub_array[] = '<a href="' . URL . '/View/Home/Gestion/Sectores/GestionarProy/?p='
+                    . Openssl::set_ssl_encrypt($row['id_proyecto_cantidad_servicios'])
+                    . '&pg=' . Openssl::set_ssl_encrypt($row['id_proyecto_gestionado'])
+                    . '" title="Ver proyecto">
                 <i class="ri-send-plane-fill text-primary fs-18"></i>
             </a>';
-        }
-
-        if ($puede_cambiar_estado) {
-            switch ($row['estados_id']) {
-                case '1':
-                    $sub_array[] = '<div class="btn-group btn-group-sm p-0" role="group">
-                        <button class="btn btn-primary btn-sm dropdown-toggle py-0" data-bs-toggle="dropdown" aria-expanded="false">Estado</button>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" onclick="cambiar_a_abierto(' 
-                                . $row['id_proyecto_gestionado'] . ')">Abierto</a></li>
-                            <li><a class="dropdown-item" onclick="cambiar_a_borrador(' 
-                                . $row['id_proyecto_gestionado'] . ')">Borrador</a></li>
-                        </ul>
-                    </div>';
-                    break;
-                case '2':
-                    $sub_array[] = '<div class="btn-group btn-group-sm p-0" role="group">
-                        <button class="btn btn-primary btn-sm dropdown-toggle py-0" data-bs-toggle="dropdown" aria-expanded="false">Estado</button>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" onclick="cambiar_a_nuevo(' 
-                                . $row['id_proyecto_gestionado'] . ')">Nuevos</a></li>
-                            <li><a class="dropdown-item" onclick="cambiar_a_borrador(' 
-                                . $row['id_proyecto_gestionado'] . ')">Borrador</a></li>
-                        </ul>
-                    </div>';
-                    break;
-                case '3':
-                    $sub_array[] = '<div class="btn-group btn-group-sm p-0" role="group">
-                        <button class="btn btn-primary btn-sm dropdown-toggle py-0" data-bs-toggle="dropdown" aria-expanded="false">Estado</button>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" onclick="cambiar_a_abierto(' 
-                                . $row['id_proyecto_gestionado'] . ')">Abierto</a></li>
-                        </ul>
-                    </div>';
-                    break;
             }
-        } else {
-            $sub_array[] = '<div class="btn-group btn-group-sm p-0" role="group">
+
+            if ($puede_cambiar_estado) {
+                switch ($row['estados_id']) {
+                    case '1':
+                        $sub_array[] = '<div class="btn-group btn-group-sm p-0" role="group">
+                        <button class="btn btn-primary btn-sm dropdown-toggle py-0" data-bs-toggle="dropdown" aria-expanded="false">Estado</button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" onclick="cambiar_a_abierto('
+                            . $row['id_proyecto_gestionado'] . ')">Abierto</a></li>
+                            <li><a class="dropdown-item" onclick="cambiar_a_borrador('
+                            . $row['id_proyecto_gestionado'] . ')">Borrador</a></li>
+                        </ul>
+                    </div>';
+                        break;
+                    case '2':
+                        $sub_array[] = '<div class="btn-group btn-group-sm p-0" role="group">
+                        <button class="btn btn-primary btn-sm dropdown-toggle py-0" data-bs-toggle="dropdown" aria-expanded="false">Estado</button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" onclick="cambiar_a_nuevo('
+                            . $row['id_proyecto_gestionado'] . ')">Nuevos</a></li>
+                            <li><a class="dropdown-item" onclick="cambiar_a_borrador('
+                            . $row['id_proyecto_gestionado'] . ')">Borrador</a></li>
+                        </ul>
+                    </div>';
+                        break;
+                    case '3':
+                        $sub_array[] = '<div class="btn-group btn-group-sm p-0" role="group">
+                        <button class="btn btn-primary btn-sm dropdown-toggle py-0" data-bs-toggle="dropdown" aria-expanded="false">Estado</button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" onclick="cambiar_a_abierto('
+                            . $row['id_proyecto_gestionado'] . ')">Abierto</a></li>
+                        </ul>
+                    </div>';
+                        break;
+                }
+            } else {
+                $sub_array[] = '<div class="btn-group btn-group-sm p-0" role="group">
                 <button class="btn btn-secondary btn-sm py-0" title="Sin permisos" disabled>Pendiente</button>
             </div>';
+            }
+
+            $data[] = $sub_array;
         }
 
-        $data[] = $sub_array;
-    }
-
-    $results = array(
-        "sEcho" => 1,
-        "iTotalRecords" => count($data),
-        "iTotalDisplayRecords" => count($data),
-        "aaData" => $data
-    );
-    echo json_encode($results);
-    break;
+        $results = array(
+            "sEcho" => 1,
+            "iTotalRecords" => count($data),
+            "iTotalDisplayRecords" => count($data),
+            "aaData" => $data
+        );
+        echo json_encode($results);
+        break;
 
     case 'get_proyectos_soc':
-    $datos = $proyecto->get_proyectos_soc($_POST['sector_id'], $_POST['cat_id'], $_POST['estados_id']);
-    $data = array();
-    $colores = array(
-        "ETHICAL HACKING" => "bg-warning text-dark",
-        "SOC" => "bg-dark text-light",
-        "SASE" => "bg-info text-light",
-        "CALIDAD Y PROCESOS" => "bg-light text-dark",
-        "INCIDENT RESPONSE" => "bg-danger text-light"
-    );
+        $datos = $proyecto->get_proyectos_soc($_POST['sector_id'], $_POST['cat_id'], $_POST['estados_id']);
+        $data = array();
+        $colores = array(
+            "ETHICAL HACKING" => "bg-warning text-dark",
+            "SOC" => "bg-dark text-light",
+            "SASE" => "bg-info text-light",
+            "CALIDAD Y PROCESOS" => "bg-light text-dark",
+            "INCIDENT RESPONSE" => "bg-danger text-light"
+        );
 
-    foreach ($datos as $row) {
-        $sub_array = array();
-        $sub_array[] = $row['titulo'];
-        $sub_array[] = $row['fech_inicio'] == '' 
-            ? 'Sin fecha' 
-            : '<span class="badge bg-light text-dark">' . $row['fech_inicio'] . '</span>';
-        $sub_array[] = $row['fech_fin'] == '' 
-            ? 'Sin fecha' 
-            : '<span class="badge bg-light text-dark">' . $row['fech_fin'] . '</span>';
+        foreach ($datos as $row) {
+            $sub_array = array();
+            $sub_array[] = $row['titulo'];
+            $sub_array[] = $row['fech_inicio'] == ''
+                ? 'Sin fecha'
+                : '<span class="badge bg-light text-dark">' . $row['fech_inicio'] . '</span>';
+            $sub_array[] = $row['fech_fin'] == ''
+                ? 'Sin fecha'
+                : '<span class="badge bg-light text-dark">' . $row['fech_fin'] . '</span>';
 
-        // ✅ Mostrar solo si estados_id = 1
-        if ($row['estados_id'] == 1) {
-            if (!empty($row['posicion_recurrencia'])) {
-                $sub_array[] = '<span class="badge bg-success text-light border border-success">'
-                    . $row['posicion_recurrencia'] . '</span>';
-            } else if (is_null($row['posicion_recurrencia']) && $row['id_proyecto_recurrencia'] > 0) {
-                $sub_array[] = '<span class="badge bg-light text-success border border-success">Actualizar<br>Recurrente</span>';
-            } else {
-                $sub_array[] = '-';
+            // Mostrar solo si estados_id = 1
+            if ($row['estados_id'] == 1) {
+                if (!empty($row['posicion_recurrencia'])) {
+                    $sub_array[] = '<span class="badge bg-success text-light border border-success">'
+                        . $row['posicion_recurrencia'] . '</span>';
+                } else if (is_null($row['posicion_recurrencia']) && $row['id_proyecto_recurrencia'] > 0) {
+                    $sub_array[] = '<span class="badge bg-light text-success border border-success">Actualizar<br>Recurrente</span>';
+                } else {
+                    $sub_array[] = '-';
+                }
+
+                $sub_array[] = $row['rechequeo'] == "SI"
+                    ? '<span class="badge bg-danger">SI</span>'
+                    : '-';
             }
 
-            $sub_array[] = $row['rechequeo'] == "SI"
-                ? '<span class="badge bg-danger">SI</span>'
-                : '-';
-        }
+            $sub_array[] = '<span class="badge bg-light text-dark">' . $row['creador_proy'] . '</span>';
+            $sub_array[] = strlen($row['cats_nom']) > 20
+                ? '<span class="badge bg-light text-dark">' . substr($row['cats_nom'], 0, 17) . '...' . '</span>'
+                : '<span class="badge bg-light text-dark">' . $row['cats_nom'] . '</span>';
+            $sub_array[] = $row['hs_dimensionadas'] == ""
+                ? "Sin hs"
+                : '<span class="badge bg-light text-dark">' . $row['hs_dimensionadas'] . '</span>';
 
-        $sub_array[] = '<span class="badge bg-light text-dark">' . $row['creador_proy'] . '</span>';
-        $sub_array[] = strlen($row['cats_nom']) > 20
-            ? '<span class="badge bg-light text-dark">' . substr($row['cats_nom'], 0, 17) . '...' . '</span>'
-            : '<span class="badge bg-light text-dark">' . $row['cats_nom'] . '</span>';
-        $sub_array[] = $row['hs_dimensionadas'] == "" 
-            ? "Sin hs" 
-            : '<span class="badge bg-light text-dark">' . $row['hs_dimensionadas'] . '</span>';
+            $sub_array[] = isset($row['usu_nom_asignado']) == ''
+                ? '<span type="button" onclick="asignar_proyecto(' . $row['id_proyecto_gestionado'] . ')" title="Asignarme el proyecto" class="badge bg-light border border-dark text-dark">Sin asignar</span>'
+                : '<span class="badge bg-info text-light">' . $row['usu_nom_asignado'] . '</span>';
 
-        $sub_array[] = isset($row['usu_nom_asignado']) == '' 
-            ? '<span type="button" onclick="asignar_proyecto(' . $row['id_proyecto_gestionado'] . ')" title="Asignarme el proyecto" class="badge bg-light border border-dark text-dark">Sin asignar</span>'
-            : '<span class="badge bg-info text-light">' . $row['usu_nom_asignado'] . '</span>';
-
-        // --- resto igual ---
-        if (isset($row['usu_nom_asignado']) && $row['usu_nom_asignado'] != '') {
-            switch ($row['estados_id']) {
-                case '1':
-                    $sub_array[] = '<span type="button" onclick="ver_hosts_eh(' . $row['id_proyecto_gestionado'] . ')">
+            if (isset($row['usu_nom_asignado']) && $row['usu_nom_asignado'] != '') {
+                switch ($row['estados_id']) {
+                    case '1':
+                        $sub_array[] = '<span type="button" onclick="ver_hosts_eh(' . $row['id_proyecto_gestionado'] . ')">
                         <i class="text-secondary fs-18 ri-global-line" title="Ver hosts"></i></span>';
-                    break;
-                case '2':
-                    $sub_array[] = '<span type="button" onclick="ver_hosts_eh(' . $row['id_proyecto_gestionado'] . ')">
+                        break;
+                    case '2':
+                        $sub_array[] = '<span type="button" onclick="ver_hosts_eh(' . $row['id_proyecto_gestionado'] . ')">
                         <i class="text-secondary fs-18 ri-global-line" title="Ver hosts"></i></span>';
-                    $sub_array[] = '<a href="' . URL . '/View/Home/Gestion/Sectores/GestionarProy/?p=' 
-                        . Openssl::set_ssl_encrypt($row['id_proyecto_cantidad_servicios']) 
-                        . '&pg=' . Openssl::set_ssl_encrypt($row['id_proyecto_gestionado']) 
-                        . '" target="_blank" rel="noopener noreferrer" title="Ver proyecto">
+                        $sub_array[] = '<a href="' . URL . '/View/Home/Gestion/Sectores/GestionarProy/?p='
+                            . Openssl::set_ssl_encrypt($row['id_proyecto_cantidad_servicios'])
+                            . '&pg=' . Openssl::set_ssl_encrypt($row['id_proyecto_gestionado'])
+                            . '" target="_blank" rel="noopener noreferrer" title="Ver proyecto">
                         <i class="ri-send-plane-fill text-primary fs-18"></i></a>';
-                    break;
+                        break;
+                }
             }
-        }
 
-        // --- Dropdown de estados ---
-        if (isset($row['usu_nom_asignado']) && $row['usu_nom_asignado'] != '') {
-            switch ($row['estados_id']) {
-                case '1':
-                    $sub_array[] = '<div class="btn-group btn-group-sm p-0" role="group">
+            // --- Dropdown de estados ---
+            if (isset($row['usu_nom_asignado']) && $row['usu_nom_asignado'] != '') {
+                switch ($row['estados_id']) {
+                    case '1':
+                        $sub_array[] = '<div class="btn-group btn-group-sm p-0" role="group">
                         <button id="btnGroupDrop1" type="button" class="btn btn-primary btn-sm dropdown-toggle py-0" 
                             data-bs-toggle="dropdown" aria-expanded="false">Estado</button>
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" onclick="cambiar_a_abierto(' . $row['id_proyecto_gestionado'] . ')">Abierto</a></li>
                             <li><a class="dropdown-item" onclick="cambiar_a_borrador(' . $row['id_proyecto_gestionado'] . ')">Borrador</a></li>
                         </ul></div>';
-                    break;
+                        break;
 
-                case '2':
-                    $sub_array[] = '<div class="btn-group btn-group-sm p-0" role="group">
+                    case '2':
+                        $sub_array[] = '<div class="btn-group btn-group-sm p-0" role="group">
                         <button id="btnGroupDrop1" type="button" class="btn btn-primary btn-sm dropdown-toggle py-0"
                             data-bs-toggle="dropdown" aria-expanded="false">Estado</button>
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" onclick="cambiar_a_nuevo(' . $row['id_proyecto_gestionado'] . ')">Nuevos</a></li>
                             <li><a class="dropdown-item" onclick="cambiar_a_borrador(' . $row['id_proyecto_gestionado'] . ')">Borrador</a></li>
                         </ul></div>';
-                    break;
+                        break;
 
-                case '3':
-                case '4':
-                    $sub_array[] = '<span type="button" onclick="ver_hosts_eh(' . $row['id_proyecto_gestionado'] . ')">
+                    case '3':
+                    case '4':
+                        $sub_array[] = '<span type="button" onclick="ver_hosts_eh(' . $row['id_proyecto_gestionado'] . ')">
                         <i class="text-secondary fs-18 ri-global-line" title="Ver hosts"></i></span>';
-                    $sub_array[] = '<a href="' . URL . '/View/Home/Gestion/Sectores/GestionarProy/?p=' 
-                        . Openssl::set_ssl_encrypt($row['id_proyecto_cantidad_servicios']) 
-                        . '&pg=' . Openssl::set_ssl_encrypt($row['id_proyecto_gestionado']) 
-                        . '" target="_blank" rel="noopener noreferrer" title="Ver proyecto">
+                        $sub_array[] = '<a href="' . URL . '/View/Home/Gestion/Sectores/GestionarProy/?p='
+                            . Openssl::set_ssl_encrypt($row['id_proyecto_cantidad_servicios'])
+                            . '&pg=' . Openssl::set_ssl_encrypt($row['id_proyecto_gestionado'])
+                            . '" target="_blank" rel="noopener noreferrer" title="Ver proyecto">
                         <i class="ri-send-plane-fill text-primary fs-18"></i></a>';
-                    break;
-            }
-        } else {
-            $sub_array[] = '<span type="button" onclick="ver_hosts_eh(' . $row['id_proyecto_gestionado'] . ')">
+                        break;
+                }
+            } else {
+                $sub_array[] = '<span type="button" onclick="ver_hosts_eh(' . $row['id_proyecto_gestionado'] . ')">
                 <i class="text-secondary fs-18 ri-global-line" title="Ver hosts"></i></span>';
-            $sub_array[] = '<button class="btn btn-secondary btn-sm py-0" title="Sin permisos" disabled>Pendiente</button>';
+                $sub_array[] = '<button class="btn btn-secondary btn-sm py-0" title="Sin permisos" disabled>Pendiente</button>';
+            }
+
+            $data[] = $sub_array;
         }
 
-        $data[] = $sub_array;
-    }
-
-    $results = array(
-        "sEcho" => 1,
-        "iTotalRecords" => count($data),
-        "iTotalDisplayRecords" => count($data),
-        "aaData" => $data
-    );
-    echo json_encode($results);
-    break;
+        $results = array(
+            "sEcho" => 1,
+            "iTotalRecords" => count($data),
+            "iTotalDisplayRecords" => count($data),
+            "aaData" => $data
+        );
+        echo json_encode($results);
+        break;
 
     case 'get_proyectos_incident_response':
-    $datos = $proyecto->get_proyectos_incident_response($_POST['sector_id'], $_POST['estados_id'], $_POST['cat_id']);
-    $data = array();
-    $colores = array(
-        "ETHICAL HACKING" => "bg-warning text-dark",
-        "SOC" => "bg-dark text-light",
-        "SASE" => "bg-info text-light",
-        "CALIDAD Y PROCESOS" => "bg-light text-dark",
-        "INCIDENT RESPONSE" => "bg-danger text-light"
-    );
+        $datos = $proyecto->get_proyectos_incident_response($_POST['sector_id'], $_POST['estados_id'], $_POST['cat_id']);
+        $data = array();
+        $colores = array(
+            "ETHICAL HACKING" => "bg-warning text-dark",
+            "SOC" => "bg-dark text-light",
+            "SASE" => "bg-info text-light",
+            "CALIDAD Y PROCESOS" => "bg-light text-dark",
+            "INCIDENT RESPONSE" => "bg-danger text-light"
+        );
+        foreach ($datos as $row) {
+            $sub_array = array();
+            $sub_array[] = $row['titulo'];
+            $sub_array[] = $row['fech_inicio'] == ''
+                ? 'Sin fecha'
+                : '<span class="badge bg-light text-dark">' . $row['fech_inicio'] . '</span>';
+            $sub_array[] = $row['fech_fin'] == ''
+                ? 'Sin fecha'
+                : '<span class="badge bg-light text-dark">' . $row['fech_fin'] . '</span>';
 
-    foreach ($datos as $row) {
-        $sub_array = array();
-        $sub_array[] = $row['titulo'];
-        $sub_array[] = $row['fech_inicio'] == '' 
-            ? 'Sin fecha' 
-            : '<span class="badge bg-light text-dark">' . $row['fech_inicio'] . '</span>';
-        $sub_array[] = $row['fech_fin'] == '' 
-            ? 'Sin fecha' 
-            : '<span class="badge bg-light text-dark">' . $row['fech_fin'] . '</span>';
+            if ($row['estados_id'] == 1) {
+                if (!empty($row['posicion_recurrencia'])) {
+                    $sub_array[] = '<span class="badge bg-success text-light border border-success">'
+                        . $row['posicion_recurrencia'] . '</span>';
+                } else if (is_null($row['posicion_recurrencia']) && $row['id_proyecto_recurrencia'] > 0) {
+                    $sub_array[] = '<span class="badge bg-light text-success border border-success">Actualizar<br>Recurrente</span>';
+                } else {
+                    $sub_array[] = '-';
+                }
 
-        // 🔹 Mostrar sólo si estado_id = 1
-        if ($row['estados_id'] == 1) {
-            // Posición recurrencia
-            if (!empty($row['posicion_recurrencia'])) {
-                $sub_array[] = '<span class="badge bg-success text-light border border-success">'
-                    . $row['posicion_recurrencia'] . '</span>';
-            } else if (is_null($row['posicion_recurrencia']) && $row['id_proyecto_recurrencia'] > 0) {
-                $sub_array[] = '<span class="badge bg-light text-success border border-success">Actualizar<br>Recurrente</span>';
+                $sub_array[] = $row['rechequeo'] == "SI"
+                    ? '<span class="badge bg-danger">SI</span>'
+                    : '-';
+            }
+
+            $sub_array[] = '<span class="badge bg-light text-dark">' . $row['creador_proy'] . '</span>';
+            $sub_array[] = strlen($row['cats_nom']) > 20
+                ? '<span class="badge bg-light text-dark">' . substr($row['cats_nom'], 0, 17) . '...' . '</span>'
+                : '<span class="badge bg-light text-dark">' . $row['cats_nom'] . '</span>';
+            $sub_array[] = $row['hs_dimensionadas'] == ""
+                ? "Sin hs"
+                : '<span class="badge bg-light text-dark">' . $row['hs_dimensionadas'] . '</span>';
+
+            $sub_array[] = isset($row['usu_nom_asignado']) == ''
+                ? '<span type="button" onclick="asignar_proyecto(' . $row['id_proyecto_gestionado'] . ')" data-placement="top" title="Asignarme el proyecto" class="badge bg-light border border-dark text-dark">Sin asignar</span>'
+                : '<span class="badge bg-info text-light">' . $row['usu_nom_asignado'] . '</span>';
+
+            if (isset($row['usu_nom_asignado']) && $row['usu_nom_asignado'] != '') {
+                switch ($row['estados_id']) {
+                    case '1':
+                    case '2':
+                        $sub_array[] = '<span type="button" onclick="ver_hosts_eh(' . $row['id_proyecto_gestionado'] . ' )">
+                        <i class="text-secondary fs-18 ri-global-line" title="Ver hosts"></i>
+                    </span>';
+                        if ($row['estados_id'] == 2) {
+                            $sub_array[] = '<a href="' . URL . '/View/Home/Gestion/Sectores/GestionarProy/?p='
+                                . Openssl::set_ssl_encrypt($row['id_proyecto_cantidad_servicios']) . '&pg='
+                                . Openssl::set_ssl_encrypt($row['id_proyecto_gestionado'])
+                                . '" rel="noopener noreferrer" title="Ver proyecto">
+                            <i class="ri-send-plane-fill text-primary fs-18"></i></a>';
+                        }
+                        break;
+                }
+            }
+
+            // Validación: solo usuario asignado o sector 4 puede cambiar estado
+            $usuario_sesion = $_SESSION['usu_id'] ?? 0;
+            $sector_sesion = $_SESSION['sector_id'] ?? 0;
+            $asignados = isset($row['usu_id_asignado']) ? array_map('trim', explode(',', $row['usu_id_asignado'])) : [];
+            $tiene_permiso = in_array($usuario_sesion, $asignados) || $sector_sesion == 4;
+
+            if (isset($row['usu_nom_asignado']) && $row['usu_nom_asignado'] != '') {
+                switch ($row['estados_id']) {
+                    case '1':
+                    case '2':
+                        if ($tiene_permiso) {
+                            $sub_array[] = '<div class="btn-group btn-group-sm p-0" role="group">
+                            <button id="btnGroupDrop1" type="button" class="btn btn-primary btn-sm dropdown-toggle py-0" data-bs-toggle="dropdown" aria-expanded="false">
+                                Estado
+                            </button>
+                            <ul class="dropdown-menu">';
+                            if ($row['estados_id'] == 1) {
+                                $sub_array[count($sub_array) - 1] .= '
+                                <li><a class="dropdown-item" onclick="cambiar_a_abierto(' . $row['id_proyecto_gestionado'] . ')">Abierto</a></li>
+                                <li><a class="dropdown-item" onclick="cambiar_a_borrador(' . $row['id_proyecto_gestionado'] . ')">Borrador</a></li>';
+                            } else {
+                                $sub_array[count($sub_array) - 1] .= '
+                                <li><a class="dropdown-item" onclick="cambiar_a_nuevo(' . $row['id_proyecto_gestionado'] . ')">Nuevos</a></li>
+                                <li><a class="dropdown-item" onclick="cambiar_a_borrador(' . $row['id_proyecto_gestionado'] . ')">Borrador</a></li>';
+                            }
+                            $sub_array[count($sub_array) - 1] .= '</ul></div>';
+                        } else {
+                            $sub_array[] = '<button class="btn btn-secondary btn-sm py-0" title="Sin permisos" disabled>Estado</button>';
+                        }
+                        break;
+
+                    case '3':
+                    case '4':
+                        $sub_array[] = '<span type="button" onclick="ver_hosts_eh(' . $row['id_proyecto_gestionado'] . ')">
+                        <i class="text-secondary fs-18 ri-global-line" title="Ver hosts"></i></span>';
+                        $sub_array[] = '<a href="' . URL . '/View/Home/Gestion/Sectores/GestionarProy/?p='
+                            . Openssl::set_ssl_encrypt($row['id_proyecto_cantidad_servicios']) . '&pg='
+                            . Openssl::set_ssl_encrypt($row['id_proyecto_gestionado'])
+                            . '" target="_blank" title="Ver proyecto">
+                        <i class="ri-send-plane-fill text-primary fs-18"></i></a>';
+                        break;
+                }
             } else {
-                $sub_array[] = '-';
+                $sub_array[] = '<span type="button" onclick="ver_hosts_eh(' . $row['id_proyecto_gestionado'] . ')">
+                <i class="text-secondary fs-18 ri-global-line" title="Ver hosts"></i></span>';
+                $sub_array[] = '<button class="btn btn-secondary btn-sm py-0" title="Sin permisos" disabled>Pendiente</button>';
             }
 
-            // Rechequeo
-            $sub_array[] = $row['rechequeo'] == "SI"
-                ? '<span class="badge bg-danger">SI</span>'
-                : '-';
+            $data[] = $sub_array;
         }
 
-        $sub_array[] = '<span class="badge bg-light text-dark">' . $row['creador_proy'] . '</span>';
-        $sub_array[] = strlen($row['cats_nom']) > 20
-            ? '<span class="badge bg-light text-dark">' . substr($row['cats_nom'], 0, 17) . '...' . '</span>'
-            : '<span class="badge bg-light text-dark">' . $row['cats_nom'] . '</span>';
-        $sub_array[] = $row['hs_dimensionadas'] == "" 
-            ? "Sin hs" 
-            : '<span class="badge bg-light text-dark">' . $row['hs_dimensionadas'] . '</span>';
-        
-        $sub_array[] = isset($row['usu_nom_asignado']) == '' 
-            ? '<span type="button" onclick="asignar_proyecto(' . $row['id_proyecto_gestionado'] . ')" data-placement="top" title="Asignarme el proyecto" class="badge bg-light border border-dark text-dark">Sin asignar</span>' 
-            : '<span class="badge bg-info text-light">' . $row['usu_nom_asignado'] . '</span>';
-
-        if (isset($row['usu_nom_asignado']) && $row['usu_nom_asignado'] != '') {
-            switch ($row['estados_id']) {
-                case '1':
-                    $sub_array[] = '<span type="button" onclick="ver_hosts_eh(' . $row['id_proyecto_gestionado'] . ' )">
-                        <i class="text-secondary fs-18 ri-global-line" data-placement="top" title="Ver hosts"></i>
-                    </span>';
-                    break;
-                case '2':
-                    $sub_array[] = '<span type="button" onclick="ver_hosts_eh(' . $row['id_proyecto_gestionado'] . ' )">
-                        <i class="text-secondary fs-18 ri-global-line" data-placement="top" title="Ver hosts"></i>
-                    </span>';
-                    $sub_array[] = '<a href="' . URL . '/View/Home/Gestion/Sectores/GestionarProy/?p=' 
-                        . Openssl::set_ssl_encrypt($row['id_proyecto_cantidad_servicios']) . '&pg=' 
-                        . Openssl::set_ssl_encrypt($row['id_proyecto_gestionado']) 
-                        . '" rel="noopener noreferrer" title="Ver proyecto">
-                        <i class="ri-send-plane-fill text-primary fs-18"></i></a>';
-                    break;
-            }
-        }
-
-        if (isset($row['usu_nom_asignado']) && $row['usu_nom_asignado'] != '') {
-            switch ($row['estados_id']) {
-                case '1':
-                    $sub_array[] = '<div class="btn-group btn-group-sm p-0" role="group" aria-label="Button group with nested dropdown">
-                        <div class="btn-group p-0" role="group">
-                            <button id="btnGroupDrop1" type="button" class="btn btn-primary btn-sm dropdown-toggle py-0" data-bs-toggle="dropdown" aria-expanded="false">
-                                Estado
-                            </button>
-                            <ul class="dropdown-menu" aria-labelledby="btnGroupDrop1">
-                                <li><a class="dropdown-item" type="button" onclick="cambiar_a_abierto(' . $row['id_proyecto_gestionado'] . ')">Abierto</a></li>
-                                <li><a class="dropdown-item" type="button" onclick="cambiar_a_borrador(' . $row['id_proyecto_gestionado'] . ')">Borrador</a></li>
-                            </ul>
-                        </div>
-                    </div>';
-                    break;
-
-                case '2':
-                    $sub_array[] = '<div class="btn-group btn-group-sm p-0" role="group" aria-label="Button group with nested dropdown">
-                        <div class="btn-group p-0" role="group">
-                            <button id="btnGroupDrop1" type="button" class="btn btn-primary btn-sm dropdown-toggle py-0" data-bs-toggle="dropdown" aria-expanded="false">
-                                Estado
-                            </button>
-                            <ul class="dropdown-menu" aria-labelledby="btnGroupDrop1">
-                                <li><a class="dropdown-item" type="button" onclick="cambiar_a_nuevo(' . $row['id_proyecto_gestionado'] . ')">Nuevos</a></li>
-                                <li><a class="dropdown-item" type="button" onclick="cambiar_a_borrador(' . $row['id_proyecto_gestionado'] . ')">Borrador</a></li>
-                            </ul>
-                        </div>
-                    </div>';
-                    break;
-
-                case '3':
-                    $sub_array[] = '<span type="button" onclick="ver_hosts_eh(' . $row['id_proyecto_gestionado'] . ' )">
-                        <i class="text-secondary fs-18 ri-global-line" data-placement="top" title="Ver hosts"></i>
-                    </span>';
-                    $sub_array[] = '<a href="' . URL . '/View/Home/Gestion/Sectores/GestionarProy/?p=' 
-                        . Openssl::set_ssl_encrypt($row['id_proyecto_cantidad_servicios']) . '&pg=' 
-                        . Openssl::set_ssl_encrypt($row['id_proyecto_gestionado']) 
-                        . '" rel="noopener noreferrer" title="Ver proyecto">
-                        <i class="ri-send-plane-fill text-primary fs-18"></i></a>';
-                    break;
-
-                case '4':
-                    $sub_array[] = '<span type="button" onclick="ver_hosts_eh(' . $row['id_proyecto_gestionado'] . ' )">
-                        <i class="text-secondary fs-18 ri-global-line" data-placement="top" title="Ver hosts"></i>
-                    </span>';
-                    $sub_array[] = '<a href="' . URL . '/View/Home/Gestion/Sectores/GestionarProy/?p=' 
-                        . Openssl::set_ssl_encrypt($row['id_proyecto_cantidad_servicios']) . '&pg=' 
-                        . Openssl::set_ssl_encrypt($row['id_proyecto_gestionado']) 
-                        . '" target="_blank" rel="noopener noreferrer" title="Ver proyecto">
-                        <i class="ri-send-plane-fill text-primary fs-18"></i></a>';
-                    break;
-            }
-        } else {
-            $sub_array[] = '<span type="button" onclick="ver_hosts_eh(' . $row['id_proyecto_gestionado'] . ' )">
-                <i class="text-secondary fs-18 ri-global-line" data-placement="top" title="Ver hosts"></i>
-            </span>';
-            $sub_array[] = '<button class="btn btn-secondary btn-sm py-0" title="Sin permisos" disabled>Pendiente</button>';
-        }
-
-        $data[] = $sub_array;
-    }
-
-    $results = array(
-        "sEcho" => 1,
-        "iTotalRecords" => count($data),
-        "iTotalDisplayRecords" => count($data),
-        "aaData" => $data
-    );
-    echo json_encode($results);
-    break;
-
+        echo json_encode([
+            "sEcho" => 1,
+            "iTotalRecords" => count($data),
+            "iTotalDisplayRecords" => count($data),
+            "aaData" => $data
+        ]);
+        break;
 
     case 'cambiar_estado_proyecto_cantidad_servicios':
         $proyecto->cambiar_estado_proyecto_cantidad_servicios($_POST['id_proyecto_cantidad_servicios']);
@@ -954,122 +933,122 @@ switch ($_GET['proy']) {
         break;
 
     case 'get_proyectos_sase':
-    $datos = $proyecto->get_proyectos_sase($_POST['sector_id'], $_POST['cat_id'], $_POST['estados_id']);
-    $data = array();
-    $colores = array(
-        "ETHICAL HACKING" => "bg-warning text-dark",
-        "SOC" => "bg-dark text-light",
-        "SASE" => "bg-info text-light",
-        "CALIDAD Y PROCESOS" => "bg-light text-dark",
-        "INCIDENT RESPONSE" => "bg-danger text-light"
-    );
+        $datos = $proyecto->get_proyectos_sase($_POST['sector_id'], $_POST['cat_id'], $_POST['estados_id']);
+        $data = array();
+        $colores = array(
+            "ETHICAL HACKING" => "bg-warning text-dark",
+            "SOC" => "bg-dark text-light",
+            "SASE" => "bg-info text-light",
+            "CALIDAD Y PROCESOS" => "bg-light text-dark",
+            "INCIDENT RESPONSE" => "bg-danger text-light"
+        );
 
-    foreach ($datos as $row) {
-        $sub_array = array();
-        $sub_array[] = $row['titulo'];
-        $sub_array[] = $row['fech_inicio'] == '' 
-            ? 'Sin fecha' 
-            : '<span class="badge bg-light text-dark">' . $row['fech_inicio'] . '</span>';
-        $sub_array[] = $row['fech_fin'] == '' 
-            ? 'Sin fecha' 
-            : '<span class="badge bg-light text-dark">' . $row['fech_fin'] . '</span>';
+        foreach ($datos as $row) {
+            $sub_array = array();
+            $sub_array[] = $row['titulo'];
+            $sub_array[] = $row['fech_inicio'] == ''
+                ? 'Sin fecha'
+                : '<span class="badge bg-light text-dark">' . $row['fech_inicio'] . '</span>';
+            $sub_array[] = $row['fech_fin'] == ''
+                ? 'Sin fecha'
+                : '<span class="badge bg-light text-dark">' . $row['fech_fin'] . '</span>';
 
-        // ✅ Solo mostrar si estados_id = 1
-        if ($row['estados_id'] == 1) {
-            if (!empty($row['posicion_recurrencia'])) {
-                $sub_array[] = '<span class="badge bg-success text-light border border-success">'
-                    . $row['posicion_recurrencia'] . '</span>';
-            } else if (is_null($row['posicion_recurrencia']) && $row['id_proyecto_recurrencia'] > 0) {
-                $sub_array[] = '<span class="badge bg-light text-success border border-success">Actualizar<br>Recurrente</span>';
-            } else {
-                $sub_array[] = '-';
+            // ✅ Solo mostrar si estados_id = 1
+            if ($row['estados_id'] == 1) {
+                if (!empty($row['posicion_recurrencia'])) {
+                    $sub_array[] = '<span class="badge bg-success text-light border border-success">'
+                        . $row['posicion_recurrencia'] . '</span>';
+                } else if (is_null($row['posicion_recurrencia']) && $row['id_proyecto_recurrencia'] > 0) {
+                    $sub_array[] = '<span class="badge bg-light text-success border border-success">Actualizar<br>Recurrente</span>';
+                } else {
+                    $sub_array[] = '-';
+                }
+
+                $sub_array[] = $row['rechequeo'] == "SI"
+                    ? '<span class="badge bg-danger">SI</span>'
+                    : '-';
             }
 
-            $sub_array[] = $row['rechequeo'] == "SI"
-                ? '<span class="badge bg-danger">SI</span>'
-                : '-';
-        }
+            $sub_array[] = '<span class="badge bg-light text-dark">' . $row['creador_proy'] . '</span>';
+            $sub_array[] = strlen($row['cats_nom']) > 20
+                ? '<span class="badge bg-light text-dark">' . substr($row['cats_nom'], 0, 17) . '...' . '</span>'
+                : '<span class="badge bg-light text-dark">' . $row['cats_nom'] . '</span>';
+            $sub_array[] = $row['hs_dimensionadas'] == ""
+                ? "Sin hs"
+                : '<span class="badge bg-light text-dark">' . $row['hs_dimensionadas'] . '</span>';
 
-        $sub_array[] = '<span class="badge bg-light text-dark">' . $row['creador_proy'] . '</span>';
-        $sub_array[] = strlen($row['cats_nom']) > 20
-            ? '<span class="badge bg-light text-dark">' . substr($row['cats_nom'], 0, 17) . '...' . '</span>'
-            : '<span class="badge bg-light text-dark">' . $row['cats_nom'] . '</span>';
-        $sub_array[] = $row['hs_dimensionadas'] == "" 
-            ? "Sin hs" 
-            : '<span class="badge bg-light text-dark">' . $row['hs_dimensionadas'] . '</span>';
+            $sub_array[] = empty($row['usu_nom_asignado'])
+                ? '<span type="button" onclick="asignar_proyecto(' . $row['id_proyecto_gestionado'] . ')" title="Asignarme el proyecto" class="badge bg-light border border-dark text-dark">Sin asignar</span>'
+                : '<span class="badge bg-info text-light">' . $row['usu_nom_asignado'] . '</span>';
 
-        $sub_array[] = empty($row['usu_nom_asignado'])
-            ? '<span type="button" onclick="asignar_proyecto(' . $row['id_proyecto_gestionado'] . ')" title="Asignarme el proyecto" class="badge bg-light border border-dark text-dark">Sin asignar</span>'
-            : '<span class="badge bg-info text-light">' . $row['usu_nom_asignado'] . '</span>';
-
-        // --- Acciones según estado ---
-        if (!empty($row['usu_nom_asignado'])) {
-            switch ($row['estados_id']) {
-                case '1':
-                    $sub_array[] = '<span type="button" onclick="ver_hosts_eh(' . $row['id_proyecto_gestionado'] . ')">
+            // --- Acciones según estado ---
+            if (!empty($row['usu_nom_asignado'])) {
+                switch ($row['estados_id']) {
+                    case '1':
+                        $sub_array[] = '<span type="button" onclick="ver_hosts_eh(' . $row['id_proyecto_gestionado'] . ')">
                         <i class="text-secondary fs-18 ri-global-line" title="Ver hosts"></i></span>';
-                    break;
-                case '2':
-                    $sub_array[] = '<span type="button" onclick="ver_hosts_eh(' . $row['id_proyecto_gestionado'] . ')">
+                        break;
+                    case '2':
+                        $sub_array[] = '<span type="button" onclick="ver_hosts_eh(' . $row['id_proyecto_gestionado'] . ')">
                         <i class="text-secondary fs-18 ri-global-line" title="Ver hosts"></i></span>';
-                    $sub_array[] = '<a href="' . URL . '/View/Home/Gestion/Sectores/GestionarProy/?p=' 
-                        . Openssl::set_ssl_encrypt($row['id_proyecto_cantidad_servicios']) 
-                        . '&pg=' . Openssl::set_ssl_encrypt($row['id_proyecto_gestionado']) 
-                        . '" target="_blank" title="Ver proyecto">
+                        $sub_array[] = '<a href="' . URL . '/View/Home/Gestion/Sectores/GestionarProy/?p='
+                            . Openssl::set_ssl_encrypt($row['id_proyecto_cantidad_servicios'])
+                            . '&pg=' . Openssl::set_ssl_encrypt($row['id_proyecto_gestionado'])
+                            . '" target="_blank" title="Ver proyecto">
                         <i class="ri-send-plane-fill text-primary fs-18"></i></a>';
-                    break;
+                        break;
+                }
             }
-        }
 
-        // --- Dropdown de cambio de estado ---
-        if (!empty($row['usu_nom_asignado'])) {
-            switch ($row['estados_id']) {
-                case '1':
-                    $sub_array[] = '<div class="btn-group btn-group-sm p-0" role="group">
+            // --- Dropdown de cambio de estado ---
+            if (!empty($row['usu_nom_asignado'])) {
+                switch ($row['estados_id']) {
+                    case '1':
+                        $sub_array[] = '<div class="btn-group btn-group-sm p-0" role="group">
                         <button id="btnGroupDrop1" type="button" class="btn btn-primary btn-sm dropdown-toggle py-0" 
                             data-bs-toggle="dropdown" aria-expanded="false">Estado</button>
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" onclick="cambiar_a_abierto(' . $row['id_proyecto_gestionado'] . ')">Abierto</a></li>
                             <li><a class="dropdown-item" onclick="cambiar_a_borrador(' . $row['id_proyecto_gestionado'] . ')">Borrador</a></li>
                         </ul></div>';
-                    break;
-                case '2':
-                    $sub_array[] = '<div class="btn-group btn-group-sm p-0" role="group">
+                        break;
+                    case '2':
+                        $sub_array[] = '<div class="btn-group btn-group-sm p-0" role="group">
                         <button id="btnGroupDrop1" type="button" class="btn btn-primary btn-sm dropdown-toggle py-0"
                             data-bs-toggle="dropdown" aria-expanded="false">Estado</button>
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" onclick="cambiar_a_nuevo(' . $row['id_proyecto_gestionado'] . ')">Nuevos</a></li>
                             <li><a class="dropdown-item" onclick="cambiar_a_borrador(' . $row['id_proyecto_gestionado'] . ')">Borrador</a></li>
                         </ul></div>';
-                    break;
-                case '3':
-                case '4':
-                    $sub_array[] = '<span type="button" onclick="ver_hosts_eh(' . $row['id_proyecto_gestionado'] . ')">
+                        break;
+                    case '3':
+                    case '4':
+                        $sub_array[] = '<span type="button" onclick="ver_hosts_eh(' . $row['id_proyecto_gestionado'] . ')">
                         <i class="text-secondary fs-18 ri-global-line" title="Ver hosts"></i></span>';
-                    $sub_array[] = '<a href="' . URL . '/View/Home/Gestion/Sectores/GestionarProy/?p=' 
-                        . Openssl::set_ssl_encrypt($row['id_proyecto_cantidad_servicios']) 
-                        . '&pg=' . Openssl::set_ssl_encrypt($row['id_proyecto_gestionado']) 
-                        . '" target="_blank" title="Ver proyecto">
+                        $sub_array[] = '<a href="' . URL . '/View/Home/Gestion/Sectores/GestionarProy/?p='
+                            . Openssl::set_ssl_encrypt($row['id_proyecto_cantidad_servicios'])
+                            . '&pg=' . Openssl::set_ssl_encrypt($row['id_proyecto_gestionado'])
+                            . '" target="_blank" title="Ver proyecto">
                         <i class="ri-send-plane-fill text-primary fs-18"></i></a>';
-                    break;
-            }
-        } else {
-            $sub_array[] = '<span type="button" onclick="ver_hosts_eh(' . $row['id_proyecto_gestionado'] . ')">
+                        break;
+                }
+            } else {
+                $sub_array[] = '<span type="button" onclick="ver_hosts_eh(' . $row['id_proyecto_gestionado'] . ')">
                 <i class="text-secondary fs-18 ri-global-line" title="Ver hosts"></i></span>';
-            $sub_array[] = '<button class="btn btn-secondary btn-sm py-0" title="Sin permisos" disabled>Pendiente</button>';
+                $sub_array[] = '<button class="btn btn-secondary btn-sm py-0" title="Sin permisos" disabled>Pendiente</button>';
+            }
+
+            $data[] = $sub_array;
         }
 
-        $data[] = $sub_array;
-    }
-
-    $results = array(
-        "sEcho" => 1,
-        "iTotalRecords" => count($data),
-        "iTotalDisplayRecords" => count($data),
-        "aaData" => $data
-    );
-    echo json_encode($results);
-    break;
+        $results = array(
+            "sEcho" => 1,
+            "iTotalRecords" => count($data),
+            "iTotalDisplayRecords" => count($data),
+            "aaData" => $data
+        );
+        echo json_encode($results);
+        break;
 
     case 'get_proyectos_nuevos_vista_calidad':
         $datos = $proyecto->get_proyectos_nuevos_vista_calidad($_POST['sector_id'], $_POST['estados_id']);
