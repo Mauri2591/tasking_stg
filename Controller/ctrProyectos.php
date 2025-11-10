@@ -375,7 +375,7 @@ switch ($_GET['proy']) {
             $_POST['titulo'],
             $_POST['descripcion'],
             $_POST['refProy'],
-            $_POST['recurrencia'],
+            ($_POST['recurrencia'] === '' ? null : (int) $_POST['recurrencia']),
             $_POST['fech_inicio'],
             $_POST['fech_fin'],
             $_POST['fech_vantive']
