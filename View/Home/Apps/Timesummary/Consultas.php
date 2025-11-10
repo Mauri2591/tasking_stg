@@ -43,7 +43,7 @@ if (isset($_SESSION['usu_id'])) {
                                         <table style="text-align: center;" id="table_tareas_usuarios">
                                             <thead>
                                                 <tr>
-                                                    <th style="width: 30%;text-align: center;">CLIENTE</th>
+                                                    <th style="width: 0%;text-align: center;">CLIENTE</th>
                                                     <th style="width: 5%;text-align: center;">REF</th>
                                                     <th style="width: 5%;text-align: center;">PRODUCTO</th>
                                                     <th style="width: 5%;text-align: center;">TAREA</th>
@@ -56,7 +56,6 @@ if (isset($_SESSION['usu_id'])) {
                                                 </tr>
                                             </thead>
                                         </table>
-
                                     </div>
                                 </div>
                             </div>
@@ -69,7 +68,7 @@ if (isset($_SESSION['usu_id'])) {
                                         <table style="text-align: center;" id="table_get_tareas_x_usuario_x_usu_id">
                                             <thead>
                                                 <tr>
-                                                    <th style="width: 30%;text-align: center;">CLIENTE</th>
+                                                    <th style="width: 40%;text-align: center;">CLIENTE</th>
                                                     <th style="width: 5%;text-align: center;">REF</th>
                                                     <th style="width: 5%;text-align: center;">PRODUCTO</th>
                                                     <th style="width: 5%;text-align: center;">TAREA</th>
@@ -117,7 +116,7 @@ if (isset($_SESSION['usu_id'])) {
                 "bDestroy": true,
                 "responsive": true,
                 "bInfo": true,
-                "iDisplayLength": 7,
+                "iDisplayLength": 10,
                 "language": {
                     "sProcessing": "Procesando...",
                     "sZeroRecords": "No hay tareas registradas.",
@@ -148,7 +147,7 @@ if (isset($_SESSION['usu_id'])) {
                 "bDestroy": true,
                 "responsive": true,
                 "bInfo": true,
-                "iDisplayLength": 7,
+                "iDisplayLength": 10,
                 "language": {
                     "sProcessing": "Procesando...",
                     "sZeroRecords": "No hay tareas registradas.",

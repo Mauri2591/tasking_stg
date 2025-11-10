@@ -1193,12 +1193,13 @@ ORDER BY id_proyecto_cantidad_servicios ASC";
         return $conn->lastInsertId();
     }
 
-    public function insert_proyecto_pm(int $id_proyecto_gestionado, $usu_crea, $estados_id)
+    public function insert_proyecto_pm(int $id_proyecto_gestionado, $horas_pm, $usu_crea, $estados_id)
     {
         $conn = parent::get_conexion();
-        $sql = "INSERT INTO pm_calidad (id_proyecto_gestionado,usu_crea,estados_id) VALUES (:id_proyecto_gestionado,:usu_crea,:estados_id)";
+        $sql = "INSERT INTO pm_calidad (id_proyecto_gestionado,horas_pm,usu_crea,estados_id) VALUES (:id_proyecto_gestionado,:horas_pm,:usu_crea,:estados_id)";
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(':id_proyecto_gestionado', $id_proyecto_gestionado, PDO::PARAM_INT);
+        $stmt->bindValue(':horas_pm', $horas_pm, PDO::PARAM_STR_CHAR);
         $stmt->bindValue(':usu_crea', $usu_crea, PDO::PARAM_INT);
         $stmt->bindValue(':estados_id', $estados_id, PDO::PARAM_INT);
         $stmt->execute();
@@ -1291,66 +1292,63 @@ WHERE
         $stmt->execute();
     }
 
-   public function update_proyecto(
-    int $id,
-    int $cat_id,
-    int $cats_id,
-    int $sector_id,
-    int $usu_id,
-    int $usu_crea,
-    int $prioridad_id,
-    string $titulo,
-    string $descripcion,
-    string $refProy,
-    ?string $recurrencia,
-    ?string $fech_inicio,
-    ?string $fech_fin,
-    ?string $fech_vantive
-) {
-    try {
-        $conn = parent::get_conexion();
+    public function update_proyecto(
+        int $id,
+        int $cat_id,
+        int $cats_id,
+        int $sector_id,
+        int $usu_id,
+        int $usu_crea,
+        int $prioridad_id,
+        string $titulo,
+        string $descripcion,
+        string $refProy,
+        string $recurrencia,
+        string $fech_inicio,
+        string $fech_fin,
+        string $fech_vantive
+    ) {
+        try {
+            $conn = parent::get_conexion();
+            $sql = "UPDATE proyecto_gestionado 
+                    SET cat_id = :cat_id,
+                        cats_id = :cats_id,
+                        sector_id = :sector_id,
+                        usu_crea = :usu_crea,
+                        prioridad_id = :prioridad_id,
+                        titulo = :titulo,
+                        descripcion = :descripcion,
+                        refProy = :refProy,
+                        recurrencia = :recurrencia,
+                        fech_inicio = :fech_inicio,
+                        fech_fin = :fech_fin,
+                        fech_vantive = :fech_vantive
+                    WHERE id = :id
+                      AND est = 1";
 
-        // ✅ Corrige recurrencia vacía
-        $recurrencia = ($recurrencia === '' || $recurrencia === null) ? null : (int)$recurrencia;
+            $stmt = $conn->prepare($sql);
 
-        $sql = "UPDATE proyecto_gestionado 
-                SET cat_id = :cat_id,
-                    cats_id = :cats_id,
-                    sector_id = :sector_id,
-                    usu_crea = :usu_crea,
-                    prioridad_id = :prioridad_id,
-                    titulo = :titulo,
-                    descripcion = :descripcion,
-                    refProy = :refProy,
-                    recurrencia = :recurrencia,
-                    fech_inicio = :fech_inicio,
-                    fech_fin = :fech_fin,
-                    fech_vantive = :fech_vantive
-                WHERE id = :id
-                  AND est = 1";
-
-        $stmt = $conn->prepare($sql);
-        $stmt->bindValue(':cat_id', $cat_id, PDO::PARAM_INT);
-        $stmt->bindValue(':cats_id', $cats_id, PDO::PARAM_INT);
-        $stmt->bindValue(':sector_id', $sector_id, PDO::PARAM_INT);
-        $stmt->bindValue(':usu_crea', $usu_crea, PDO::PARAM_INT);
-        $stmt->bindValue(':prioridad_id', $prioridad_id, PDO::PARAM_INT);
-        $stmt->bindValue(':titulo', htmlspecialchars($titulo, ENT_QUOTES, 'UTF-8'), PDO::PARAM_STR);
-        $stmt->bindValue(':descripcion', htmlspecialchars($descripcion, ENT_QUOTES, 'UTF-8'), PDO::PARAM_STR);
-        $stmt->bindValue(':refProy', htmlspecialchars($refProy, ENT_QUOTES, 'UTF-8'), PDO::PARAM_STR);
-        $stmt->bindValue(':recurrencia', $recurrencia, is_null($recurrencia) ? PDO::PARAM_NULL : PDO::PARAM_INT);
-        $stmt->bindValue(':fech_inicio', $fech_inicio, is_null($fech_inicio) ? PDO::PARAM_NULL : PDO::PARAM_STR);
-        $stmt->bindValue(':fech_fin', $fech_fin, is_null($fech_fin) ? PDO::PARAM_NULL : PDO::PARAM_STR);
-        $stmt->bindValue(':fech_vantive', $fech_vantive, is_null($fech_vantive) ? PDO::PARAM_NULL : PDO::PARAM_STR);
-        $stmt->bindValue(':id', $id, PDO::PARAM_INT);
-        $stmt->execute();
-
-        return $stmt->rowCount();
-    } catch (PDOException $e) {
-        error_log("Error en update_proyecto: " . $e->getMessage());
-        return false;
+            $stmt->bindValue(':cat_id', $cat_id, PDO::PARAM_INT);
+            $stmt->bindValue(':cats_id', $cats_id, PDO::PARAM_INT);
+            $stmt->bindValue(':sector_id', $sector_id, PDO::PARAM_INT);
+            $stmt->bindValue(':usu_crea', $usu_crea, PDO::PARAM_INT);
+            $stmt->bindValue(':prioridad_id', $prioridad_id, PDO::PARAM_INT);
+            $stmt->bindValue(':titulo', htmlspecialchars($titulo, ENT_QUOTES, 'UTF-8'), PDO::PARAM_STR);
+            $stmt->bindValue(':descripcion', htmlspecialchars($descripcion, ENT_QUOTES, 'UTF-8'), PDO::PARAM_STR);
+            $stmt->bindValue(':refProy', htmlspecialchars($refProy, ENT_QUOTES, 'UTF-8'), PDO::PARAM_STR);
+            $stmt->bindValue(':recurrencia', htmlspecialchars($recurrencia, ENT_QUOTES, 'UTF-8'), PDO::PARAM_STR);
+            $stmt->bindValue(':fech_inicio', $fech_inicio, is_null($fech_inicio) ? PDO::PARAM_NULL : PDO::PARAM_STR);
+            $stmt->bindValue(':fech_fin', $fech_fin, is_null($fech_fin) ? PDO::PARAM_NULL : PDO::PARAM_STR);
+            $stmt->bindValue(':fech_vantive', $fech_vantive, is_null($fech_vantive) ? PDO::PARAM_NULL : PDO::PARAM_STR);
+            $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+            $stmt->execute();
+            return $stmt->rowCount(); // cantidad de filas actualizadas
+        } catch (PDOException $e) {
+            // Loguear el error si querés (por ejemplo usando error_log())
+            error_log("Error en update_proyecto: " . $e->getMessage());
+            return false; // podés devolver false si algo falla
+        }
     }
-}
 
     public function update_usuarios_asignados(int $id_proyecto_gestionado, array $usuarios_ids)
     {

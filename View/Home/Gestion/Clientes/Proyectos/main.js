@@ -1813,7 +1813,7 @@ function crearRechequeo(id) {
                                 setTimeout(() => {
                                     if ($.fn.DataTable.isDataTable('#tablelHistorialProyectosCalidad')) {
                                         $('#tablelHistorialProyectosCalidad').DataTable().ajax.reload(null, false);
-                                        $("#table_proyectos_total_calidad").DataTable().ajax.reload(null,false);
+                                        $("#table_proyectos_total_calidad").DataTable().ajax.reload(null, false);
                                         $('#table_proyectos_borrador').DataTable().ajax.reload(null, false);
                                     }
                                 }, 1000);

@@ -317,7 +317,7 @@ switch ($_GET['accion']) {
             $sub_array[] = $row['hora_hasta'];
             $sub_array[] = $row['horas_consumidas'];
             $sub_array[] = $row['descripcion'];
-            $sub_array[] = $row['usu_nom'];
+            $sub_array[] = '<span class="badge bg-primary text-light border border-secondary">'.$row['usu_nom'].' '.$row['usu_ape'].'</span>';
             $data[] = $sub_array;
         }
         $results = array(
@@ -343,7 +343,7 @@ switch ($_GET['accion']) {
             $sub_array[] = $row['hora_hasta'];
             $sub_array[] = $row['horas_consumidas'];
             $sub_array[] = $row['descripcion'];
-            $sub_array[] = $row['usu_nom'];
+            $sub_array[] = '<span class="badge bg-primary text-light border border-secondary">'.$row['usu_nom'].'</span>';
             $data[] = $sub_array;
         }
         $results = array(

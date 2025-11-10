@@ -170,9 +170,6 @@ switch ($_GET['proy']) {
             $proyecto->insert_host($id_proyecto_gestionado, $id_proyecto_cantidad_servicios, $_SESSION['usu_id'], $host['tipo'], $host['valor']);
         }
 
-        //Inserto el pm
-        $proyecto->insert_proyecto_pm($id_proyecto_gestionado, $_SESSION['usu_id'], 1);
-
         $proyecto->insert_dimensionamiento(
             $id_proyecto_gestionado,
             $_POST['hs_dimensionadas'],

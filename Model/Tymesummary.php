@@ -368,7 +368,8 @@ ORDER BY
     timesummary_carga.fech_crea AS fecha_carga,
     clientes.client_rs AS cliente,
     proyecto_gestionado.refProy AS referencia,
-    tm_usuario.usu_nom
+    tm_usuario.usu_nom,
+        tm_usuario.usu_ape
 FROM timesummary_carga
 LEFT JOIN tm_categoria 
     ON timesummary_carga.id_producto = tm_categoria.cat_id
@@ -380,14 +381,14 @@ LEFT JOIN proyecto_gestionado
     ON timesummary_carga.id_proyecto_gestionado = proyecto_gestionado.id
 INNER JOIN tm_usuario 
     ON timesummary_carga.usu_id = tm_usuario.usu_id
-WHERE timesummary_carga.usu_id = :usu_id";
+WHERE timesummary_carga.usu_id = :usu_id ORDER BY timesummary_carga.fecha DESC";
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(":usu_id", $usu_id, PDO::PARAM_INT);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-     public function get_tareas_x_usuario_x_usu_id($usu_id)
+    public function get_tareas_x_usuario_x_usu_id($usu_id)
     {
         $conn = parent::get_conexion();
         $sql = "SELECT 
@@ -401,7 +402,8 @@ WHERE timesummary_carga.usu_id = :usu_id";
     timesummary_carga.fech_crea AS fecha_carga,
     clientes.client_rs AS cliente,
     proyecto_gestionado.refProy AS referencia,
-    tm_usuario.usu_nom
+    tm_usuario.usu_nom,
+    tm_usuario.usu_ape
 FROM timesummary_carga
 LEFT JOIN tm_categoria 
     ON timesummary_carga.id_producto = tm_categoria.cat_id
@@ -413,7 +415,8 @@ LEFT JOIN proyecto_gestionado
     ON timesummary_carga.id_proyecto_gestionado = proyecto_gestionado.id
 INNER JOIN tm_usuario 
     ON timesummary_carga.usu_id = tm_usuario.usu_id
-WHERE timesummary_carga.usu_id = :usu_id";
+WHERE timesummary_carga.usu_id = :usu_id
+ORDER BY timesummary_carga.fecha DESC";
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(":usu_id", $usu_id, PDO::PARAM_INT);
         $stmt->execute();
