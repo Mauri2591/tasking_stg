@@ -537,9 +537,9 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
         let formData = new FormData();
 
         let checkboxes = document.querySelectorAll('#combo_usuario_x_sector input[name="usu_asignado[]"]:checked');
-        checkboxes.forEach((check, index) => {
+        checkboxes.forEach(check => {
             formData.append('usu_asignado[]', check.value);
-        })
+        });
 
         let hs_dimensionadas = document.getElementById('hs_dimensionadas').value.trim();
 
@@ -551,26 +551,35 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
                 text: "El campo 'hs_dimensionadas' debe ser un número positivo.",
                 timer: 1500
             });
-            return;
+            return null; // 🚨 DEVUELVE null explícitamente
         }
 
-        formData.append('id', id);
-        formData.append('cat_id', document.getElementById("combo_categoria_proy_nuevo").value);
-        formData.append('cats_id', document.getElementById("combo_subcategoria_proy_nuevo").value);
-        formData.append('sector_id', document.getElementById("combo_sector_proy_nuevo").value);
-        formData.append('usu_id', document.getElementById("combo_usuario_x_sector").value);
-        formData.append('prioridad_id', document.getElementById("combo_prioridad_proy_nuevo").value);
-        formData.append('titulo', document.getElementById("titulo_client_rs_alta_proy").value);
-        formData.append('descripcion', document.getElementById("descripcion_proy").value);
-        formData.append('refProy', document.getElementById("client_refPro_proy_nuevo").value);
-        formData.append('recurrencia', document.getElementById("combo_recurrente_proy_nuevo").value);
-        formData.append('fech_inicio', document.getElementById("fech_ini_proy_nuevo").value);
-        formData.append('fech_fin', document.getElementById("fech_fin_proy_nuevo").value);
-        formData.append('fech_vantive', document.getElementById("fech_vantive").value);
+        // 🔹 Aseguramos que el ID venga del campo correcto
+        let idProyecto = $("#id_proyecto_gestionado").val() || id || null;
+        if (!idProyecto) {
+            console.error("❌ No se encontró el id_proyecto_gestionado");
+            return null;
+        }
+
+        formData.append('id', idProyecto);
+        formData.append('id_proyecto_gestionado', idProyecto);
+        formData.append('cat_id', $("#combo_categoria_proy_nuevo").val());
+        formData.append('cats_id', $("#combo_subcategoria_proy_nuevo").val());
+        formData.append('sector_id', $("#combo_sector_proy_nuevo").val());
+        formData.append('usu_id', $("#combo_usuario_x_sector").val());
+        formData.append('prioridad_id', $("#combo_prioridad_proy_nuevo").val());
+        formData.append('titulo', $("#titulo_client_rs_alta_proy").val());
+        formData.append('descripcion', $("#descripcion_proy").val());
+        formData.append('refProy', $("#client_refPro_proy_nuevo").val());
+        formData.append('recurrencia', $("#combo_recurrente_proy_nuevo").val() || 0);
+        formData.append('fech_inicio', $("#fech_ini_proy_nuevo").val());
+        formData.append('fech_fin', $("#fech_fin_proy_nuevo").val());
+        formData.append('fech_vantive', $("#fech_vantive").val());
         formData.append('hs_dimensionadas', hs_dimensionadas);
-        formData.append('id_proyecto_gestionado', id);
+
         return formData;
     }
+
 
 
     $.post("../../../../../Controller/ctrProyectos.php?proy=get_client_y_pais_para_proy_borrador", {
@@ -798,6 +807,7 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
                 e.stopPropagation();
 
                 let dataForm = get_data_editar_proyecto();
+                if (!dataForm) return; // Detiene si hubo error en la validación
 
                 $.ajax({
                     type: "POST",
