@@ -19,7 +19,7 @@ switch ($_GET['accion']) {
         $data = [
             "proyecto" => $_POST['id_proyecto_gestionado'] ?? null,
             "producto" => $_POST['id_producto'] ?? null,
-            "producto" => $_POST['id_tarea'] ?? null,
+            "id_tarea" => $_POST['id_tarea'] ?? null,
             "fecha" => $_POST['fecha'] ?? null,
             "desde" => $hora_desde,
             "hasta" => $hora_hasta
@@ -54,6 +54,7 @@ switch ($_GET['accion']) {
                 $_POST['id_proyecto_gestionado'] ?? null,
                 $_POST['id_producto'] ?? null,
                 $_POST['id_tarea'] ?? null,
+                $_POST['id_pm_calidad'] ?? null,
                 $_POST['fecha'] ?? null,
                 $_POST['hora_desde'] ?? null,
                 $_POST['hora_hasta'] ?? null,
@@ -106,10 +107,12 @@ switch ($_GET['accion']) {
         $datos = $tymesummary->get_titulos_proyectos($_SESSION['usu_id']);
         $htmlOption = '';
         foreach ($datos as $val) {
-            $htmlOption .= '<option value="' . $val['id_proyecto_gestionado'] . '">' . $val['titulo'] . '</option>';
+            $htmlOption .= '<option value="' . $val['id_proyecto_gestionado'] . '" 
+            data-pm="' . ($val['id_pm_calidad'] ?? '') . '">' . $val['titulo'] . '</option>';
         }
         echo $htmlOption;
         break;
+
 
     case 'get_producto_proyectos':
         $datos = $tymesummary->get_producto_proyectos($_SESSION['sector_id']);
@@ -150,11 +153,8 @@ switch ($_GET['accion']) {
     case 'datos_tabla_ts':
         $datos = $tymesummary->get_titulos_proyectos($_SESSION['usu_id']);
         $htmlTable = '';
-        $proyectos_mostrados = []; //array para controlar duplicados
-
-        foreach ($datos as $key => $val) {
-            $id_proyecto = $val['id_proyecto_gestionado'];
-            if (!in_array($id_proyecto, $proyectos_mostrados)) {
+        if ($_SESSION['sector_id'] == "4") {
+            foreach ($datos as $key => $val) {
                 $htmlTable .= '
             <tr>
                 <td class="px-1 text-center">' . substr($val['titulo'], 0, 30) . '</td>
@@ -167,9 +167,30 @@ switch ($_GET['accion']) {
                     : '<td class="px-1 text-center fw-bold text-danger">' . $val['horas_total'] . '</td>'
                 ) . '
             </tr>';
-                $proyectos_mostrados[] = $id_proyecto;
+            }
+        } else {
+            $proyectos_mostrados = []; //array para controlar duplicados
+
+            foreach ($datos as $key => $val) {
+                $id_proyecto = $val['id_proyecto_gestionado'];
+                if (!in_array($id_proyecto, $proyectos_mostrados)) {
+                    $htmlTable .= '
+            <tr>
+                <td class="px-1 text-center">' . substr($val['titulo'], 0, 30) . '</td>
+                <td class="px-1 text-center">' . substr($val['producto'], 0, 10) . '</td>
+                <td class="px-1 text-center fw-bold text-success">' . $val['hs_dimensionadas'] . '</td>
+                <td class="px-1 text-center fw-bold">' . $val['horas_consumidas'] . '</td>
+                ' . (
+                        $val['comparacion_horas'] == "HORAS_TOTAL_MENOR_QUE_DIM"
+                        ? '<td class="px-1 text-center fw-bold text-success">' . $val['horas_total'] . '</td>'
+                        : '<td class="px-1 text-center fw-bold text-danger">' . $val['horas_total'] . '</td>'
+                    ) . '
+            </tr>';
+                    $proyectos_mostrados[] = $id_proyecto;
+                }
             }
         }
+
         echo $htmlTable;
         break;
 
@@ -205,23 +226,41 @@ switch ($_GET['accion']) {
 
     case 'get_titulos_proyectos_total':
         $datos = $tymesummary->get_titulos_proyectos_total($_SESSION['usu_id']);
-        $data = array();
-        $proyectos_vistos = [];
-
-        foreach ($datos as $row) {
-            // Evita duplicados por id_proyecto_gestionado
-            if (!in_array($row['id_proyecto_gestionado'], $proyectos_vistos)) {
+        if ($_SESSION['sector_id'] == "4") {
+            foreach ($datos as $row) {
                 $sub_array = array();
                 $sub_array[] = $row['titulo'];
                 $sub_array[] = '<p class="text-center p-0 m-0"><span class="badge border border-dark bg-light text-dark">' . $row['hs_dimensionadas'] . '</span></p>';
                 $sub_array[] = '<span class="text-center badge border border-dark bg-light text-dark">' . $row['producto'] . '</span>';
+                $sub_array[] = $row['es_pm'] == "SI"
+                    ? '<span class="text-center badge bg-success fs-9 fw-bold text-light">Si</span>'
+                    : '<span class="text-center badge border border-dark bg-light text-dark">No</span>';
                 $sub_array[] = $row['est'] == 1
                     ? '<span class="text-center badge bg-success text-light"> Activo </span>'
                     : '<span class="badge" style="background-color:gray;color:white"> Inactivo </span>';
                 $sub_array[] = '<a type="button" title="Desea inactivar esta tarea?" onclick="cambiarEstadoTareaHistorial(' . $row['id_timesummary_estados'] . ')" class="ri-edit-fill text-danger"></a>';
 
                 $data[] = $sub_array;
-                $proyectos_vistos[] = $row['id_proyecto_gestionado'];
+            }
+        } else {
+            $data = array();
+            $proyectos_vistos = [];
+
+            foreach ($datos as $row) {
+                // Evita duplicados por id_proyecto_gestionado
+                if (!in_array($row['id_proyecto_gestionado'], $proyectos_vistos)) {
+                    $sub_array = array();
+                    $sub_array[] = $row['titulo'];
+                    $sub_array[] = '<p class="text-center p-0 m-0"><span class="badge border border-dark bg-light text-dark">' . $row['hs_dimensionadas'] . '</span></p>';
+                    $sub_array[] = '<span class="text-center badge border border-dark bg-light text-dark">' . $row['producto'] . '</span>';
+                    $sub_array[] = $row['est'] == 1
+                        ? '<span class="text-center badge bg-success text-light"> Activo </span>'
+                        : '<span class="badge" style="background-color:gray;color:white"> Inactivo </span>';
+                    $sub_array[] = '<a type="button" title="Desea inactivar esta tarea?" onclick="cambiarEstadoTareaHistorial(' . $row['id_timesummary_estados'] . ')" class="ri-edit-fill text-danger"></a>';
+
+                    $data[] = $sub_array;
+                    $proyectos_vistos[] = $row['id_proyecto_gestionado'];
+                }
             }
         }
 
@@ -308,7 +347,11 @@ switch ($_GET['accion']) {
         $data = array();
         foreach ($datos as $row) {
             $sub_array = array();
-            $sub_array[] = $row['cliente'];
+            $cliente = $row['cliente'];
+            if (strlen($cliente) > 30) {
+                $cliente = wordwrap($cliente, 30, "<br>", true);
+            }
+            $sub_array[] = $cliente;
             $sub_array[] = $row['referencia'];
             $sub_array[] = $row['producto'];
             $sub_array[] = $row['tarea'];
@@ -316,8 +359,13 @@ switch ($_GET['accion']) {
             $sub_array[] = $row['hora_desde'];
             $sub_array[] = $row['hora_hasta'];
             $sub_array[] = $row['horas_consumidas'];
-            $sub_array[] = $row['descripcion'];
-            $sub_array[] = '<span class="badge bg-primary text-light border border-secondary">'.$row['usu_nom'].' '.$row['usu_ape'].'</span>';
+            $descripcion = $row['descripcion'];
+            if (strlen($descripcion) > 30) {
+                $descripcion = wordwrap($descripcion, 30, "<br>", true);
+            }
+
+            $sub_array[] = $descripcion;
+            $sub_array[] = '<span class="badge bg-primary text-light border border-secondary">' . $row['usu_nom'] . ' ' . $row['usu_ape'] . '</span>';
             $data[] = $sub_array;
         }
         $results = array(
@@ -329,7 +377,7 @@ switch ($_GET['accion']) {
         echo json_encode($results);
         break;
 
-         case 'get_tareas_x_usuario_x_usu_id':
+    case 'get_tareas_x_usuario_x_usu_id':
         $datos = $tymesummary->get_tareas_x_usuario_x_usu_id($_SESSION['usu_id']);
         $data = array();
         foreach ($datos as $row) {
@@ -343,7 +391,7 @@ switch ($_GET['accion']) {
             $sub_array[] = $row['hora_hasta'];
             $sub_array[] = $row['horas_consumidas'];
             $sub_array[] = $row['descripcion'];
-            $sub_array[] = '<span class="badge bg-primary text-light border border-secondary">'.$row['usu_nom'].'</span>';
+            $sub_array[] = '<span class="badge bg-primary text-light border border-secondary">' . $row['usu_nom'] . '</span>';
             $data[] = $sub_array;
         }
         $results = array(

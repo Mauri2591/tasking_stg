@@ -102,15 +102,19 @@ class Proyectos extends Conexion
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function cambiar_a_abierto($id)
+    public function cambiar_a_abierto($id, $usu_crea)
     {
         $conn = parent::get_conexion();
-        $sql = "UPDATE proyecto_gestionado SET estados_id= 1 WHERE id=? AND est=1";
+        $sql = "UPDATE proyecto_gestionado 
+            SET usu_crea = :usu_crea, estados_id = 1 
+            WHERE id = :id AND est = 1";
         $stmt = $conn->prepare($sql);
-        $stmt->bindValue(1, htmlspecialchars($id, ENT_QUOTES), PDO::PARAM_INT);
+        $stmt->bindValue(":id", $id, PDO::PARAM_INT);
+        $stmt->bindValue(":usu_crea", $usu_crea, PDO::PARAM_INT);
         $stmt->execute();
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+        return $stmt->rowCount() > 0;
     }
+
 
     public function eliminar_proy_x_numero_servicio_proy_gestionado($id)
     {
@@ -180,7 +184,7 @@ class Proyectos extends Conexion
     DATE_FORMAT(pg.fech_inicio, '%d-%m-%Y') AS fech_inicio, 
     p.cantidad_servicios, 
     c.client_rs, 
-    u.usu_nom AS creador_proy,
+    u.usu_nom AS creador_proy,           -- ahora viene del proyecto_gestionado
     s.sector_nombre,
     tc.cat_nom,
     tp.pais_nombre,
@@ -200,12 +204,10 @@ LEFT JOIN clientes c
     ON p.client_id = c.client_id
 LEFT JOIN tm_pais tp 
     ON c.pais_id = tp.pais_id
-LEFT JOIN tm_usuario u 
-    ON p.usu_crea = u.usu_id
 LEFT JOIN proyecto_gestionado pg 
     ON pg.id_proyecto_cantidad_servicios = pcs.id
-LEFT JOIN tm_usuario ug 
-    ON u.usu_id = ug.usu_id
+LEFT JOIN tm_usuario u 
+    ON pg.usu_crea = u.usu_id           -- ✅ cambio aquí
 LEFT JOIN tm_categoria tc 
     ON pg.cat_id = tc.cat_id
 LEFT JOIN sectores s 
@@ -216,9 +218,10 @@ LEFT JOIN tm_usuario tmu
     ON ua.usu_asignado = tmu.usu_id
 LEFT JOIN proyecto_recurrencia pr 
     ON pg.id_proyecto_recurrencia = pr.id
-    LEFT JOIN prioridad 
-    ON pg.prioridad_id=prioridad.id
-    LEFT JOIN proyecto_rechequeo ON pg.id=proyecto_rechequeo.id_proyecto_gestionado
+LEFT JOIN prioridad 
+    ON pg.prioridad_id = prioridad.id
+LEFT JOIN proyecto_rechequeo 
+    ON pg.id = proyecto_rechequeo.id_proyecto_gestionado
 WHERE pcs.est = 1 
   AND (pg.estados_id IS NULL OR pg.estados_id = 14)
 GROUP BY 
@@ -316,7 +319,7 @@ ORDER BY pcs.proy_id ASC, pcs.numero_servicio ASC";
     DATE_FORMAT(pg.fech_fin, '%d-%m-%Y') AS fech_fin,
     p.cantidad_servicios, 
     c.client_rs, 
-    u.usu_nom AS creador_proy,
+    u.usu_nom AS creador_proy,              -- ✅ ahora del proyecto_gestionado
     s.sector_nombre,
     s.sector_id,
     tsc.cats_nom,
@@ -325,33 +328,21 @@ ORDER BY pcs.proy_id ASC, pcs.numero_servicio ASC";
     pg.cat_id,
     pg.estados_id,
     pg.titulo,
-
-    -- 🔹 Prioridad
     prio.id AS prioridad,
     prio.prioridad AS prioridad_nom,
-
-    -- 🔹 Recurrencia
     pr.posicion_recurrencia,
     CASE 
         WHEN pg.id_proyecto_recurrencia IS NULL THEN 0 
         ELSE pg.id_proyecto_recurrencia 
     END AS id_proyecto_recurrencia,
-
-    -- 🔹 Rechequeo (SI/NO)
     IF(proyecto_rechequeo.id IS NOT NULL, 'SI', 'NO') AS rechequeo,
-
-    -- 🔹 Usuarios asignados
     GROUP_CONCAT(uas.usu_nom SEPARATOR ',<br>') AS usu_nom_asignado,
     GROUP_CONCAT(uas.usu_id SEPARATOR ',') AS usu_id_asignado,
-
-    -- 🔹 Horas dimensionadas
     (
         SELECT SUM(d.hs_dimensionadas)
         FROM dimensionamiento d
         WHERE d.id_proyecto_gestionado = pg.id
     ) AS hs_dimensionadas,
-
-    -- 🔹 Categoría
     tmc.cat_nom AS categoria
 
 FROM proyecto_cantidad_servicios pcs
@@ -361,12 +352,10 @@ LEFT JOIN clientes c
     ON p.client_id = c.client_id
 LEFT JOIN tm_pais tp 
     ON c.pais_id = tp.pais_id
-LEFT JOIN tm_usuario u 
-    ON p.usu_crea = u.usu_id
 LEFT JOIN proyecto_gestionado pg 
     ON pg.id_proyecto_cantidad_servicios = pcs.id
-LEFT JOIN tm_usuario ug 
-    ON u.usu_id = ug.usu_id
+LEFT JOIN tm_usuario u 
+    ON pg.usu_crea = u.usu_id             -- ✅ cambio clave
 LEFT JOIN sectores s 
     ON pg.sector_id = s.sector_id
 LEFT JOIN tm_subcategoria tsc 
@@ -431,98 +420,96 @@ ORDER BY
     {
         $conn = parent::get_conexion();
         $sql = "SELECT 
-        pcs.id AS id_proyecto_cantidad_servicios,
-        pcs.proy_id, 
-        pcs.numero_servicio, 
-        DATE_FORMAT(pg.fech_inicio, '%d-%m-%Y') AS fech_inicio,
-        DATE_FORMAT(pg.fech_fin, '%d-%m-%Y') AS fech_fin,
-        p.cantidad_servicios, 
-        c.client_rs, 
-        u.usu_nom AS creador_proy,
-        s.sector_nombre,
-        s.sector_id,
-        tsc.cats_nom,
-        tp.pais_nombre,
-        pg.id AS id_proyecto_gestionado,
-        pg.cat_id,
-        pg.estados_id,
-        pg.titulo,
-        prio.id AS prioridad,
-        prio.prioridad AS prioridad_nom,
-        pr.posicion_recurrencia,
-        IF(proyecto_rechequeo.id, 'SI', 'NO') AS rechequeo,
-        CASE 
-            WHEN pg.id_proyecto_recurrencia IS NULL THEN 0 
-            ELSE pg.id_proyecto_recurrencia 
-        END AS id_proyecto_recurrencia,
-        GROUP_CONCAT(uas.usu_nom SEPARATOR ',<br>') AS usu_nom_asignado,
-        GROUP_CONCAT(uas.usu_id SEPARATOR ',') AS usu_id_asignado, -- ✅ agregado para validar permisos
-        (
-            SELECT SUM(d.hs_dimensionadas)
-            FROM dimensionamiento d
-            WHERE d.id_proyecto_gestionado = pg.id
-        ) AS hs_dimensionadas,
-        tmc.cat_nom AS categoria
-    FROM proyecto_cantidad_servicios pcs
-    JOIN proyectos p 
-        ON pcs.proy_id = p.proy_id
-    LEFT JOIN clientes c 
-        ON p.client_id = c.client_id
-    LEFT JOIN tm_pais tp 
-        ON c.pais_id = tp.pais_id
-    LEFT JOIN tm_usuario u 
-        ON p.usu_crea = u.usu_id
-    LEFT JOIN proyecto_gestionado pg 
-        ON pg.id_proyecto_cantidad_servicios = pcs.id
-    LEFT JOIN tm_usuario ug 
-        ON u.usu_id = ug.usu_id
-    LEFT JOIN sectores s 
-        ON pg.sector_id = s.sector_id
-    LEFT JOIN tm_subcategoria tsc 
-        ON pg.cats_id = tsc.cats_id
-    LEFT JOIN tm_categoria tmc 
-        ON pg.cat_id = tmc.cat_id
-    LEFT JOIN prioridad prio 
-        ON pg.prioridad_id = prio.id
-    LEFT JOIN usuario_proyecto AS ua 
-        ON pg.id = ua.id_proyecto_gestionado
-    LEFT JOIN tm_usuario uas 
-        ON ua.usu_asignado = uas.usu_id
-    LEFT JOIN proyecto_recurrencia pr 
-        ON pg.id_proyecto_recurrencia = pr.id
-    LEFT JOIN proyecto_rechequeo 
-        ON pg.id = proyecto_rechequeo.id_proyecto_gestionado
-    WHERE pcs.est = 1 
-      AND pg.estados_id = :estados_id
-      AND (
-            s.sector_id = :sector_id
-            OR pg.cat_id = :cat_id
-        )
-      AND pg.cat_id = :cat_id
-    GROUP BY 
-        pcs.id,
-        pcs.proy_id, 
-        pcs.numero_servicio, 
-        pg.fech_inicio,
-        pg.fech_fin,
-        p.cantidad_servicios, 
-        c.client_rs, 
-        u.usu_nom,
-        s.sector_nombre,
-        s.sector_id,
-        tsc.cats_nom,
-        tp.pais_nombre,
-        pg.id,
-        pg.cat_id,
-        pg.estados_id,
-        pg.titulo,
-        prio.id,
-        prio.prioridad,
-        tmc.cat_nom,
-        pr.posicion_recurrencia,
-        pg.id_proyecto_recurrencia,
-        rechequeo
-    ORDER BY id_proyecto_cantidad_servicios ASC";
+    pcs.id AS id_proyecto_cantidad_servicios,
+    pcs.proy_id, 
+    pcs.numero_servicio, 
+    DATE_FORMAT(pg.fech_inicio, '%d-%m-%Y') AS fech_inicio,
+    DATE_FORMAT(pg.fech_fin, '%d-%m-%Y') AS fech_fin,
+    p.cantidad_servicios, 
+    c.client_rs, 
+    u.usu_nom AS creador_proy,              -- ✅ ahora viene del proyecto_gestionado
+    s.sector_nombre,
+    s.sector_id,
+    tsc.cats_nom,
+    tp.pais_nombre,
+    pg.id AS id_proyecto_gestionado,
+    pg.cat_id,
+    pg.estados_id,
+    pg.titulo,
+    prio.id AS prioridad,
+    prio.prioridad AS prioridad_nom,
+    pr.posicion_recurrencia,
+    IF(proyecto_rechequeo.id, 'SI', 'NO') AS rechequeo,
+    CASE 
+        WHEN pg.id_proyecto_recurrencia IS NULL THEN 0 
+        ELSE pg.id_proyecto_recurrencia 
+    END AS id_proyecto_recurrencia,
+    GROUP_CONCAT(uas.usu_nom SEPARATOR ',<br>') AS usu_nom_asignado,
+    GROUP_CONCAT(uas.usu_id SEPARATOR ',') AS usu_id_asignado,
+    (
+        SELECT SUM(d.hs_dimensionadas)
+        FROM dimensionamiento d
+        WHERE d.id_proyecto_gestionado = pg.id
+    ) AS hs_dimensionadas,
+    tmc.cat_nom AS categoria
+FROM proyecto_cantidad_servicios pcs
+JOIN proyectos p 
+    ON pcs.proy_id = p.proy_id
+LEFT JOIN clientes c 
+    ON p.client_id = c.client_id
+LEFT JOIN tm_pais tp 
+    ON c.pais_id = tp.pais_id
+LEFT JOIN proyecto_gestionado pg 
+    ON pg.id_proyecto_cantidad_servicios = pcs.id
+LEFT JOIN tm_usuario u 
+    ON pg.usu_crea = u.usu_id             -- ✅ cambio aquí
+LEFT JOIN sectores s 
+    ON pg.sector_id = s.sector_id
+LEFT JOIN tm_subcategoria tsc 
+    ON pg.cats_id = tsc.cats_id
+LEFT JOIN tm_categoria tmc 
+    ON pg.cat_id = tmc.cat_id
+LEFT JOIN prioridad prio 
+    ON pg.prioridad_id = prio.id
+LEFT JOIN usuario_proyecto AS ua 
+    ON pg.id = ua.id_proyecto_gestionado
+LEFT JOIN tm_usuario uas 
+    ON ua.usu_asignado = uas.usu_id
+LEFT JOIN proyecto_recurrencia pr 
+    ON pg.id_proyecto_recurrencia = pr.id
+LEFT JOIN proyecto_rechequeo 
+    ON pg.id = proyecto_rechequeo.id_proyecto_gestionado
+WHERE pcs.est = 1 
+  AND pg.estados_id = :estados_id
+  AND (
+        s.sector_id = :sector_id
+        OR pg.cat_id = :cat_id
+      )
+  AND pg.cat_id = :cat_id
+GROUP BY 
+    pcs.id,
+    pcs.proy_id, 
+    pcs.numero_servicio, 
+    pg.fech_inicio,
+    pg.fech_fin,
+    p.cantidad_servicios, 
+    c.client_rs, 
+    u.usu_nom,
+    s.sector_nombre,
+    s.sector_id,
+    tsc.cats_nom,
+    tp.pais_nombre,
+    pg.id,
+    pg.cat_id,
+    pg.estados_id,
+    pg.titulo,
+    prio.id,
+    prio.prioridad,
+    tmc.cat_nom,
+    pr.posicion_recurrencia,
+    pg.id_proyecto_recurrencia,
+    rechequeo
+ORDER BY id_proyecto_cantidad_servicios ASC";
 
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(':sector_id', $sector_id, PDO::PARAM_INT);
@@ -547,7 +534,7 @@ ORDER BY
     DATE_FORMAT(pg.fech_fin, '%d-%m-%Y') AS fech_fin,
     p.cantidad_servicios, 
     c.client_rs, 
-    u.usu_nom AS creador_proy,
+    u.usu_nom AS creador_proy,            -- ✅ ahora desde proyecto_gestionado
     s.sector_nombre,
     s.sector_id,
     tsc.cats_nom,
@@ -558,12 +545,12 @@ ORDER BY
     pg.titulo,
     prio.id AS prioridad,
     prio.prioridad AS prioridad_nom,
-    pr.posicion_recurrencia,                         -- ✅ NUEVO
-    IF(proyecto_rechequeo.id, 'SI', 'NO') AS rechequeo, -- ✅ NUEVO
+    pr.posicion_recurrencia,
+    IF(proyecto_rechequeo.id, 'SI', 'NO') AS rechequeo,
     CASE 
         WHEN pg.id_proyecto_recurrencia IS NULL THEN 0 
         ELSE pg.id_proyecto_recurrencia 
-    END AS id_proyecto_recurrencia,                  -- ✅ NUEVO
+    END AS id_proyecto_recurrencia,
     GROUP_CONCAT(uas.usu_nom SEPARATOR ',<br>') AS usu_nom_asignado,
     (
         SELECT SUM(d.hs_dimensionadas)
@@ -572,20 +559,32 @@ ORDER BY
     ) AS hs_dimensionadas,
     tmc.cat_nom AS categoria
 FROM proyecto_cantidad_servicios pcs
-JOIN proyectos p ON pcs.proy_id = p.proy_id
-LEFT JOIN clientes c ON p.client_id = c.client_id
-LEFT JOIN tm_pais tp ON c.pais_id = tp.pais_id
-LEFT JOIN tm_usuario u ON p.usu_crea = u.usu_id
-LEFT JOIN proyecto_gestionado pg ON pg.id_proyecto_cantidad_servicios = pcs.id
-LEFT JOIN tm_usuario ug ON u.usu_id = ug.usu_id
-LEFT JOIN sectores s ON pg.sector_id = s.sector_id
-LEFT JOIN tm_subcategoria tsc ON pg.cats_id = tsc.cats_id
-LEFT JOIN tm_categoria tmc ON pg.cat_id = tmc.cat_id
-LEFT JOIN prioridad prio ON pg.prioridad_id = prio.id
-LEFT JOIN usuario_proyecto AS ua ON pg.id = ua.id_proyecto_gestionado
-LEFT JOIN tm_usuario uas ON ua.usu_asignado = uas.usu_id
-LEFT JOIN proyecto_recurrencia pr ON pg.id_proyecto_recurrencia = pr.id
-LEFT JOIN proyecto_rechequeo ON pg.id = proyecto_rechequeo.id_proyecto_gestionado
+JOIN proyectos p 
+    ON pcs.proy_id = p.proy_id
+LEFT JOIN clientes c 
+    ON p.client_id = c.client_id
+LEFT JOIN tm_pais tp 
+    ON c.pais_id = tp.pais_id
+LEFT JOIN proyecto_gestionado pg 
+    ON pg.id_proyecto_cantidad_servicios = pcs.id
+LEFT JOIN tm_usuario u 
+    ON pg.usu_crea = u.usu_id              -- ✅ cambio clave
+LEFT JOIN sectores s 
+    ON pg.sector_id = s.sector_id
+LEFT JOIN tm_subcategoria tsc 
+    ON pg.cats_id = tsc.cats_id
+LEFT JOIN tm_categoria tmc 
+    ON pg.cat_id = tmc.cat_id
+LEFT JOIN prioridad prio 
+    ON pg.prioridad_id = prio.id
+LEFT JOIN usuario_proyecto ua 
+    ON pg.id = ua.id_proyecto_gestionado
+LEFT JOIN tm_usuario uas 
+    ON ua.usu_asignado = uas.usu_id
+LEFT JOIN proyecto_recurrencia pr 
+    ON pg.id_proyecto_recurrencia = pr.id
+LEFT JOIN proyecto_rechequeo 
+    ON pg.id = proyecto_rechequeo.id_proyecto_gestionado
 WHERE s.sector_id = ?
   AND pcs.est = 1 
   AND pg.cat_id = ?
@@ -635,7 +634,7 @@ ORDER BY id_proyecto_cantidad_servicios ASC";
     DATE_FORMAT(pg.fech_fin, '%d-%m-%Y') AS fech_fin,
     p.cantidad_servicios, 
     c.client_rs, 
-    u.usu_nom AS creador_proy,
+    u.usu_nom AS creador_proy,              -- ✅ ahora el creador del proyecto_gestionado
     s.sector_nombre,
     s.sector_id,
     tsc.cats_nom,
@@ -646,12 +645,12 @@ ORDER BY id_proyecto_cantidad_servicios ASC";
     pg.titulo,
     prio.id AS prioridad,
     prio.prioridad AS prioridad_nom,
-    pr.posicion_recurrencia,                         -- ✅ NUEVO
-    IF(proyecto_rechequeo.id, 'SI', 'NO') AS rechequeo, -- ✅ NUEVO
+    pr.posicion_recurrencia,
+    IF(proyecto_rechequeo.id, 'SI', 'NO') AS rechequeo,
     CASE 
         WHEN pg.id_proyecto_recurrencia IS NULL THEN 0 
         ELSE pg.id_proyecto_recurrencia 
-    END AS id_proyecto_recurrencia,                  -- ✅ NUEVO
+    END AS id_proyecto_recurrencia,
     GROUP_CONCAT(uas.usu_nom SEPARATOR ',<br>') AS usu_nom_asignado,
     (
         SELECT SUM(d.hs_dimensionadas)
@@ -666,12 +665,10 @@ LEFT JOIN clientes c
     ON p.client_id = c.client_id
 LEFT JOIN tm_pais tp 
     ON c.pais_id = tp.pais_id
-LEFT JOIN tm_usuario u 
-    ON p.usu_crea = u.usu_id
 LEFT JOIN proyecto_gestionado pg 
     ON pg.id_proyecto_cantidad_servicios = pcs.id
-LEFT JOIN tm_usuario ug 
-    ON u.usu_id = ug.usu_id
+LEFT JOIN tm_usuario u 
+    ON pg.usu_crea = u.usu_id              -- ✅ cambio clave
 LEFT JOIN sectores s 
     ON pg.sector_id = s.sector_id
 LEFT JOIN tm_subcategoria tsc 
@@ -680,7 +677,7 @@ LEFT JOIN tm_categoria tmc
     ON pg.cat_id = tmc.cat_id
 LEFT JOIN prioridad prio 
     ON pg.prioridad_id = prio.id
-LEFT JOIN usuario_proyecto AS ua 
+LEFT JOIN usuario_proyecto ua 
     ON pg.id = ua.id_proyecto_gestionado
 LEFT JOIN tm_usuario uas 
     ON ua.usu_asignado = uas.usu_id
@@ -861,7 +858,7 @@ WHERE proyecto_gestionado.id = :id_proyecto_gestionado";
     DATE_FORMAT(pg.fech_fin, '%d-%m-%Y') AS fech_fin,
     p.cantidad_servicios, 
     c.client_rs, 
-    u.usu_nom AS creador_proy,
+    u.usu_nom AS creador_proy,            -- ✅ ahora desde proyecto_gestionado
     s.sector_nombre,
     s.sector_id,
     tsc.cats_nom,
@@ -880,21 +877,32 @@ WHERE proyecto_gestionado.id = :id_proyecto_gestionado";
     ) AS hs_dimensionadas,
     tmc.cat_nom
 FROM proyecto_cantidad_servicios pcs
-JOIN proyectos p ON pcs.proy_id = p.proy_id
-LEFT JOIN clientes c ON p.client_id = c.client_id
-LEFT JOIN tm_pais tp ON c.pais_id = tp.pais_id
-LEFT JOIN tm_usuario u ON p.usu_crea = u.usu_id
-LEFT JOIN proyecto_gestionado pg ON pg.id_proyecto_cantidad_servicios = pcs.id
-LEFT JOIN tm_usuario ug ON u.usu_id = ug.usu_id
-LEFT JOIN sectores s ON pg.sector_id = s.sector_id
-LEFT JOIN tm_subcategoria tsc ON pg.cats_id = tsc.cats_id
-LEFT JOIN tm_categoria tmc ON pg.cat_id = tmc.cat_id
-LEFT JOIN prioridad prio ON pg.prioridad_id = prio.id
-LEFT JOIN usuario_proyecto AS ua ON pg.id = ua.id_proyecto_gestionado
-LEFT JOIN tm_usuario uas ON ua.usu_asignado = uas.usu_id
-WHERE s.sector_id = ?
-  AND pcs.est = 1 
-  AND pg.estados_id = ?
+JOIN proyectos p 
+    ON pcs.proy_id = p.proy_id
+LEFT JOIN clientes c 
+    ON p.client_id = c.client_id
+LEFT JOIN tm_pais tp 
+    ON c.pais_id = tp.pais_id
+LEFT JOIN proyecto_gestionado pg 
+    ON pg.id_proyecto_cantidad_servicios = pcs.id
+LEFT JOIN tm_usuario u 
+    ON pg.usu_crea = u.usu_id              -- ✅ cambio clave
+LEFT JOIN sectores s 
+    ON pg.sector_id = s.sector_id
+LEFT JOIN tm_subcategoria tsc 
+    ON pg.cats_id = tsc.cats_id
+LEFT JOIN tm_categoria tmc 
+    ON pg.cat_id = tmc.cat_id
+LEFT JOIN prioridad prio 
+    ON pg.prioridad_id = prio.id
+LEFT JOIN usuario_proyecto ua 
+    ON pg.id = ua.id_proyecto_gestionado
+LEFT JOIN tm_usuario uas 
+    ON ua.usu_asignado = uas.usu_id
+WHERE 
+    s.sector_id = ?
+    AND pcs.est = 1 
+    AND pg.estados_id = ?
 GROUP BY 
     pcs.id,
     pcs.proy_id, 
@@ -935,7 +943,7 @@ ORDER BY id_proyecto_cantidad_servicios ASC";
     DATE_FORMAT(pg.fech_fin, '%d-%m-%Y') AS fech_fin,
     p.cantidad_servicios, 
     c.client_rs, 
-    u.usu_nom AS creador_proy,
+    u.usu_nom AS creador_proy,                 -- ✅ ahora desde proyecto_gestionado
     s.sector_nombre,
     s.sector_id,
     tsc.cats_nom,
@@ -944,14 +952,13 @@ ORDER BY id_proyecto_cantidad_servicios ASC";
     pg.cat_id,
     pg.estados_id,
     proyecto_recurrencia.posicion_recurrencia,
- 	pg.titulo,
+    pg.titulo,
     prio.id AS prioridad,
     prio.prioridad AS prioridad_nom,
-    prioridad.prioridad,
-CASE 
-  WHEN proyecto_rechequeo.id_proyecto_gestionado IS NOT NULL THEN 'SI'
-  ELSE 'NO'
-END AS rechequeo,
+    CASE 
+        WHEN proyecto_rechequeo.id_proyecto_gestionado IS NOT NULL THEN 'SI'
+        ELSE 'NO'
+    END AS rechequeo,
     GROUP_CONCAT(uas.usu_nom SEPARATOR ',<br>') AS usu_nom_asignado,
     (
         SELECT SUM(d.hs_dimensionadas)
@@ -960,23 +967,35 @@ END AS rechequeo,
     ) AS hs_dimensionadas,
     tmc.cat_nom
 FROM proyecto_cantidad_servicios pcs
-JOIN proyectos p ON pcs.proy_id = p.proy_id
-LEFT JOIN clientes c ON p.client_id = c.client_id
-LEFT JOIN tm_pais tp ON c.pais_id = tp.pais_id
-LEFT JOIN tm_usuario u ON p.usu_crea = u.usu_id
-LEFT JOIN proyecto_gestionado pg ON pg.id_proyecto_cantidad_servicios = pcs.id
-LEFT JOIN tm_usuario ug ON u.usu_id = ug.usu_id
-LEFT JOIN sectores s ON pg.sector_id = s.sector_id
-LEFT JOIN tm_subcategoria tsc ON pg.cats_id = tsc.cats_id
-LEFT JOIN tm_categoria tmc ON pg.cat_id = tmc.cat_id
-LEFT JOIN prioridad prio ON pg.prioridad_id = prio.id
-LEFT JOIN usuario_proyecto AS ua ON pg.id = ua.id_proyecto_gestionado
-LEFT JOIN tm_usuario uas ON ua.usu_asignado = uas.usu_id
-LEFT JOIN prioridad ON pg.prioridad_id=prioridad.id
-LEFT JOIN proyecto_rechequeo ON proyecto_rechequeo.id_proyecto_gestionado = pg.id
-LEFT JOIN proyecto_recurrencia ON pg.id=proyecto_recurrencia.id_proyecto_gestionado
-WHERE pcs.est = 1 
-  AND (pg.estados_id = 1 OR pg.estados_id = 2)
+JOIN proyectos p 
+    ON pcs.proy_id = p.proy_id
+LEFT JOIN clientes c 
+    ON p.client_id = c.client_id
+LEFT JOIN tm_pais tp 
+    ON c.pais_id = tp.pais_id
+LEFT JOIN proyecto_gestionado pg 
+    ON pg.id_proyecto_cantidad_servicios = pcs.id
+LEFT JOIN tm_usuario u 
+    ON pg.usu_crea = u.usu_id                -- ✅ creador del proyecto gestionado
+LEFT JOIN sectores s 
+    ON pg.sector_id = s.sector_id
+LEFT JOIN tm_subcategoria tsc 
+    ON pg.cats_id = tsc.cats_id
+LEFT JOIN tm_categoria tmc 
+    ON pg.cat_id = tmc.cat_id
+LEFT JOIN prioridad prio 
+    ON pg.prioridad_id = prio.id
+LEFT JOIN usuario_proyecto ua 
+    ON pg.id = ua.id_proyecto_gestionado
+LEFT JOIN tm_usuario uas 
+    ON ua.usu_asignado = uas.usu_id
+LEFT JOIN proyecto_rechequeo 
+    ON proyecto_rechequeo.id_proyecto_gestionado = pg.id
+LEFT JOIN proyecto_recurrencia 
+    ON pg.id = proyecto_recurrencia.id_proyecto_gestionado
+WHERE 
+    pcs.est = 1 
+    AND (pg.estados_id = 1 OR pg.estados_id = 2)
 GROUP BY 
     pcs.id,
     pcs.proy_id, 
@@ -1013,7 +1032,7 @@ ORDER BY id_proyecto_cantidad_servicios ASC";
     DATE_FORMAT(pg.fech_fin, '%d-%m-%Y') AS fech_fin,
     p.cantidad_servicios, 
     c.client_rs, 
-    u.usu_nom AS creador_proy,
+    u.usu_nom AS creador_proy,               -- ✅ ahora desde proyecto_gestionado
     s.sector_nombre,
     s.sector_id,
     tsc.cats_nom,
@@ -1030,22 +1049,33 @@ ORDER BY id_proyecto_cantidad_servicios ASC";
         FROM dimensionamiento d
         WHERE d.id_proyecto_gestionado = pg.id
     ) AS hs_dimensionadas,
-    tmc.cat_nom
+    tmc.cat_nom AS categoria
 FROM proyecto_cantidad_servicios pcs
-JOIN proyectos p ON pcs.proy_id = p.proy_id
-LEFT JOIN clientes c ON p.client_id = c.client_id
-LEFT JOIN tm_pais tp ON c.pais_id = tp.pais_id
-LEFT JOIN tm_usuario u ON p.usu_crea = u.usu_id
-LEFT JOIN proyecto_gestionado pg ON pg.id_proyecto_cantidad_servicios = pcs.id
-LEFT JOIN tm_usuario ug ON u.usu_id = ug.usu_id
-LEFT JOIN sectores s ON pg.sector_id = s.sector_id
-LEFT JOIN tm_subcategoria tsc ON pg.cats_id = tsc.cats_id
-LEFT JOIN tm_categoria tmc ON pg.cat_id = tmc.cat_id
-LEFT JOIN prioridad prio ON pg.prioridad_id = prio.id
-LEFT JOIN usuario_proyecto AS ua ON pg.id = ua.id_proyecto_gestionado
-LEFT JOIN tm_usuario uas ON ua.usu_asignado = uas.usu_id
-WHERE pcs.est = 1 
-  AND pg.estados_id = ?
+JOIN proyectos p 
+    ON pcs.proy_id = p.proy_id
+LEFT JOIN clientes c 
+    ON p.client_id = c.client_id
+LEFT JOIN tm_pais tp 
+    ON c.pais_id = tp.pais_id
+LEFT JOIN proyecto_gestionado pg 
+    ON pg.id_proyecto_cantidad_servicios = pcs.id
+LEFT JOIN tm_usuario u 
+    ON pg.usu_crea = u.usu_id                -- ✅ cambio clave
+LEFT JOIN sectores s 
+    ON pg.sector_id = s.sector_id
+LEFT JOIN tm_subcategoria tsc 
+    ON pg.cats_id = tsc.cats_id
+LEFT JOIN tm_categoria tmc 
+    ON pg.cat_id = tmc.cat_id
+LEFT JOIN prioridad prio 
+    ON pg.prioridad_id = prio.id
+LEFT JOIN usuario_proyecto ua 
+    ON pg.id = ua.id_proyecto_gestionado
+LEFT JOIN tm_usuario uas 
+    ON ua.usu_asignado = uas.usu_id
+WHERE 
+    pcs.est = 1 
+    AND pg.estados_id = ?
 GROUP BY 
     pcs.id,
     pcs.proy_id, 
@@ -1066,7 +1096,8 @@ GROUP BY
     prio.id,
     prio.prioridad,
     tmc.cat_nom
-ORDER BY id_proyecto_cantidad_servicios ASC";
+ORDER BY 
+    id_proyecto_cantidad_servicios ASC";
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(1, htmlspecialchars($estados_id, ENT_QUOTES), PDO::PARAM_INT);
         $stmt->execute();
@@ -1085,7 +1116,7 @@ ORDER BY id_proyecto_cantidad_servicios ASC";
     DATE_FORMAT(pg.fech_fin, '%d-%m-%Y') AS fech_fin,
     p.cantidad_servicios, 
     c.client_rs, 
-    u.usu_nom AS creador_proy,
+    u.usu_nom AS creador_proy,               -- ✅ ahora desde proyecto_gestionado
     s.sector_nombre,
     s.sector_id,
     tsc.cats_nom,
@@ -1102,22 +1133,33 @@ ORDER BY id_proyecto_cantidad_servicios ASC";
         FROM dimensionamiento d
         WHERE d.id_proyecto_gestionado = pg.id
     ) AS hs_dimensionadas,
-    tmc.cat_nom
+    tmc.cat_nom AS categoria
 FROM proyecto_cantidad_servicios pcs
-JOIN proyectos p ON pcs.proy_id = p.proy_id
-LEFT JOIN clientes c ON p.client_id = c.client_id
-LEFT JOIN tm_pais tp ON c.pais_id = tp.pais_id
-LEFT JOIN tm_usuario u ON p.usu_crea = u.usu_id
-LEFT JOIN proyecto_gestionado pg ON pg.id_proyecto_cantidad_servicios = pcs.id
-LEFT JOIN tm_usuario ug ON u.usu_id = ug.usu_id
-LEFT JOIN sectores s ON pg.sector_id = s.sector_id
-LEFT JOIN tm_subcategoria tsc ON pg.cats_id = tsc.cats_id
-LEFT JOIN tm_categoria tmc ON pg.cat_id = tmc.cat_id
-LEFT JOIN prioridad prio ON pg.prioridad_id = prio.id
-LEFT JOIN usuario_proyecto AS ua ON pg.id = ua.id_proyecto_gestionado
-LEFT JOIN tm_usuario uas ON ua.usu_asignado = uas.usu_id
-WHERE pcs.est = 1 
-  AND pg.estados_id = ?
+JOIN proyectos p 
+    ON pcs.proy_id = p.proy_id
+LEFT JOIN clientes c 
+    ON p.client_id = c.client_id
+LEFT JOIN tm_pais tp 
+    ON c.pais_id = tp.pais_id
+LEFT JOIN proyecto_gestionado pg 
+    ON pg.id_proyecto_cantidad_servicios = pcs.id
+LEFT JOIN tm_usuario u 
+    ON pg.usu_crea = u.usu_id                -- ✅ cambio clave
+LEFT JOIN sectores s 
+    ON pg.sector_id = s.sector_id
+LEFT JOIN tm_subcategoria tsc 
+    ON pg.cats_id = tsc.cats_id
+LEFT JOIN tm_categoria tmc 
+    ON pg.cat_id = tmc.cat_id
+LEFT JOIN prioridad prio 
+    ON pg.prioridad_id = prio.id
+LEFT JOIN usuario_proyecto ua 
+    ON pg.id = ua.id_proyecto_gestionado
+LEFT JOIN tm_usuario uas 
+    ON ua.usu_asignado = uas.usu_id
+WHERE 
+    pcs.est = 1 
+    AND pg.estados_id = ?
 GROUP BY 
     pcs.id,
     pcs.proy_id, 

@@ -347,7 +347,7 @@ switch ($_GET['proy']) {
         break;
 
     case 'cambiar_a_abierto':
-        $proyecto->cambiar_a_abierto($_POST['id']);
+        $proyecto->cambiar_a_abierto($_POST['id'],$_SESSION['usu_id']);
         break;
 
     case 'inactivar_host_x_id':

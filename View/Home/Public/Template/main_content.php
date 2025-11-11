@@ -170,11 +170,11 @@
                             <li class="nav-item">
                                 <a class="nav-link collapsed" href="#sidebarServicios" data-bs-toggle="collapse"
                                     role="button" aria-expanded="false" aria-controls="sidebarServicios"
-                                    data-key="t-email">Servicios</a>
+                                    data-key="t-email">Productos</a>
                                 <div class="menu-dropdown collapse" id="sidebarServicios">
                                     <ul class="nav nav-sm flex-column">
                                         <li class="nav-item">
-                                            <a href="<?php echo URL . "View/Home/Gestion/Sectores/Ethical_hacking/IR/"; ?>"
+                                            <a href="<?php echo URL . "View/Home/Gestion/Sectores/CalidadYProcesos/IR/"; ?>"
                                                 class="nav-link" data-key="t-mailbox">Incident Response</a>
                                         </li>
                                     </ul>
@@ -208,7 +208,7 @@
                         ?>
                                 <li class="nav-item">
                                     <a href="#sidebarEmail" class="nav-link collapsed" data-bs-toggle="collapse" role="button"
-                                        aria-expanded="false" aria-controls="sidebarEmail" data-key="t-email">Servicios</a>
+                                        aria-expanded="false" aria-controls="sidebarEmail" data-key="t-email">Productos</a>
                                     <div class="menu-dropdown collapse" id="sidebarEmail">
                                         <ul class="nav nav-sm flex-column">
                                             <li class="nav-item">
@@ -277,10 +277,10 @@
                                                 <a href="<?php echo URL . "View/Home/Apps/Timesummary/"; ?>"
                                                     class="nav-link" data-key="t-mailbox">Calendario</a>
                                             </li>
-                                             <li class="nav-item">
-                                                    <a href="<?php echo URL . "View/Home/Apps/Timesummary/Consultas.php"; ?>"
-                                                        class="nav-link" data-key="t-mailbox">Consultas</a>
-                                                </li>
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Apps/Timesummary/Consultas.php"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Consultas</a>
+                                            </li>
                                         </ul>
                                     </div>
                                 </li>
@@ -290,7 +290,7 @@
                             ?>
                                 <li class="nav-item">
                                     <a href="#sidebarEmail" class="nav-link collapsed" data-bs-toggle="collapse" role="button"
-                                        aria-expanded="false" aria-controls="sidebarEmail" data-key="t-email">Servicios</a>
+                                        aria-expanded="false" aria-controls="sidebarEmail" data-key="t-email">Productos</a>
                                     <div class="menu-dropdown collapse" id="sidebarEmail">
                                         <ul class="nav nav-sm flex-column">
                                             <li class="nav-item">
@@ -303,7 +303,7 @@
                                             </li>
                                             <li class="nav-item">
                                                 <a href="<?php echo URL . "View/Home/Gestion/Sectores/SOC/Consultoria_SSPP/"; ?>"
-                                                    class="nav-link" data-key="t-mailbox">CONSULTORIA - SSPP</a>
+                                                    class="nav-link" data-key="t-mailbox">Consultoria - SSPP</a>
                                             </li>
                                             <li class="nav-item">
                                                 <a href="<?php echo URL . "View/Home/Gestion/Sectores/SOC/EDR/"; ?>"
@@ -311,15 +311,15 @@
                                             </li>
                                             <li class="nav-item">
                                                 <a href="<?php echo URL . "View/Home/Gestion/Sectores/SOC/DESARROLLO_INTERNO/"; ?>"
-                                                    class="nav-link" data-key="t-mailbox">DESARROLLO INTERNO</a>
+                                                    class="nav-link" data-key="t-mailbox">Desarrollo Interno</a>
                                             </li>
                                             <li class="nav-item">
                                                 <a href="<?php echo URL . "View/Home/Gestion/Sectores/SOC/PROYECTO_NO_ESTANDAR/"; ?>"
-                                                    class="nav-link" data-key="t-mailbox">PROYECTO NO ESTANDAR</a>
+                                                    class="nav-link" data-key="t-mailbox">Proyecto no Estandar</a>
                                             </li>
                                             <li class="nav-item">
                                                 <a href="<?php echo URL . "View/Home/Gestion/Sectores/SOC/IR/"; ?>"
-                                                    class="nav-link" data-key="t-mailbox">INCIDENT RESPONSE</a>
+                                                    class="nav-link" data-key="t-mailbox">Incident Response</a>
                                             </li>
                                             <li class="nav-item">
                                                 <a href="<?php echo URL . "View/Home/Gestion/Clientes/Proyectos/"; ?>"
@@ -342,10 +342,10 @@
                                                 <a href="<?php echo URL . "View/Home/Apps/Timesummary/"; ?>"
                                                     class="nav-link" data-key="t-mailbox">Calendario</a>
                                             </li>
-                                             <li class="nav-item">
-                                                    <a href="<?php echo URL . "View/Home/Apps/Timesummary/Consultas.php"; ?>"
-                                                        class="nav-link" data-key="t-mailbox">Consultas</a>
-                                                </li>
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Apps/Timesummary/Consultas.php"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Consultas</a>
+                                            </li>
                                         </ul>
                                     </div>
                                 </li>
@@ -355,7 +355,7 @@
                             ?>
                                 <li class="nav-item">
                                     <a href="#sidebarEmail" class="nav-link collapsed" data-bs-toggle="collapse" role="button"
-                                        aria-expanded="false" aria-controls="sidebarEmail" data-key="t-email">Servicios</a>
+                                        aria-expanded="false" aria-controls="sidebarEmail" data-key="t-email">Productos</a>
                                     <div class="menu-dropdown collapse" id="sidebarEmail">
                                         <ul class="nav nav-sm flex-column">
                                             <li class="nav-item">
@@ -453,10 +453,10 @@
                                                 <a href="<?php echo URL . "View/Home/Apps/Timesummary/"; ?>"
                                                     class="nav-link" data-key="t-mailbox">Calendario</a>
                                             </li>
-                                             <li class="nav-item">
-                                                    <a href="<?php echo URL . "View/Home/Apps/Timesummary/Consultas.php"; ?>"
-                                                        class="nav-link" data-key="t-mailbox">Consultas</a>
-                                                </li>
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Apps/Timesummary/Consultas.php"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Consultas</a>
+                                            </li>
                                         </ul>
                                     </div>
                                 </li>
@@ -490,11 +490,11 @@
                                     <li class="nav-item">
                                         <a class="nav-link collapsed" href="#sidebarServicios" data-bs-toggle="collapse"
                                             role="button" aria-expanded="false" aria-controls="sidebarServicios"
-                                            data-key="t-email">Servicios</a>
+                                            data-key="t-email">Productos</a>
                                         <div class="menu-dropdown collapse" id="sidebarServicios">
                                             <ul class="nav nav-sm flex-column">
                                                 <li class="nav-item">
-                                                    <a href="<?php echo URL . "View/Home/Gestion/Sectores/Ethical_hacking/IR/"; ?>"
+                                                    <a href="<?php echo URL . "View/Home/Gestion/Sectores/CalidadYProcesos/IR/"; ?>"
                                                         class="nav-link" data-key="t-mailbox">INCIDENT RESPONSE</a>
                                                 </li>
                                             </ul>

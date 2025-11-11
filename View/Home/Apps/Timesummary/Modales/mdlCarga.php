@@ -5,8 +5,10 @@
       <div class="modal-header">
         <span id="fechaSeleccionada" class="badge fs-11 text-light border bg-primary"></span>
       </div>
-      <div class="modal-body">
+      <span class="badge bg-success text-light" style="display: none;width: 10%; margin-left: 1.3rem;" id="validar_si_tiene_id_pm_calidad">PM</span>
 
+      <div class="modal-body">
+        <input type="hidden" hidden id="id_pm_calidad">
         <section class="card-body border border-ligth p-2 mt-2">
           <div style="display: flex; justify-content: space-evenly;">
             <div class="mb-2 row">

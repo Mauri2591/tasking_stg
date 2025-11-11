@@ -106,7 +106,7 @@
                                     </select>
                                 </div>
                                 <div class="mb-3 col-sm-3">
-                                    <span class="badge bg-light fs-10 mb-1 text-dark">Categoria</span>
+                                    <span class="badge bg-light fs-10 mb-1 text-dark">Tipo</span>
                                     <select id="combo_subcategoria_proy_nuevo" class="form-select form-select-sm"
                                         aria-label=".form-select-sm example">
 

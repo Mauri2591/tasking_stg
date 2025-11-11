@@ -18,22 +18,27 @@ class Tymesummary extends Conexion
             t.fecha as fecha,
             tareas.id as id_tarea,
             tareas.nombre as nombre_tarea,
+            t.id_pm_calidad,
             tm_categoria.cat_nom as producto
             FROM timesummary_carga t
             INNER JOIN proyecto_gestionado p 
                 ON t.id_proyecto_gestionado = p.id
                 LEFT JOIN tm_categoria ON t.id_producto=tm_categoria.cat_id
                 LEFT JOIN tareas ON t.id_tarea=tareas.id
+           
             WHERE t.usu_id = :usu_id";
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(":usu_id", $usu_id, PDO::PARAM_INT);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
     public static function validarHora($hora)
     {
         return preg_match('/^(?:[01]\d|2[0-3]):[0-5]\d$/', $hora);
     }
+
+
 
     public static function validarDatosVacios($datos)
     {
@@ -80,17 +85,18 @@ class Tymesummary extends Conexion
         ];
     }
 
-    public function insert_tarea($usu_id, $id_proyecto_gestionado, $id_producto, $id_tarea, $fecha, $hora_desde, $hora_hasta, $descripcion, $horas_consumidas)
+    public function insert_tarea($usu_id, $id_proyecto_gestionado, $id_producto, $id_tarea, $id_pm_calidad, $fecha, $hora_desde, $hora_hasta, $descripcion, $horas_consumidas)
     {
         $conn = parent::get_conexion();
         $sql = "INSERT INTO timesummary_carga
-        (usu_id, id_proyecto_gestionado, id_producto,id_tarea, fecha, hora_desde, hora_hasta, descripcion,horas_consumidas)
-        VALUES (:usu_id, :id_proyecto_gestionado, :id_producto,:id_tarea, :fecha, :hora_desde, :hora_hasta, :descripcion,:horas_consumidas)";
+        (usu_id, id_proyecto_gestionado, id_producto,id_tarea, id_pm_calidad, fecha, hora_desde, hora_hasta, descripcion,horas_consumidas)
+        VALUES (:usu_id, :id_proyecto_gestionado, :id_producto,:id_tarea, :id_pm_calidad, :fecha, :hora_desde, :hora_hasta, :descripcion,:horas_consumidas)";
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(":usu_id", $usu_id, PDO::PARAM_INT);
         $stmt->bindValue(":id_proyecto_gestionado", $id_proyecto_gestionado, PDO::PARAM_INT);
         $stmt->bindValue(":id_producto", $id_producto, PDO::PARAM_INT);
         $stmt->bindValue(":id_tarea", $id_tarea, PDO::PARAM_INT);
+        $stmt->bindValue(":id_pm_calidad", $id_pm_calidad, PDO::PARAM_INT);
         $stmt->bindValue(":fecha", htmlentities($fecha, ENT_QUOTES), PDO::PARAM_STR);
         $stmt->bindValue(":hora_desde", htmlentities($hora_desde, ENT_QUOTES), PDO::PARAM_STR);
         $stmt->bindValue(":hora_hasta", htmlentities($hora_hasta, ENT_QUOTES), PDO::PARAM_STR);
@@ -107,65 +113,66 @@ class Tymesummary extends Conexion
     pg.id AS id_proyecto_gestionado,
     pg.titulo,
     tm_categoria.cat_nom AS producto,
-
-    -- 🔹 Total de horas dimensionadas
     IFNULL(dim.total_hs_dimensionadas, 0) AS hs_dimensionadas,
 
-    -- 🔹 Horas consumidas por el usuario actual
-    IFNULL(
-        (
-            SELECT 
-                TIME_FORMAT(SEC_TO_TIME(SUM(TIME_TO_SEC(tc2.horas_consumidas))), '%H:%i')
-            FROM timesummary_carga tc2
-            WHERE 
-                tc2.id_proyecto_gestionado = pg.id
-                AND tc2.usu_id = :usu_asignado
-                AND tc2.est = 1
-        ),
-        '00:00'
-    ) AS horas_consumidas,
+    -- horas_consumidas (solo las que el usuario actual cargó)
+    IFNULL((
+        SELECT TIME_FORMAT(SEC_TO_TIME(SUM(TIME_TO_SEC(tc1.horas_consumidas))), '%H:%i')
+        FROM timesummary_carga tc1
+        WHERE tc1.id_proyecto_gestionado = pg.id
+          AND tc1.usu_id = tse.usuario_asignado
+          AND tc1.est = 1
+    ), '00:00') AS horas_consumidas,
 
-    -- 🔹 Total de horas consumidas por todos los usuarios
-    IFNULL(
-        (
-            SELECT 
-                TIME_FORMAT(SEC_TO_TIME(SUM(TIME_TO_SEC(tc3.horas_consumidas))), '%H:%i')
-            FROM timesummary_carga tc3
-            WHERE 
-                tc3.id_proyecto_gestionado = pg.id
-                AND tc3.est = 1
-        ),
-        '00:00'
-    ) AS horas_total,
-
-    -- 🔹 Comparación entre horas_total y horas_dimensionadas
+    -- horas_total (suma general según grupo PM o no PM)
     CASE 
-        WHEN (
-            -- Convertimos las horas totales a segundos
-            (SELECT SUM(TIME_TO_SEC(tc4.horas_consumidas)) 
-             FROM timesummary_carga tc4 
-             WHERE tc4.id_proyecto_gestionado = pg.id AND tc4.est = 1)
-        ) > (dim.total_hs_dimensionadas * 3600) 
-        THEN 'HORAS_TOTAL_MAYOR_QUE_DIM'
-        ELSE 'HORAS_TOTAL_MENOR_QUE_DIM'
-    END AS comparacion_horas,
+        WHEN tse.id_pm_calidad IS NOT NULL THEN 
+            IFNULL((
+                SELECT TIME_FORMAT(SEC_TO_TIME(SUM(TIME_TO_SEC(tc2.horas_consumidas))), '%H:%i')
+                FROM timesummary_carga tc2
+                WHERE tc2.id_proyecto_gestionado = pg.id
+                  AND tc2.est = 1
+                  AND tc2.id_pm_calidad = tse.id_pm_calidad
+            ), '00:00')
+        ELSE
+            IFNULL((
+                SELECT TIME_FORMAT(SEC_TO_TIME(SUM(TIME_TO_SEC(tc3.horas_consumidas))), '%H:%i')
+                FROM timesummary_carga tc3
+                WHERE tc3.id_proyecto_gestionado = pg.id
+                  AND tc3.est = 1
+                  AND (tc3.id_pm_calidad IS NULL OR tc3.id_pm_calidad = 0)
+            ), '00:00')
+    END AS horas_total,
 
-    tse.est
+    -- comparacion_horas (solo contra el grupo del usuario)
+    IF(
+        (
+            SELECT SUM(TIME_TO_SEC(tc4.horas_consumidas))
+            FROM timesummary_carga tc4
+            WHERE tc4.id_proyecto_gestionado = pg.id
+              AND tc4.est = 1
+              AND (
+                   (tse.id_pm_calidad IS NOT NULL AND tc4.id_pm_calidad = tse.id_pm_calidad)
+                OR (tse.id_pm_calidad IS NULL AND (tc4.id_pm_calidad IS NULL OR tc4.id_pm_calidad = 0))
+              )
+        ) > (IFNULL(dim.total_hs_dimensionadas,0) * 3600),
+        'HORAS_TOTAL_MAYOR_QUE_DIM',
+        'HORAS_TOTAL_MENOR_QUE_DIM'
+    ) AS comparacion_horas,
+
+    tse.est,
+    tse.id_pm_calidad,
+    CASE WHEN tse.id_pm_calidad IS NOT NULL THEN 'SI' ELSE 'NO' END AS es_pm
 
 FROM proyecto_gestionado pg
-
 LEFT JOIN tm_estados e 
     ON pg.estados_id = e.estados_id
-
 LEFT JOIN tm_categoria 
     ON pg.cat_id = tm_categoria.cat_id
-
 INNER JOIN timesummary_estados tse 
     ON pg.id = tse.id_proyecto_gestionado
-    AND tse.usuario_asignado = :usu_asignado
-    AND tse.est = 1
-
--- 🔹 Subconsulta para total dimensionadas
+   AND tse.usuario_asignado = :usu_asignado
+   AND tse.est = 1
 LEFT JOIN (
     SELECT 
         id_proyecto_gestionado,
@@ -174,15 +181,10 @@ LEFT JOIN (
     GROUP BY id_proyecto_gestionado
 ) AS dim 
     ON dim.id_proyecto_gestionado = pg.id
-
-WHERE 
-    e.estados_id IN (1, 2, 3, 4)
-
+WHERE e.estados_id IN (1, 2, 3, 4)
 GROUP BY 
-    tse.id, pg.id, pg.titulo, tm_categoria.cat_nom, dim.total_hs_dimensionadas, tse.est
-
-ORDER BY 
-    pg.titulo";
+    tse.id, pg.id, pg.titulo, tm_categoria.cat_nom, dim.total_hs_dimensionadas, tse.est, tse.id_pm_calidad
+ORDER BY pg.titulo";
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(":usu_asignado", $usu_asignado, PDO::PARAM_INT);
         $stmt->execute();
@@ -193,35 +195,39 @@ ORDER BY
     {
         $conexion = parent::get_conexion();
         $sql = "SELECT 
-            tse.id AS id_timesummary_estados,
-            pg.id AS id_proyecto_gestionado,
-            pg.titulo,
-            tm_categoria.cat_nom AS producto,
-            IFNULL(dim.total_hs_dimensionadas, 0) AS hs_dimensionadas,
-            tse.est
-        FROM proyecto_gestionado pg
-        LEFT JOIN tm_estados e 
-            ON pg.estados_id = e.estados_id
-        LEFT JOIN tm_categoria 
-            ON pg.cat_id = tm_categoria.cat_id
-        INNER JOIN timesummary_estados tse 
-            ON pg.id = tse.id_proyecto_gestionado
-            AND tse.usuario_asignado = :usu_asignado 
-        LEFT JOIN (
-            SELECT 
-                id_proyecto_gestionado,
-                SUM(hs_dimensionadas) AS total_hs_dimensionadas
-            FROM dimensionamiento
-            GROUP BY id_proyecto_gestionado
-        ) AS dim 
-            ON dim.id_proyecto_gestionado = pg.id
-        WHERE e.estados_id IN (1, 2, 3, 4)
-        ORDER BY pg.titulo";
+                tse.id AS id_timesummary_estados,
+                tse.id_pm_calidad,
+                pg.id AS id_proyecto_gestionado,
+                pg.titulo,
+                tm_categoria.cat_nom AS producto,
+                IFNULL(dim.total_hs_dimensionadas, 0) AS hs_dimensionadas,
+                tse.est,
+                CASE 
+                    WHEN tse.id_pm_calidad IS NOT NULL THEN 'SI'
+                    ELSE 'NO'
+                END AS es_pm
+            FROM proyecto_gestionado pg
+            LEFT JOIN tm_estados e 
+                ON pg.estados_id = e.estados_id
+            LEFT JOIN tm_categoria 
+                ON pg.cat_id = tm_categoria.cat_id
+            INNER JOIN timesummary_estados tse 
+                ON pg.id = tse.id_proyecto_gestionado
+                AND tse.usuario_asignado = :usu_asignado
+            LEFT JOIN (
+                SELECT id_proyecto_gestionado, SUM(hs_dimensionadas) AS total_hs_dimensionadas
+                FROM dimensionamiento
+                GROUP BY id_proyecto_gestionado
+            ) AS dim ON dim.id_proyecto_gestionado = pg.id
+            WHERE e.estados_id IN (1, 2, 3, 4)
+            ORDER BY pg.titulo";
+
         $stmt = $conexion->prepare($sql);
         $stmt->bindParam(':usu_asignado', $usu_asignado, PDO::PARAM_INT);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
 
     public function get_estado_tarea($id_timesummary_estados)
     {

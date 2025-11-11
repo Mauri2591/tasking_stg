@@ -109,14 +109,34 @@ if (isset($_SESSION['usu_id'])) {
             dateClick: function(info) {
                 let FECHA = info.dateStr;
                 $("#mdlCarcaTimesummary").modal("show");
-                $("#fechaSeleccionada").text(FECHA)
+                $("#fechaSeleccionada").text(FECHA);
 
-                $.post("../../../../Controller/ctrTimesummary.php?accion=get_titulos_proyectos",
-                    function(data, textStatus, jqXHR) {
-                        $("#id_proyecto_gestionado").html(data)
-                    },
-                    "html"
-                );
+                $.post("../../../../Controller/ctrTimesummary.php?accion=get_titulos_proyectos", function(data) {
+                    $("#id_proyecto_gestionado").html(data);
+
+                    $("#id_proyecto_gestionado").off("change").on("change", function() {
+                        const selectedOption = this.options[this.selectedIndex];
+                        const idPmCalidad = selectedOption.getAttribute("data-pm") || "";
+                        $("#id_pm_calidad").val(idPmCalidad);
+
+                        if (idPmCalidad) {
+                            document.getElementById("validar_si_tiene_id_pm_calidad").style.display="flex";
+                        } else {
+                            document.getElementById("validar_si_tiene_id_pm_calidad").style.display="none";
+                        }
+                    });
+
+                    // Ejecutar el listener una vez al inicio
+                    $("#id_proyecto_gestionado").trigger("change");
+                }, "html");
+
+                $.post("../../../../Controller/ctrTimesummary.php?accion=get_producto_proyectos", function(data) {
+                    $("#id_producto").html(data);
+                }, "html");
+
+                $.post("../../../../Controller/ctrTimesummary.php?accion=get_tareas_total", function(data) {
+                    $("#id_tarea").html(data);
+                }, "html");
 
                 $.post("../../../../Controller/ctrTimesummary.php?accion=get_producto_proyectos",
                     function(data, textStatus, jqXHR) {
@@ -177,7 +197,8 @@ if (isset($_SESSION['usu_id'])) {
                         fecha: FECHA,
                         hora_desde: horaDesde,
                         hora_hasta: horaHasta,
-                        descripcion: $("#descripcion").val()
+                        descripcion: $("#descripcion").val(),
+                        id_pm_calidad:$("#id_pm_calidad").val()
                     };
 
                     $.ajax({
@@ -228,6 +249,7 @@ if (isset($_SESSION['usu_id'])) {
                 const DESCRIPCION = EVENTO.extendedProps.descripcion;
                 const ID_TAREA = EVENTO.extendedProps.id_tarea;
                 const TAREA = EVENTO.extendedProps.nombre;
+                const ID_PM_CALIDAD = EVENTO.extendedProps.id_pm_calidad;
 
                 const START_HORA = START.getHours().toString().padStart(2, '0');
                 const START_MIN = START.getMinutes().toString().padStart(2, '0');
@@ -326,6 +348,7 @@ if (isset($_SESSION['usu_id'])) {
         });
         calendar.render();
     });
+
 
     $.post("../../../../Controller/ctrTimesummary.php?accion=datos_tabla_ts",
         function(data, textStatus, jqXHR) {
