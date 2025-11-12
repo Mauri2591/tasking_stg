@@ -289,7 +289,7 @@ ORDER BY pcs.proy_id ASC, pcs.numero_servicio ASC";
         LEFT JOIN tm_pais tp ON c.pais_id = tp.pais_id
         LEFT JOIN tm_usuario u ON p.usu_crea = u.usu_id
         LEFT JOIN proyecto_gestionado pg ON pg.id_proyecto_cantidad_servicios = pcs.id
-        LEFT JOIN tm_usuario ug ON pg.usu_id = ug.usu_id
+        LEFT JOIN tm_usuario ug ON pg.usu_crea = ug.usu_id
         LEFT JOIN tm_categoria tc ON pg.cat_id = tc.cat_id
         LEFT JOIN sectores s ON pg.sector_id = s.sector_id
         LEFT JOIN dimensionamiento d ON d.id_proyecto_gestionado = pg.id -- ✅ JOIN sin filtro restrictivo
@@ -297,7 +297,7 @@ ORDER BY pcs.proy_id ASC, pcs.numero_servicio ASC";
         WHERE s.sector_id = ? 
         AND pcs.est = 1 
         AND (pg.estados_id IS NULL OR pg.estados_id IN (1))
-        ORDER BY pcs.proy_id ASC, pcs.numero_servicio ASC;";
+        ORDER BY pcs.proy_id ASC, pcs.numero_servicio ASC";
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(1, htmlspecialchars($sector_id, ENT_QUOTES), PDO::PARAM_INT);
         $stmt->execute();
