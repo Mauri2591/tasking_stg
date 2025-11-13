@@ -23,8 +23,8 @@
     <!-- <link rel="stylesheet" href="https://cdn.datatables.net/2.2.2/css/dataTables.dataTables.css" /> -->
 
     <!-- DataTables 1.13 compatible con Buttons -->
-<link rel="stylesheet" href="https://cdn.datatables.net/2.2.2/css/dataTables.dataTables.css">
-<link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.1.1/css/buttons.dataTables.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.2.2/css/dataTables.dataTables.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.1.1/css/buttons.dataTables.css">
 
     <!-- Icons Css -->
     <link href="<?php echo URL ?>/View/Home/Public/velzon/assets/css/icons.min.css?sheet=<?php echo rand(); ?>"
@@ -50,57 +50,80 @@
     <script>
         var URL = "<?php echo URL; ?>";
 
+        document.getElementById("idCheckValidarUsuPass").addEventListener("change", function() {
+            if (this.value == "NO") {
+                this.value = "SI";
+                $("#usu_pass").prop("disabled", false);
+            } else if (this.value == "SI") {
+                this.value = "NO"
+                $("#usu_pass").prop("disabled", true);
+            }
+        });
+
         function editarPerfil() {
             let formData = new FormData();
+            formData.append('usu_nom', document.getElementById("usu_nom").value);
+            formData.append('usu_ape', document.getElementById("usu_ape").value);
+            formData.append('usu_correo', document.getElementById("usu_correo").value);
             formData.append('usu_pass', document.getElementById("usu_pass").value);
+            formData.append('idCheckValidarUsuPass', document.getElementById("idCheckValidarUsuPass").value);
             return formData;
         }
 
         function btnEditPerfil() {
+            $.post(URL + "Controller/ctrUsuarios.php?usuarios=get_usuario_x_id",
+                function(data, textStatus, jqXHR) {
+                    $("#usu_nom").val(data.usu_nom);
+                    $("#usu_ape").val(data.usu_ape);
+                    $("#usu_correo").val(data.usu_correo);
+                },
+                "json"
+            );
             $("#modalEditPerfil").modal("show");
             document.getElementById("formEditPerfil").reset();
         }
 
-        function btnFormEditPerfil() {
-            let data = editarPerfil();
-            let usu_pas = data.get('usu_pass');
-            if (usu_pas == '') {
-                Swal.fire({
-                    icon: "warning",
-                    title: "Error",
-                    text: "Password vacía, debe ingresar una nueva password",
-                    showConfirmButton: true,
-                    showCancelButton: true
-                });
-            } else {
+            function btnFormEditPerfil() {
+                let formData = new FormData();
+                formData.append('usu_nom', $("#usu_nom").val());
+                formData.append('usu_ape', $("#usu_ape").val());
+                formData.append('usu_correo', $("#usu_correo").val());
+
+                const cambiarPass = $("#idCheckValidarUsuPass").prop("checked");
+                formData.append('idCheckValidarUsuPass', cambiarPass ? "SI" : "NO");
+
+                if (cambiarPass) {
+                    formData.append('password', $("#usu_pass").val());
+                }
+
                 $.ajax({
                     type: "POST",
                     url: URL + "Controller/ctrUsuarios.php?usuarios=editarPerfil",
-                    data: {
-                        "usu_pass": usu_pas
-                    },
+                    data: formData,
+                    processData: false,
+                    contentType: false,
                     dataType: "json",
                     success: function(response) {
                         Swal.fire({
                             icon: "success",
-                            title: "Bien",
-                            text: "Password cambiada correctamente",
-                            showConfirmButton: false,
-                            timer: 1200
+                            title: "Perfil actualizado",
+                            text: response.Success,
+                            timer: 1500,
+                            showConfirmButton: false
                         });
                         $("#modalEditPerfil").modal("hide");
                     },
                     error: function(err) {
+                        let errorMsg = err.responseJSON?.Error || "Error inesperado.";
                         Swal.fire({
                             icon: "error",
                             title: "Error",
-                            text: "Ocurrió un problema al cambiar la password",
+                            text: errorMsg,
                             showConfirmButton: true
                         });
                     }
                 });
             }
-        }
     </script>
 
     <style>

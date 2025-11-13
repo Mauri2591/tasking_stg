@@ -124,6 +124,8 @@ if (isset($_SESSION['usu_id'])) {
     if (($_SESSION['sector_id']) != "4"):
     ?>
         <script>
+                var URL = "<?php echo URL; ?>";
+
             document.addEventListener("DOMContentLoaded", function() {
 
                 $.post("../../Controller/ctrProyectos.php?proy=get_sectores_x_sector_id",
@@ -191,7 +193,7 @@ if (isset($_SESSION['usu_id'])) {
             }
 
             function btnEditPerfil() {
-                $.post("../../Controller/ctrUsuarios.php?usuarios=get_usuario_x_id",
+                $.post(URL+"Controller/ctrUsuarios.php?usuarios=get_usuario_x_id",
                     function(data, textStatus, jqXHR) {
                         $("#usu_nom").val(data.usu_nom);
                         $("#usu_ape").val(data.usu_ape);
@@ -389,7 +391,6 @@ if (isset($_SESSION['usu_id'])) {
                 });
             }
         </script>
-
     <?php endif; ?>
 
 <?php } else {
