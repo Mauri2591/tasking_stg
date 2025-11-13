@@ -236,58 +236,80 @@ if (isset($_SESSION['usu_id'])) {
                 );
             });
 
+            document.getElementById("idCheckValidarUsuPass").addEventListener("change", function() {
+                if (this.value == "NO") {
+                    this.value = "SI";
+                    $("#usu_pass").prop("disabled", false);
+                } else if (this.value == "SI") {
+                    this.value = "NO"
+                    $("#usu_pass").prop("disabled", true);
+                }
+            });
+
             function editarPerfil() {
                 let formData = new FormData();
+                formData.append('usu_nom', document.getElementById("usu_nom").value);
+                formData.append('usu_ape', document.getElementById("usu_ape").value);
+                formData.append('usu_correo', document.getElementById("usu_correo").value);
                 formData.append('usu_pass', document.getElementById("usu_pass").value);
+                formData.append('idCheckValidarUsuPass', document.getElementById("idCheckValidarUsuPass").value);
                 return formData;
             }
 
             function btnEditPerfil() {
+                $.post("../../Controller/ctrUsuarios.php?usuarios=get_usuario_x_id",
+                    function(data, textStatus, jqXHR) {
+                        $("#usu_nom").val(data.usu_nom);
+                        $("#usu_ape").val(data.usu_ape);
+                        $("#usu_correo").val(data.usu_correo);
+                    },
+                    "json"
+                );
                 $("#modalEditPerfil").modal("show");
                 document.getElementById("formEditPerfil").reset();
+
             }
 
             function btnFormEditPerfil() {
-                let data = editarPerfil();
-                let usu_pas = data.get('usu_pass');
-                if (usu_pas == '') {
-                    Swal.fire({
-                        icon: "warning",
-                        title: "Error",
-                        text: "Password vacia, debe ingresar una nueva password",
-                        showConfirmButton: true,
-                        showCancelButton: true
-                    });
-                } else {
-                    $.ajax({
-                        type: "POST",
-                        url: "../../Controller/ctrUsuarios.php?usuarios=editarPerfil",
-                        data: {
-                            "usu_pass": usu_pas
-                        },
-                        dataType: "json",
-                        success: function(response) {
-                            Swal.fire({
-                                icon: "success",
-                                title: "Bien",
-                                text: "Password cambiada correctamente",
-                                showConfirmButton: false,
-                                showCancelButton: false,
-                                timer: 1200
-                            });
-                            $("#modalEditPerfil").modal("hide");
-                        },
-                        error: function(err) {
-                            Swal.fire({
-                                icon: "warning",
-                                title: "Error",
-                                text: "Password vacia, debe ingresar una nueva password",
-                                showConfirmButton: true,
-                                showCancelButton: true
-                            });
-                        }
-                    });
+                let formData = new FormData();
+                formData.append('usu_nom', $("#usu_nom").val());
+                formData.append('usu_ape', $("#usu_ape").val());
+                formData.append('usu_correo', $("#usu_correo").val());
+
+                const cambiarPass = $("#idCheckValidarUsuPass").prop("checked");
+                formData.append('idCheckValidarUsuPass', cambiarPass ? "SI" : "NO");
+
+                if (cambiarPass) {
+                    formData.append('password', $("#usu_pass").val());
                 }
+
+                $.ajax({
+                    type: "POST",
+                    url: URL + "Controller/ctrUsuarios.php?usuarios=editarPerfil",
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    dataType: "json",
+                    success: function(response) {
+                        Swal.fire({
+                            icon: "success",
+                            title: "Perfil actualizado",
+                            text: response.Success,
+                            timer: 1500,
+                            showConfirmButton: false
+                        });
+                        $("#modalEditPerfil").modal("hide");
+                    },
+                    error: function(err) {
+                        let errorMsg = err.responseJSON?.Error || "Error inesperado.";
+                        Swal.fire({
+                            icon: "error",
+                            title: "Error",
+                            text: errorMsg,
+                            showConfirmButton: true
+                        });
+                    }
+                });
             }
         </script>
 
