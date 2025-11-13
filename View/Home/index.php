@@ -118,14 +118,13 @@ if (isset($_SESSION['usu_id'])) {
             <?php unset($_SESSION['bienvenido']) ?>
             document.getElementById("text_bienvenido").style.display = "none";
         }, 3000);
+        var URL = "<?php echo URL; ?>";
     </script>
 
     <?php
     if (($_SESSION['sector_id']) != "4"):
     ?>
         <script>
-                var URL = "<?php echo URL; ?>";
-
             document.addEventListener("DOMContentLoaded", function() {
 
                 $.post("../../Controller/ctrProyectos.php?proy=get_sectores_x_sector_id",
@@ -172,28 +171,28 @@ if (isset($_SESSION['usu_id'])) {
                 );
             });
 
-            document.getElementById("idCheckValidarUsuPass").addEventListener("change", function() {
+            document.getElementById("idCheckValidarUsuPass2").addEventListener("change", function() {
                 if (this.value == "NO") {
                     this.value = "SI";
-                    $("#usu_pass").prop("disabled", false);
+                    $("#usu_pass2").prop("disabled", false);
                 } else if (this.value == "SI") {
                     this.value = "NO"
-                    $("#usu_pass").prop("disabled", true);
+                    $("#usu_pass2").prop("disabled", true);
                 }
             });
 
             function editarPerfil() {
                 let formData = new FormData();
-                formData.append('usu_nom', document.getElementById("usu_nom").value);
-                formData.append('usu_ape', document.getElementById("usu_ape").value);
-                formData.append('usu_correo', document.getElementById("usu_correo").value);
-                formData.append('usu_pass', document.getElementById("usu_pass").value);
-                formData.append('idCheckValidarUsuPass', document.getElementById("idCheckValidarUsuPass").value);
+                formData.append('usu_nom', document.getElementById("usu_nom2").value);
+                formData.append('usu_ape', document.getElementById("usu_ape2").value);
+                formData.append('usu_correo', document.getElementById("usu_correo2").value);
+                formData.append('usu_pass', document.getElementById("usu_pass2").value);
+                formData.append('idCheckValidarUsuPass2', document.getElementById("idCheckValidarUsuPass2").value);
                 return formData;
             }
 
             function btnEditPerfil() {
-                $.post(URL+"Controller/ctrUsuarios.php?usuarios=get_usuario_x_id",
+                $.post(URL + "Controller/ctrUsuarios.php?usuarios=get_usuario_x_id",
                     function(data, textStatus, jqXHR) {
                         $("#usu_nom").val(data.usu_nom);
                         $("#usu_ape").val(data.usu_ape);
@@ -201,22 +200,23 @@ if (isset($_SESSION['usu_id'])) {
                     },
                     "json"
                 );
+                $("#idCheckValidarUsuPass").val("NO")
+                document.getElementById("usu_pass").setAttribute("disabled", "");
                 $("#modalEditPerfil").modal("show");
                 document.getElementById("formEditPerfil").reset();
-
             }
 
-            function btnFormEditPerfil() {
+            function btnFormEditPerfil2() {
                 let formData = new FormData();
-                formData.append('usu_nom', $("#usu_nom").val());
-                formData.append('usu_ape', $("#usu_ape").val());
-                formData.append('usu_correo', $("#usu_correo").val());
+                formData.append('usu_nom', $("#usu_nom2").val());
+                formData.append('usu_ape', $("#usu_ape2").val());
+                formData.append('usu_correo', $("#usu_correo2").val());
 
-                const cambiarPass = $("#idCheckValidarUsuPass").prop("checked");
-                formData.append('idCheckValidarUsuPass', cambiarPass ? "SI" : "NO");
+                const cambiarPass = $("#idCheckValidarUsuPass2").prop("checked");
+                formData.append('idCheckValidarUsuPass2', cambiarPass ? "SI" : "NO");
 
                 if (cambiarPass) {
-                    formData.append('password', $("#usu_pass").val());
+                    formData.append('password', $("#usu_pass2").val());
                 }
 
                 $.ajax({
@@ -234,7 +234,7 @@ if (isset($_SESSION['usu_id'])) {
                             timer: 1500,
                             showConfirmButton: false
                         });
-                        $("#modalEditPerfil").modal("hide");
+                        $("#modalEditPerfil2").modal("hide");
                     },
                     error: function(err) {
                         let errorMsg = err.responseJSON?.Error || "Error inesperado.";
@@ -251,7 +251,6 @@ if (isset($_SESSION['usu_id'])) {
     <?php else: ?>
         <script>
             document.addEventListener("DOMContentLoaded", function() {
-
                 $.post("../../Controller/ctrProyectos.php?proy=get_sectores_x_sector_id",
                     function(data, textStatus, jqXHR) {
                         $("#cont_get_categorias_x_sector").html(data);
@@ -315,51 +314,52 @@ if (isset($_SESSION['usu_id'])) {
                 );
             });
 
-            document.getElementById("idCheckValidarUsuPass").addEventListener("change", function() {
+            document.getElementById("idCheckValidarUsuPass2").addEventListener("change", function() {
                 if (this.value == "NO") {
                     this.value = "SI";
-                    $("#usu_pass").prop("disabled", false);
+                    $("#usu_pass2").prop("disabled", false);
                 } else if (this.value == "SI") {
                     this.value = "NO"
-                    $("#usu_pass").prop("disabled", true);
+                    $("#usu_pass2").prop("disabled", true);
                 }
             });
 
             function editarPerfil() {
                 let formData = new FormData();
-                formData.append('usu_nom', document.getElementById("usu_nom").value);
-                formData.append('usu_ape', document.getElementById("usu_ape").value);
-                formData.append('usu_correo', document.getElementById("usu_correo").value);
-                formData.append('usu_pass', document.getElementById("usu_pass").value);
-                formData.append('idCheckValidarUsuPass', document.getElementById("idCheckValidarUsuPass").value);
+                formData.append('usu_nom', document.getElementById("usu_nom2").value);
+                formData.append('usu_ape', document.getElementById("usu_ape2").value);
+                formData.append('usu_correo', document.getElementById("usu_correo2").value);
+                formData.append('usu_pass', document.getElementById("usu_pass2").value);
+                formData.append('idCheckValidarUsuPass2', document.getElementById("idCheckValidarUsuPass2").value);
                 return formData;
             }
 
             function btnEditPerfil() {
-                $.post("../../Controller/ctrUsuarios.php?usuarios=get_usuario_x_id",
+                $.post(URL + "Controller/ctrUsuarios.php?usuarios=get_usuario_x_id",
                     function(data, textStatus, jqXHR) {
-                        $("#usu_nom").val(data.usu_nom);
-                        $("#usu_ape").val(data.usu_ape);
-                        $("#usu_correo").val(data.usu_correo);
+                        $("#usu_nom2").val(data.usu_nom);
+                        $("#usu_ape2").val(data.usu_ape);
+                        $("#usu_correo2").val(data.usu_correo);
                     },
                     "json"
                 );
-                $("#modalEditPerfil").modal("show");
-                document.getElementById("formEditPerfil").reset();
-
+                $("#idCheckValidarUsuPass2").val("NO")
+                document.getElementById("usu_pass2").setAttribute("disabled", "");
+                $("#modalEditPerfil2").modal("show");
+                document.getElementById("formEditPerfil2").reset();
             }
 
-            function btnFormEditPerfil() {
+            function btnFormEditPerfil2() {
                 let formData = new FormData();
-                formData.append('usu_nom', $("#usu_nom").val());
-                formData.append('usu_ape', $("#usu_ape").val());
-                formData.append('usu_correo', $("#usu_correo").val());
+                formData.append('usu_nom', $("#usu_nom2").val());
+                formData.append('usu_ape', $("#usu_ape2").val());
+                formData.append('usu_correo', $("#usu_correo2").val());
 
-                const cambiarPass = $("#idCheckValidarUsuPass").prop("checked");
-                formData.append('idCheckValidarUsuPass', cambiarPass ? "SI" : "NO");
+                const cambiarPass = $("#idCheckValidarUsuPass2").prop("checked");
+                formData.append('idCheckValidarUsuPass2', cambiarPass ? "SI" : "NO");
 
                 if (cambiarPass) {
-                    formData.append('password', $("#usu_pass").val());
+                    formData.append('password', $("#usu_pass2").val());
                 }
 
                 $.ajax({
@@ -377,7 +377,7 @@ if (isset($_SESSION['usu_id'])) {
                             timer: 1500,
                             showConfirmButton: false
                         });
-                        $("#modalEditPerfil").modal("hide");
+                        $("#modalEditPerfil2").modal("hide");
                     },
                     error: function(err) {
                         let errorMsg = err.responseJSON?.Error || "Error inesperado.";
@@ -391,6 +391,7 @@ if (isset($_SESSION['usu_id'])) {
                 });
             }
         </script>
+
     <?php endif; ?>
 
 <?php } else {

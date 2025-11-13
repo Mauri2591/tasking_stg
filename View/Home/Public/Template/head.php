@@ -50,15 +50,17 @@
     <script>
         var URL = "<?php echo URL; ?>";
 
-        document.getElementById("idCheckValidarUsuPass").addEventListener("change", function() {
-            if (this.value == "NO") {
-                this.value = "SI";
-                $("#usu_pass").prop("disabled", false);
-            } else if (this.value == "SI") {
-                this.value = "NO"
-                $("#usu_pass").prop("disabled", true);
-            }
-        });
+        document.addEventListener("DOMContentLoaded", () => {
+            document.getElementById("idCheckValidarUsuPass").addEventListener("change", function() {
+                if (this.value == "NO") {
+                    this.value = "SI";
+                    $("#usu_pass").prop("disabled", false);
+                } else if (this.value == "SI") {
+                    this.value = "NO"
+                    $("#usu_pass").prop("disabled", true);
+                }
+            });
+        })
 
         function editarPerfil() {
             let formData = new FormData();
@@ -69,7 +71,6 @@
             formData.append('idCheckValidarUsuPass', document.getElementById("idCheckValidarUsuPass").value);
             return formData;
         }
-
         function btnEditPerfil() {
             $.post(URL + "Controller/ctrUsuarios.php?usuarios=get_usuario_x_id",
                 function(data, textStatus, jqXHR) {
@@ -79,51 +80,55 @@
                 },
                 "json"
             );
+            
+            $("#idCheckValidarUsuPass").val("NO")
+            document.getElementById("usu_pass").setAttribute("disabled", "");
             $("#modalEditPerfil").modal("show");
             document.getElementById("formEditPerfil").reset();
+
         }
 
-            function btnFormEditPerfil() {
-                let formData = new FormData();
-                formData.append('usu_nom', $("#usu_nom").val());
-                formData.append('usu_ape', $("#usu_ape").val());
-                formData.append('usu_correo', $("#usu_correo").val());
+        function btnFormEditPerfil() {
+            let formData = new FormData();
+            formData.append('usu_nom', $("#usu_nom").val());
+            formData.append('usu_ape', $("#usu_ape").val());
+            formData.append('usu_correo', $("#usu_correo").val());
 
-                const cambiarPass = $("#idCheckValidarUsuPass").prop("checked");
-                formData.append('idCheckValidarUsuPass', cambiarPass ? "SI" : "NO");
+            const cambiarPass = $("#idCheckValidarUsuPass").prop("checked");
+            formData.append('idCheckValidarUsuPass', cambiarPass ? "SI" : "NO");
 
-                if (cambiarPass) {
-                    formData.append('password', $("#usu_pass").val());
-                }
-
-                $.ajax({
-                    type: "POST",
-                    url: URL + "Controller/ctrUsuarios.php?usuarios=editarPerfil",
-                    data: formData,
-                    processData: false,
-                    contentType: false,
-                    dataType: "json",
-                    success: function(response) {
-                        Swal.fire({
-                            icon: "success",
-                            title: "Perfil actualizado",
-                            text: response.Success,
-                            timer: 1500,
-                            showConfirmButton: false
-                        });
-                        $("#modalEditPerfil").modal("hide");
-                    },
-                    error: function(err) {
-                        let errorMsg = err.responseJSON?.Error || "Error inesperado.";
-                        Swal.fire({
-                            icon: "error",
-                            title: "Error",
-                            text: errorMsg,
-                            showConfirmButton: true
-                        });
-                    }
-                });
+            if (cambiarPass) {
+                formData.append('password', $("#usu_pass").val());
             }
+
+            $.ajax({
+                type: "POST",
+                url: URL + "Controller/ctrUsuarios.php?usuarios=editarPerfil",
+                data: formData,
+                processData: false,
+                contentType: false,
+                dataType: "json",
+                success: function(response) {
+                    Swal.fire({
+                        icon: "success",
+                        title: "Perfil actualizado",
+                        text: response.Success,
+                        timer: 1500,
+                        showConfirmButton: false
+                    });
+                    $("#modalEditPerfil").modal("hide");
+                },
+                error: function(err) {
+                    let errorMsg = err.responseJSON?.Error || "Error inesperado.";
+                    Swal.fire({
+                        icon: "error",
+                        title: "Error",
+                        text: errorMsg,
+                        showConfirmButton: true
+                    });
+                }
+            });
+        }
     </script>
 
     <style>
