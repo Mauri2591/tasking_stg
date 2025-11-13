@@ -82,7 +82,6 @@ switch ($_GET['usuarios']) {
                 exit;
             }
 
-            $rol_id = $_POST['sector_id'] == "4" ? 1 : 2;
             $password_default = "111";
 
             $data = $usuarios->insert_usuario(
