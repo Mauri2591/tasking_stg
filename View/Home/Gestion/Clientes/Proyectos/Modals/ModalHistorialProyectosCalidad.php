@@ -5,9 +5,12 @@
         <div class="modal-content">
             <div class="card-body">
                 <div class="p-2 border bg-light" style="margin-bottom: .5rem;">
+                    <div style="display: flex; justify-content: end; align-items: center;">
+                        <span class="badge bg-primary text-light">Reporte Cliente</span> <i onclick="descargarExcel(document.getElementById('inputHiddenIdCliente').value)" class="ri-file-excel-2-fill text-success fs-22" type="button" title="Descargar documento"></i>
+                    </div>
                     <span class="badge bg-primary text-light fs-12">Cliente: <span id="idCliente" style="text-transform: uppercase;"></span></span>
                     <input type="hidden" hidden id="inputHiddenIdCliente">
-                    <span><i onclick="descargarExcel(document.getElementById('inputHiddenIdCliente').value)" class="ri-file-excel-2-fill text-success fs-22" type="button" title="Descargar documento"></i></span>
+
                     <div style="display: flex; width: 15%; align-items: center; gap: 8px; margin-top: .5rem;margin-bottom: .5rem">
                         <label for="anio" class="form-label mb-0">AÑO:</label>
                         <input type="number" id="anio" name="anio" class="form-control form-control-sm"

@@ -143,7 +143,10 @@ if (isset($_SESSION['usu_id'])) {
                         <div class="tab-pane" id="tab_total" role="tabpanel">
                             <div class="card card-body">
                                 <table id="table_proyectos_total_calidad" style="text-align: center; width: 100%;">
-                                    <span class="mb-4"><span class="badge bg-primary fs-12">Total:</span><i onclick="descargarExcelProyectosTotal()" class="ri-file-excel-2-fill text-success fs-22" type="button" title="Descargar documento"></i></span>
+                                    <div style="display: flex; justify-content: end;">
+                                    <span class="mb-4"><span class="badge bg-primary fs-12">Reporte Clientes</span><i onclick="descargarExcelProyectosTotal()" class="ri-file-excel-2-fill text-success fs-22" type="button" title="Descargar documento"></i></span>
+
+                                    </div>
                                     <thead style="text-align: center;">
                                         <tr style="text-align: center;">
                                             <th style="width: 400px;text-align: center;">CLIENTE</th>
@@ -281,9 +284,7 @@ if (isset($_SESSION['usu_id'])) {
                                 <table id="table_proyectos_total_calidad" style="text-align: center; width: 100%;">
                                     <span class="mb-4">
                                         <span class="badge bg-primary fs-12">Total:</span>
-                                        <i onclick="descargarExcelProyectosTotal()"
-                                            class="ri-file-excel-2-fill text-success fs-22"
-                                            type="button" title="Descargar documento"></i>
+                                        
                                     </span>
                                     <thead style="text-align: center;">
                                         <tr>

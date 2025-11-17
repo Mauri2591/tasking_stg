@@ -31,6 +31,25 @@ if (isset($_SESSION['usu_id'])) {
 
                     <?php if ($_SESSION['sector_id'] == "4"): ?>
                         <div class="card-body">
+
+                            <div style="display: flex; justify-content: end;">
+                                <div class="btn-group-vertical" role="group" aria-label="Vertical button group">
+                                    <div class="btn-group" role="group">
+                                        <button id="btnGroupVerticalDrop1" type="button"
+                                            class="btn btn-primary text-light py-0 px-2 dropdown-toggle"
+                                            data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            Reportes
+                                        </button>
+
+                                        <div class="dropdown-menu py-1" aria-labelledby="btnGroupVerticalDrop1">
+                                            <a class="dropdown-item" href="#"><i title="Descargar Docx" class="fs-18 text-secondary my-0 py-0 ri-file-word-fill"></i></a>
+                                            <a class="dropdown-item" href="#"><i title="Descargar Xlsx" class="fs-18 text-success my-0 py-0 ri-file-excel-fill"></i></a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
                             <ul id="tab_sectores" class="nav nav-pills arrow-navtabs nav-success py-0 px-1 mb-3" role="tablist">
 
                             </ul>

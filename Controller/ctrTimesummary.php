@@ -3,7 +3,7 @@ require_once __DIR__ . "/../Config/Conexion.php";
 require_once __DIR__ . "/../Config/Config.php";
 require_once __DIR__ . "/../vendor/autoload.php";
 require_once __DIR__ . "/../Model/Clases/HtmlPurifier.php";
-require_once __DIR__ . "/../Model/timesummary.php";
+require_once __DIR__ . "/../Model/Timesummary.php";
 require_once __DIR__ . "/../Model/Clases/Validaciones.php";
 require_once __DIR__ . "/../Model/Clases/Headers.php";
 require_once __DIR__ . "/../Model/Clases/Openssl.php";
