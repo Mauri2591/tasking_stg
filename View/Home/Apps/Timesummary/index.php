@@ -95,6 +95,7 @@ if (isset($_SESSION['usu_id'])) {
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.19/index.global.min.js'></script>
 <script>
     var sector_id = "<?php echo $_SESSION['sector_id']; ?>";
+    var URL = "<?php echo URL ?>";
     let huboUpdate = false;
     document.addEventListener('DOMContentLoaded', function() {
         var tabla;
@@ -102,7 +103,7 @@ if (isset($_SESSION['usu_id'])) {
         var calendar = new FullCalendar.Calendar(calendarEl, {
             initialView: 'dayGridMonth',
             locale: 'es',
-            events: '../../../../Controller/ctrTimesummary.php?accion=get_tareas',
+            events: URL+'Controller/ctrTimesummary.php?accion=get_tareas',
             selectable: true,
             Boolean,
             default: true,
@@ -112,10 +113,10 @@ if (isset($_SESSION['usu_id'])) {
                 $("#mdlCarcaTimesummary").modal("show");
                 $("#fechaSeleccionada").text(FECHA);
 
-                $.post("../../../../Controller/ctrTimesummary.php?accion=get_producto_proyectos", function(productosHTML) {
+                $.post(URL+"Controller/ctrTimesummary.php?accion=get_producto_proyectos", function(productosHTML) {
                     $("#id_producto").html(productosHTML);
 
-                    $.post("../../../../Controller/ctrTimesummary.php?accion=get_titulos_proyectos", function(proyectosHTML) {
+                    $.post(URL+"Controller/ctrTimesummary.php?accion=get_titulos_proyectos", function(proyectosHTML) {
 
                         $("#id_proyecto_gestionado").html(proyectosHTML);
 
@@ -137,7 +138,7 @@ if (isset($_SESSION['usu_id'])) {
                                 }
 
                                 $.post(
-                                    "../../../../Controller/ctrTimesummary.php?accion=get_cat_id_by_proyecto_gestionado", {
+                                    URL+"Controller/ctrTimesummary.php?accion=get_cat_id_by_proyecto_gestionado", {
                                         id: idProyecto
                                     },
                                     function(resp) {
@@ -173,11 +174,11 @@ if (isset($_SESSION['usu_id'])) {
 
                 }, "html");
 
-                $.post("../../../../Controller/ctrTimesummary.php?accion=get_tareas_total", function(data) {
+                $.post(URL+"Controller/ctrTimesummary.php?accion=get_tareas_total", function(data) {
                     $("#id_tarea").html(data);
                 }, "html");
 
-                $.post("../../../../Controller/ctrTimesummary.php?accion=get_tareas_total",
+                $.post(URL+"Controller/ctrTimesummary.php?accion=get_tareas_total",
                     function(data, textStatus, jqXHR) {
 
                         $("#id_tarea").html(data)
@@ -234,7 +235,7 @@ if (isset($_SESSION['usu_id'])) {
 
                     $.ajax({
                         type: "POST",
-                        url: "../../../../Controller/ctrTimesummary.php?accion=insert_tarea",
+                        url: URL+"Controller/ctrTimesummary.php?accion=insert_tarea",
                         data: data,
                         dataType: "json",
                         success: function(response) {
@@ -298,7 +299,7 @@ if (isset($_SESSION['usu_id'])) {
                 $("#mdlEditarTimesummary").modal("show");
 
 
-                $.post("../../../../Controller/ctrTimesummary.php?accion=get_tareas_x_id", {
+                $.post(URL+"Controller/ctrTimesummary.php?accion=get_tareas_x_id", {
                         id: ID_TAREA
                     },
                     function(data) {
@@ -320,7 +321,7 @@ if (isset($_SESSION['usu_id'])) {
                         if (!result.isConfirmed) return;
 
                         $.post(
-                            "../../../../Controller/ctrTimesummary.php?accion=delete_tarea", {
+                            URL+"Controller/ctrTimesummary.php?accion=delete_tarea", {
                                 id: EVENTO_ID
                             },
                             function(response) {
@@ -375,7 +376,7 @@ if (isset($_SESSION['usu_id'])) {
                     'pdfHtml5'
                 ],
                 "ajax": {
-                    url: "../../../../Controller/ctrTimesummary.php?accion=get_titulos_proyectos_total",
+                    url: URL+"Controller/ctrTimesummary.php?accion=get_titulos_proyectos_total",
                     type: "post",
                     dataType: "json",
                     data: {},
@@ -428,7 +429,7 @@ if (isset($_SESSION['usu_id'])) {
         calendar.render();
     });
 
-    $.post("../../../../Controller/ctrTimesummary.php?accion=datos_tabla_ts",
+    $.post(URL+"Controller/ctrTimesummary.php?accion=datos_tabla_ts",
         function(data, textStatus, jqXHR) {
             $("#tbody_tabla_timasummary").html(data)
             console.log(data);
@@ -437,7 +438,7 @@ if (isset($_SESSION['usu_id'])) {
         "html"
     );
 
-    $.post("../../../../Controller/ctrTimesummary.php?accion=get_validar_si_hay_tareas_activas",
+    $.post(URL+"Controller/ctrTimesummary.php?accion=get_validar_si_hay_tareas_activas",
         function(data, textStatus, jqXHR) {
             $("#caption_tareas").html(data)
 
@@ -447,14 +448,14 @@ if (isset($_SESSION['usu_id'])) {
 
     document.getElementById("id_tareas_x_similitud").addEventListener("input", function() {
         if (this.value == '') {
-            $.post("../../../../Controller/ctrTimesummary.php?accion=datos_tabla_ts",
+            $.post(URL+"Controller/ctrTimesummary.php?accion=datos_tabla_ts",
                 function(data, textStatus, jqXHR) {
                     $("#tbody_tabla_timasummary").html(data)
                 },
                 "html"
             );
         } else {
-            $.post("../../../../Controller/ctrTimesummary.php?accion=get_titulos_proyectos_like", {
+            $.post(URL+"Controller/ctrTimesummary.php?accion=get_titulos_proyectos_like", {
                     titulo: $("#id_tareas_x_similitud").val()
                 },
                 function(data, textStatus, jqXHR) {
@@ -478,7 +479,7 @@ if (isset($_SESSION['usu_id'])) {
             if (result.isConfirmed) {
                 $.ajax({
                     type: "POST",
-                    url: "../../../../Controller/ctrTimesummary.php?accion=cambiar_estado_tarea",
+                    url: URL+"Controller/ctrTimesummary.php?accion=cambiar_estado_tarea",
                     data: {
                         id_timesummary_estados: id_timesummary_estados,
                         est: 0
@@ -512,7 +513,7 @@ if (isset($_SESSION['usu_id'])) {
     }
 
     function refrescarTablaTS() {
-        $.post("../../../../Controller/ctrTimesummary.php?accion=datos_tabla_ts",
+        $.post(URL+"Controller/ctrTimesummary.php?accion=datos_tabla_ts",
             function(data) {
                 $("#tbody_tabla_timasummary").html(data);
             },
@@ -521,7 +522,7 @@ if (isset($_SESSION['usu_id'])) {
     }
 
     function cambiarEstadoTareaHistorial(id_timesummary_estados) {
-        $.post("../../../../Controller/ctrTimesummary.php?accion=get_estado_tarea", {
+        $.post(URL+"Controller/ctrTimesummary.php?accion=get_estado_tarea", {
                 id_timesummary_estados: id_timesummary_estados
             },
             function(data, textStatus, jqXHR) {
@@ -539,7 +540,7 @@ if (isset($_SESSION['usu_id'])) {
                         if (result.isConfirmed) {
                             $.ajax({
                                 type: "POST",
-                                url: "../../../../Controller/ctrTimesummary.php?accion=cambiar_estado_tarea",
+                                url: URL+"Controller/ctrTimesummary.php?accion=cambiar_estado_tarea",
                                 data: {
                                     id_timesummary_estados: id_timesummary_estados,
                                     est: 1
@@ -586,7 +587,7 @@ if (isset($_SESSION['usu_id'])) {
                         if (result.isConfirmed) {
                             $.ajax({
                                 type: "POST",
-                                url: "../../../../Controller/ctrTimesummary.php?accion=cambiar_estado_tarea",
+                                url: URL+"Controller/ctrTimesummary.php?accion=cambiar_estado_tarea",
                                 data: {
                                     id_timesummary_estados: id_timesummary_estados,
                                     est: 0
