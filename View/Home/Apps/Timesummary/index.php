@@ -105,8 +105,8 @@ if (isset($_SESSION['usu_id'])) {
             locale: 'es',
             events: URL+'Controller/ctrTimesummary.php?accion=get_tareas',
             selectable: true,
-            // Boolean,
-            // default: true,
+            Boolean,
+            default: true,
             selectMirror: true,
             dateClick: function(info) {
                 let FECHA = info.dateStr;
