@@ -120,7 +120,7 @@ if (isset($_SESSION['usu_id'])) {
 
                         $("#id_proyecto_gestionado").html(proyectosHTML);
 
-                        if (sector_id != "4") { // Valido si no es Calidad que el change cambie los productos
+                        if (sector_id != "4" || sector_id != 4) { // Valido si no es Calidad que el change cambie los productos
 
                             $("#id_proyecto_gestionado").off("change").on("change", function() {
                                 let idProyecto = this.value;
