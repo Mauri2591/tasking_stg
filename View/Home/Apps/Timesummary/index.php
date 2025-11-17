@@ -94,7 +94,7 @@ if (isset($_SESSION['usu_id'])) {
 ?>
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.19/index.global.min.js'></script>
 <script>
-    // var sector_id = "<?php echo $_SESSION['sector_id']; ?>";
+    var sector_id = "<?php echo $_SESSION['sector_id']; ?>";
     var URL = "<?php echo URL ?>";
     let huboUpdate = false;
     document.addEventListener('DOMContentLoaded', function() {
@@ -120,54 +120,54 @@ if (isset($_SESSION['usu_id'])) {
 
                         $("#id_proyecto_gestionado").html(proyectosHTML);
 
-                        // if (sector_id != "4" || sector_id != 4) { // Valido si no es Calidad que el change cambie los productos
+                        if (sector_id != "4" || sector_id != 4) { // Valido si no es Calidad que el change cambie los productos
 
-                        //     $("#id_proyecto_gestionado").off("change").on("change", function() {
-                        //         let idProyecto = this.value;
+                            $("#id_proyecto_gestionado").off("change").on("change", function() {
+                                let idProyecto = this.value;
 
-                        //         const selectedOption = this.options[this.selectedIndex];
-                        //         const idPmCalidad = selectedOption.getAttribute("data-pm") || "";
-                        //         $("#id_pm_calidad").val(idPmCalidad);
+                                const selectedOption = this.options[this.selectedIndex];
+                                const idPmCalidad = selectedOption.getAttribute("data-pm") || "";
+                                $("#id_pm_calidad").val(idPmCalidad);
 
-                        //         if (idPmCalidad) {
-                        //             $("#validar_si_tiene_id_pm_calidad_es_pm").show();
-                        //             $("#validar_si_tiene_id_pm_calidad_proy_asignado").hide();
-                        //         } else {
-                        //             $("#validar_si_tiene_id_pm_calidad_proy_asignado").show();
-                        //             $("#validar_si_tiene_id_pm_calidad_es_pm").hide();
-                        //         }
+                                if (idPmCalidad) {
+                                    $("#validar_si_tiene_id_pm_calidad_es_pm").show();
+                                    $("#validar_si_tiene_id_pm_calidad_proy_asignado").hide();
+                                } else {
+                                    $("#validar_si_tiene_id_pm_calidad_proy_asignado").show();
+                                    $("#validar_si_tiene_id_pm_calidad_es_pm").hide();
+                                }
 
-                        //         $.post(
-                        //             URL+"Controller/ctrTimesummary.php?accion=get_cat_id_by_proyecto_gestionado", {
-                        //                 id: idProyecto
-                        //             },
-                        //             function(resp) {
-                        //                 if (resp.cat_id) {
-                        //                     $("#id_producto").val(resp.cat_id);
-                        //                 }
-                        //             },
-                        //             "json"
-                        //         );
+                                $.post(
+                                    URL+"Controller/ctrTimesummary.php?accion=get_cat_id_by_proyecto_gestionado", {
+                                        id: idProyecto
+                                    },
+                                    function(resp) {
+                                        if (resp.cat_id) {
+                                            $("#id_producto").val(resp.cat_id);
+                                        }
+                                    },
+                                    "json"
+                                );
 
-                        //     });
-                        // } else {
-                        //     $("#id_proyecto_gestionado").off("change").on("change", function() {
-                        //         let idProyecto = this.value;
+                            });
+                        } else {
+                            $("#id_proyecto_gestionado").off("change").on("change", function() {
+                                let idProyecto = this.value;
 
-                        //         const selectedOption = this.options[this.selectedIndex];
-                        //         const idPmCalidad = selectedOption.getAttribute("data-pm") || "";
-                        //         $("#id_pm_calidad").val(idPmCalidad);
+                                const selectedOption = this.options[this.selectedIndex];
+                                const idPmCalidad = selectedOption.getAttribute("data-pm") || "";
+                                $("#id_pm_calidad").val(idPmCalidad);
 
-                        //         if (idPmCalidad) {
-                        //             $("#validar_si_tiene_id_pm_calidad_es_pm").show();
-                        //             $("#validar_si_tiene_id_pm_calidad_proy_asignado").hide();
-                        //         } else {
-                        //             $("#validar_si_tiene_id_pm_calidad_proy_asignado").show();
-                        //             $("#validar_si_tiene_id_pm_calidad_es_pm").hide();
-                        //         }
+                                if (idPmCalidad) {
+                                    $("#validar_si_tiene_id_pm_calidad_es_pm").show();
+                                    $("#validar_si_tiene_id_pm_calidad_proy_asignado").hide();
+                                } else {
+                                    $("#validar_si_tiene_id_pm_calidad_proy_asignado").show();
+                                    $("#validar_si_tiene_id_pm_calidad_es_pm").hide();
+                                }
 
-                        //     });
-                        // }
+                            });
+                        }
                         $("#id_proyecto_gestionado").trigger("change");
 
                     }, "html");
