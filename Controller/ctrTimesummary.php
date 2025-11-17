@@ -3,12 +3,12 @@ require_once __DIR__ . "/../Config/Conexion.php";
 require_once __DIR__ . "/../Config/Config.php";
 require_once __DIR__ . "/../vendor/autoload.php";
 require_once __DIR__ . "/../Model/Clases/HtmlPurifier.php";
-require_once __DIR__ . "/../Model/Tymesummary.php";
+require_once __DIR__ . "/../Model/timesummary.php";
 require_once __DIR__ . "/../Model/Clases/Validaciones.php";
 require_once __DIR__ . "/../Model/Clases/Headers.php";
 require_once __DIR__ . "/../Model/Clases/Openssl.php";
 
-$tymesummary = new Tymesummary;
+$timesummary = new timesummary;
 
 switch ($_GET['accion']) {
 
@@ -26,19 +26,19 @@ switch ($_GET['accion']) {
         ];
 
         // Validación de formato de hora
-        if (!Tymesummary::validarHora($hora_desde) || !Tymesummary::validarHora($hora_hasta)) {
+        if (!timesummary::validarHora($hora_desde) || !timesummary::validarHora($hora_hasta)) {
             http_response_code(400);
             echo json_encode(["error" => "Formato de hora inválido. Use HH:MM"]);
             exit;
         }
         // Validación de campos vacíos
-        if (!Tymesummary::validarDatosVacios($data)) {
+        if (!timesummary::validarDatosVacios($data)) {
             http_response_code(400);
             echo json_encode(["error" => "Hay campos obligatorios vacíos"]);
             exit;
         }
 
-        $validacion_horas = Tymesummary::validar_horas_minutos($hora_desde, $hora_hasta);
+        $validacion_horas = timesummary::validar_horas_minutos($hora_desde, $hora_hasta);
 
         if (!$validacion_horas['success']) {
             http_response_code(400);
@@ -49,7 +49,7 @@ switch ($_GET['accion']) {
         $horas_consumidas = $validacion_horas['duracion']; // Ejemplo: "01:30"
 
         try {
-            $tymesummary->insert_tarea(
+            $timesummary->insert_tarea(
                 $_SESSION['usu_id'] ?? null,
                 $_POST['id_proyecto_gestionado'] ?? null,
                 $_POST['id_producto'] ?? null,
@@ -83,7 +83,7 @@ switch ($_GET['accion']) {
 
     // OBTENER TAREAS PARA FULLCALENDAR
     case 'get_tareas':
-        $data = $tymesummary->get_tareas($_SESSION['usu_id'] ?? null);
+        $data = $timesummary->get_tareas($_SESSION['usu_id'] ?? null);
         $eventos = [];
         foreach ($data as $r) {
             $eventos[] = [
@@ -104,7 +104,7 @@ switch ($_GET['accion']) {
         break;
 
     case 'get_titulos_proyectos':
-        $datos = $tymesummary->get_titulos_proyectos($_SESSION['usu_id']);
+        $datos = $timesummary->get_titulos_proyectos($_SESSION['usu_id']);
         $htmlOption = '';
         foreach ($datos as $val) {
             $htmlOption .= '<option value="' . $val['id_proyecto_gestionado'] . '" 
@@ -115,7 +115,7 @@ switch ($_GET['accion']) {
 
 
     case 'get_producto_proyectos':
-        $datos = $tymesummary->get_producto_proyectos($_SESSION['sector_id']);
+        $datos = $timesummary->get_producto_proyectos($_SESSION['sector_id']);
         $htmlOption = '';
         foreach ($datos as $val) {
             $htmlOption .= '<option value="' . $val['cat_id'] . '">' . $val['cat_nom'] . '</option>';
@@ -123,8 +123,23 @@ switch ($_GET['accion']) {
         echo $htmlOption;
         break;
 
+    case 'delete_tarea':
+        try {
+            $timesummary->delete_tarea($_POST['id']);
+            echo json_encode(["success" => true]);
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode(["error" => $e->getMessage()]);
+        }
+        break;
+
+    case 'get_cat_id_by_proyecto_gestionado':
+        echo json_encode($timesummary->get_cat_id_by_proyecto_gestionado($_POST['id']));
+        break;
+
+
     case 'get_tareas_total';
-        $datos = $tymesummary->get_tareas_total();
+        $datos = $timesummary->get_tareas_total();
         $htmlOption = '';
         foreach ($datos as $key => $val) {
             $htmlOption .= '<option value="' . $val['id'] . '" title="' . htmlspecialchars($val['definicion']) . '">' . $val['nombre'] . '</option>';
@@ -134,11 +149,11 @@ switch ($_GET['accion']) {
 
     case 'get_tareas_x_id':
         // 1. Obtengo la tarea guardad
-        $tareaActual = $tymesummary->get_tareas_x_id($_POST['id']);
+        $tareaActual = $timesummary->get_tareas_x_id($_POST['id']);
         $id_tarea_seleccionada = !empty($tareaActual[0]['id_tarea']) ? $tareaActual[0]['id_tarea'] : null;
 
         // 2. Obtener todas las tareas posibles
-        $todas = $tymesummary->get_tareas_total();
+        $todas = $timesummary->get_tareas_total();
 
         // 3. Construir el <option> con la seleccionada
         $htmlOption = '';
@@ -151,7 +166,7 @@ switch ($_GET['accion']) {
         break;
 
     case 'datos_tabla_ts':
-        $datos = $tymesummary->get_titulos_proyectos($_SESSION['usu_id']);
+        $datos = $timesummary->get_titulos_proyectos($_SESSION['usu_id']);
         $htmlTable = '';
         if ($_SESSION['sector_id'] == "4") {
             foreach ($datos as $key => $val) {
@@ -196,7 +211,7 @@ switch ($_GET['accion']) {
 
 
     case 'get_validar_si_hay_tareas_activas':
-        $data = $tymesummary->get_validar_si_hay_tareas_activas($_SESSION['usu_id']);
+        $data = $timesummary->get_validar_si_hay_tareas_activas($_SESSION['usu_id']);
         if ($data->total > 0) {
 ?>
             <span class="badge bg-success text-light">Proyectos activos</span>
@@ -209,7 +224,7 @@ switch ($_GET['accion']) {
         break;
 
     case 'get_titulos_proyectos_like':
-        $datos = $tymesummary->get_titulos_proyectos_like($_SESSION['usu_id'], $_POST['titulo']);
+        $datos = $timesummary->get_titulos_proyectos_like($_SESSION['usu_id'], $_POST['titulo']);
         $htmlTable = '';
         foreach ($datos as $key => $val) {
             $htmlTable .= '
@@ -225,7 +240,7 @@ switch ($_GET['accion']) {
         break;
 
     case 'get_titulos_proyectos_total':
-        $datos = $tymesummary->get_titulos_proyectos_total($_SESSION['usu_id']);
+        $datos = $timesummary->get_titulos_proyectos_total($_SESSION['usu_id']);
         if ($_SESSION['sector_id'] == "4") {
             foreach ($datos as $row) {
                 $sub_array = array();
@@ -234,9 +249,9 @@ switch ($_GET['accion']) {
                 $sub_array[] = '<span class="text-center badge border border-dark bg-light text-dark">' . $row['producto'] . '</span>';
                 $sub_array[] = $row['es_pm'] == "SI"
                     ? '<span class="text-center badge bg-success fs-9 fw-bold text-light">Si</span>'
-                    : '<span class="text-center badge border border-dark bg-light text-dark">No</span>';
+                    : '<span class="text-center badge bg-danger bg-light text-dark">Asignado</span>';
                 $sub_array[] = $row['est'] == 1
-                    ? '<span class="text-center badge bg-success text-light"> Activo </span>'
+                    ? '<span class="text-center badge border border-success text-success"> Activo </span>'
                     : '<span class="badge" style="background-color:gray;color:white"> Inactivo </span>';
                 $sub_array[] = '<a type="button" title="Desea inactivar esta tarea?" onclick="cambiarEstadoTareaHistorial(' . $row['id_timesummary_estados'] . ')" class="ri-edit-fill text-danger"></a>';
 
@@ -275,7 +290,7 @@ switch ($_GET['accion']) {
 
 
     case 'get_estado_tarea':
-        $datos = $tymesummary->get_estado_tarea($_POST['id_timesummary_estados']);
+        $datos = $timesummary->get_estado_tarea($_POST['id_timesummary_estados']);
         echo json_encode($datos);
         break;
 
@@ -286,7 +301,7 @@ switch ($_GET['accion']) {
             $usuario_asignado = $_SESSION['usu_id'];
 
             // ✅ Llamada al modelo con el filtro por usuario
-            $tymesummary->cambiar_estado_tarea(
+            $timesummary->cambiar_estado_tarea(
                 $_POST['id_timesummary_estados'],
                 $_POST['est'],
                 $usuario_asignado
@@ -304,7 +319,7 @@ switch ($_GET['accion']) {
         break;
 
     case 'get_sectores':
-        $data = $tymesummary->get_sectores();
+        $data = $timesummary->get_sectores();
         foreach ($data as $val) {
             // marcar activo el sector ETHICAL HACKING (id = 1)
             $activeClass = ($val['sector_id'] == 1) ? 'active' : '';
@@ -327,7 +342,7 @@ switch ($_GET['accion']) {
 
     case 'get_usuarios_por_sector':
         $sector_id = $_POST['sector_id'];
-        $data = $tymesummary->get_usuarios_por_sector($sector_id);
+        $data = $timesummary->get_usuarios_por_sector($sector_id);
 
         if (empty($data)) {
             echo "<span class='text-muted'>No hay usuarios en este sector.</span>";
@@ -343,7 +358,7 @@ switch ($_GET['accion']) {
         break;
 
     case 'get_tareas_x_usuario':
-        $datos = $tymesummary->get_tareas_x_usuario($_POST['usu_id']);
+        $datos = $timesummary->get_tareas_x_usuario($_POST['usu_id']);
         $data = array();
         foreach ($datos as $row) {
             $sub_array = array();
@@ -378,7 +393,7 @@ switch ($_GET['accion']) {
         break;
 
     case 'get_tareas_x_usuario_x_usu_id':
-        $datos = $tymesummary->get_tareas_x_usuario_x_usu_id($_SESSION['usu_id']);
+        $datos = $timesummary->get_tareas_x_usuario_x_usu_id($_SESSION['usu_id']);
         $data = array();
         foreach ($datos as $row) {
             $sub_array = array();

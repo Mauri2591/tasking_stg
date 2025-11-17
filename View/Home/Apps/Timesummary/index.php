@@ -94,6 +94,7 @@ if (isset($_SESSION['usu_id'])) {
 ?>
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.19/index.global.min.js'></script>
 <script>
+    var sector_id = "<?php echo $_SESSION['sector_id']; ?>";
     let huboUpdate = false;
     document.addEventListener('DOMContentLoaded', function() {
         var tabla;
@@ -111,40 +112,70 @@ if (isset($_SESSION['usu_id'])) {
                 $("#mdlCarcaTimesummary").modal("show");
                 $("#fechaSeleccionada").text(FECHA);
 
-                $.post("../../../../Controller/ctrTimesummary.php?accion=get_titulos_proyectos", function(data) {
-                    $("#id_proyecto_gestionado").html(data);
+                $.post("../../../../Controller/ctrTimesummary.php?accion=get_producto_proyectos", function(productosHTML) {
+                    $("#id_producto").html(productosHTML);
 
-                    $("#id_proyecto_gestionado").off("change").on("change", function() {
-                        const selectedOption = this.options[this.selectedIndex];
-                        const idPmCalidad = selectedOption.getAttribute("data-pm") || "";
-                        $("#id_pm_calidad").val(idPmCalidad);
+                    $.post("../../../../Controller/ctrTimesummary.php?accion=get_titulos_proyectos", function(proyectosHTML) {
 
-                        if (idPmCalidad) {
-                            document.getElementById("validar_si_tiene_id_pm_calidad").style.display="flex";
+                        $("#id_proyecto_gestionado").html(proyectosHTML);
+
+                        if (sector_id != "4") { // Valido si no es Calidad que el change cambie los productos
+
+                            $("#id_proyecto_gestionado").off("change").on("change", function() {
+                                let idProyecto = this.value;
+
+                                const selectedOption = this.options[this.selectedIndex];
+                                const idPmCalidad = selectedOption.getAttribute("data-pm") || "";
+                                $("#id_pm_calidad").val(idPmCalidad);
+
+                                if (idPmCalidad) {
+                                    $("#validar_si_tiene_id_pm_calidad_es_pm").show();
+                                    $("#validar_si_tiene_id_pm_calidad_proy_asignado").hide();
+                                } else {
+                                    $("#validar_si_tiene_id_pm_calidad_proy_asignado").show();
+                                    $("#validar_si_tiene_id_pm_calidad_es_pm").hide();
+                                }
+
+                                $.post(
+                                    "../../../../Controller/ctrTimesummary.php?accion=get_cat_id_by_proyecto_gestionado", {
+                                        id: idProyecto
+                                    },
+                                    function(resp) {
+                                        if (resp.cat_id) {
+                                            $("#id_producto").val(resp.cat_id);
+                                        }
+                                    },
+                                    "json"
+                                );
+
+                            });
                         } else {
-                            document.getElementById("validar_si_tiene_id_pm_calidad").style.display="none";
+                            $("#id_proyecto_gestionado").off("change").on("change", function() {
+                                let idProyecto = this.value;
+
+                                const selectedOption = this.options[this.selectedIndex];
+                                const idPmCalidad = selectedOption.getAttribute("data-pm") || "";
+                                $("#id_pm_calidad").val(idPmCalidad);
+
+                                if (idPmCalidad) {
+                                    $("#validar_si_tiene_id_pm_calidad_es_pm").show();
+                                    $("#validar_si_tiene_id_pm_calidad_proy_asignado").hide();
+                                } else {
+                                    $("#validar_si_tiene_id_pm_calidad_proy_asignado").show();
+                                    $("#validar_si_tiene_id_pm_calidad_es_pm").hide();
+                                }
+
+                            });
                         }
-                    });
+                        $("#id_proyecto_gestionado").trigger("change");
 
-                    // Ejecutar el listener una vez al inicio
-                    $("#id_proyecto_gestionado").trigger("change");
-                }, "html");
+                    }, "html");
 
-                $.post("../../../../Controller/ctrTimesummary.php?accion=get_producto_proyectos", function(data) {
-                    $("#id_producto").html(data);
                 }, "html");
 
                 $.post("../../../../Controller/ctrTimesummary.php?accion=get_tareas_total", function(data) {
                     $("#id_tarea").html(data);
                 }, "html");
-
-                $.post("../../../../Controller/ctrTimesummary.php?accion=get_producto_proyectos",
-                    function(data, textStatus, jqXHR) {
-                        $("#id_producto").html(data)
-
-                    },
-                    "html"
-                );
 
                 $.post("../../../../Controller/ctrTimesummary.php?accion=get_tareas_total",
                     function(data, textStatus, jqXHR) {
@@ -198,7 +229,7 @@ if (isset($_SESSION['usu_id'])) {
                         hora_desde: horaDesde,
                         hora_hasta: horaHasta,
                         descripcion: $("#descripcion").val(),
-                        id_pm_calidad:$("#id_pm_calidad").val()
+                        id_pm_calidad: $("#id_pm_calidad").val()
                     };
 
                     $.ajax({
@@ -263,6 +294,7 @@ if (isset($_SESSION['usu_id'])) {
                 $("#id_editar_tarea").val(ID_TAREA)
                 $("#editar_descripcion").val(DESCRIPCION)
                 $("#fechaSeleccionadaEdit").text(FECHA_FORMATO);
+
                 $("#mdlEditarTimesummary").modal("show");
 
 
@@ -274,6 +306,54 @@ if (isset($_SESSION['usu_id'])) {
                     },
                     "html");
 
+
+                $("#btnEliminarTarea").off("click").on("click", function() {
+
+                    Swal.fire({
+                        icon: "warning",
+                        title: "¿Desea eliminar esta tarea?",
+                        showCancelButton: true,
+                        confirmButtonText: "Sí",
+                        cancelButtonText: "Cancelar"
+                    }).then((result) => {
+
+                        if (!result.isConfirmed) return;
+
+                        $.post(
+                            "../../../../Controller/ctrTimesummary.php?accion=delete_tarea", {
+                                id: EVENTO_ID
+                            },
+                            function(response) {
+
+                                Swal.fire({
+                                    icon: "success",
+                                    title: "Tarea eliminada correctamente",
+                                    showConfirmButton: false,
+                                    timer: 500
+                                });
+
+                                $("#mdlEditarTimesummary").modal("hide");
+
+                                setTimeout(() => {
+                                    calendar.refetchEvents();
+                                }, 300);
+
+                                setTimeout(() => {
+                                    refrescarTablaTS();
+                                }, 300);
+
+                            },
+                            "json"
+                        ).fail(function(xhr) {
+                            Swal.fire({
+                                icon: "error",
+                                title: "Error",
+                                text: xhr.responseJSON?.error || "No se pudo eliminar la tarea"
+                            });
+                        });
+
+                    });
+                });
             }
         });
 
@@ -332,7 +412,6 @@ if (isset($_SESSION['usu_id'])) {
                 }
             });
 
-
             // Handler: cuando el modal se oculta
             $('#mdlHistorialTimesummary').on('hidden.bs.modal', function() {
                 if ($.fn.DataTable && $.fn.DataTable.isDataTable('#tableHistorialTimesummary')) {
@@ -348,7 +427,6 @@ if (isset($_SESSION['usu_id'])) {
         });
         calendar.render();
     });
-
 
     $.post("../../../../Controller/ctrTimesummary.php?accion=datos_tabla_ts",
         function(data, textStatus, jqXHR) {
@@ -385,8 +463,7 @@ if (isset($_SESSION['usu_id'])) {
                 "html"
             );
         }
-
-    })
+    });
 
     function editarTarea(id_timesummary_estados) {
         Swal.fire({
@@ -432,6 +509,15 @@ if (isset($_SESSION['usu_id'])) {
 
             }
         });
+    }
+
+    function refrescarTablaTS() {
+        $.post("../../../../Controller/ctrTimesummary.php?accion=datos_tabla_ts",
+            function(data) {
+                $("#tbody_tabla_timasummary").html(data);
+            },
+            "html"
+        );
     }
 
     function cambiarEstadoTareaHistorial(id_timesummary_estados) {

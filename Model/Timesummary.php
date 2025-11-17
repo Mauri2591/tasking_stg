@@ -1,6 +1,6 @@
 <?php
 
-class Tymesummary extends Conexion
+class timesummary extends Conexion
 {
 
     public function get_tareas($usu_id = null)
@@ -102,6 +102,15 @@ class Tymesummary extends Conexion
         $stmt->bindValue(":hora_hasta", htmlentities($hora_hasta, ENT_QUOTES), PDO::PARAM_STR);
         $stmt->bindValue(":descripcion", htmlentities($descripcion, ENT_QUOTES), PDO::PARAM_STR);
         $stmt->bindValue(":horas_consumidas", $horas_consumidas, PDO::PARAM_STR);
+        $stmt->execute();
+    }
+
+        public function delete_tarea($id)
+    {
+        $conn = parent::get_conexion();
+        $sql = "DELETE FROM timesummary_carga WHERE id=:id";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue(":id", $id, PDO::PARAM_INT);
         $stmt->execute();
     }
 
@@ -285,6 +294,16 @@ ORDER BY pg.titulo";
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+public function get_cat_id_by_proyecto_gestionado($id)
+{
+    $conn = parent::get_conexion();
+    $sql = "SELECT cat_id FROM proyecto_gestionado WHERE id = :id";
+    $stmt = $conn->prepare($sql);
+    $stmt->bindValue(":id", $id, PDO::PARAM_INT);
+    $stmt->execute();
+    return $stmt->fetch(PDO::FETCH_ASSOC);
+}
 
     public function cambiar_estado_tarea($id_timesummary_estados, $est, $usuario_asignado)
     {

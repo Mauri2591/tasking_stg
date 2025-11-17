@@ -1,5 +1,5 @@
 $(document).ready(function () {
-    tabla = $("#table_proyectos_nuevos_eh_incident_response").dataTable({
+    tabla = $("#table_proyectos_nuevos_calidad_sase").dataTable({
         "aProcessing": true,
         "aServerSide": true,
         dom: 'Bfrtip',
@@ -17,14 +17,15 @@ $(document).ready(function () {
             type: "post",
             dataType: "json",
             data: {
-                sector_id: 4, // eh
+                sector_id: 4, // calidad
                 estados_id: 1, //nuevos
-                cat_id: 26 //IR
+                cat_id: 24 //sase
             },
-            error: function (e) {
-            }
+            error: function (e) {}
         },
-        "order": [[0, "asc"]], //Ordenar descendentemente
+        "order": [
+            [0, "asc"]
+        ], //Ordenar descendentemente
         "bDestroy": true,
         "responsive": true,
         "bInfo": true,
@@ -56,7 +57,7 @@ $(document).ready(function () {
         }
     });
 
-    tabla = $("#table_proyectos_abiertos_eh_incident_response").dataTable({
+    tabla = $("#table_proyectos_abiertos_calidad_sase").dataTable({
         "aProcessing": true,
         "aServerSide": true,
         dom: 'Bfrtip',
@@ -74,14 +75,15 @@ $(document).ready(function () {
             type: "post",
             dataType: "json",
             data: {
-                sector_id: 4, // eh
-                estados_id: 2, //abierto
-                cat_id: 26 //IR
+                sector_id: 4, // calidad
+                estados_id: 2, //nuevos
+                cat_id: 24 //sase
             },
-            error: function (e) {
-            }
+            error: function (e) {}
         },
-        "order": [[0, "asc"]], //Ordenar descendentemente
+        "order": [
+            [0, "asc"]
+        ], //Ordenar descendentemente
         "bDestroy": true,
         "responsive": true,
         "bInfo": true,
@@ -113,7 +115,7 @@ $(document).ready(function () {
         }
     });
 
-    tabla = $("#table_proyectos_realizados_eh_incident_response").dataTable({
+    tabla = $("#table_proyectos_realizados_calidad_sase").dataTable({
         "aProcessing": true,
         "aServerSide": true,
         dom: 'Bfrtip',
@@ -131,14 +133,15 @@ $(document).ready(function () {
             type: "post",
             dataType: "json",
             data: {
-                sector_id: 4, // eh
-                estados_id: 3, //realizado
-                cat_id: 26 //IR
+               sector_id: 4, // calidad
+                estados_id: 3, //nuevos
+                cat_id: 24 //sase
             },
-            error: function (e) {
-            }
+            error: function (e) {}
         },
-        "order": [[0, "asc"]], //Ordenar descendentemente
+        "order": [
+            [0, "asc"]
+        ], //Ordenar descendentemente
         "bDestroy": true,
         "responsive": true,
         "bInfo": true,
@@ -188,14 +191,15 @@ $(document).ready(function () {
             type: "post",
             dataType: "json",
             data: {
-                sector_id: 4, // eh
-                estados_id: 4, //cerrado calidad
-                cat_id: 26 //IR
+             sector_id: 4, // calidad
+                estados_id: 4, //nuevos
+                cat_id: 24 //sase
             },
-            error: function (e) {
-            }
+            error: function (e) {}
         },
-        "order": [[0, "asc"]], //Ordenar descendentemente
+        "order": [
+            [0, "asc"]
+        ], //Ordenar descendentemente
         "bDestroy": true,
         "responsive": true,
         "bInfo": true,
@@ -237,7 +241,10 @@ function cambiar_a_borrador(id_proyecto_gestionado) {
         showCancelButton: true
     }).then((result) => {
         if (result.isConfirmed) {
-            $.post("../../../../../../Controller/ctrProyectos.php?proy=update_estado_proy", { ud: id_proyecto_gestionado, estados_id: 14 },
+            $.post("../../../../../../Controller/ctrProyectos.php?proy=update_estado_proy", {
+                    ud: id_proyecto_gestionado,
+                    estados_id: 14
+                },
                 function (data, textStatus, jqXHR) {
 
                 },
@@ -245,14 +252,17 @@ function cambiar_a_borrador(id_proyecto_gestionado) {
             );
 
             setTimeout(() => {
+                if ($.fn.DataTable.isDataTable('#table_proyectos_nuevos_eh_pentest')) {
+                    $('#table_proyectos_nuevos_eh_pentest').DataTable().ajax.reload(null, false);
+                }
                 if ($.fn.DataTable.isDataTable('#table_proyectos_borrador')) {
                     $('#table_proyectos_borrador').DataTable().ajax.reload(null, false);
                 }
-                if ($.fn.DataTable.isDataTable('#table_proyectos_abiertos_eh_incident_response')) {
-                    $('#table_proyectos_abiertos_eh_incident_response').DataTable().ajax.reload(null, false);
+                if ($.fn.DataTable.isDataTable('#table_proyectos_abiertos_calidad_sase')) {
+                    $('#table_proyectos_abiertos_calidad_sase').DataTable().ajax.reload(null, false);
                 }
-                if ($.fn.DataTable.isDataTable('#table_proyectos_nuevos_eh_incident_response')) {
-                    $('#table_proyectos_nuevos_eh_incident_response').DataTable().ajax.reload(null, false);
+                if ($.fn.DataTable.isDataTable('#table_proyectos_nuevos_calidad_sase')) {
+                    $('#table_proyectos_nuevos_calidad_sase').DataTable().ajax.reload(null, false);
                 }
             }, 500);
             Swal.fire({
@@ -278,7 +288,10 @@ function cambiar_a_abierto(id_proyecto_gestionado) {
         showCancelButton: true
     }).then((result) => {
         if (result.isConfirmed) {
-            $.post("../../../../../../Controller/ctrProyectos.php?proy=update_estado_proy", { id: id_proyecto_gestionado, estados_id: 2 },
+            $.post("../../../../../../Controller/ctrProyectos.php?proy=update_estado_proy", {
+                    id: id_proyecto_gestionado,
+                    estados_id: 2
+                },
                 function (data, textStatus, jqXHR) {
 
                 },
@@ -293,17 +306,18 @@ function cambiar_a_abierto(id_proyecto_gestionado) {
             });
 
             setTimeout(() => {
-                if ($.fn.DataTable.isDataTable('#table_proyectos_abiertos_eh_incident_response')) {
-                    $('#table_proyectos_abiertos_eh_incident_response').DataTable().ajax.reload(null, false);
+                if ($.fn.DataTable.isDataTable('#table_proyectos_abiertos_calidad_sase')) {
+                    $('#table_proyectos_abiertos_calidad_sase').DataTable().ajax.reload(null, false);
                 }
-                if ($.fn.DataTable.isDataTable('#table_proyectos_nuevos_eh_incident_response')) {
-                    $('#table_proyectos_nuevos_eh_incident_response').DataTable().ajax.reload(null, false);
+                if ($.fn.DataTable.isDataTable('#table_proyectos_nuevos_calidad_sase')) {
+                    $('#table_proyectos_nuevos_calidad_sase').DataTable().ajax.reload(null, false);
                 }
             }, 500);
 
         }
     })
 }
+
 function asignar_proyecto(id_proyecto_gestionado) {
 
     Swal.fire({
@@ -313,7 +327,9 @@ function asignar_proyecto(id_proyecto_gestionado) {
         showCancelButton: true
     }).then((result) => {
         if (result.isConfirmed) {
-            $.post("../../../../../../Controller/ctrProyectos.php?proy=tomar_proyecto", { id_proyecto_gestionado: id_proyecto_gestionado },
+            $.post("../../../../../../Controller/ctrProyectos.php?proy=tomar_proyecto", {
+                    id_proyecto_gestionado: id_proyecto_gestionado
+                },
                 function (data, textStatus, jqXHR) {
 
                 },
@@ -327,8 +343,8 @@ function asignar_proyecto(id_proyecto_gestionado) {
                 timer: 1300
             });
             setTimeout(() => {
-                if ($.fn.DataTable.isDataTable('#table_proyectos_nuevos_eh_incident_response')) {
-                    $('#table_proyectos_nuevos_eh_incident_response').DataTable().ajax.reload(null, false);
+                if ($.fn.DataTable.isDataTable('#table_proyectos_nuevos_calidad_sase')) {
+                    $('#table_proyectos_nuevos_calidad_sase').DataTable().ajax.reload(null, false);
                 }
             }, 500);
         }
@@ -342,19 +358,25 @@ function asignar_proyecto(id_proyecto_gestionado) {
 
 function ver_hosts_eh(id_proyecto_gestionado) {
     $("#ModalVerHosts").modal("show");
-    $.post("../../../../../../Controller/ctrProyectos.php?proy=get_hosts_proy_ip", { id_proyecto_gestionado: id_proyecto_gestionado },
+    $.post("../../../../../../Controller/ctrProyectos.php?proy=get_hosts_proy_ip", {
+            id_proyecto_gestionado: id_proyecto_gestionado
+        },
         function (data, textStatus, jqXHR) {
             $("#cont_ip").html(data)
         },
         "html"
     );
-    $.post("../../../../../../Controller/ctrProyectos.php?proy=get_hosts_proy_url", { id_proyecto_gestionado: id_proyecto_gestionado },
+    $.post("../../../../../../Controller/ctrProyectos.php?proy=get_hosts_proy_url", {
+            id_proyecto_gestionado: id_proyecto_gestionado
+        },
         function (data, textStatus, jqXHR) {
             $("#cont_url").html(data)
         },
         "html"
     );
-    $.post("../../../../../../Controller/ctrProyectos.php?proy=get_hosts_proy_otro", { id_proyecto_gestionado: id_proyecto_gestionado },
+    $.post("../../../../../../Controller/ctrProyectos.php?proy=get_hosts_proy_otro", {
+            id_proyecto_gestionado: id_proyecto_gestionado
+        },
         function (data, textStatus, jqXHR) {
             $("#cont_otro").html(data)
         },
@@ -370,7 +392,10 @@ function cambiar_a_nuevo(id_proyecto_gestionado) {
         showCancelButton: true
     }).then((result) => {
         if (result.isConfirmed) {
-            $.post("../../../../../../Controller/ctrProyectos.php?proy=update_estado_proy", { id: id_proyecto_gestionado, estados_id: 1 },
+            $.post("../../../../../../Controller/ctrProyectos.php?proy=update_estado_proy", {
+                    id: id_proyecto_gestionado,
+                    estados_id: 1
+                },
                 function (data, textStatus, jqXHR) {
 
                 },
@@ -385,11 +410,11 @@ function cambiar_a_nuevo(id_proyecto_gestionado) {
             });
 
             setTimeout(() => {
-                if ($.fn.DataTable.isDataTable('#table_proyectos_abiertos_eh_incident_response')) {
-                    $('#table_proyectos_abiertos_eh_incident_response').DataTable().ajax.reload(null, false);
+                if ($.fn.DataTable.isDataTable('#table_proyectos_abiertos_calidad_sase')) {
+                    $('#table_proyectos_abiertos_calidad_sase').DataTable().ajax.reload(null, false);
                 }
-                if ($.fn.DataTable.isDataTable('#table_proyectos_nuevos_eh_incident_response')) {
-                    $('#table_proyectos_nuevos_eh_incident_response').DataTable().ajax.reload(null, false);
+                if ($.fn.DataTable.isDataTable('#table_proyectos_nuevos_calidad_sase')) {
+                    $('#table_proyectos_nuevos_calidad_sase').DataTable().ajax.reload(null, false);
                 }
             }, 500);
         }
@@ -404,7 +429,10 @@ function cambiar_a_realizado(id_proyecto_gestionado) {
         showCancelButton: true
     }).then((result) => {
         if (result.isConfirmed) {
-            $.post("../../../../../../Controller/ctrProyectos.php?proy=update_estado_proy", { id: id_proyecto_gestionado, estados_id: 3 },
+            $.post("../../../../../../Controller/ctrProyectos.php?proy=update_estado_proy", {
+                    id: id_proyecto_gestionado,
+                    estados_id: 3
+                },
                 function (data, textStatus, jqXHR) {
 
                 },
@@ -418,11 +446,11 @@ function cambiar_a_realizado(id_proyecto_gestionado) {
                 showConfirmButton: false
             });
             setTimeout(() => {
-                if ($.fn.DataTable.isDataTable('#table_proyectos_abiertos_eh_incident_response')) {
-                    $('#table_proyectos_abiertos_eh_incident_response').DataTable().ajax.reload(null, false);
+                if ($.fn.DataTable.isDataTable('#table_proyectos_abiertos_calidad_sase')) {
+                    $('#table_proyectos_abiertos_calidad_sase').DataTable().ajax.reload(null, false);
                 }
-                if ($.fn.DataTable.isDataTable('#table_proyectos_realizados_eh_incident_response')) {
-                    $('#table_proyectos_realizados_eh_incident_response').DataTable().ajax.reload(null, false);
+                if ($.fn.DataTable.isDataTable('#table_proyectos_realizados_calidad_sase')) {
+                    $('#table_proyectos_realizados_calidad_sase').DataTable().ajax.reload(null, false);
                 }
             }, 500);
 

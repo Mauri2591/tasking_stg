@@ -1227,9 +1227,9 @@ switch ($_GET['proy']) {
             $sub_array[] = $row['fech_inicio'] == '' ? 'Sin fecha' : '<span class="badge bg-light text-dark">' . $row['fech_inicio'] . '</span>';
             $sub_array[] = $row['fech_fin'] == '' ? 'Sin fecha' : '<span class="badge bg-light text-dark">' . $row['fech_fin'] . '</span>';
             $sub_array[] = '<span class="badge bg-light text-dark">' . $row['creador_proy'] . '</span';
-            $sub_array[] = strlen($row['cat_nom']) > 10
-                ? '<span class="badge bg-light text-dark" data-placement="top" title="' . $row['cat_nom'] . '">' . substr($row['cat_nom'], 0, 10) . '...' . '</span>'
-                : '<span class="badge bg-light text-dark" data-placement="top" title="' . $row['cat_nom'] . '">' . $row['cat_nom'] . '</span>';
+            $sub_array[] = strlen($row['categoria']) > 10
+                ? '<span class="badge bg-light text-dark" data-placement="top" title="' . $row['categoria'] . '">' . substr($row['categoria'], 0, 10) . '...' . '</span>'
+                : '<span class="badge bg-light text-dark" data-placement="top" title="' . $row['categoria'] . '">' . $row['categoria'] . '</span>';
             $sub_array[] = strlen($row['cats_nom']) > 10
                 ? '<span class="badge bg-light text-dark" data-placement="top" title="' . $row['cats_nom'] . '">' . substr($row['cats_nom'], 0, 10) . '...' . '</span>'
                 : '<span class="badge bg-light text-dark" data-placement="top" title="' . $row['cats_nom'] . '">' . $row['cats_nom'] . '</span>';

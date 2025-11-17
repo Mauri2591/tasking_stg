@@ -16,9 +16,9 @@ class Login extends Conexion
         $stmt->execute();
         $resul = $stmt->fetch(PDO::FETCH_ASSOC);
         if ($resul == false) {
-            header("Location:" . URL . "/?err=err_usu");
+            header("Location:" . URL . "?err=err_usu");
         } else if (!password_verify($usu_pass, $resul['usu_pass'])) {
-            header("Location:" . URL . "/?err=err_pass");
+            header("Location:" . URL . "?err=err_pass");
             exit();
         } else {
             session_regenerate_id();
