@@ -42,13 +42,12 @@ if (isset($_SESSION['usu_id'])) {
                                         </button>
 
                                         <div class="dropdown-menu py-1" aria-labelledby="btnGroupVerticalDrop1">
-                                            <a class="dropdown-item" href="#"><i title="Descargar Docx" class="fs-18 text-secondary my-0 py-0 ri-file-word-fill"></i></a>
-                                            <a class="dropdown-item" href="#"><i title="Descargar Xlsx" class="fs-18 text-success my-0 py-0 ri-file-excel-fill"></i></a>
+                                            <a onclick="mdlDeReporteDocx()" class="dropdown-item" href="#"><i title="Descargar Docx" class="fs-22 text-secondary ri-file-word-fill"></i></a>
+                                            <a onclick="mdlDeReporteXlsx()" class="dropdown-item" href="#"><i title="Descargar Xlsx" class="fs-22 text-success ri-file-excel-fill"></i></a>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-
 
                             <ul id="tab_sectores" class="nav nav-pills arrow-navtabs nav-success py-0 px-1 mb-3" role="tablist">
 
@@ -113,9 +112,11 @@ if (isset($_SESSION['usu_id'])) {
     <!-- End Page-content -->
     <?php
     include_once __DIR__ . "/../../../../View/Home/Public/Template/footer.php";
+    include_once __DIR__ . "/Modales/mdlReportes.php";
     ?>
     <script>
         var tabla;
+        var URL = "<?php echo URL ?>";
 
         document.addEventListener("DOMContentLoaded", function() {
             // Inicializa DataTable vacía
@@ -180,17 +181,14 @@ if (isset($_SESSION['usu_id'])) {
                 }
             });
 
-            // Cargar pestañas de sectores
             $.post("../../../../Controller/ctrTimesummary.php?accion=get_sectores", function(data) {
                 $("#tab_sectores").html(data);
 
-                // Cargar usuarios del primer sector activo (Ethical Hacking)
                 let tabActivo = $("#tab_sectores .nav-link.active");
                 let sectorId = tabActivo.data("sector-id");
                 cargarUsuarios(sectorId);
             });
 
-            // Click en tab de sector
             $("#tab_sectores").on("click", ".nav-link", function(e) {
                 e.preventDefault();
                 $("#tab_sectores .nav-link").removeClass("active");
@@ -205,14 +203,11 @@ if (isset($_SESSION['usu_id'])) {
                     },
                     function(data) {
                         $("#tab_usuarios_x_sector").html(data);
-
-                        // 🔁 Cuando termina de cargar los usuarios, obtener el primero
                         let primerUsuario = $("#tab_usuarios_x_sector span").first();
-
                         if (primerUsuario.length > 0) {
-                            let usu_id = primerUsuario.attr("onclick").match(/\d+/)[0]; // extrae el ID del onclick
+                            let usu_id = primerUsuario.attr("onclick").match(/\d+/)[0];
                             window.usu_id = usu_id;
-                            $("#table_tareas_usuarios").DataTable().ajax.reload(); // recarga la tabla
+                            $("#table_tareas_usuarios").DataTable().ajax.reload();
                         }
                     },
                     "html"
@@ -221,15 +216,95 @@ if (isset($_SESSION['usu_id'])) {
 
         });
 
-        function verTareasUsuario(usu_id) {
-            window.usu_id = usu_id; // Guardamos el id globalmente
-            $("#table_tareas_usuarios").DataTable().ajax.reload(); // recarga con el nuevo id
+        function validaridCheckValidarCliente(idCheck, idInput) {
+            $(idCheck).off("change");
+            $(idCheck).on("change", function() {
+                const checked = $(this).is(":checked");
+                $(this).val(checked ? "SI" : "NO");
+                $(idInput).prop("disabled", !checked);
+            });
         }
+
+        function mdlDeReporteDocx() {
+            $("#hiddenIdClienteDocx").val('');
+            $("#getNombreClienteDocx").val('');
+            $("#nombreClienteDocx").val('');
+            $("#hiddenDocx").val('Docx');
+            $("#idCheckValidarClienteDocx").prop("checked", false);
+            $("#nombreClienteDocx").prop("disabled", true);
+            $("#mdlReportesDocx").modal("show");
+            validaridCheckValidarCliente("#idCheckValidarClienteDocx", "#nombreClienteDocx");
+            document.getElementById("nombreClienteDocx").addEventListener("input", inputNombreClienteDocx);
+        }
+
+
+        function inputNombreClienteDocx() {
+            let texto = $("#nombreClienteDocx").val().trim();
+            if (texto === "") {
+                $("#hiddenIdClienteDocx").val('');
+                $("#getNombreClienteDocx").val('');
+                return;
+            }
+            $.post(
+                "../../../../Controller/ctrTimesummary.php?accion=getNombreCliente", {
+                    client_rs: texto
+                },
+                function(data) {
+                    if (data && data.cliente_id) {
+                        $("#getNombreClienteDocx").val(data.client_rs);
+                        $("#hiddenIdClienteDocx").val(data.cliente_id);
+                    } else {
+                        $("#getNombreClienteDocx").val('');
+                        $("#hiddenIdClienteDocx").val('');
+                    }
+                },
+                "json"
+            );
+        }
+
+        function inputNombreClienteXlsx() {
+            let valor = $("#nombreClienteXlsx").val().trim();
+            if (valor === "") {
+                $("#hiddenIdClienteXlsx").val('');
+                $("#getNombreClienteXlsx").val('');
+                return; 
+            }
+            $.post(
+                "../../../../Controller/ctrTimesummary.php?accion=getNombreCliente", {
+                    client_rs: valor
+                },
+                function(data) {
+                    if (data && data.cliente_id) {
+                        $("#getNombreClienteXlsx").val(data.client_rs);
+                        $("#hiddenIdClienteXlsx").val(data.cliente_id);
+                    } else {
+                        $("#getNombreClienteXlsx").val('');
+                        $("#hiddenIdClienteXlsx").val('');
+                    }
+                },
+                "json"
+            );
+        }
+
+        function mdlDeReporteXlsx() {
+            $("#hiddenIdClienteXlsx").val('');
+            $("#getNombreClienteXlsx").val('');
+            $("#nombreClienteXlsx").val('');
+            $("#idCheckValidarClienteXlsx").prop("checked", false);
+            $("#nombreClienteXlsx").prop("disabled", true);
+            $("#mdlReportesXlsx").modal("show");
+            validaridCheckValidarCliente("#idCheckValidarClienteXlsx", "#nombreClienteXlsx");
+            document
+                .getElementById("nombreClienteXlsx")
+                .addEventListener("input", inputNombreClienteXlsx);
+        }
+
+        function verTareasUsuario(usu_id) {
+            window.usu_id = usu_id;
+            $("#table_tareas_usuarios").DataTable().ajax.reload();
+        }
+
     </script>
-
-
-
-
 
 <?php } else {
     header("Location:" . URL . "/View/Home/Logout.php");

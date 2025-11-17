@@ -2,6 +2,8 @@
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpWord\PhpWord;
+use PhpOffice\PhpWord\IOFactory;
 
 class Reportes
 {
@@ -164,113 +166,374 @@ class Reportes
         exit;
     }
 
-   public static function total_excel($data, $nombre)
-{
-    $spreadsheet = new Spreadsheet();
-    $sheet = $spreadsheet->getActiveSheet();
+    public static function total_excel($data, $nombre)
+    {
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
 
-    // Extraer todas las categorías únicas
-    $todas_categorias = [];
-    foreach ($data as $row) {
-        if (!empty($row['categoria']) && !in_array($row['categoria'], $todas_categorias)) {
-            $todas_categorias[] = $row['categoria'];
+        // Extraer todas las categorías únicas
+        $todas_categorias = [];
+        foreach ($data as $row) {
+            if (!empty($row['categoria']) && !in_array($row['categoria'], $todas_categorias)) {
+                $todas_categorias[] = $row['categoria'];
+            }
         }
-    }
-    sort($todas_categorias);
+        sort($todas_categorias);
 
-    // Encabezados
-    $headers = array_merge(['CLIENTE'], $todas_categorias, ['TOTAL PROYECTOS']);
-    $sheet->fromArray($headers, NULL, 'A1');
+        // Encabezados
+        $headers = array_merge(['CLIENTE'], $todas_categorias, ['TOTAL PROYECTOS']);
+        $sheet->fromArray($headers, NULL, 'A1');
 
-    //Construir estructura pivotada
-    $pivot = [];
-    foreach ($data as $row) {
-        $cliente = $row['client_rs'];
-        $categoria = $row['categoria'] ?: '-';
-        $cantidad = (int) $row['cantidad_proyectos'];
+        //Construir estructura pivotada
+        $pivot = [];
+        foreach ($data as $row) {
+            $cliente = $row['client_rs'];
+            $categoria = $row['categoria'] ?: '-';
+            $cantidad = (int) $row['cantidad_proyectos'];
 
-        if (!isset($pivot[$cliente])) {
-            $pivot[$cliente] = array_fill_keys($todas_categorias, 0);
+            if (!isset($pivot[$cliente])) {
+                $pivot[$cliente] = array_fill_keys($todas_categorias, 0);
+            }
+            $pivot[$cliente][$categoria] += $cantidad;
         }
-        $pivot[$cliente][$categoria] += $cantidad;
-    }
 
-    // Escribir filas
-    $rowNum = 2;
-    $totales_categorias = array_fill_keys($todas_categorias, 0);
-    $total_general = 0;
+        // Escribir filas
+        $rowNum = 2;
+        $totales_categorias = array_fill_keys($todas_categorias, 0);
+        $total_general = 0;
 
-    foreach ($pivot as $cliente => $cats) {
-        $fila = [$cliente];
-        $subtotal = 0;
+        foreach ($pivot as $cliente => $cats) {
+            $fila = [$cliente];
+            $subtotal = 0;
 
+            foreach ($todas_categorias as $cat) {
+                $valor = $cats[$cat] > 0 ? $cats[$cat] : '-';
+                $fila[] = $valor;
+                if ($cats[$cat] > 0) {
+                    $totales_categorias[$cat] += $cats[$cat];
+                    $subtotal += $cats[$cat];
+                }
+            }
+
+            $fila[] = $subtotal;
+            $total_general += $subtotal;
+            $sheet->fromArray($fila, NULL, 'A' . $rowNum);
+            $rowNum++;
+        }
+
+        // Agregar salto de línea antes del total
+        $rowNum++; // deja una fila vacía visualmente
+
+        // 🧩 6️⃣ Fila de totales (gris)
+        $fila_total = ['TOTAL'];
         foreach ($todas_categorias as $cat) {
-            $valor = $cats[$cat] > 0 ? $cats[$cat] : '-';
-            $fila[] = $valor;
-            if ($cats[$cat] > 0) {
-                $totales_categorias[$cat] += $cats[$cat];
-                $subtotal += $cats[$cat];
+            $fila_total[] = $totales_categorias[$cat];
+        }
+        $fila_total[] = $total_general;
+        $sheet->fromArray($fila_total, NULL, 'A' . $rowNum);
+
+        // Pintar la fila TOTAL en gris
+        $ultimaCol = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex(count($headers));
+        $sheet->getStyle("A{$rowNum}:{$ultimaCol}{$rowNum}")
+            ->getFill()
+            ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
+            ->getStartColor()
+            ->setRGB('D9D9D9'); // gris claro
+
+        $sheet->getStyle("A{$rowNum}:{$ultimaCol}{$rowNum}")
+            ->getFont()
+            ->setBold(true)
+            ->getColor()
+            ->setRGB('000000');
+
+        // Estilos del encabezado
+        $headerStyle = $sheet->getStyle("A1:{$ultimaCol}1");
+        $headerStyle->getFont()->setBold(true)->getColor()->setRGB('FFFFFF');
+        $headerStyle->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
+            ->getStartColor()->setRGB('43578F');
+        $headerStyle->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+
+        // Centrar y ajustar ancho
+        foreach (range(1, count($headers)) as $i) {
+            $col = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($i);
+            $sheet->getStyle($col)->getAlignment()
+                ->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+            $sheet->getColumnDimension($col)->setAutoSize(true);
+        }
+
+        // Congelar encabezado
+        $sheet->freezePane('A2');
+
+        // Exportar
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header("Content-Disposition: attachment;filename=\"{$nombre}.xlsx\"");
+        header('Cache-Control: max-age=0');
+
+        $writer = new Xlsx($spreadsheet);
+        $writer->save('php://output');
+        exit;
+    }
+
+    public static function getDatosReporteSinFiltroXlsx($data, $nombre)
+    {
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+
+        // Encabezados
+        $headers = [
+            'ID',
+            'CLIENTE',
+            'PRODUCTO',
+            'SECTOR',
+            'DIMENSIONAMIENTO',
+            'HS TOTAL',
+            'HS POR USUARIO',
+            'FECHA INICIO',
+            'FECHA FIN',
+            'ESTADO'
+        ];
+        $sheet->fromArray($headers, NULL, 'A1');
+
+        // Datos
+        $row = 2;
+        foreach ($data as $fila) {
+            $sheet->fromArray([
+                $row - 1,
+                $fila['client_rs'],
+                $fila['producto'],
+                $fila['sector'],
+                $fila['dimensionamiento'],
+                $fila['horas_consumidas_total'],
+                $fila['horas_consumidas_por_usuario'],
+                $fila['fech_inicio'],
+                $fila['fech_fin'],
+                $fila['estado']
+            ], NULL, 'A' . $row);
+            $row++;
+        }
+
+        // AutoFilter
+        $sheet->setAutoFilter("A1:J" . ($row - 1));
+
+        // Encabezado estilo
+        $sheet->getStyle("A1:J1")->applyFromArray([
+            'font' => ['bold' => true, 'color' => ['rgb' => 'FFFFFF']],
+            'fill' => [
+                'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                'startColor' => ['rgb' => '43578F']
+            ],
+            'alignment' => ['horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER]
+        ]);
+
+        // Filas alternadas
+        for ($i = 2; $i < $row; $i++) {
+            if ($i % 2 == 0) {
+                $sheet->getStyle("A{$i}:J{$i}")
+                    ->getFill()
+                    ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
+                    ->getStartColor()
+                    ->setRGB('F2F2F2');
             }
         }
 
-        $fila[] = $subtotal;
-        $total_general += $subtotal;
-        $sheet->fromArray($fila, NULL, 'A' . $rowNum);
-        $rowNum++;
+        // Centrado
+        foreach (range('A', 'J') as $col) {
+            $sheet->getStyle($col)->getAlignment()
+                ->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+        }
+
+        // Bordes
+        $sheet->getStyle("A1:J" . ($row - 1))->applyFromArray([
+            'borders' => [
+                'outline' => ['borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN],
+                'inside'  => ['borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN]
+            ]
+        ]);
+
+        // AutoSize
+        foreach (range('A', 'J') as $col) {
+            $sheet->getColumnDimension($col)->setAutoSize(true);
+        }
+
+        // Exportar
+        ob_clean();
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header("Content-Disposition: attachment;filename=\"{$nombre}.xlsx\"");
+        header('Cache-Control: max-age=0');
+
+        $writer = new Xlsx($spreadsheet);
+        $writer->save('php://output');
+        exit;
     }
 
-    // Agregar salto de línea antes del total
-    $rowNum++; // deja una fila vacía visualmente
 
-    // 🧩 6️⃣ Fila de totales (gris)
-    $fila_total = ['TOTAL'];
-    foreach ($todas_categorias as $cat) {
-        $fila_total[] = $totales_categorias[$cat];
+    public static function getDatosReporteSinFiltroDocx($data, $nombre, $fechaDesde = null, $fechaHasta = null)
+    {
+        $phpWord = new PhpWord();
+
+        // Estilos
+        $phpWord->addTitleStyle(1, ['bold' => true, 'size' => 20]);
+        $phpWord->addTitleStyle(2, ['bold' => true, 'size' => 14]);
+
+        $section = $phpWord->addSection();
+
+        // ===== PAGINACIÓN =====
+        $footer = $section->addFooter();
+
+        $footer->addPreserveText(
+            'Página {PAGE} de {NUMPAGES}',
+            ['size' => 10],
+            ['alignment' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER]
+        );
+
+
+        // Título
+        $section->addText(
+            'TIMESUMMARY',
+            ['bold' => true, 'size' => 28],
+            ['alignment' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER]
+        );
+
+        // Fecha
+        $fechaActual = date("d/m/Y H:i");
+        $section->addText(
+            "Generado el: " . $fechaActual,
+            ['italic' => true, 'size' => 10],
+            ['alignment' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER]
+        );
+
+        // Filtros
+        if (!empty($fechaDesde) || !empty($fechaHasta)) {
+            $txtFiltro = "Filtro por fechas: ";
+            $txtFiltro .= (!empty($fechaDesde) ? "Desde $fechaDesde " : "");
+            $txtFiltro .= (!empty($fechaHasta) ? "Hasta $fechaHasta" : "");
+            $section->addText($txtFiltro, ['bold' => true]);
+        }
+
+        $section->addPageBreak();
+
+        // Título
+        $section->addText(
+            'TABLA DE PROYECTOS GENERAL',
+            ['bold' => true, 'size' => 20],
+            ['alignment' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER]
+        );
+
+        $section->addTextBreak(1);
+
+        $section->addText(
+            "Aqui se presenta un resumen de cada proyecto, incluyendo el nombre del cliente, el producto contratado, el sector asignado, la cantidad de horas dimensionadas, las fechas de inicio y finalización, y el estado actual del proyecto."
+        );
+
+        // --- TABLA ---
+        $table = $section->addTable([
+            'borderSize' => 2,
+            'borderColor' => '000000',
+            'cellMargin' => 100
+        ]);
+
+        // Encabezados y ancho por columna
+        $headers = [
+            'CLIENTE'  => 3000,
+            'PRODUCTO' => 2800,
+            'SECTOR'   => 3000,
+            'HS'       => 1500,  // MAS CHICA
+            'INICIO'   => 1500,
+            'FIN'      => 1500,
+            'ESTADO'   => 3000   // MAS GRANDE
+        ];
+
+        // Fila encabezado
+        $bgStyle = ['bgColor' => '43578F'];
+
+        $table->addRow();
+        foreach ($headers as $titulo => $ancho) {
+            $table->addCell($ancho, $bgStyle)->addText(
+                $titulo,
+                ['color' => 'FFFFFF', 'bold' => true]
+            );
+        }
+
+        // Filas con datos
+        foreach ($data as $fila) {
+            $table->addRow();
+
+            $table->addCell($headers['CLIENTE'])->addText($fila['client_rs']);
+            $table->addCell($headers['PRODUCTO'])->addText($fila['producto']);
+            $table->addCell($headers['SECTOR'])->addText($fila['sector']);
+            $table->addCell($headers['HS'])->addText($fila['dimensionamiento']);
+            $table->addCell($headers['INICIO'])->addText($fila['fech_inicio']);
+            $table->addCell($headers['FIN'])->addText($fila['fech_fin']);
+            $table->addCell($headers['ESTADO'])->addText($fila['estado']);
+        }
+
+        $section->addPageBreak();
+
+        $section->addText(
+            "DETALLE POR PROYECTO",
+            ['bold' => true, 'size' => 20],
+            ['alignment' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER]
+        );
+
+        $section->addTextBreak(2);
+        // Iterar por cada proyecto
+        foreach ($data as $fila) {
+
+            // Nombre cliente + producto
+            $section->addText(
+                strtoupper($fila['client_rs'] . " - " . $fila['producto']),
+                ['bold' => true, 'size' => 12]
+            );
+
+            $section->addText(
+                "Inicio: " . ($fila['fech_inicio'] ?: "N/A") .
+                    "   |   Fin: " . ($fila['fech_fin'] ?: "N/A")
+            );
+
+            // Dimensionamiento y fechas
+            $section->addText(
+                "Dimensionamiento: " . ($fila['dimensionamiento']." hs" ?: "N/A")
+            );
+
+            $section->addText(
+                "Horas consumidas total: " . ($fila['horas_consumidas_total']." hs" ?: "N/A")
+            );
+
+            $section->addTextBreak(0.5);
+
+            // Subtitulo colaboradores
+            $section->addText("Horas consumidas por colaborador:", ['bold' => true]);
+
+            // horas_consumidas_por_usuario ya viene así: "Mauricio 05:30, Rodrigo 02:45..."
+            if (!empty($fila['horas_consumidas_por_usuario'])) {
+
+                // Convertimos la cadena en items separados
+                $colaboradores = explode(", ", $fila['horas_consumidas_por_usuario']." hs");
+
+                // Lista de colaboradores & horas
+                $listStyle = ['listType' => \PhpOffice\PhpWord\Style\ListItem::TYPE_BULLET_FILLED];
+
+                foreach ($colaboradores as $col) {
+                    $section->addListItem($col, 0, null, $listStyle);
+                }
+            } else {
+                $section->addText("Sin registros de carga.", ['italic' => true]);
+            }
+
+            $section->addTextBreak(1);
+        }
+        // Exportar DOCX
+        $filename = "{$nombre}.docx";
+
+        header("Content-Description: File Transfer");
+        header('Content-Disposition: attachment; filename="' . $filename . '"');
+        header('Content-Type: application/vnd.openxmlformats-officedocument.wordprocessingml.document');
+        header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+        header('Expires: 0');
+        header('Pragma: public');
+
+        $writer = IOFactory::createWriter($phpWord, 'Word2007');
+        $writer->save("php://output");
+        exit;
     }
-    $fila_total[] = $total_general;
-    $sheet->fromArray($fila_total, NULL, 'A' . $rowNum);
-
-    // Pintar la fila TOTAL en gris
-    $ultimaCol = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex(count($headers));
-    $sheet->getStyle("A{$rowNum}:{$ultimaCol}{$rowNum}")
-        ->getFill()
-        ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
-        ->getStartColor()
-        ->setRGB('D9D9D9'); // gris claro
-
-    $sheet->getStyle("A{$rowNum}:{$ultimaCol}{$rowNum}")
-        ->getFont()
-        ->setBold(true)
-        ->getColor()
-        ->setRGB('000000');
-
-    // Estilos del encabezado
-    $headerStyle = $sheet->getStyle("A1:{$ultimaCol}1");
-    $headerStyle->getFont()->setBold(true)->getColor()->setRGB('FFFFFF');
-    $headerStyle->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
-        ->getStartColor()->setRGB('43578F');
-    $headerStyle->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
-
-    // Centrar y ajustar ancho
-    foreach (range(1, count($headers)) as $i) {
-        $col = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($i);
-        $sheet->getStyle($col)->getAlignment()
-            ->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
-        $sheet->getColumnDimension($col)->setAutoSize(true);
-    }
-
-    // Congelar encabezado
-    $sheet->freezePane('A2');
-
-    // Exportar
-    header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-    header("Content-Disposition: attachment;filename=\"{$nombre}.xlsx\"");
-    header('Cache-Control: max-age=0');
-
-    $writer = new Xlsx($spreadsheet);
-    $writer->save('php://output');
-    exit;
-}
-
-
 }

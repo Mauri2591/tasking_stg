@@ -157,5 +157,9 @@
             font-size: .9em;
             font-weight: 500;
         }
+
+        .dropdown-item{
+            padding: 0 1rem;
+        }
     </style>
 </head>

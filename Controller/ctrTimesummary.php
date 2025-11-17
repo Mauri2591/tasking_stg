@@ -418,6 +418,10 @@ switch ($_GET['accion']) {
         echo json_encode($results);
         break;
 
+    case 'getNombreCliente':
+        echo json_encode($timesummary->getNombreCliente($_POST['client_rs']));
+        break;
+
     default:
         http_response_code(404);
         echo json_encode(["Error" => "Acción no reconocida"]);

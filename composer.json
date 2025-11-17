@@ -3,6 +3,7 @@
         "firebase/php-jwt": "^6.11",
         "vlucas/phpdotenv": "^5.6",
         "ezyang/htmlpurifier": "^4.18",
-        "phpoffice/phpspreadsheet": "^5.2"
+        "phpoffice/phpspreadsheet": "^5.2",
+        "phpoffice/phpword": "^1.4"
     }
 }
