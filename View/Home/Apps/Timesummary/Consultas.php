@@ -117,7 +117,6 @@ if (isset($_SESSION['usu_id'])) {
     <script>
         var tabla;
         var URL = "<?php echo URL ?>";
-
         document.addEventListener("DOMContentLoaded", function() {
             // Inicializa DataTable vacía
             tabla = $("#table_tareas_usuarios").DataTable({
@@ -149,7 +148,6 @@ if (isset($_SESSION['usu_id'])) {
                     }
                 }
             });
-
 
             tabla = $("#table_get_tareas_x_usuario_x_usu_id").DataTable({
                 "aProcessing": true,

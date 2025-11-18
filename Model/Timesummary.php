@@ -6,26 +6,23 @@ class timesummary extends Conexion
     public function get_tareas($usu_id = null)
     {
         $conn = parent::get_conexion();
-        $sql = "SELECT 
-            t.id,
-            t.fecha,
-            t.hora_desde,
-            t.hora_hasta,
-            p.titulo AS titulo_proyecto,
-            t.descripcion,
-            t.id_proyecto_gestionado,
-            t.id_producto,
-            t.fecha as fecha,
-            tareas.id as id_tarea,
-            tareas.nombre as nombre_tarea,
-            t.id_pm_calidad,
-            tm_categoria.cat_nom as producto
+        $sql = "SELECT
+                t.id,
+                t.fecha,
+                t.hora_desde,
+                t.hora_hasta,
+                CASE WHEN es_telecom = 'Telecom' THEN 'TELECOM' ELSE p.titulo END AS titulo_proyecto,
+                t.descripcion,
+                t.id_proyecto_gestionado,
+                t.id_producto,
+                tareas.id AS id_tarea,
+                tareas.nombre AS nombre_tarea,
+                t.id_pm_calidad,
+                tm_categoria.cat_nom AS producto
             FROM timesummary_carga t
-            INNER JOIN proyecto_gestionado p 
-                ON t.id_proyecto_gestionado = p.id
-                LEFT JOIN tm_categoria ON t.id_producto=tm_categoria.cat_id
-                LEFT JOIN tareas ON t.id_tarea=tareas.id
-           
+            LEFT JOIN proyecto_gestionado p ON t.id_proyecto_gestionado = p.id
+            LEFT JOIN tm_categoria ON t.id_producto = tm_categoria.cat_id
+            LEFT JOIN tareas ON t.id_tarea = tareas.id
             WHERE t.usu_id = :usu_id";
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(":usu_id", $usu_id, PDO::PARAM_INT);
@@ -38,18 +35,15 @@ class timesummary extends Conexion
         return preg_match('/^(?:[01]\d|2[0-3]):[0-5]\d$/', $hora);
     }
 
-
-
     public static function validarDatosVacios($datos)
     {
         foreach ($datos as $key => $val) {
-            if (empty($val)) {
+            if (empty($val) && !in_array($key, ['proyecto', 'es_telecom'])) {
                 return false;
             }
         }
         return true;
     }
-
     public static function validar_horas_minutos($hora_desde, $hora_hasta)
     {
         // Validar formato HH:MM
@@ -85,17 +79,18 @@ class timesummary extends Conexion
         ];
     }
 
-    public function insert_tarea($usu_id, $id_proyecto_gestionado, $id_producto, $id_tarea, $id_pm_calidad, $fecha, $hora_desde, $hora_hasta, $descripcion, $horas_consumidas)
+    public function insert_tarea($usu_id, $id_proyecto_gestionado, $id_producto, $id_tarea, $es_telecom, $id_pm_calidad, $fecha, $hora_desde, $hora_hasta, $descripcion, $horas_consumidas)
     {
         $conn = parent::get_conexion();
         $sql = "INSERT INTO timesummary_carga
-        (usu_id, id_proyecto_gestionado, id_producto,id_tarea, id_pm_calidad, fecha, hora_desde, hora_hasta, descripcion,horas_consumidas)
-        VALUES (:usu_id, :id_proyecto_gestionado, :id_producto,:id_tarea, :id_pm_calidad, :fecha, :hora_desde, :hora_hasta, :descripcion,:horas_consumidas)";
+        (usu_id, id_proyecto_gestionado, id_producto,id_tarea, es_telecom, id_pm_calidad, fecha, hora_desde, hora_hasta, descripcion,horas_consumidas)
+        VALUES (:usu_id, :id_proyecto_gestionado, :id_producto,:id_tarea, :es_telecom, :id_pm_calidad, :fecha, :hora_desde, :hora_hasta, :descripcion,:horas_consumidas)";
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(":usu_id", $usu_id, PDO::PARAM_INT);
         $stmt->bindValue(":id_proyecto_gestionado", $id_proyecto_gestionado, PDO::PARAM_INT);
         $stmt->bindValue(":id_producto", $id_producto, PDO::PARAM_INT);
         $stmt->bindValue(":id_tarea", $id_tarea, PDO::PARAM_INT);
+        $stmt->bindValue(":es_telecom", $es_telecom, PDO::PARAM_STR);
         $stmt->bindValue(":id_pm_calidad", $id_pm_calidad, PDO::PARAM_INT);
         $stmt->bindValue(":fecha", htmlentities($fecha, ENT_QUOTES), PDO::PARAM_STR);
         $stmt->bindValue(":hora_desde", htmlentities($hora_desde, ENT_QUOTES), PDO::PARAM_STR);
@@ -112,6 +107,56 @@ class timesummary extends Conexion
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(":id", $id, PDO::PARAM_INT);
         $stmt->execute();
+    }
+
+    public function updateTarea($id, $hora_desde, $hora_hasta, $id_tarea, $descripcion)
+    {
+        $conn = parent::get_conexion();
+
+        // Calcular diferencia en formato HH:MM
+        $horaDesde = new DateTime($hora_desde);
+        $horaHasta = new DateTime($hora_hasta);
+        $intervalo = $horaDesde->diff($horaHasta);
+
+        // Formato HH:MM (ejemplo: 01:30)
+        $horasConsumidas = str_pad($intervalo->h, 2, "0", STR_PAD_LEFT) . ":" .
+            str_pad($intervalo->i, 2, "0", STR_PAD_LEFT);
+
+        $sql = "UPDATE timesummary_carga 
+            SET hora_desde = :hora_desde, 
+                hora_hasta = :hora_hasta, 
+                id_tarea = :id_tarea,
+                descripcion = :descripcion,
+                horas_consumidas = :horas_consumidas
+            WHERE id = :id";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue(":id", (int)$id, PDO::PARAM_INT);
+        $stmt->bindValue(":hora_desde", $hora_desde, PDO::PARAM_STR);
+        $stmt->bindValue(":hora_hasta", $hora_hasta, PDO::PARAM_STR);
+        $stmt->bindValue(":id_tarea", $id_tarea, PDO::PARAM_STR);
+        $stmt->bindValue(":descripcion", $descripcion, PDO::PARAM_STR);
+        $stmt->bindValue(":horas_consumidas", $horasConsumidas, PDO::PARAM_STR);
+        try {
+            $stmt->execute();
+            return $stmt->rowCount() > 0;
+        } catch (PDOException $e) {
+            error_log("Error en updateTarea: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    public function getDatosTelecom()
+    {
+        $conn = parent::get_conexion();
+        $sql = "SELECT client_id, client_rs FROM clientes WHERE clientes.client_id=209";
+        $stmt = $conn->prepare($sql);
+        try {
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log("Error en updateTarea: " . $e->getMessage());
+            return false;
+        }
     }
 
     public function get_titulos_proyectos($usu_asignado)
@@ -330,7 +375,6 @@ ORDER BY pg.titulo";
             throw new PDOException($e->getMessage());
         }
     }
-
     public function get_tareas_total()
     {
         $conn = parent::get_conexion();
@@ -391,7 +435,7 @@ ORDER BY pg.titulo";
     TIME_FORMAT(TIMEDIFF(timesummary_carga.hora_hasta, timesummary_carga.hora_desde), '%H:%i') AS horas_consumidas,
     timesummary_carga.descripcion,
     timesummary_carga.fech_crea AS fecha_carga,
-    clientes.client_rs AS cliente,
+    CASE WHEN timesummary_carga.es_telecom = 'Telecom' THEN 'TELECOM' ELSE clientes.client_rs END AS cliente,
     proyecto_gestionado.refProy AS referencia,
     tm_usuario.usu_nom,
         tm_usuario.usu_ape
@@ -425,7 +469,7 @@ WHERE timesummary_carga.usu_id = :usu_id ORDER BY timesummary_carga.fecha DESC";
     TIME_FORMAT(TIMEDIFF(timesummary_carga.hora_hasta, timesummary_carga.hora_desde), '%H:%i') AS horas_consumidas,
     timesummary_carga.descripcion,
     timesummary_carga.fech_crea AS fecha_carga,
-    clientes.client_rs AS cliente,
+    CASE WHEN timesummary_carga.es_telecom = 'Telecom' THEN 'TELECOM' ELSE clientes.client_rs END AS cliente,
     proyecto_gestionado.refProy AS referencia,
     tm_usuario.usu_nom,
     tm_usuario.usu_ape
@@ -441,7 +485,7 @@ LEFT JOIN proyecto_gestionado
 INNER JOIN tm_usuario 
     ON timesummary_carga.usu_id = tm_usuario.usu_id
 WHERE timesummary_carga.usu_id = :usu_id
-ORDER BY timesummary_carga.fecha DESC";
+ORDER BY timesummary_carga.fecha DESC;";
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(":usu_id", $usu_id, PDO::PARAM_INT);
         $stmt->execute();

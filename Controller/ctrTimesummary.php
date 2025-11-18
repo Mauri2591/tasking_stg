@@ -20,6 +20,7 @@ switch ($_GET['accion']) {
             "proyecto" => $_POST['id_proyecto_gestionado'] ?? null,
             "producto" => $_POST['id_producto'] ?? null,
             "id_tarea" => $_POST['id_tarea'] ?? null,
+            "es_telecom" => $_POST['es_telecom'] ?? null,
             "fecha" => $_POST['fecha'] ?? null,
             "desde" => $hora_desde,
             "hasta" => $hora_hasta
@@ -54,6 +55,7 @@ switch ($_GET['accion']) {
                 $_POST['id_proyecto_gestionado'] ?? null,
                 $_POST['id_producto'] ?? null,
                 $_POST['id_tarea'] ?? null,
+                $_POST['es_telecom'] ?? null,
                 $_POST['id_pm_calidad'] ?? null,
                 $_POST['fecha'] ?? null,
                 $_POST['hora_desde'] ?? null,
@@ -104,12 +106,34 @@ switch ($_GET['accion']) {
         break;
 
     case 'get_titulos_proyectos':
+        header('Content-Type: text/html; charset=UTF-8');
+
         $datos = $timesummary->get_titulos_proyectos($_SESSION['usu_id']);
+        $datosTelecom = $timesummary->getDatosTelecom();
         $htmlOption = '';
-        foreach ($datos as $val) {
-            $htmlOption .= '<option value="' . $val['id_proyecto_gestionado'] . '" 
-            data-pm="' . ($val['id_pm_calidad'] ?? '') . '">' . $val['titulo'] . '</option>';
+
+        // Agregar siempre Telecom primero
+        if (!empty($datosTelecom)) {
+            foreach ($datosTelecom as $telecom) {
+                $idCliente = htmlspecialchars($telecom['client_id'], ENT_QUOTES, 'UTF-8');
+                $nombreCliente = strtoupper(htmlspecialchars($telecom['client_rs'], ENT_QUOTES, 'UTF-8'));
+                $htmlOption .= "<option value=\"$idCliente\" data-pm=\"\">$nombreCliente</option>";
+            }
         }
+
+        // Agregar proyectos del usuario
+        if (!empty($datos)) {
+            foreach ($datos as $val) {
+                $idProyecto = htmlspecialchars($val['id_proyecto_gestionado'], ENT_QUOTES, 'UTF-8');
+                $idPm = htmlspecialchars($val['id_pm_calidad'] ?? '', ENT_QUOTES, 'UTF-8');
+                $titulo = htmlspecialchars($val['titulo'], ENT_QUOTES, 'UTF-8');
+
+                $htmlOption .= "<option value=\"$idProyecto\" data-pm=\"$idPm\">$titulo</option>";
+            }
+        } else {
+            $htmlOption .= '<option value="">No hay proyectos disponibles</option>';
+        }
+
         echo $htmlOption;
         break;
 
@@ -133,10 +157,19 @@ switch ($_GET['accion']) {
         }
         break;
 
+    case 'updateTarea':
+        try {
+            $timesummary->updateTarea($_POST['id'], $_POST['hora_desde'], $_POST['hora_hasta'], $_POST['id_tarea'], $_POST['descripcion']);
+            echo json_encode(["success" => "Actualizado correctamente"]);
+        } catch (\Throwable $e) {
+            echo "Error de update: " . $e->getMessage() . "\nCodigo: " . $e->getCode();
+            exit;
+        }
+        break;
+
     case 'get_cat_id_by_proyecto_gestionado':
         echo json_encode($timesummary->get_cat_id_by_proyecto_gestionado($_POST['id']));
         break;
-
 
     case 'get_tareas_total';
         $datos = $timesummary->get_tareas_total();
@@ -167,9 +200,23 @@ switch ($_GET['accion']) {
 
     case 'datos_tabla_ts':
         $datos = $timesummary->get_titulos_proyectos($_SESSION['usu_id']);
+        $datosTelecom = $timesummary->getDatosTelecom();
         $htmlTable = '';
+        // Primero agregamos datosTelecom
+        foreach ($datosTelecom as $telecom) {
+            $htmlTable .= '
+        <tr>
+            <td class="px-1 text-center fw-bold text-primary">' . htmlspecialchars($telecom['client_rs']) . '</td>
+            <td class="px-1 text-center">TELECOM</td>
+            <td class="px-1 text-center">00:00</td>
+            <td class="px-1 text-center">00:00</td>
+            <td class="px-1 text-center">00:00</td>
+        </tr>';
+        }
+
+        // Luego agregamos el resto según la lógica
         if ($_SESSION['sector_id'] == "4") {
-            foreach ($datos as $key => $val) {
+            foreach ($datos as $val) {
                 $htmlTable .= '
             <tr>
                 <td class="px-1 text-center">' . substr($val['titulo'], 0, 30) . '</td>
@@ -184,23 +231,22 @@ switch ($_GET['accion']) {
             </tr>';
             }
         } else {
-            $proyectos_mostrados = []; //array para controlar duplicados
-
-            foreach ($datos as $key => $val) {
+            $proyectos_mostrados = [];
+            foreach ($datos as $val) {
                 $id_proyecto = $val['id_proyecto_gestionado'];
                 if (!in_array($id_proyecto, $proyectos_mostrados)) {
                     $htmlTable .= '
-            <tr>
-                <td class="px-1 text-center">' . substr($val['titulo'], 0, 30) . '</td>
-                <td class="px-1 text-center">' . substr($val['producto'], 0, 10) . '</td>
-                <td class="px-1 text-center fw-bold text-success">' . $val['hs_dimensionadas'] . '</td>
-                <td class="px-1 text-center fw-bold">' . $val['horas_consumidas'] . '</td>
-                ' . (
+                <tr>
+                    <td class="px-1 text-center">' . substr($val['titulo'], 0, 30) . '</td>
+                    <td class="px-1 text-center">' . substr($val['producto'], 0, 10) . '</td>
+                    <td class="px-1 text-center fw-bold text-success">' . $val['hs_dimensionadas'] . '</td>
+                    <td class="px-1 text-center fw-bold">' . $val['horas_consumidas'] . '</td>
+                    ' . (
                         $val['comparacion_horas'] == "HORAS_TOTAL_MENOR_QUE_DIM"
                         ? '<td class="px-1 text-center fw-bold text-success">' . $val['horas_total'] . '</td>'
                         : '<td class="px-1 text-center fw-bold text-danger">' . $val['horas_total'] . '</td>'
                     ) . '
-            </tr>';
+                </tr>';
                     $proyectos_mostrados[] = $id_proyecto;
                 }
             }
@@ -208,6 +254,7 @@ switch ($_GET['accion']) {
 
         echo $htmlTable;
         break;
+
 
 
     case 'get_validar_si_hay_tareas_activas':
