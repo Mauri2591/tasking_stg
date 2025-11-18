@@ -131,7 +131,7 @@ switch ($_GET['accion']) {
                 $htmlOption .= "<option value=\"$idProyecto\" data-pm=\"$idPm\">$titulo</option>";
             }
         } else {
-            $htmlOption .= '<option value="">No hay proyectos disponibles</option>';
+            $htmlOption .= '';
         }
 
         echo $htmlOption;
