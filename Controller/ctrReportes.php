@@ -30,7 +30,6 @@ switch ($_GET['case'] ?? null) {
         $reporte::total_excel($data, "PROYECTOS_TOTAL");
         break;
 
-
    case 'getDatosReporteSinFiltro':
 
     $fechaDesde = $_POST['hora_desde_edit'] ?? null;

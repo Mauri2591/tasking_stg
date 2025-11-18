@@ -485,7 +485,8 @@ ORDER BY timesummary_carga.fecha DESC";
             tm_categoria.cat_nom AS producto,
             sectores.sector_nombre AS sector,
             MAX(proyecto_gestionado.recurrencia) AS recurrencia,
-            MAX(tm_estados.estados_nombre) AS estado
+            MAX(tm_estados.estados_nombre) AS estado,
+            proyectos.cantidad_servicios
         FROM proyectos
         INNER JOIN clientes 
             ON proyectos.client_id = clientes.client_id
@@ -513,7 +514,7 @@ ORDER BY timesummary_carga.fecha DESC";
         ON horas_usuarios.id_proyecto_gestionado = proyecto_gestionado.id
         LEFT JOIN tm_estados 
             ON proyecto_gestionado.estados_id = tm_estados.estados_id
-            WHERE proyecto_gestionado.estados_id IN(1,2,3,4)
+            WHERE proyecto_gestionado.estados_id IN(1,2,3,4,14)
         GROUP BY 
             clientes.client_id,
             clientes.client_rs,
@@ -552,7 +553,8 @@ ORDER BY timesummary_carga.fecha DESC";
             tm_categoria.cat_nom AS producto,
             sectores.sector_nombre AS sector,
             MAX(proyecto_gestionado.recurrencia) AS recurrencia,
-            MAX(tm_estados.estados_nombre) AS estado
+            MAX(tm_estados.estados_nombre) AS estado,
+            proyectos.cantidad_servicios
         FROM proyectos
         INNER JOIN clientes 
             ON proyectos.client_id = clientes.client_id
@@ -580,7 +582,7 @@ ORDER BY timesummary_carga.fecha DESC";
         ON horas_usuarios.id_proyecto_gestionado = proyecto_gestionado.id
         LEFT JOIN tm_estados 
             ON proyecto_gestionado.estados_id = tm_estados.estados_id
-            WHERE proyecto_gestionado.fech_inicio BETWEEN :fecha_desde AND :fecha_hasta AND proyecto_gestionado.estados_id IN(1,2,3,4)
+            WHERE proyecto_gestionado.fech_inicio BETWEEN :fecha_desde AND :fecha_hasta AND proyecto_gestionado.estados_id IN(1,2,3,4,14)
         GROUP BY 
             clientes.client_id,
             clientes.client_rs,
@@ -621,7 +623,8 @@ ORDER BY timesummary_carga.fecha DESC";
             tm_categoria.cat_nom AS producto,
             sectores.sector_nombre AS sector,
             MAX(proyecto_gestionado.recurrencia) AS recurrencia,
-            MAX(tm_estados.estados_nombre) AS estado
+            MAX(tm_estados.estados_nombre) AS estado,
+            proyectos.cantidad_servicios
         FROM proyectos
         INNER JOIN clientes 
             ON proyectos.client_id = clientes.client_id
@@ -649,7 +652,7 @@ ORDER BY timesummary_carga.fecha DESC";
         ON horas_usuarios.id_proyecto_gestionado = proyecto_gestionado.id
         LEFT JOIN tm_estados 
             ON proyecto_gestionado.estados_id = tm_estados.estados_id
-            WHERE clientes.client_id = :client_id AND proyecto_gestionado.estados_id IN(1,2,3,4)
+            WHERE clientes.client_id = :client_id AND proyecto_gestionado.estados_id IN(1,2,3,4,14)
         GROUP BY 
             clientes.client_id,
             clientes.client_rs,
@@ -690,7 +693,8 @@ ORDER BY timesummary_carga.fecha DESC";
             tm_categoria.cat_nom AS producto,
             sectores.sector_nombre AS sector,
             MAX(proyecto_gestionado.recurrencia) AS recurrencia,
-            MAX(tm_estados.estados_nombre) AS estado
+            MAX(tm_estados.estados_nombre) AS estado,
+            proyectos.cantidad_servicios
         FROM proyectos
         INNER JOIN clientes 
             ON proyectos.client_id = clientes.client_id
@@ -718,7 +722,7 @@ ORDER BY timesummary_carga.fecha DESC";
         ON horas_usuarios.id_proyecto_gestionado = proyecto_gestionado.id
         LEFT JOIN tm_estados 
             ON proyecto_gestionado.estados_id = tm_estados.estados_id
-            WHERE clientes.client_id=:client_id AND proyecto_gestionado.fech_inicio BETWEEN :fecha_desde AND :fecha_hasta AND proyecto_gestionado.estados_id IN(1,2,3,4)
+            WHERE clientes.client_id=:client_id AND proyecto_gestionado.fech_inicio BETWEEN :fecha_desde AND :fecha_hasta AND proyecto_gestionado.estados_id IN(1,2,3,4,14)
         GROUP BY 
             clientes.client_id,
             clientes.client_rs,

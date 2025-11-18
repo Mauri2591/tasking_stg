@@ -104,7 +104,6 @@ class Reportes
                     $sheet->getStyle('F' . $rowNum)->getFont()->getColor()->setRGB($textColor);
                 }
 
-                // 🎨 Pintar el ID solo si ese ID tiene rechequeos asociados
                 $proyecto_id = $row['id'];
                 if (isset($ids_con_rechequeos[$proyecto_id])) {
                     if (!isset($color_map[$proyecto_id])) {
@@ -221,10 +220,8 @@ class Reportes
             $rowNum++;
         }
 
-        // Agregar salto de línea antes del total
-        $rowNum++; // deja una fila vacía visualmente
+        $rowNum++;
 
-        // 🧩 6️⃣ Fila de totales (gris)
         $fila_total = ['TOTAL'];
         foreach ($todas_categorias as $cat) {
             $fila_total[] = $totales_categorias[$cat];
@@ -238,7 +235,7 @@ class Reportes
             ->getFill()
             ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
             ->getStartColor()
-            ->setRGB('D9D9D9'); // gris claro
+            ->setRGB('D9D9D9'); 
 
         $sheet->getStyle("A{$rowNum}:{$ultimaCol}{$rowNum}")
             ->getFont()
@@ -246,14 +243,12 @@ class Reportes
             ->getColor()
             ->setRGB('000000');
 
-        // Estilos del encabezado
         $headerStyle = $sheet->getStyle("A1:{$ultimaCol}1");
         $headerStyle->getFont()->setBold(true)->getColor()->setRGB('FFFFFF');
         $headerStyle->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
             ->getStartColor()->setRGB('43578F');
         $headerStyle->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
 
-        // Centrar y ajustar ancho
         foreach (range(1, count($headers)) as $i) {
             $col = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($i);
             $sheet->getStyle($col)->getAlignment()
@@ -261,10 +256,8 @@ class Reportes
             $sheet->getColumnDimension($col)->setAutoSize(true);
         }
 
-        // Congelar encabezado
         $sheet->freezePane('A2');
 
-        // Exportar
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         header("Content-Disposition: attachment;filename=\"{$nombre}.xlsx\"");
         header('Cache-Control: max-age=0');
@@ -395,7 +388,7 @@ class Reportes
         );
 
         // Fecha
-        $fechaActual = date("d/m/Y H:i");
+        $fechaActual = date("d/m/Y");
         $section->addText(
             "Generado el: " . $fechaActual,
             ['italic' => true, 'size' => 10],
@@ -425,7 +418,7 @@ class Reportes
             "Aqui se presenta un resumen de cada proyecto, incluyendo el nombre del cliente, el producto contratado, el sector asignado, la cantidad de horas dimensionadas, las fechas de inicio y finalización, y el estado actual del proyecto."
         );
 
-        // --- TABLA ---
+        // TABLA
         $table = $section->addTable([
             'borderSize' => 2,
             'borderColor' => '000000',
