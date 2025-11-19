@@ -220,7 +220,7 @@ if (isset($_SESSION['usu_id'])) {
                             title: "Error",
                             text: "Ya existe una tarea en ese rango horario.",
                             showConfirmButton: false,
-                            timer:1300
+                            timer: 1300
                         });
                         return;
                     }
@@ -311,45 +311,34 @@ if (isset($_SESSION['usu_id'])) {
 
 
                 $("#btnEliminarTarea").off("click").on("click", function() {
-                    Swal.fire({
-                        icon: "warning",
-                        title: "¿Desea eliminar esta tarea?",
-                        showCancelButton: true,
-                        confirmButtonText: "Sí",
-                        cancelButtonText: "Cancelar"
-                    }).then((result) => {
+                    $.post(
+                        URL + "Controller/ctrTimesummary.php?accion=delete_tarea", {
+                            id: EVENTO_ID
+                        },
+                        function(response) {
 
-                        if (!result.isConfirmed) return;
-
-                        $.post(
-                            URL + "Controller/ctrTimesummary.php?accion=delete_tarea", {
-                                id: EVENTO_ID
-                            },
-                            function(response) {
-
-                                Swal.fire({
-                                    icon: "success",
-                                    title: "Tarea eliminada correctamente",
-                                    showConfirmButton: false,
-                                    timer: 500
-                                });
-
-                                $("#mdlEditarTimesummary").modal("hide");
-
-                                setTimeout(() => {
-                                    calendar.refetchEvents();
-                                    refrescarTablaTS();
-                                }, 300);
-                            },
-                            "json"
-                        ).fail(function(xhr) {
                             Swal.fire({
-                                icon: "error",
-                                title: "Error",
-                                text: xhr.responseJSON?.error || "No se pudo eliminar la tarea"
+                                icon: "success",
+                                title:"Bien",
+                                text: "Tarea eliminada correctamente",
+                                showConfirmButton: false,
+                                timer: 1300
                             });
-                        });
 
+                            $("#mdlEditarTimesummary").modal("hide");
+
+                            setTimeout(() => {
+                                calendar.refetchEvents();
+                                refrescarTablaTS();
+                            }, 300);
+                        },
+                        "json"
+                    ).fail(function(xhr) {
+                        Swal.fire({
+                            icon: "error",
+                            title: "Error",
+                            text: xhr.responseJSON?.error || "No se pudo eliminar la tarea"
+                        });
                     });
                 });
 
@@ -427,7 +416,7 @@ if (isset($_SESSION['usu_id'])) {
                         title: "Error",
                         text: "Ya existe una tarea en ese rango horario.",
                         showConfirmButton: false,
-                        timer:1300
+                        timer: 1300
                     });
                     info.revert();
                     return;
