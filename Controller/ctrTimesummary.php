@@ -137,7 +137,6 @@ switch ($_GET['accion']) {
         echo $htmlOption;
         break;
 
-
     case 'get_producto_proyectos':
         $datos = $timesummary->get_producto_proyectos($_SESSION['sector_id']);
         $htmlOption = '';
@@ -467,6 +466,11 @@ switch ($_GET['accion']) {
 
     case 'getNombreCliente':
         echo json_encode($timesummary->getNombreCliente($_POST['client_rs']));
+        break;
+
+    case 'getDatosParaEventDrop':
+        $datos=$timesummary->getDatosParaEventDrop($_POST['id']);
+        echo json_encode($datos);
         break;
 
     default:

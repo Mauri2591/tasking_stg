@@ -107,6 +107,7 @@ if (isset($_SESSION['usu_id'])) {
             events: URL + 'Controller/ctrTimesummary.php?accion=get_tareas',
             selectable: true,
             Boolean,
+            editable: true,
             default: true,
             selectMirror: true,
             dateClick: function(info) {
@@ -253,13 +254,8 @@ if (isset($_SESSION['usu_id'])) {
                                 calendar.refetchEvents();
                                 $("#mdlCarcaTimesummary").modal("hide");
                                 $("#id_proyecto_gestionado, #id_producto, #id_tarea, #hora_desde, #hora_hasta, #descripcion").val('');
-                            }, 500);
-                            setTimeout(() => {
                                 refrescarTablaTS();
-                            }, 300);
-                            // setTimeout(() => {
-                            //     window.location.reload();
-                            // }, 900);
+                            }, 500);
                         },
                         error: function(error) {
                             Swal.fire({
@@ -341,12 +337,8 @@ if (isset($_SESSION['usu_id'])) {
 
                                 setTimeout(() => {
                                     calendar.refetchEvents();
-                                }, 300);
-
-                                setTimeout(() => {
                                     refrescarTablaTS();
                                 }, 300);
-
                             },
                             "json"
                         ).fail(function(xhr) {
@@ -385,11 +377,8 @@ if (isset($_SESSION['usu_id'])) {
                                 setTimeout(() => {
                                     calendar.refetchEvents();
                                     $("#mdlEditarTimesummary").modal("hide");
-                                }, 500);
-                                setTimeout(() => {
                                     refrescarTablaTS();
-                                }, 300);
-
+                                }, 500);
                             } else {
                                 Swal.fire({
                                     icon: "warning",
@@ -408,6 +397,58 @@ if (isset($_SESSION['usu_id'])) {
                             });
                         }
                     });
+                });
+            },
+            eventDrop: function(info) {
+                const EVENTO_ID = info.event.id;
+                const NUEVA_FECHA = info.event.start.toISOString().slice(0, 10); // YYYY-MM-DD
+
+                // Paso 1: Obtener datos del evento original
+                $.post(URL + "Controller/ctrTimesummary.php?accion=getDatosParaEventDrop", {
+                    id: EVENTO_ID
+                }, function(data) {
+                    if (data.error) {
+                        info.revert();
+                        return;
+                    }
+
+                    let horaDesde = data.hora_desde.slice(0, 5);
+                    let horaHasta = data.hora_hasta.slice(0, 5);
+
+                    let datosInsert = {
+                        id_proyecto_gestionado: data.id_proyecto_gestionado == 209 ? null : data.id_proyecto_gestionado,
+                        id_producto: data.id_producto,
+                        id_tarea: data.id_tarea,
+                        es_telecom: data.id_proyecto_gestionado == 0 ? "Telecom" : null,
+                        fecha: NUEVA_FECHA,
+                        hora_desde: horaDesde,
+                        hora_hasta: horaHasta,
+                        descripcion: data.descripcion,
+                        id_pm_calidad: data.id_pm_calidad
+                    };
+
+                    // Paso 3: Insertar en la BD
+                    $.post(URL + "Controller/ctrTimesummary.php?accion=insert_tarea", datosInsert, function(response) {
+                        if (response.error) {
+                            info.revert();
+                        } else {
+                            Swal.fire({
+                                icon: "success",
+                                title: "Bien",
+                                text: data.Success || "Tarea inactivada correctamente",
+                                showConfirmButton: false,
+                                timer: 1000
+                            });
+                            setTimeout(() => {
+                                calendar.refetchEvents();
+                                refrescarTablaTS();
+                            }, 500);
+                        }
+                    }, "json");
+
+                }, "json").fail(function() {
+                    console.log("Error al obtener datos");
+                    info.revert();
                 });
             }
         });
@@ -486,7 +527,6 @@ if (isset($_SESSION['usu_id'])) {
     $.post(URL + "Controller/ctrTimesummary.php?accion=datos_tabla_ts",
         function(data, textStatus, jqXHR) {
             $("#tbody_tabla_timasummary").html(data)
-            console.log(data);
 
         },
         "html"

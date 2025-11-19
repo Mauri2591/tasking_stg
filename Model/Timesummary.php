@@ -783,4 +783,19 @@ ORDER BY timesummary_carga.fecha DESC;";
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    public function getDatosParaEventDrop($id)
+    {
+        $conn = parent::get_conexion();
+        $sql = "SELECT * FROM timesummary_carga WHERE id=:id";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue(":id", $id, PDO::PARAM_INT);
+        try {
+            $stmt->execute();
+            return $stmt->fetch(PDO::FETCH_ASSOC);
+        } catch (\Throwable $e) {
+            echo "Error: ".$e->getMessage();
+            exit;
+        }
+    }
 }
