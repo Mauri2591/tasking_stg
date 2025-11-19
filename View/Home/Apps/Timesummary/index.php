@@ -219,7 +219,8 @@ if (isset($_SESSION['usu_id'])) {
                             icon: "warning",
                             title: "Error",
                             text: "Ya existe una tarea en ese rango horario.",
-                            showConfirmButton: true
+                            showConfirmButton: false,
+                            timer:1000
                         });
                         return;
                     }
@@ -401,13 +402,12 @@ if (isset($_SESSION['usu_id'])) {
             },
             eventDrop: function(info) {
                 const EVENTO_ID = info.event.id;
-                const NUEVA_FECHA = info.event.start.toISOString().slice(0, 10); // YYYY-MM-DD
+                const NUEVA_FECHA = info.event.start.toISOString().slice(0, 10);
                 const NUEVO_INICIO = info.event.start;
                 const NUEVO_FIN = info.event.end;
 
-                // ✅ Paso 1: Validar conflicto en el cliente
                 let existeConflicto = calendar.getEvents().some(evento => {
-                    if (evento.id === info.event.id) return false; // Ignorar el mismo evento
+                    if (evento.id === info.event.id) return false;
                     let inicio = evento.start;
                     let fin = evento.end;
 
@@ -426,13 +426,13 @@ if (isset($_SESSION['usu_id'])) {
                         icon: "warning",
                         title: "Error",
                         text: "Ya existe una tarea en ese rango horario.",
-                        showConfirmButton: true
+                        showConfirmButton: false,
+                        timer:1000
                     });
                     info.revert();
                     return;
                 }
 
-                // ✅ Paso 2: Obtener datos del evento original
                 $.post(URL + "Controller/ctrTimesummary.php?accion=getDatosParaEventDrop", {
                     id: EVENTO_ID
                 }, function(data) {
@@ -445,7 +445,6 @@ if (isset($_SESSION['usu_id'])) {
                     let horaDesde = data.hora_desde.slice(0, 5);
                     let horaHasta = data.hora_hasta.slice(0, 5);
 
-                    // ✅ Preparar datos para insertar
                     let datosInsert = {
                         id_proyecto_gestionado: data.id_proyecto_gestionado == 209 ? null : data.id_proyecto_gestionado,
                         id_producto: data.id_producto,
@@ -458,7 +457,6 @@ if (isset($_SESSION['usu_id'])) {
                         id_pm_calidad: data.id_pm_calidad
                     };
 
-                    // ✅ Paso 3: Insertar en la BD
                     $.post(URL + "Controller/ctrTimesummary.php?accion=insert_tarea", datosInsert, function(response) {
                         if (response.error) {
                             Swal.fire({
