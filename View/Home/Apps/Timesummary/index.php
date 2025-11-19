@@ -220,7 +220,7 @@ if (isset($_SESSION['usu_id'])) {
                             title: "Error",
                             text: "Ya existe una tarea en ese rango horario.",
                             showConfirmButton: false,
-                            timer:1200
+                            timer:1300
                         });
                         return;
                     }
@@ -427,7 +427,7 @@ if (isset($_SESSION['usu_id'])) {
                         title: "Error",
                         text: "Ya existe una tarea en ese rango horario.",
                         showConfirmButton: false,
-                        timer:1200
+                        timer:1300
                     });
                     info.revert();
                     return;
