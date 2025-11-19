@@ -32,7 +32,7 @@ switch ($_GET['case'] ?? null) {
         $data = $proyecto->get_proyectos_total_excel($fecha_desde, $fecha_hasta);
 
         if (empty($data)) {
-            http_response_code(404);
+            http_response_code(404);    
             header("Location:".URL."/View/Home/Gestion/Clientes/Proyectos/?doc=error");
             exit;
         }
