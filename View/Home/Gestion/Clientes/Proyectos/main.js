@@ -1844,19 +1844,16 @@ function crearRechequeo(id) {
     );
 }
 
-
-
 function descargarExcel(client_id) {
     window.location.href = `../../../../../Controller/ctrReportes.php?case=excel&client_id=${client_id}`;
 }
 
 function mdlDescargarExcelProyectosTotal() {
-    $("#modalDescargarExcelProyectosTotal").modal("show")
+    document.getElementById("formDescargarReporteXlsx").reset();
+    $("#modalDescargarExcelProyectosTotal").modal("show");
 }
 
-
 const params = new URLSearchParams(window.location.search);
-
 if (params.get('doc') === "error") {
     Swal.fire({
         icon: "warning",

@@ -2,7 +2,7 @@
 <div class="modal fade" id="modalDescargarExcelProyectosTotal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
     aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog">
-        <form action="<?php echo URL . "Controller/ctrReportes.php?case=total_excel" ?>" method="post">
+        <form id="formDescargarReporteXlsx" action="<?php echo URL . "Controller/ctrReportes.php?case=total_excel" ?>" method="post">
             <div class="modal-content">
                 <div class="card-body">
                     <h5 class="mb-0 pb-0">Descargar Archivo <i class="ri-file-excel-2-fill text-success fs-22" title="Descargar documento"></i>

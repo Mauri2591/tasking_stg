@@ -144,7 +144,7 @@ if (isset($_SESSION['usu_id'])) {
                             <div class="card card-body">
                                 <table id="table_proyectos_total_calidad" style="text-align: center; width: 100%;">
                                     <div style="display: flex; justify-content: end;">
-                                        <span class="mb-4"><span class="badge bg-primary fs-12">Reporte Clientes</span><i onclick="descargarExcelProyectosTotal()" class="ri-file-excel-2-fill text-success fs-22" type="button" title="Descargar documento"></i></span>
+                                        <span class="mb-4"><span class="badge bg-primary fs-12">Reporte Clientes</span><i onclick="mdlDescargarExcelProyectosTotal()" class="ri-file-excel-2-fill text-success fs-22" type="button" title="Descargar documento"></i></span>
                                     </div>
                                     <thead style="text-align: center;">
                                         <tr style="text-align: center;">
