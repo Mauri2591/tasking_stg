@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . "/../Config/Conexion.php";
+require_once __DIR__ . "/../Config/Config.php";
 require_once __DIR__ . "/../Model/Proyectos.php";
 require_once __DIR__ . "/../Model/Clases/Reportes.php";
 require_once __DIR__ . "/../Model/Timesummary.php";
@@ -26,52 +27,60 @@ switch ($_GET['case'] ?? null) {
         break;
 
     case 'total_excel':
-        $data = $proyecto->get_proyectos_total_excel();
+        $fecha_desde = $_POST['fecha_desde'] ?? null;
+        $fecha_hasta = $_POST['fecha_hasta'] ?? null;
+        $data = $proyecto->get_proyectos_total_excel($fecha_desde, $fecha_hasta);
+
+        if (empty($data)) {
+            http_response_code(404);
+            header("Location:".URL."/View/Home/Gestion/Clientes/Proyectos/?doc=error");
+            exit;
+        }
         $reporte::total_excel($data, "PROYECTOS_TOTAL");
         break;
 
-   case 'getDatosReporteSinFiltro':
+    case 'getDatosReporteSinFiltro':
 
-    $fechaDesde = $_POST['hora_desde_edit'] ?? null;
-    $fechaHasta = $_POST['hora_hasta_edit'] ?? null;
-    $idClienteDocx = $_POST['hiddenIdClienteDocx'] ?? null;
-    $idClienteXlsx = $_POST['hiddenIdClienteXlsx'] ?? null;
+        $fechaDesde = $_POST['hora_desde_edit'] ?? null;
+        $fechaHasta = $_POST['hora_hasta_edit'] ?? null;
+        $idClienteDocx = $_POST['hiddenIdClienteDocx'] ?? null;
+        $idClienteXlsx = $_POST['hiddenIdClienteXlsx'] ?? null;
 
-    // Normalizar cliente (puede venir de Docx o Xlsx)
-    $idCliente = $idClienteDocx ?: $idClienteXlsx;
+        // Normalizar cliente (puede venir de Docx o Xlsx)
+        $idCliente = $idClienteDocx ?: $idClienteXlsx;
 
 
-    // 1️⃣ SIN FILTROS → REPORTE GENERAL
-    if (empty($fechaDesde) && empty($fechaHasta) && empty($idCliente)) {
-        $data = $timesummary->getDatosReporteSinFiltro();
-        $nombreReporte = "Timmesumary";
-    }
-    // 2️⃣ SOLO FECHAS
-    else if (!empty($fechaDesde) || !empty($fechaHasta)) {
-        $data = $timesummary->getDatosReporteConFiltroFechas($fechaDesde, $fechaHasta);
-        $nombreReporte = "Timmesumary";
-    }
-    // 3️⃣ SOLO CLIENTE
-    else if (!empty($idCliente) && empty($fechaDesde) && empty($fechaHasta)) {
-        $data = $timesummary->getDatosReporteConFiltroPoriDCliente($idCliente);
-        $nombreReporte = "Timmesumary";
-    }
-    // 4️⃣ FECHAS + CLIENTE
-    else if ((!empty($fechaDesde) || !empty($fechaHasta)) && !empty($idCliente)) {
-        $data = $timesummary->getReportePorFechasYCliente($idCliente,$fechaDesde, $fechaHasta);
-        $nombreReporte = "Timmesumary";
-    }
+        // 1️⃣ SIN FILTROS → REPORTE GENERAL
+        if (empty($fechaDesde) && empty($fechaHasta) && empty($idCliente)) {
+            $data = $timesummary->getDatosReporteSinFiltro();
+            $nombreReporte = "Timmesumary";
+        }
+        // 2️⃣ SOLO FECHAS
+        else if (!empty($fechaDesde) || !empty($fechaHasta)) {
+            $data = $timesummary->getDatosReporteConFiltroFechas($fechaDesde, $fechaHasta);
+            $nombreReporte = "Timmesumary";
+        }
+        // 3️⃣ SOLO CLIENTE
+        else if (!empty($idCliente) && empty($fechaDesde) && empty($fechaHasta)) {
+            $data = $timesummary->getDatosReporteConFiltroPoriDCliente($idCliente);
+            $nombreReporte = "Timmesumary";
+        }
+        // 4️⃣ FECHAS + CLIENTE
+        else if ((!empty($fechaDesde) || !empty($fechaHasta)) && !empty($idCliente)) {
+            $data = $timesummary->getReportePorFechasYCliente($idCliente, $fechaDesde, $fechaHasta);
+            $nombreReporte = "Timmesumary";
+        }
 
-    if (isset($_POST['generarReporteDocx'])) {
-        Reportes::getDatosReporteSinFiltroDocx($data, $nombreReporte);
-        exit;
-    }
+        if (isset($_POST['generarReporteDocx'])) {
+            Reportes::getDatosReporteSinFiltroDocx($data, $nombreReporte);
+            exit;
+        }
 
-    if (isset($_POST['generarReporteXlsx'])) {
-        Reportes::getDatosReporteSinFiltroXlsx($data, $nombreReporte);
-        exit;
-    }
-    break;
+        if (isset($_POST['generarReporteXlsx'])) {
+            Reportes::getDatosReporteSinFiltroXlsx($data, $nombreReporte);
+            exit;
+        }
+        break;
 
     default:
         echo "Acción no reconocida";

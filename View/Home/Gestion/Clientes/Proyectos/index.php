@@ -144,8 +144,7 @@ if (isset($_SESSION['usu_id'])) {
                             <div class="card card-body">
                                 <table id="table_proyectos_total_calidad" style="text-align: center; width: 100%;">
                                     <div style="display: flex; justify-content: end;">
-                                    <span class="mb-4"><span class="badge bg-primary fs-12">Reporte Clientes</span><i onclick="descargarExcelProyectosTotal()" class="ri-file-excel-2-fill text-success fs-22" type="button" title="Descargar documento"></i></span>
-
+                                        <span class="mb-4"><span class="badge bg-primary fs-12">Reporte Clientes</span><i onclick="descargarExcelProyectosTotal()" class="ri-file-excel-2-fill text-success fs-22" type="button" title="Descargar documento"></i></span>
                                     </div>
                                     <thead style="text-align: center;">
                                         <tr style="text-align: center;">
@@ -256,6 +255,7 @@ if (isset($_SESSION['usu_id'])) {
                         include_once __DIR__ . "/Modals/ModalGestionRecurrencias.php";
                         include_once __DIR__ . "/Modals/ModalRechequeo.php";
                         include_once __DIR__ . "/Modals/ModalHistorialProyectosCalidad.php";
+                        include_once __DIR__ . "/Modals/ModalDescargarReporteXlsx.php";
                         ?>
                         <div class="tab-pane" id="arrow-contact" role="tabpanel">
 
@@ -282,10 +282,9 @@ if (isset($_SESSION['usu_id'])) {
                         <div class="tab-pane fade show active" id="tab_total" role="tabpanel">
                             <div class="card card-body">
                                 <table id="table_proyectos_total_calidad" style="text-align: center; width: 100%;">
-                                    <span class="mb-4">
-                                        <span class="badge bg-primary fs-12">Total:</span>
-                                        
-                                    </span>
+                                    <div style="display: flex; justify-content: end;">
+                                        <span class="mb-4"><span class="badge bg-primary fs-12">Reporte Clientes</span><i onclick="mdlDescargarExcelProyectosTotal()" class="ri-file-excel-2-fill text-success fs-22" type="button" title="Descargar documento"></i></span>
+                                    </div>
                                     <thead style="text-align: center;">
                                         <tr>
                                             <th style="width: 400px;text-align: center;">CLIENTE</th>
@@ -315,6 +314,7 @@ if (isset($_SESSION['usu_id'])) {
                         include_once __DIR__ . "/Modals/ModalGestionRecurrencias.php";
                         include_once __DIR__ . "/Modals/ModalRechequeo.php";
                         include_once __DIR__ . "/Modals/ModalHistorialProyectosCalidad.php";
+                        include_once __DIR__ . "/Modals/ModalDescargarReporteXlsx.php";
                         ?>
                     </div>
                 </div>

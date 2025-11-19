@@ -10,12 +10,6 @@
                     </div>
                     <span class="badge bg-primary text-light fs-12">Cliente: <span id="idCliente" style="text-transform: uppercase;"></span></span>
                     <input type="hidden" hidden id="inputHiddenIdCliente">
-
-                    <div style="display: flex; width: 15%; align-items: center; gap: 8px; margin-top: .5rem;margin-bottom: .5rem">
-                        <label for="anio" class="form-label mb-0">AÑO:</label>
-                        <input type="number" id="anio" name="anio" class="form-control form-control-sm"
-                            min="1900" max="2099" step="1" placeholder="2025">
-                    </div>
                 </div>
 
                 <?php if ($_SESSION['sector_id'] == "4"): ?>

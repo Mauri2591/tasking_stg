@@ -1850,10 +1850,27 @@ function descargarExcel(client_id) {
     window.location.href = `../../../../../Controller/ctrReportes.php?case=excel&client_id=${client_id}`;
 }
 
-function descargarExcelProyectosTotal() {
-    window.location.href = `../../../../../Controller/ctrReportes.php?case=total_excel`;
+function mdlDescargarExcelProyectosTotal() {
+    $("#modalDescargarExcelProyectosTotal").modal("show")
 }
 
+
+const params = new URLSearchParams(window.location.search);
+
+if (params.get('doc') === "error") {
+    Swal.fire({
+        icon: "warning",
+        title: "Error",
+        text: "No se encontraron registros en esa fecha",
+        showCancelButton: false,
+        showConfirmButton: false,
+        timer: 1500
+    });
+
+    // ✅ Eliminar el parámetro de la URL sin recargar
+    const url = window.location.origin + window.location.pathname;
+    history.replaceState({}, document.title, url);
+}
 
 //--------------------------------------------------------------------------------//
 
