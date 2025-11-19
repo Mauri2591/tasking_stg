@@ -417,18 +417,6 @@ function validar_combo_prioridad(valorInicial) {
 }
 
 function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
-    // $.post("../../../../../Controller/ctrProyectos.php?proy=get_si_proy_recurrencia_is_null", { id: id },
-    //     function (data, textStatus, jqXHR) {
-    //         if (data.id_proyecto_recurrencia == "NO_NULO") {
-    //             document.getElementById("icon_activos").style.display = "flex"
-    //         } else {
-    //             document.getElementById("icon_activos").style.display = "none"
-
-    //         }
-
-    //     },
-    //     "json"
-    // );
     let UPDATE_PROY_RECURRENCIA = false;
 
     $.post("../../../../../Controller/ctrProyectos.php?proy=validar_si_es_recurrente", {

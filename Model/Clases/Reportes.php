@@ -235,7 +235,7 @@ class Reportes
             ->getFill()
             ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
             ->getStartColor()
-            ->setRGB('D9D9D9'); 
+            ->setRGB('D9D9D9');
 
         $sheet->getStyle("A{$rowNum}:{$ultimaCol}{$rowNum}")
             ->getFont()
@@ -388,7 +388,9 @@ class Reportes
         );
 
         // Fecha
+        date_default_timezone_set('America/Argentina/Buenos_Aires');
         $fechaActual = date("d/m/Y");
+
         $section->addText(
             "Generado el: " . $fechaActual,
             ['italic' => true, 'size' => 10],
@@ -430,9 +432,10 @@ class Reportes
             'CLIENTE'  => 3000,
             'PRODUCTO' => 2800,
             'SECTOR'   => 3000,
-            'HS'       => 1500,  // MAS CHICA
-            'INICIO'   => 1500,
-            'FIN'      => 1500,
+            'USUARIOS' => 3000,
+            'DIMENSIONAMIENTO' => 2500,
+            'INICIO'   => 2500,
+            'FIN'      => 2500,
             'ESTADO'   => 3000   // MAS GRANDE
         ];
 
@@ -450,11 +453,11 @@ class Reportes
         // Filas con datos
         foreach ($data as $fila) {
             $table->addRow();
-
             $table->addCell($headers['CLIENTE'])->addText($fila['client_rs']);
             $table->addCell($headers['PRODUCTO'])->addText($fila['producto']);
             $table->addCell($headers['SECTOR'])->addText($fila['sector']);
-            $table->addCell($headers['HS'])->addText($fila['dimensionamiento']);
+            $table->addCell($headers['USUARIOS'])->addText($fila['usuarios_asignados']);
+            $table->addCell($headers['DIMENSIONAMIENTO'])->addText($fila['dimensionamiento']);
             $table->addCell($headers['INICIO'])->addText($fila['fech_inicio']);
             $table->addCell($headers['FIN'])->addText($fila['fech_fin']);
             $table->addCell($headers['ESTADO'])->addText($fila['estado']);
@@ -485,11 +488,11 @@ class Reportes
 
             // Dimensionamiento y fechas
             $section->addText(
-                "Dimensionamiento: " . ($fila['dimensionamiento']." hs" ?: "N/A")
+                "Dimensionamiento: " . ($fila['dimensionamiento'] . " hs" ?: "N/A")
             );
 
             $section->addText(
-                "Horas consumidas total: " . ($fila['horas_consumidas_total']." hs" ?: "N/A")
+                "Horas consumidas total: " . ($fila['horas_consumidas_total'] . " hs" ?: "N/A")
             );
 
             $section->addTextBreak(0.5);
@@ -501,7 +504,26 @@ class Reportes
             if (!empty($fila['horas_consumidas_por_usuario'])) {
 
                 // Convertimos la cadena en items separados
-                $colaboradores = explode(", ", $fila['horas_consumidas_por_usuario']." hs");
+                $colaboradores = explode(", ", $fila['horas_consumidas_por_usuario'] . " hs");
+
+                // Lista de colaboradores & horas
+                $listStyle = ['listType' => \PhpOffice\PhpWord\Style\ListItem::TYPE_BULLET_FILLED];
+
+                foreach ($colaboradores as $col) {
+                    $section->addListItem($col, 0, null, $listStyle);
+                }
+            } else {
+                $section->addText("Sin registros de carga.", ['italic' => true]);
+            }
+
+            // Subtitulo PM
+            $section->addText("Horas consumidas PM:", ['bold' => true]);
+
+            // horas_consumidas_por_usuario ya viene así: "Mauricio 05:30, Rodrigo 02:45..."
+            if (!empty($fila['horas_consumidas_pm_calidad_detalle'])) {
+
+                // Convertimos la cadena en items separados
+                $colaboradores = explode(", ", $fila['horas_consumidas_pm_calidad_detalle'] . " hs");
 
                 // Lista de colaboradores & horas
                 $listStyle = ['listType' => \PhpOffice\PhpWord\Style\ListItem::TYPE_BULLET_FILLED];
@@ -515,8 +537,9 @@ class Reportes
 
             $section->addTextBreak(1);
         }
+        $nombreArchivo = $nombre . "_" . $fechaActual;
         // Exportar DOCX
-        $filename = "{$nombre}.docx";
+        $filename = "{$nombreArchivo}.docx";
 
         header("Content-Description: File Transfer");
         header('Content-Disposition: attachment; filename="' . $filename . '"');

@@ -237,7 +237,7 @@ function cambiar_a_borrador(id_proyecto_gestionado) {
         showCancelButton: true
     }).then((result) => {
         if (result.isConfirmed) {
-            $.post("../../../../../../Controller/ctrProyectos.php?proy=update_estado_proy", { ud: id_proyecto_gestionado, estados_id: 14 },
+            $.post("../../../../../../Controller/ctrProyectos.php?proy=update_estado_proy", { id: id_proyecto_gestionado, estados_id: 14 },
                 function (data, textStatus, jqXHR) {
 
                 },
@@ -245,7 +245,7 @@ function cambiar_a_borrador(id_proyecto_gestionado) {
             );
 
             setTimeout(() => {
-                if ($.fn.DataTable.isDataTable('#table_proyectos_borrador')) {
+                if ($.fn.DataTable.isDataTable('#table_proyectos_abiertos_calidad_Gestion_Estrategica')) {
                     $('#table_proyectos_borrador').DataTable().ajax.reload(null, false);
                 }
                 if ($.fn.DataTable.isDataTable('#table_proyectos_abiertos_calidad_Gestion_Estrategica')) {

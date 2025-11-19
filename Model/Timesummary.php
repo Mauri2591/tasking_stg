@@ -508,66 +508,78 @@ ORDER BY timesummary_carga.fecha DESC;";
     public function getDatosReporteSinFiltro()
     {
         $conn = parent::get_conexion();
-        $sql = "SELECT 
-            clientes.client_id,
-            clientes.client_rs,
-            COUNT(DISTINCT proyecto_gestionado.id) AS proyectos_gestionados,
-            COUNT(DISTINCT proyecto_cantidad_servicios.id) AS total_proyectos_cantidad_servicios,
-            proyecto_gestionado.fech_inicio,
-            proyecto_gestionado.fech_fin,
-            dimensionamiento.hs_dimensionadas AS dimensionamiento,
-            TIME_FORMAT(
-                SEC_TO_TIME(SUM(horas_usuarios.total_segundos)),
-                '%H:%i'
-            ) AS horas_consumidas_total,
-            GROUP_CONCAT(
-                CONCAT(
-                    horas_usuarios.usu_nom, ' ',
-                    TIME_FORMAT(SEC_TO_TIME(horas_usuarios.total_segundos), '%H:%i')
-                ) SEPARATOR ', '
-            ) AS horas_consumidas_por_usuario,
-            tm_categoria.cat_nom AS producto,
-            sectores.sector_nombre AS sector,
-            MAX(proyecto_gestionado.recurrencia) AS recurrencia,
-            MAX(tm_estados.estados_nombre) AS estado,
-            proyectos.cantidad_servicios
-        FROM proyectos
-        INNER JOIN clientes 
-            ON proyectos.client_id = clientes.client_id
-        LEFT JOIN proyecto_cantidad_servicios
-            ON proyecto_cantidad_servicios.proy_id = proyectos.proy_id
-        LEFT JOIN proyecto_gestionado
-            ON proyecto_gestionado.id_proyecto_cantidad_servicios = proyecto_cantidad_servicios.id
-        LEFT JOIN tm_categoria
-            ON proyecto_gestionado.cat_id = tm_categoria.cat_id
-        LEFT JOIN sectores
-            ON sectores.sector_id = proyecto_gestionado.sector_id
-        LEFT JOIN dimensionamiento 
-            ON proyecto_gestionado.id = dimensionamiento.id_proyecto_gestionado
-        LEFT JOIN (
-            SELECT 
-                tc.id_proyecto_gestionado,
-                tc.usu_id,
-                tm_usuario.usu_nom,
-                SUM(TIME_TO_SEC(tc.horas_consumidas)) AS total_segundos
-            FROM timesummary_carga tc
-            INNER JOIN tm_usuario 
-                ON tm_usuario.usu_id = tc.usu_id
-            GROUP BY tc.id_proyecto_gestionado, tc.usu_id, tm_usuario.usu_nom
-        ) AS horas_usuarios
-        ON horas_usuarios.id_proyecto_gestionado = proyecto_gestionado.id
-        LEFT JOIN tm_estados 
-            ON proyecto_gestionado.estados_id = tm_estados.estados_id
-            WHERE proyecto_gestionado.estados_id IN(1,2,3,4,14)
-        GROUP BY 
-            clientes.client_id,
-            clientes.client_rs,
-            tm_categoria.cat_nom,
-            sectores.sector_nombre,
-            proyecto_gestionado.fech_inicio,
-            proyecto_gestionado.fech_fin,
-            dimensionamiento.hs_dimensionadas
-        ORDER BY clientes.client_rs";
+        $sql = "SELECT
+    clientes.client_id,
+    clientes.client_rs,
+    COUNT(DISTINCT proyecto_gestionado.id) AS proyectos_gestionados,
+    COUNT(DISTINCT proyecto_cantidad_servicios.id) AS total_proyectos_cantidad_servicios,
+    proyecto_gestionado.fech_inicio,
+    proyecto_gestionado.fech_fin,
+    dimensionamiento.hs_dimensionadas AS dimensionamiento,
+    tm_usuario_pm.usu_nom AS usuario_pm_calidad,
+    pm_calidad.horas_pm,
+    TIME_FORMAT(
+        SEC_TO_TIME(SUM(DISTINCT CASE WHEN horas_usuarios.id_pm_calidad <> 1 THEN horas_usuarios.total_segundos ELSE 0 END)),
+        '%H:%i'
+    ) AS horas_consumidas_total,
+    TIME_FORMAT(
+        SEC_TO_TIME(SUM(DISTINCT CASE WHEN horas_usuarios.id_pm_calidad = 1 THEN horas_usuarios.total_segundos ELSE 0 END)),
+        '%H:%i'
+    ) AS horas_consumidas_pm_calidad,
+    GROUP_CONCAT(
+        DISTINCT CASE WHEN horas_usuarios.id_pm_calidad <> 1 THEN
+            CONCAT(horas_usuarios.usu_nom, ' ',
+                TIME_FORMAT(SEC_TO_TIME(horas_usuarios.total_segundos), '%H:%i')
+            )
+        END SEPARATOR ', '
+    ) AS horas_consumidas_por_usuario,
+    GROUP_CONCAT(
+        DISTINCT CASE WHEN horas_usuarios.id_pm_calidad = 1 THEN
+            CONCAT(horas_usuarios.usu_nom, ' ',
+                TIME_FORMAT(SEC_TO_TIME(horas_usuarios.total_segundos), '%H:%i')
+            )
+        END SEPARATOR ', '
+    ) AS horas_consumidas_pm_calidad_detalle,
+    GROUP_CONCAT(DISTINCT tm_usuario.usu_nom SEPARATOR ', ') AS usuarios_asignados,
+    tm_categoria.cat_nom AS producto,
+    sectores.sector_nombre AS sector,
+    MAX(proyecto_gestionado.recurrencia) AS recurrencia,
+    MAX(tm_estados.estados_nombre) AS estado,
+    proyectos.cantidad_servicios
+FROM proyectos
+INNER JOIN clientes ON proyectos.client_id = clientes.client_id
+LEFT JOIN proyecto_cantidad_servicios ON proyecto_cantidad_servicios.proy_id = proyectos.proy_id
+LEFT JOIN proyecto_gestionado ON proyecto_gestionado.id_proyecto_cantidad_servicios = proyecto_cantidad_servicios.id
+LEFT JOIN tm_categoria ON proyecto_gestionado.cat_id = tm_categoria.cat_id
+LEFT JOIN sectores ON sectores.sector_id = proyecto_gestionado.sector_id
+LEFT JOIN dimensionamiento ON proyecto_gestionado.id = dimensionamiento.id_proyecto_gestionado
+LEFT JOIN usuario_proyecto ON proyecto_gestionado.id = usuario_proyecto.id_proyecto_gestionado
+LEFT JOIN tm_usuario ON tm_usuario.usu_id = usuario_proyecto.usu_asignado
+LEFT JOIN pm_calidad ON pm_calidad.id_proyecto_gestionado = proyecto_gestionado.id
+LEFT JOIN tm_usuario AS tm_usuario_pm ON tm_usuario_pm.usu_id = pm_calidad.usu_crea
+LEFT JOIN (
+    SELECT 
+        tc.id_proyecto_gestionado,
+        tc.usu_id,
+        tc.id_pm_calidad,
+        tm_usuario.usu_nom,
+        SUM(TIME_TO_SEC(tc.horas_consumidas)) AS total_segundos
+    FROM timesummary_carga tc
+    INNER JOIN tm_usuario ON tm_usuario.usu_id = tc.usu_id
+    GROUP BY tc.id_proyecto_gestionado, tc.usu_id, tc.id_pm_calidad, tm_usuario.usu_nom
+) AS horas_usuarios ON horas_usuarios.id_proyecto_gestionado = proyecto_gestionado.id
+LEFT JOIN tm_estados ON proyecto_gestionado.estados_id = tm_estados.estados_id
+WHERE proyecto_gestionado.estados_id IN (1,2,3,4,14)
+GROUP BY 
+    clientes.client_id,
+    clientes.client_rs,
+    tm_categoria.cat_nom,
+    sectores.sector_nombre,
+    proyecto_gestionado.fech_inicio,
+    proyecto_gestionado.fech_fin,
+    dimensionamiento.hs_dimensionadas,
+    tm_usuario_pm.usu_nom
+ORDER BY clientes.client_rs";
         $stmt = $conn->prepare($sql);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -794,7 +806,7 @@ ORDER BY timesummary_carga.fecha DESC;";
             $stmt->execute();
             return $stmt->fetch(PDO::FETCH_ASSOC);
         } catch (\Throwable $e) {
-            echo "Error: ".$e->getMessage();
+            echo "Error: " . $e->getMessage();
             exit;
         }
     }

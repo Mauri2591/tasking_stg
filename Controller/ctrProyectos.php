@@ -97,28 +97,30 @@ switch ($_GET['proy']) {
         break;
 
 
-    case 'get_usuarios_x_sector':
-        $usuarios = $proyecto->get_usuarios_x_sector($_POST['sector_id']);
-        $asignados = [];
+   case 'get_usuarios_x_sector':
+    $usuarios = $proyecto->get_usuarios_x_sector($_POST['sector_id']);
+    $asignados = [];
 
-        if (!empty($_POST['id_proyecto_gestionado'])) {
-            $asignados = $proyecto->get_usuarios_x_proy_y_sector((int) $_POST['id_proyecto_gestionado']);
-        }
+    if (!empty($_POST['id_proyecto_gestionado'])) {
+        $asignados = $proyecto->get_usuarios_x_proy_y_sector((int) $_POST['id_proyecto_gestionado']);
+    }
 
+    $asignados_ids = array_column($asignados, 'usu_asignado');
 
-        $asignados_ids = array_column($asignados, 'usu_asignado');
+    $htmlCheckbox = '';
+    foreach ($usuarios as $val) {
+        $checked = in_array($val['usu_id'], $asignados_ids) ? 'checked' : '';
+        $disabled = in_array($val['usu_id'], $asignados_ids) ? 'disabled' : ''; // ✅ Deshabilitar si ya está asignado
 
-        $htmlCheckbox = '';
-        foreach ($usuarios as $val) {
-            $checked = in_array($val['usu_id'], $asignados_ids) ? 'checked' : '';
-            $htmlCheckbox .= '<label title="' . $val['sector_nombre'] . '" class="d-block">'
-                . '<input type="checkbox" value="' . $val['usu_id'] . '" name="usu_asignado[]" ' . $checked . '> '
-                . htmlspecialchars($val['usu_nom'])
-                . '</label>';
-        }
+        $htmlCheckbox .= '<label title="' . $val['sector_nombre'] . '" class="d-block">'
+            . '<input type="checkbox" value="' . $val['usu_id'] . '" name="usu_asignado[]" ' . $checked . ' ' . $disabled . '> '
+            . htmlspecialchars($val['usu_nom'])
+            . '</label>';
+    }
 
-        echo $htmlCheckbox;
-        break;
+    echo $htmlCheckbox;
+    break;
+
 
     case 'insert_proyecto_gestionado':
         $archivo_subido = (isset($_FILES['archivo']) && $_FILES['archivo']['error'] === 0)
