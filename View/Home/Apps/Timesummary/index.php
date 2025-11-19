@@ -609,11 +609,11 @@ if (isset($_SESSION['usu_id'])) {
                             title: "Bien",
                             text: data.Success || "Tarea inactivada correctamente",
                             showConfirmButton: false,
-                            timer: 1300
+                            timer: 1000
                         });
                         setTimeout(() => {
                             window.location.reload();
-                        }, 1300);
+                        }, 1000);
                     },
                     error: function(xhr) {
                         Swal.fire({
@@ -671,7 +671,7 @@ if (isset($_SESSION['usu_id'])) {
                                         title: "Bien",
                                         text: data.Success || "Tarea activada correctamente",
                                         showConfirmButton: false,
-                                        timer: 1300
+                                        timer: 1000
                                     });
                                     setTimeout(() => {
                                         if ($.fn.DataTable.isDataTable('#tableHistorialTimesummary')) {
@@ -718,7 +718,7 @@ if (isset($_SESSION['usu_id'])) {
                                         title: "Bien",
                                         text: data.Success || "Tarea inactivada correctamente",
                                         showConfirmButton: false,
-                                        timer: 1300
+                                        timer: 1000
                                     });
                                     setTimeout(() => {
                                         if ($.fn.DataTable.isDataTable('#tableHistorialTimesummary')) {

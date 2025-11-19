@@ -492,7 +492,7 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
                                     $("#table_proyectos_borrador").DataTable().ajax.reload(null, false);
                                     $('#table_proyectos_recurrencia').DataTable().ajax.reload(null, false);
                                 }
-                            }, 500);
+                            }, 300);
                         }
                     },
                     "json"
