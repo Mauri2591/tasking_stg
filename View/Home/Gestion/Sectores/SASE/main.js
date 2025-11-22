@@ -20,10 +20,11 @@ $(document).ready(function () {
                 sector_id: 3,
                 estados_id: 1
             },
-            error: function (e) {
-            }
+            error: function (e) {}
         },
-        "order": [[0, "asc"]], //Ordenar descendentemente
+        "order": [
+            [0, "asc"]
+        ], //Ordenar descendentemente
         "bDestroy": true,
         "responsive": true,
         "bInfo": true,
@@ -77,10 +78,11 @@ $(document).ready(function () {
                 sector_id: 3,
                 estados_id: 2
             },
-            error: function (e) {
-            }
+            error: function (e) {}
         },
-        "order": [[0, "asc"]], //Ordenar descendentemente
+        "order": [
+            [0, "asc"]
+        ], //Ordenar descendentemente
         "bDestroy": true,
         "responsive": true,
         "bInfo": true,
@@ -133,10 +135,11 @@ $(document).ready(function () {
                 sector_id: 3,
                 estados_id: 3
             },
-            error: function (e) {
-            }
+            error: function (e) {}
         },
-        "order": [[0, "asc"]], //Ordenar descendentemente
+        "order": [
+            [0, "asc"]
+        ], //Ordenar descendentemente
         "bDestroy": true,
         "responsive": true,
         "bInfo": true,
@@ -169,7 +172,7 @@ $(document).ready(function () {
     });
 });
 
-function cambiar_proy_sase_desde_calidad_pentest(id_proyecto_gestionado) {
+function cambiar_estado_proy_desde_calidad_a_borrador(id_proyecto_gestionado) {
     Swal.fire({
         icon: "info",
         title: "Desea pasar el proyecto a Borrador?",
@@ -177,14 +180,54 @@ function cambiar_proy_sase_desde_calidad_pentest(id_proyecto_gestionado) {
         showCancelButton: true
     }).then((result) => {
         if (result.isConfirmed) {
-            $.post("../../../../../Controller/ctrProyectos.php?proy=update_estado_proy", { id: id_proyecto_gestionado, estados_id: 14 },
+            $.post("../../../../../Controller/ctrProyectos.php?proy=update_estado_proy", {
+                    id: id_proyecto_gestionado,
+                    estados_id: 14
+                },
                 function (data, textStatus, jqXHR) {
 
                 },
                 "json"
             );
-            $('#table_proyectos_nuevos_sase').DataTable().ajax.reload(null, false);
-            $('#table_proyectos_borrador').DataTable().ajax.reload(null, false);
+
+            setTimeout(() => {
+                $('#table_proyectos_nuevos_sase').DataTable().ajax.reload(null, false);
+                $('#table_proyectos_borrador').DataTable().ajax.reload(null, false);
+            }, 500);
+
+            Swal.fire({
+                icon: "success",
+                title: "Bien",
+                text: "Proyecto pasado a Borrador!",
+                timer: 1500,
+                showConfirmButton: false
+            });
+        }
+    })
+}
+
+function cambiar_estado_proy_desde_calidad_a_abierto(id_proyecto_gestionado) {
+    Swal.fire({
+        icon: "info",
+        title: "Desea pasar el proyecto a Abierto?",
+        showConfirmButton: true,
+        showCancelButton: true
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.post("../../../../../Controller/ctrProyectos.php?proy=update_estado_proy", {
+                    id: id_proyecto_gestionado,
+                    estados_id: 2
+                },
+                function (data, textStatus, jqXHR) {
+
+                },
+                "json"
+            );
+            setTimeout(() => {
+                $('#table_proyectos_nuevos_sase').DataTable().ajax.reload(null, false);
+                $('#table_proyectos_abiertos_sase').DataTable().ajax.reload(null, false);
+            }, 500);
+
             Swal.fire({
                 icon: "success",
                 title: "Bien",
@@ -196,21 +239,62 @@ function cambiar_proy_sase_desde_calidad_pentest(id_proyecto_gestionado) {
     })
 }
 
+function cerrar_proyecto(id_proyecto_gestionado) {
+    Swal.fire({
+        icon: "info",
+        title: "Desea cerrar el proyecto?",
+        showConfirmButton: true,
+        showCancelButton: true
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.post("../../../../../Controller/ctrProyectos.php?proy=update_estado_proy", {
+                    id: id_proyecto_gestionado,
+                    estados_id: 4
+                },
+                function (data, textStatus, jqXHR) {
+
+                },
+                "json"
+            );
+            Swal.fire({
+                icon: "success",
+                title: "Bien",
+                text: "Proyecto pasado a Nuevo!",
+                timer: 1500,
+                showConfirmButton: false
+            });
+
+            setTimeout(() => {
+                if ($.fn.DataTable.isDataTable('#table_proyectos_realizados_sase')) {
+                    $('#table_proyectos_realizados_sase').DataTable().ajax.reload(null, false);
+                }
+            }, 500);
+
+        }
+    })
+}
+
 function ver_hosts_eh(id_proyecto_gestionado) {
     $("#ModalVerHosts").modal("show");
-    $.post("../../../../../Controller/ctrProyectos.php?proy=get_hosts_proy_ip", { id_proyecto_gestionado: id_proyecto_gestionado },
+    $.post("../../../../../Controller/ctrProyectos.php?proy=get_hosts_proy_ip", {
+            id_proyecto_gestionado: id_proyecto_gestionado
+        },
         function (data, textStatus, jqXHR) {
             $("#cont_ip").html(data)
         },
         "html"
     );
-    $.post("../../../../../Controller/ctrProyectos.php?proy=get_hosts_proy_url", { id_proyecto_gestionado: id_proyecto_gestionado },
+    $.post("../../../../../Controller/ctrProyectos.php?proy=get_hosts_proy_url", {
+            id_proyecto_gestionado: id_proyecto_gestionado
+        },
         function (data, textStatus, jqXHR) {
             $("#cont_url").html(data)
         },
         "html"
     );
-    $.post("../../../../../Controller/ctrProyectos.php?proy=get_hosts_proy_otro", { id_proyecto_gestionado: id_proyecto_gestionado },
+    $.post("../../../../../Controller/ctrProyectos.php?proy=get_hosts_proy_otro", {
+            id_proyecto_gestionado: id_proyecto_gestionado
+        },
         function (data, textStatus, jqXHR) {
             $("#cont_otro").html(data)
         },

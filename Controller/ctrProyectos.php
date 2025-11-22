@@ -347,7 +347,7 @@ switch ($_GET['proy']) {
         break;
 
     case 'cambiar_a_abierto':
-        $proyecto->cambiar_a_abierto($_POST['id'],$_SESSION['usu_id']);
+        $proyecto->cambiar_a_abierto($_POST['id'], $_SESSION['usu_id']);
         break;
 
     case 'inactivar_host_x_id':
@@ -1081,7 +1081,8 @@ switch ($_GET['proy']) {
                                         Estado
                                     </button>
                                     <ul class="dropdown-menu" aria-labelledby="btnGroupDrop1">
-                                        <li><a class="dropdown-item" type="button" onclick="cambiar_proy_eh_desde_calidad_pentest(' . $row['id_proyecto_gestionado'] . ')">Borrador</a></li>
+                                        <li><a class="dropdown-item" type="button" onclick="cambiar_estado_proy_desde_calidad_a_borrador(' . $row['id_proyecto_gestionado'] . ')">Borrador</a></li>
+                                        <li><a class="dropdown-item" type="button" onclick="cambiar_estado_proy_desde_calidad_a_abierto(' . $row['id_proyecto_gestionado'] . ')">Abierto</a></li>
                                     </ul>
                                 </div>
                             </div>';
@@ -1771,7 +1772,6 @@ switch ($_GET['proy']) {
             ]);
         }
         break;
-
 
     default:
         break;

@@ -109,6 +109,7 @@ if (isset($_SESSION['usu_id'])) {
                                                     <th>HS</th>
                                                     <th>ASIGNADO</th>
                                                     <th>HOSTS</th>
+                                                    <th>VER</th>
                                                     <th></th>
                                                 </tr>
                                             </thead>

@@ -1,0 +1,74 @@
+Qualys
+User: teecm3mg
+Pass: Ulra259+
+*********************************************************
+Tenable (entrar con el autenticator de Google)
+User: mrgonzalez@teco.com.ar
+Pass: Mauuroteee9191+
+*********************************************************
+Windows, SYN/ACK y TuId
+User: u633419
+Pass: Mauuroteee9191
+*********************************************************
+Vulma
+User: mrgonzalez@teco.com.ar
+Pass: Mauuroteee9191
+*********************************************************
+Virtual Box - Usuario inicial
+User: eh2023
+Pass: Mauuroteee9191
+*********************************************************
+CLAVE VPN KALI:
+VPN: sudo openfortivpn 181.105.177.1:10443 --username=kali --trusted-cert c6ec6fea7b08997cb1e9da71f8fc04ca3561700482bcc9a8f5244c06b0e76a99 -v
+Pass: Kali2022*
+*********************************************************
+ip: 10.75.246.125  Puerto: 22
+root vulma
+HnWc&7qR8#x8Ht
+----------
+Phpmyadmin
+https://10.75.246.125/phpmyadmin/index.php?route=/sql&server=1&db=vulma_gestion&table=tm_usuario&pos=0
+10.75.246.125:phpmyadmin
+root:wp%Q6RgJ&3SdWR
+*********************************************************
+WinSCP
+10.75.246.125
+ehmssplocal:7Q5k7&AS$7K48U
+*********************************************************
+ssh
+Para el server: host = ssh ehmssplocal@10.75.246.125 pass = 7Q5k7&AS$7K48U 
+*********************************************************
+USUARIO Y PASS JENKINS:
+mauri2591
+Mauuroteee9191
+*********************************************************
+USUARIO Y PASS SFTP OVA:
+usuario: mrgonzalez
+password anterior: Cambiame1245##$$
+PasswordMauri1245##$$
+Pasos:
+1_Carpeta OVA: Nombre proyecto, Password la que quiera, Expiration por default 1 dia sino la que yo quiera, Max tokens recomendado 2.
+Copio el link del enlace, No lo abro sino lo copio y se lo comparto.
+*********************************************************
+ACUNETIX:
+user: mrgonzalez@pentest.com
+pass: P4$$w0rD#
+*********************************************************
+UDEMY
+link curso metasploit (https://tecom.udemy.com/course/metasploit-cero-experto-practicas-walter-coto-alvaro-chirou-2021/learn/lecture/26519468#overview)
+Usuario: macaruso2@teco.com.ar
+Password:wSEpj7h5vUS2FYM
+*********************************************************
+*********************************************************
+RDP
+10.248.130.139
+10.75.228.202
+10.75.246.226
+*********************************************************
+
+*********************************************************
+SFTP
+mrgonzalez
+mauuroteee9191
+CODE AUTENTICACION en mi cel personal
+*********************************************************

@@ -172,7 +172,7 @@ $(document).ready(function () {
     });
 });
 
-function cambiar_proy_eh_desde_calidad_pentest(id_proyecto_gestionado) {
+function cambiar_estado_proy_desde_calidad_a_borrador(id_proyecto_gestionado) {
     Swal.fire({
         icon: "info",
         title: "Desea pasar el proyecto a Borrador?",
@@ -189,8 +189,44 @@ function cambiar_proy_eh_desde_calidad_pentest(id_proyecto_gestionado) {
                 },
                 "json"
             );
-            $('#table_proyectos_nuevos_eh').DataTable().ajax.reload(null, false);
-            $('#table_proyectos_borrador').DataTable().ajax.reload(null, false);
+            setTimeout(() => {
+                $('#table_proyectos_nuevos_eh').DataTable().ajax.reload(null, false);
+                $('#table_proyectos_borrador').DataTable().ajax.reload(null, false);
+            }, 500);
+
+            Swal.fire({
+                icon: "success",
+                title: "Bien",
+                text: "Proyecto pasado a Borrador!",
+                timer: 1500,
+                showConfirmButton: false
+            });
+        }
+    })
+}
+
+function cambiar_estado_proy_desde_calidad_a_abierto(id_proyecto_gestionado) {
+    Swal.fire({
+        icon: "info",
+        title: "Desea pasar el proyecto a Abierto?",
+        showConfirmButton: true,
+        showCancelButton: true
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.post("../../../../../Controller/ctrProyectos.php?proy=update_estado_proy", {
+                    id: id_proyecto_gestionado,
+                    estados_id: 2
+                },
+                function (data, textStatus, jqXHR) {
+
+                },
+                "json"
+            );
+            setTimeout(() => {
+                $('#table_proyectos_nuevos_eh').DataTable().ajax.reload(null, false);
+                $('#table_proyectos_abiertos_eh').DataTable().ajax.reload(null, false);
+            }, 500);
+
             Swal.fire({
                 icon: "success",
                 title: "Bien",
@@ -228,8 +264,8 @@ function cerrar_proyecto(id_proyecto_gestionado) {
             });
 
             setTimeout(() => {
-                if ($.fn.DataTable.isDataTable('#table_proyectos_realizados')) {
-                    $('#table_proyectos_realizados').DataTable().ajax.reload(null, false);
+                if ($.fn.DataTable.isDataTable('#table_proyectos_realizados_eh')) {
+                    $('#table_proyectos_realizados_eh').DataTable().ajax.reload(null, false);
                 }
             }, 500);
 
