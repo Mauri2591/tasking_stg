@@ -98,7 +98,7 @@
             }
 
             // Carpeta por hash
-            $ruta_archivos = __DIR__ . "../../../View/Home/Public/Uploads/Proyectos/" . $hash_folder . "/";
+            $ruta_archivos = __DIR__ . "/../../../View/Home/Public/Uploads/Proyectos/" . $hash_folder . "/";
             if (!is_dir($ruta_archivos)) {
                 mkdir($ruta_archivos, 0777, true);
             }
