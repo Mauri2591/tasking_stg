@@ -104,6 +104,7 @@ if (isset($_SESSION['usu_id'])) {
 
                                             <div style="display: flex; margin-top: .2rem; margin-bottom: .2rem;">
                                                 <span id="rechequeo" style="display: none; color:orangered" class="badge ml-1 border border-dark bg-light"></span>
+                                                <span id="proy_recurrencia" style="display: none; color:orangered" class="badge ml-1 border border-dark bg-light"></span>
                                                 <span
                                                     class="badge bg-light border border-dark text-dark mx-2 mb-1">Detalle:</span>
                                             </div>
@@ -333,7 +334,7 @@ if (isset($_SESSION['usu_id'])) {
                     } else {
                         mostrar = false;
                     }
-                    
+
                     data.forEach(elem => {
                         if (elem.usu_asignado == session_usu_id || sector_usu_id == "4") {
                             mostrar = true;
@@ -367,7 +368,16 @@ if (isset($_SESSION['usu_id'])) {
                     id: id_proyecto_gestionado
                 },
                 function(data, textStatus, jqXHR) {
+                    console.log(data);
                     
+                    if (data.posicion_recurrencia) {
+                        document.getElementById("proy_recurrencia").style.display = "flex";
+                        $("#proy_recurrencia").text("Recurrente: "+data.posicion_recurrencia);
+                    } else {
+                        document.getElementById("proy_recurrencia").style.display = "none";
+                    }
+
+
                     if (data.rechequeo == "SI") {
                         document.getElementById("rechequeo").style.display = "flex";
                         $("#rechequeo").text("Rechequeo");
@@ -730,7 +740,6 @@ if (isset($_SESSION['usu_id'])) {
                             $.post("../../../../../Controller/ctrProyectos.php?proy=get_datos_proyecto_gestionado", {
                                 id: id_proyecto_gestionado
                             }, function(data) {
-                                console.log(data);
 
                                 if (data.fech_fin == null || data.fech_fin == '') {
                                     Swal.fire({
@@ -830,7 +839,7 @@ if (isset($_SESSION['usu_id'])) {
                     id: id_proyecto_gestionado
                 },
                 function(data, textStatus, jqXHR) {
-                    
+
                     let SECTOR_ID = data.sector_id;
                     $.post("../../../../../Controller/ctrProyectos.php?proy=get_usuarios_x_sector_agregar_a_proy", {
                             sector_id: SECTOR_ID

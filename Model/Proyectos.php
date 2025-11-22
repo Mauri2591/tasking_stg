@@ -1710,6 +1710,7 @@ WHERE
     {
         $conn = parent::get_conexion();
         $sql = "SELECT proyecto_gestionado.*, 
+				   proyecto_recurrencia.posicion_recurrencia,
                    tm_categoria.cat_nom, 
                    tm_subcategoria.cats_nom,
                    if(proyecto_rechequeo.id, 'SI','NO') AS rechequeo
@@ -1719,7 +1720,8 @@ WHERE
             LEFT JOIN tm_subcategoria 
                    ON proyecto_gestionado.cats_id = tm_subcategoria.cats_id
                    LEFT JOIN proyecto_rechequeo ON proyecto_rechequeo.id_proyecto_gestionado=proyecto_gestionado.id
-            WHERE proyecto_gestionado.id = :id 
+                   LEFT JOIN proyecto_recurrencia ON proyecto_gestionado.id=proyecto_recurrencia.id_proyecto_gestionado
+            WHERE proyecto_gestionado.id = :id
               AND proyecto_gestionado.est = 1";
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(':id', $id, PDO::PARAM_INT);
