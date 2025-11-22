@@ -9,6 +9,8 @@ Options -Indexes
 <IfModule mod_rewrite.c>
   RewriteEngine On
 
+  RewriteBase /tasking_stg/Api/
+
   # Bloquear acceso directo a /public/
   RewriteRule ^public/ - [F,L]
 
