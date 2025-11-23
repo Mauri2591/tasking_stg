@@ -140,7 +140,6 @@ return function (App $app) {
             pg.id AS id_proyecto,
             prr.posicion_recurrencia AS recurrencia,
             IF(pr.id IS NOT NULL,'SI','NO') AS rechequeo,
-            pr.posicion_recurrencia AS rechequeo,
             IF(pg.descripcion = '', NULL, pg.descripcion) AS descripcion_proyecto,
             IF(pg.fech_inicio = '', NULL, pg.fech_inicio) AS fecha_inicio,
             IF(pg.fech_fin = '', NULL, pg.fech_fin) AS fecha_fin,
