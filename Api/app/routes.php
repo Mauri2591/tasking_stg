@@ -131,9 +131,8 @@ return function (App $app) {
         return $response->withHeader('Content-Type', 'application/json');
     });
 
-
-    $app->get('/proyectosActivos', function (Request $request, Response $response) use ($app) {
-        // 1. Obtener el header Authorization
+    $app->get('/proyectosTasking', function (Request $request, Response $response) use ($app) {
+        // 1. Validar token JWT
         $authHeader = $request->getHeaderLine('Authorization');
 
         if (!$authHeader || !preg_match('/Bearer\s(\S+)/', $authHeader, $matches)) {
@@ -142,59 +141,59 @@ return function (App $app) {
         }
 
         $token = $matches[1];
-        
-        // 2. Validar el token JWT
+
         try {
             $decoded = JWT::decode($token, new Key($_ENV['JWT_SECRET'], 'HS256'));
-            // Si llega aquí, el token es válido
         } catch (Exception $e) {
             $response->getBody()->write(json_encode(['error' => 'Token inválido o expirado']));
             return $response->withHeader('Content-Type', 'application/json')->withStatus(403);
         }
 
-        // 3. Continuar con la lógica del endpoint
+        // 2. Ejecutar la consulta
         $pdo = $app->getContainer()->get(PDO::class);
-
         $sql = "SELECT 
-        pg.id AS id_proyecto,
-        clientes.client_id AS id_cliente,
-        clientes.client_rs AS nombre_cliente,
-        pg.titulo,
-        pg.refProy AS referencia,
-        prr.posicion_recurrencia AS recurrencia,
-        IF(pr.id IS NOT NULL,'SI','NO') AS rechequeo,
-        IF(pg.descripcion = '', NULL, pg.descripcion) AS descripcion_proyecto,
-        IF(pg.fech_inicio = '', NULL, pg.fech_inicio) AS fecha_inicio,
-        IF(pg.fech_fin = '', NULL, pg.fech_fin) AS fecha_fin,
-        pg.fech_vantive,
-        GROUP_CONCAT(DISTINCT up.usu_asignado) AS ids_usuarios_asignados,
-        GROUP_CONCAT(DISTINCT tu.usu_nom) AS nombres_usuarios_asignados,
-        pg.estados_id AS id_estado_proyecto,
-        te.estados_nombre AS estado_proyecto,
-        tc.cat_nom AS producto,
-        d.hs_dimensionadas,
-        CONCAT(
-            '{',
-            '\"ips\": [', IFNULL(GROUP_CONCAT(DISTINCT CASE WHEN h.tipo = 'IP' THEN CONCAT('\"', h.host, '\"') END SEPARATOR ','), ''), '],',
-            '\"urls\": [', IFNULL(GROUP_CONCAT(DISTINCT CASE WHEN h.tipo = 'URL' THEN CONCAT('\"', h.host, '\"') END SEPARATOR ','), ''), '],',
-            '\"otros\": [', IFNULL(GROUP_CONCAT(DISTINCT CASE WHEN h.tipo NOT IN ('IP','URL') THEN CONCAT('\"', h.host, '\"') END SEPARATOR ','), ''), ']',
-            '}'
-        ) AS hosts
+            pg.id AS id_proyecto,
+            clientes.client_id AS id_cliente,
+            clientes.client_rs AS nombre_cliente,
+            pg.titulo AS titulo_proyecto,
+            pg.refProy AS referencia,
+            prr.posicion_recurrencia AS recurrencia,
+            IF(pr.id IS NOT NULL,'SI','NO') AS rechequeo,
+            IF(pg.descripcion = '', NULL, pg.descripcion) AS descripcion_proyecto,
+            IF(pg.fech_inicio = '', NULL, pg.fech_inicio) AS fecha_inicio,
+            IF(pg.fech_fin = '', NULL, pg.fech_fin) AS fecha_fin,
+            pg.fech_vantive,
+            GROUP_CONCAT(DISTINCT up.usu_asignado) AS ids_usuarios_asignados,
+            GROUP_CONCAT(DISTINCT tu.usu_nom) AS nombres_usuarios_asignados,
+            pg.estados_id AS id_estado_proyecto,
+            te.estados_nombre AS nombre_estado_proyecto,
+            tc.cat_id AS producto_id,
+            tc.cat_nom AS producto_nombre,
+            tm_subcategoria.cats_id AS tipo_id,
+            tm_subcategoria.cats_nom AS tipo_nombre,
+            d.hs_dimensionadas,
+            CONCAT(
+                '{',
+                '\"ips\": [', IFNULL(GROUP_CONCAT(DISTINCT CASE WHEN h.tipo = 'IP' THEN CONCAT('\"', h.host, '\"') END SEPARATOR ','), ''), '],',
+                '\"urls\": [', IFNULL(GROUP_CONCAT(DISTINCT CASE WHEN h.tipo = 'URL' THEN CONCAT('\"', h.host, '\"') END SEPARATOR ','), ''), '],',
+                '\"otros\": [', IFNULL(GROUP_CONCAT(DISTINCT CASE WHEN h.tipo NOT IN ('IP','URL') THEN CONCAT('\"', h.host, '\"') END SEPARATOR ','), ''), ']',
+                '}'
+            ) AS hosts
         FROM proyecto_gestionado pg
         LEFT JOIN usuario_proyecto up ON pg.id = up.id_proyecto_gestionado
         LEFT JOIN tm_usuario tu ON up.usu_asignado = tu.usu_id
         LEFT JOIN tm_estados te ON pg.estados_id = te.estados_id
         LEFT JOIN tm_categoria tc ON pg.cat_id = tc.cat_id
+        LEFT JOIN tm_subcategoria ON pg.cats_id = tm_subcategoria.cats_id
         LEFT JOIN proyecto_rechequeo pr ON pg.id = pr.id_proyecto_gestionado
         LEFT JOIN proyecto_recurrencia prr ON pg.id = prr.id_proyecto_gestionado
         LEFT JOIN dimensionamiento d ON pg.id = d.id_proyecto_gestionado
-        LEFT JOIN hosts h ON pg.id = h.id_proyecto_gestionado
+        LEFT JOIN hosts h ON pg.id = h.id_proyecto_gestionado AND h.est = 1
         INNER JOIN proyecto_cantidad_servicios pcs ON pg.id_proyecto_cantidad_servicios = pcs.id
         INNER JOIN proyectos ON pcs.proy_id = proyectos.proy_id
         INNER JOIN clientes ON proyectos.client_id = clientes.client_id
         WHERE pg.estados_id NOT IN(14,15,16,17)
         GROUP BY pg.id";
-
         $stmt = $pdo->prepare($sql);
         $stmt->execute();
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -204,24 +203,58 @@ return function (App $app) {
             return $response->withHeader('Content-Type', 'application/json')->withStatus(404);
         }
 
+        // 3. Transformar datos
         foreach ($rows as &$row) {
             $row['hosts'] = json_decode($row['hosts'], true);
+
+            // Cliente
             $row['cliente'] = [
                 'id' => $row['id_cliente'],
                 'nombre' => $row['nombre_cliente']
             ];
+
+            // Usuarios
             $row['usuarios'] = [
                 'ids' => $row['ids_usuarios_asignados'] ? explode(',', $row['ids_usuarios_asignados']) : [],
                 'nombres' => $row['nombres_usuarios_asignados'] ? explode(',', $row['nombres_usuarios_asignados']) : []
             ];
-            unset($row['id_cliente'], $row['nombre_cliente'], $row['ids_usuarios_asignados'], $row['nombres_usuarios_asignados']);
+
+            // Producto
+            $row['producto'] = [
+                'id' => $row['producto_id'],
+                'nombre' => $row['producto_nombre']
+            ];
+
+            // Tipo
+            $row['tipo'] = [
+                'id' => $row['tipo_id'],
+                'nombre' => $row['tipo_nombre']
+            ];
+
+            //Estados
+            $row['estado'] = [
+                'id' => $row['id_estado_proyecto'],
+                'nombre' => $row['nombre_estado_proyecto']
+            ];
+
+            // Eliminar campos planos
+            unset(
+                $row['id_cliente'],
+                $row['nombre_cliente'],
+                $row['ids_usuarios_asignados'],
+                $row['nombres_usuarios_asignados'],
+                $row['producto_id'],
+                $row['producto_nombre'],
+                $row['tipo_id'],
+                $row['tipo_nombre'],
+                $row['id_estado_proyecto'],
+                $row['nombre_estado_proyecto']
+            );
         }
 
         $response->getBody()->write(json_encode($rows, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
         return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
     });
-
-
 
 
     // Grupo protegido /users
@@ -235,38 +268,4 @@ return function (App $app) {
         $group->get('', ListProjectsAction::class);
         $group->get('/{id}', ViewProjectAction::class);
     })->add(JwtMiddleware::class);
-
-
-    //Endpoint para todos los proyectos
-    /*
-SELECT 
-    pg.id AS id_proyecto,
-    prr.posicion_recurrencia,
-    IF(pr.id IS NOT NULL,'SI','NO') AS rechequeo,
-    pr.posicion_recurrencia,
-    IF(pg.descripcion = '', NULL, pg.descripcion) AS descripcion_proyecto,
-    IF(pg.fech_inicio = '', NULL, pg.fech_inicio) AS fecha_inicio,
-    IF(pg.fech_fin = '', NULL, pg.fech_fin) AS fecha_fin,
-    pg.fech_vantive,
-    GROUP_CONCAT(DISTINCT up.usu_asignado) AS ids_usuarios_asignados,
-    GROUP_CONCAT(DISTINCT tu.usu_nom) AS nombres_usuarios_asignados,
-    pg.estados_id AS id_estado_proyecto,
-    te.estados_nombre AS estado_proyecto,
-    tc.cat_nom AS producto,
-    d.hs_dimensionadas,
-    GROUP_CONCAT(DISTINCT CASE WHEN h.tipo = 'IP' THEN h.host END) AS ips,
-    GROUP_CONCAT(DISTINCT CASE WHEN h.tipo = 'URL' THEN h.host END) AS urls,
-    GROUP_CONCAT(DISTINCT CASE WHEN h.tipo NOT IN ('IP','URL') THEN h.host END) AS otros
-FROM proyecto_gestionado pg
-LEFT JOIN usuario_proyecto up ON pg.id = up.id_proyecto_gestionado
-LEFT JOIN tm_usuario tu ON up.usu_asignado = tu.usu_id
-LEFT JOIN tm_estados te ON pg.estados_id = te.estados_id
-LEFT JOIN tm_categoria tc ON pg.cat_id = tc.cat_id
-LEFT JOIN proyecto_rechequeo pr ON pg.id = pr.id_proyecto_gestionado
-LEFT JOIN proyecto_recurrencia prr ON pg.id = prr.id_proyecto_gestionado
-LEFT JOIN dimensionamiento d ON pg.id = d.id_proyecto_gestionado
-LEFT JOIN hosts h ON pg.id = h.id_proyecto_gestionado
-WHERE pg.estados_id NOT IN(14,15,16,17)
-GROUP BY pg.id;
-*/
 };
