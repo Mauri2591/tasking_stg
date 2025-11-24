@@ -32,8 +32,8 @@ switch ($_GET['case'] ?? null) {
         $data = $proyecto->get_proyectos_total_excel($fecha_desde, $fecha_hasta);
 
         if (empty($data)) {
-            http_response_code(404);    
-            header("Location:".URL."/View/Home/Gestion/Clientes/Proyectos/?doc=error");
+            http_response_code(404);
+            header("Location:" . URL . "/View/Home/Gestion/Clientes/Proyectos/?doc=error");
             exit;
         }
         $reporte::total_excel($data, "PROYECTOS_TOTAL");
@@ -49,26 +49,25 @@ switch ($_GET['case'] ?? null) {
         // Normalizar cliente (puede venir de Docx o Xlsx)
         $idCliente = $idClienteDocx ?: $idClienteXlsx;
 
-
-        // 1️⃣ SIN FILTROS → REPORTE GENERAL
-        if (empty($fechaDesde) && empty($fechaHasta) && empty($idCliente)) {
-            $data = $timesummary->getDatosReporteSinFiltro();
-            $nombreReporte = "Timmesumary";
+        // 1️⃣ FECHAS + CLIENTE (más específica)
+        if ((!empty($fechaDesde) || !empty($fechaHasta)) && !empty($idCliente)) {
+            $data = $timesummary->getReportePorFechasYCliente($idCliente, $fechaDesde, $fechaHasta);
+            $nombreReporte = "Timesummary";
         }
         // 2️⃣ SOLO FECHAS
         else if (!empty($fechaDesde) || !empty($fechaHasta)) {
             $data = $timesummary->getDatosReporteConFiltroFechas($fechaDesde, $fechaHasta);
-            $nombreReporte = "Timmesumary";
+            $nombreReporte = "Timesummary";
         }
         // 3️⃣ SOLO CLIENTE
-        else if (!empty($idCliente) && empty($fechaDesde) && empty($fechaHasta)) {
+        else if (!empty($idCliente)) {
             $data = $timesummary->getDatosReporteConFiltroPoriDCliente($idCliente);
-            $nombreReporte = "Timmesumary";
+            $nombreReporte = "Timesummary";
         }
-        // 4️⃣ FECHAS + CLIENTE
-        else if ((!empty($fechaDesde) || !empty($fechaHasta)) && !empty($idCliente)) {
-            $data = $timesummary->getReportePorFechasYCliente($idCliente, $fechaDesde, $fechaHasta);
-            $nombreReporte = "Timmesumary";
+        // 4️⃣ SIN FILTROS
+        else {
+            $data = $timesummary->getDatosReporteSinFiltro();
+            $nombreReporte = "Timesummary";
         }
 
         if (isset($_POST['generarReporteDocx'])) {

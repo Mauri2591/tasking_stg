@@ -220,7 +220,7 @@ if (isset($_SESSION['usu_id'])) {
                             title: "Error",
                             text: "Ya existe una tarea en ese rango horario.",
                             showConfirmButton: false,
-                            timer: 1300
+                            timer: 1000
                         });
                         return;
                     }
@@ -416,7 +416,7 @@ if (isset($_SESSION['usu_id'])) {
                         title: "Error",
                         text: "Ya existe una tarea en ese rango horario.",
                         showConfirmButton: false,
-                        timer: 1300
+                        timer: 1000
                     });
                     info.revert();
                     return;
@@ -461,7 +461,7 @@ if (isset($_SESSION['usu_id'])) {
                                 title: "Bien",
                                 text: response.success || "Tarea movida correctamente",
                                 showConfirmButton: false,
-                                timer: 1000
+                                timer: 900
                             });
                             setTimeout(() => {
                                 calendar.refetchEvents();

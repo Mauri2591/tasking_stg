@@ -267,97 +267,159 @@ class Reportes
         exit;
     }
 
-    public static function getDatosReporteSinFiltroXlsx($data, $nombre)
-    {
-        $spreadsheet = new Spreadsheet();
-        $sheet = $spreadsheet->getActiveSheet();
 
-        // Encabezados
-        $headers = [
-            'ID',
-            'CLIENTE',
-            'PRODUCTO',
-            'SECTOR',
-            'DIMENSIONAMIENTO',
-            'HS TOTAL',
-            'HS POR USUARIO',
-            'FECHA INICIO',
-            'FECHA FIN',
-            'ESTADO'
-        ];
-        $sheet->fromArray($headers, NULL, 'A1');
 
-        // Datos
-        $row = 2;
-        foreach ($data as $fila) {
-            $sheet->fromArray([
-                $row - 1,
-                $fila['client_rs'],
-                $fila['producto'],
-                $fila['sector'],
-                $fila['dimensionamiento'],
-                $fila['horas_consumidas_total'],
-                $fila['horas_consumidas_por_usuario'],
-                $fila['fech_inicio'],
-                $fila['fech_fin'],
-                $fila['estado']
-            ], NULL, 'A' . $row);
-            $row++;
-        }
+public static function getDatosReporteSinFiltroXlsx($data, $nombre)
+{
+    $spreadsheet = new Spreadsheet();
+    $sheet = $spreadsheet->getActiveSheet();
 
-        // AutoFilter
-        $sheet->setAutoFilter("A1:J" . ($row - 1));
+    // Encabezados
+    $headers = [
+        'ID',
+        'CLIENTE',
+        'PRODUCTO',
+        'SECTOR',
+        'DIMENSIONAMIENTO',
+        'HS CONSUMIDAS TOTAL',
+        'HS NEGATIVAS', // hs_resto
+        'HS RESTANTES', // hs_restante
+        'HS POR USUARIO',
+        'HS PM',        // horas_pm
+        'FECHA INICIO',
+        'FECHA FIN',
+        'ESTADO'
+    ];
+    $sheet->fromArray($headers, NULL, 'A1');
 
-        // Encabezado estilo
-        $sheet->getStyle("A1:J1")->applyFromArray([
-            'font' => ['bold' => true, 'color' => ['rgb' => 'FFFFFF']],
-            'fill' => [
-                'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
-                'startColor' => ['rgb' => '43578F']
-            ],
-            'alignment' => ['horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER]
-        ]);
+    // Datos
+    $row = 2;
+    foreach ($data as $fila) {
+        // Si HS NEGATIVAS está vacío, asignar "00:00"
+        $hsNegativas = (!empty($fila['hs_resto']) && strtoupper($fila['hs_resto']) !== 'NULL') ? $fila['hs_resto'] : '00:00';
 
-        // Filas alternadas
-        for ($i = 2; $i < $row; $i++) {
-            if ($i % 2 == 0) {
-                $sheet->getStyle("A{$i}:J{$i}")
-                    ->getFill()
-                    ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
-                    ->getStartColor()
-                    ->setRGB('F2F2F2');
-            }
-        }
+        // Si HS RESTANTES está vacío, asignar "00:00"
+        $hsRestantes = (!empty($fila['hs_restante']) && strtoupper($fila['hs_restante']) !== 'NULL') ? $fila['hs_restante'] : '00:00';
 
-        // Centrado
-        foreach (range('A', 'J') as $col) {
-            $sheet->getStyle($col)->getAlignment()
-                ->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
-        }
+        $sheet->fromArray([
+            $row - 1,
+            $fila['client_rs'],
+            $fila['producto'],
+            $fila['sector'],
+            $fila['dimensionamiento'],
+            $fila['horas_consumidas_total'],
+            $hsNegativas,   // Columna G
+            $hsRestantes,   // Columna H
+            $fila['horas_consumidas_por_usuario'],
+            $fila['usuario_pm_calidad'], // Columna J
+            $fila['fech_inicio'],
+            $fila['fech_fin'],
+            $fila['estado']
+        ], NULL, 'A' . $row);
 
-        // Bordes
-        $sheet->getStyle("A1:J" . ($row - 1))->applyFromArray([
-            'borders' => [
-                'outline' => ['borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN],
-                'inside'  => ['borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN]
-            ]
-        ]);
-
-        // AutoSize
-        foreach (range('A', 'J') as $col) {
-            $sheet->getColumnDimension($col)->setAutoSize(true);
-        }
-
-        // Exportar
-        ob_clean();
-        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        header("Content-Disposition: attachment;filename=\"{$nombre}.xlsx\"");
-        header('Cache-Control: max-age=0');
-
-        $writer = new Xlsx($spreadsheet);
-        $writer->save('php://output');
-        exit;
+        $row++;
     }
+
+    // AutoFilter
+    $sheet->setAutoFilter("A1:M" . ($row - 1));
+
+    // Encabezado estilo
+    $sheet->getStyle("A1:M1")->applyFromArray([
+        'font' => ['bold' => true, 'color' => ['rgb' => 'FFFFFF']],
+        'fill' => [
+            'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+            'startColor' => ['rgb' => '43578F']
+        ],
+        'alignment' => ['horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER]
+    ]);
+
+    // Filas alternadas (excepto columnas G y H)
+    for ($i = 2; $i < $row; $i++) {
+        if ($i % 2 == 0) {
+            $sheet->getStyle("A{$i}:F{$i}")
+                ->getFill()
+                ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
+                ->getStartColor()
+                ->setRGB('F2F2F2');
+
+            $sheet->getStyle("I{$i}:M{$i}")
+                ->getFill()
+                ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
+                ->getStartColor()
+                ->setRGB('F2F2F2');
+        }
+    }
+
+    // ✅ Pintar HS NEGATIVAS y HS RESTANTES según reglas
+    for ($i = 2; $i < $row; $i++) {
+        $valorNegativas = $sheet->getCell("G{$i}")->getValue();
+        $valorRestantes = $sheet->getCell("H{$i}")->getValue();
+
+        // HS NEGATIVAS
+        if ($valorNegativas !== '00:00') {
+            // Tiene valor → Naranja
+            $sheet->getStyle("G{$i}")
+                ->getFill()
+                ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
+                ->getStartColor()
+                ->setRGB('FFA500'); // Naranja
+        } else {
+            // No tiene valor → Verde claro
+            $sheet->getStyle("G{$i}")
+                ->getFill()
+                ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
+                ->getStartColor()
+                ->setRGB('90EE90'); // Verde claro
+        }
+
+        // HS RESTANTES
+        if ($valorRestantes !== '00:00') {
+            // Tiene valor → Celeste claro
+            $sheet->getStyle("H{$i}")
+                ->getFill()
+                ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
+                ->getStartColor()
+                ->setRGB('ADD8E6'); // Celeste claro
+        } else {
+            // No tiene valor → Verde claro
+            $sheet->getStyle("H{$i}")
+                ->getFill()
+                ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
+                ->getStartColor()
+                ->setRGB('90EE90'); // Verde claro
+        }
+    }
+
+    // Centrado
+    foreach (range('A', 'M') as $col) {
+        $sheet->getStyle($col)->getAlignment()
+            ->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+    }
+
+    // Bordes
+    $sheet->getStyle("A1:M" . ($row - 1))->applyFromArray([
+        'borders' => [
+            'outline' => ['borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN],
+            'inside'  => ['borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN]
+        ]
+    ]);
+
+    // AutoSize
+    foreach (range('A', 'M') as $col) {
+        $sheet->getColumnDimension($col)->setAutoSize(true);
+    }
+
+    // Exportar
+    ob_clean();
+    header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    header("Content-Disposition: attachment;filename=\"{$nombre}.xlsx\"");
+    header('Cache-Control: max-age=0');
+
+    $writer = new Xlsx($spreadsheet);
+    $writer->save('php://output');
+    exit;
+}
+
 
 
     public static function getDatosReporteSinFiltroDocx($data, $nombre, $fechaDesde = null, $fechaHasta = null)
@@ -433,7 +495,7 @@ class Reportes
             'PRODUCTO' => 2800,
             'SECTOR'   => 3000,
             'USUARIOS' => 3000,
-            'DIMENSIONAMIENTO' => 2500,
+            'HS' => 2500,
             'INICIO'   => 2500,
             'FIN'      => 2500,
             'ESTADO'   => 3000   // MAS GRANDE
@@ -457,7 +519,7 @@ class Reportes
             $table->addCell($headers['PRODUCTO'])->addText($fila['producto']);
             $table->addCell($headers['SECTOR'])->addText($fila['sector']);
             $table->addCell($headers['USUARIOS'])->addText($fila['usuarios_asignados']);
-            $table->addCell($headers['DIMENSIONAMIENTO'])->addText($fila['dimensionamiento']);
+            $table->addCell($headers['HS'])->addText($fila['dimensionamiento']);
             $table->addCell($headers['INICIO'])->addText($fila['fech_inicio']);
             $table->addCell($headers['FIN'])->addText($fila['fech_fin']);
             $table->addCell($headers['ESTADO'])->addText($fila['estado']);
@@ -520,10 +582,10 @@ class Reportes
             $section->addText("Horas consumidas PM:", ['bold' => true]);
 
             // horas_consumidas_por_usuario ya viene así: "Mauricio 05:30, Rodrigo 02:45..."
-            if (!empty($fila['horas_consumidas_pm_calidad_detalle'])) {
+            if (!empty($fila['usuario_pm_calidad'])) {
 
                 // Convertimos la cadena en items separados
-                $colaboradores = explode(", ", $fila['horas_consumidas_pm_calidad_detalle'] . " hs");
+                $colaboradores = explode(", ", $fila['usuario_pm_calidad'] . " hs");
 
                 // Lista de colaboradores & horas
                 $listStyle = ['listType' => \PhpOffice\PhpWord\Style\ListItem::TYPE_BULLET_FILLED];
