@@ -236,7 +236,7 @@ return function (App $app) {
 
             $row['prioridad'] = [
                 'id' => $row['id_prioridad'],
-                'prioridad' => $row['prioridad']
+                'nombre' => $row['prioridad']
             ];
 
             //Estados
@@ -256,7 +256,8 @@ return function (App $app) {
                 $row['tipo_id'],
                 $row['tipo_nombre'],
                 $row['id_estado_proyecto'],
-                $row['nombre_estado_proyecto']
+                $row['nombre_estado_proyecto'],
+                $row['id_prioridad']
             );
         }
 
