@@ -1,6 +1,9 @@
 <?php
-
 declare(strict_types=1);
+
+
+require __DIR__ . '/../vendor/autoload.php';
+
 
 use App\Application\Actions\User\ListUsersAction;
 use App\Application\Actions\User\ViewUserAction;
@@ -15,6 +18,10 @@ use Slim\App;
 use Slim\Interfaces\RouteCollectorProxyInterface as Group;
 use App\Domain\User\UserRepository;
 
+use Dotenv\Dotenv;
+$dotenv = Dotenv::createImmutable(dirname(__DIR__, 2));
+$dotenv->load();
+
 return function (App $app) {
 
 
@@ -27,6 +34,7 @@ return function (App $app) {
 
     /** LOGIN: Genera Access Token + Refresh Token */
     $app->post('/login', function (Request $request, Response $response) use ($app) {
+        
         $data = $request->getParsedBody();
         $usu_nom = $data['usuario'] ?? '';
         $pass = $data['password'] ?? '';
@@ -38,14 +46,18 @@ return function (App $app) {
         $user = $userRepo->datosUsuario($usu_nom);
 
         if ($user && password_verify($pass, $user['usu_pass'])) {
-            // Access Token (expira en 1 hora)
+            // Access Token expira en 1 hora
             $payload = [
                 'sub' => $user['usu_id'],
                 'name' => $user['usu_nom'],
                 'iat' => time(),
-                'exp' => time() + 3600
+                'exp' => time() + 3600 // expira en 1 hora
+                // 'exp' => time() + 60 // prueba que expire en 1 minuto
             ];
+
+
             $accessToken = JWT::encode($payload, $_ENV['JWT_SECRET'], 'HS256');
+                    
 
             // Refresh Token (expira en 7 días)
             $refreshToken = bin2hex(random_bytes(32));
@@ -102,7 +114,6 @@ return function (App $app) {
             $response->getBody()->write(json_encode(['access_token' => $newAccessToken]));
             return $response->withHeader('Content-Type', 'application/json');
         }
-
         $response->getBody()->write(json_encode(['error' => 'Refresh token inválido o expirado']));
         return $response->withHeader('Content-Type', 'application/json')->withStatus(401);
     });
