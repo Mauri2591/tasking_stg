@@ -157,6 +157,8 @@ return function (App $app) {
             clientes.client_rs AS nombre_cliente,
             pg.titulo AS titulo_proyecto,
             pg.refProy AS referencia,
+            pg.prioridad_id AS id_prioridad,
+            prioridad.prioridad,
             prr.posicion_recurrencia AS recurrencia,
             IF(pr.id IS NOT NULL,'SI','NO') AS rechequeo,
             IF(pg.descripcion = '', NULL, pg.descripcion) AS descripcion_proyecto,
@@ -189,6 +191,7 @@ return function (App $app) {
         LEFT JOIN proyecto_recurrencia prr ON pg.id = prr.id_proyecto_gestionado
         LEFT JOIN dimensionamiento d ON pg.id = d.id_proyecto_gestionado
         LEFT JOIN hosts h ON pg.id = h.id_proyecto_gestionado AND h.est = 1
+        INNER JOIN prioridad ON pg.prioridad_id=prioridad.id
         INNER JOIN proyecto_cantidad_servicios pcs ON pg.id_proyecto_cantidad_servicios = pcs.id
         INNER JOIN proyectos ON pcs.proy_id = proyectos.proy_id
         INNER JOIN clientes ON proyectos.client_id = clientes.client_id
@@ -229,6 +232,11 @@ return function (App $app) {
             $row['tipo'] = [
                 'id' => $row['tipo_id'],
                 'nombre' => $row['tipo_nombre']
+            ];
+
+            $row['prioridad'] = [
+                'id' => $row['id_prioridad'],
+                'prioridad' => $row['prioridad']
             ];
 
             //Estados
