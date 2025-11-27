@@ -96,7 +96,7 @@ class Reportes
                     $color_hex = $color_map[$referencia];
 
                     // Pintar celda F (rechequeo de proyecto)
-                    $sheet->getStyle('E' . $rowNum)
+                    $sheet->getStyle('F' . $rowNum)
                         ->getFill()
                         ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
                         ->getStartColor()
