@@ -23,7 +23,7 @@
                                     <th style="width: 5%;text-align: center;">REC</th>
                                     <th style="width: 5%;text-align: center;">RECH</th>
                                     <th style="width: 5%;text-align: center;">REF</th>
-                                    <th style="width: 5%px;text-align: center;">CREACION</th>
+                                    <th style="width: 5%px;text-align: center;">FECHA</th>
                                     <th style="width: 5%px;text-align: center;">SECTOR</th>
                                     <th style="width: 5px;text-align: center;">PROD</th>
                                     <th style="width: 5px;text-align: center;">HS</th>
@@ -62,7 +62,7 @@
                                     <th style="width: 5%;text-align: center;">REC</th>
                                     <th style="width: 5%;text-align: center;">RECH</th>
                                     <th style="width: 5%;text-align: center;">REF</th>
-                                    <th style="width: 5%px;text-align: center;">CREACION</th>
+                                    <th style="width: 5%px;text-align: center;">FECHA</th>
                                     <th style="width: 5%px;text-align: center;">SECTOR</th>
                                     <th style="width: 5px;text-align: center;">PROD</th>
                                     <th style="width: 5px;text-align: center;">HS</th>

@@ -11,6 +11,7 @@ $proyecto = new Proyectos();
 $timesummary = new Timesummary();
 
 switch ($_GET['case'] ?? null) {
+
     case 'excel':
         $client_id = $_GET['client_id'] ?? null;
 
@@ -18,13 +19,23 @@ switch ($_GET['case'] ?? null) {
             die("Falta el ID del cliente.");
         }
 
-        // Traemos los datos del cliente específico
-        $data = $proyecto->get_proyectos_total_x_client_id($client_id);
-        $nombre_cliente = $data[0]['cliente'];
+        // Traemos los datos del cliente específico (sector 4 = todos los proyectos)
+        if ($_SESSION['sector_id'] == "4") {
+            $data = $proyecto->get_proyectos_total_x_client_id($client_id, 4);
+        } else {
+            $data = $proyecto->get_proyectos_total_x_client_id($client_id, $_SESSION['sector_id']);
+        }
+
+        if (empty($data)) {
+            die("No hay datos para generar el reporte.");
+        }
+
+        $nombre_cliente = $data[0]['cliente'] ?? 'CLIENTE';
 
         // Generamos el Excel individual
         $reporte::get_reporte_excel($data, "PROYECTOS_{$nombre_cliente}");
         break;
+
 
     case 'total_excel':
         $fecha_desde = $_POST['fecha_desde'] ?? null;

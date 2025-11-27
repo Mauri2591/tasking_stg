@@ -1734,34 +1734,43 @@ WHERE
     {
         $conn = parent::get_conexion();
         if ($sector_id == 4) {
-            $sql = "SELECT cat_nom, COUNT(*) AS total FROM ( 
-            -- Proyectos actuales 
-            SELECT tc.cat_nom FROM proyecto_gestionado pg LEFT JOIN tm_categoria tc ON pg.cat_id = tc.cat_id WHERE pg.estados_id = 4 AND tc.est = 1 UNION ALL 
-            -- Proyectos antiguos 
-            SELECT tc.cat_nom FROM tm_ticket t LEFT JOIN tm_categoria tc ON t.cat_id = tc.cat_id WHERE t.estados_id = 4 AND tc.est = 1 ) AS sub GROUP BY cat_nom;";
+            // $sql = "SELECT cat_nom, COUNT(*) AS total FROM ( 
+            // -- Proyectos actuales 
+            // SELECT tc.cat_nom FROM proyecto_gestionado pg LEFT JOIN tm_categoria tc ON pg.cat_id = tc.cat_id WHERE pg.estados_id = 4 AND tc.est = 1 UNION ALL 
+            // -- Proyectos antiguos 
+            // SELECT tc.cat_nom FROM tm_ticket t LEFT JOIN tm_categoria tc ON t.cat_id = tc.cat_id WHERE t.estados_id = 4 AND tc.est = 1 ) AS sub GROUP BY cat_nom;";
+            $sql = "SELECT COUNT(proyecto_gestionado.id) AS total, tm_categoria.cat_nom 
+            FROM proyecto_gestionado INNER JOIN tm_categoria ON proyecto_gestionado.cat_id=tm_categoria.cat_id 
+            WHERE proyecto_gestionado.estados_id=4 
+            GROUP BY proyecto_gestionado.cat_id";
             $stmt = $conn->prepare($sql);
         } else {
-            $sql = "SELECT 
-    cat_nom,
-    COUNT(*) AS total
-FROM (
-    -- Proyectos actuales
-    SELECT 
-        tc.cat_nom
-    FROM proyecto_gestionado pg
-    LEFT JOIN tm_categoria tc ON pg.cat_id = tc.cat_id
-    WHERE pg.estados_id = 4 
-      AND (tc.sector_id = :sector_id OR tc.cat_id = 26)
-    UNION ALL
-    -- Proyectos antiguos
-    SELECT 
-        tc.cat_nom
-    FROM tm_ticket t
-    LEFT JOIN tm_categoria tc ON t.cat_id = tc.cat_id
-    WHERE t.estados_id = 4 
-      AND (tc.sector_id = :sector_id OR tc.cat_id = 26)
-) AS sub
-GROUP BY cat_nom";
+            //             $sql = "SELECT 
+            //     cat_nom,
+            //     COUNT(*) AS total
+            // FROM (
+            //     -- Proyectos actuales
+            //     SELECT 
+            //         tc.cat_nom
+            //     FROM proyecto_gestionado pg
+            //     LEFT JOIN tm_categoria tc ON pg.cat_id = tc.cat_id
+            //     WHERE pg.estados_id = 4 
+            //       AND (tc.sector_id = :sector_id OR tc.cat_id = 26)
+            //     UNION ALL
+            //     -- Proyectos antiguos
+            //     SELECT 
+            //         tc.cat_nom
+            //     FROM tm_ticket t
+            //     LEFT JOIN tm_categoria tc ON t.cat_id = tc.cat_id
+            //     WHERE t.estados_id = 4 
+            //       AND (tc.sector_id = :sector_id OR tc.cat_id = 26)
+            // ) AS sub
+            // GROUP BY cat_nom";
+            $sql = "SELECT COUNT(proyecto_gestionado.id) AS total, tm_categoria.cat_nom 
+            FROM proyecto_gestionado 
+            INNER JOIN tm_categoria ON proyecto_gestionado.cat_id=tm_categoria.cat_id 
+            WHERE proyecto_gestionado.sector_id=:sector_id AND proyecto_gestionado.estados_id=4 
+            GROUP BY proyecto_gestionado.cat_id";
             $stmt = $conn->prepare($sql);
             $stmt->bindValue(':sector_id', $sector_id, PDO::PARAM_INT);
         }
@@ -1773,25 +1782,26 @@ GROUP BY cat_nom";
     public function grafico_get_total_servicios_por_sector()
     {
         $conn = parent::get_conexion();
-        $sql = "SELECT 
-    sector_nombre,
-    COUNT(*) AS total
-FROM (
-    -- Proyectos actuales
-    SELECT 
-        s.sector_nombre
-    FROM proyecto_gestionado pg
-    LEFT JOIN sectores s ON pg.sector_id = s.sector_id
-    WHERE pg.estados_id = 4
-    UNION ALL
-    -- Proyectos antiguos
-    SELECT 
-        s.sector_nombre
-    FROM tm_ticket t
-    LEFT JOIN sectores s ON t.sector = s.sector_id
-    WHERE t.estados_id = 4
-) AS sub
-GROUP BY sector_nombre";
+        //         $sql = "SELECT 
+        //     sector_nombre,
+        //     COUNT(*) AS total
+        // FROM (
+        //     -- Proyectos actuales
+        //     SELECT 
+        //         s.sector_nombre
+        //     FROM proyecto_gestionado pg
+        //     LEFT JOIN sectores s ON pg.sector_id = s.sector_id
+        //     WHERE pg.estados_id = 4
+        //     UNION ALL
+        //     -- Proyectos antiguos
+        //     SELECT 
+        //         s.sector_nombre
+        //     FROM tm_ticket t
+        //     LEFT JOIN sectores s ON t.sector = s.sector_id
+        //     WHERE t.estados_id = 4
+        // ) AS sub
+        // GROUP BY sector_nombre";
+        $sql = "SELECT COUNT(proyecto_gestionado.id) AS total, sectores.sector_nombre AS sector_nombre FROM proyecto_gestionado INNER JOIN sectores ON proyecto_gestionado.sector_id=sectores.sector_id WHERE proyecto_gestionado.estados_id=4 GROUP BY sector_nombre";
         $stmt = $conn->prepare($sql);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -1823,20 +1833,19 @@ ORDER BY cantidad_proyectos DESC";
     {
         $conn = parent::get_conexion();
         $sql = "SELECT 
-    c.client_id,
-    c.client_rs,
-    tc.cat_nom AS categoria,
+    c.client_id, 
+    c.client_rs, 
     COUNT(DISTINCT pg.id) AS cantidad_proyectos
-        FROM clientes c
-        LEFT JOIN proyectos p ON p.client_id = c.client_id
-        LEFT JOIN proyecto_cantidad_servicios pcs ON pcs.proy_id = p.proy_id
-        LEFT JOIN proyecto_gestionado pg ON pg.id_proyecto_cantidad_servicios = pcs.id
-        LEFT JOIN tm_categoria tc ON pg.cat_id = tc.cat_id
-        LEFT JOIN sectores s ON pg.sector_id = s.sector_id
-        WHERE s.sector_id = :sector_id OR tc.cat_id = 26
-        AND pcs.est = 1
-        GROUP BY c.client_id, c.client_rs, tc.cat_nom
-        ORDER BY c.client_rs, tc.cat_nom";
+    FROM clientes c
+    LEFT JOIN proyectos p ON p.client_id = c.client_id
+    LEFT JOIN proyecto_cantidad_servicios pcs ON pcs.proy_id = p.proy_id
+    LEFT JOIN proyecto_gestionado pg ON pg.id_proyecto_cantidad_servicios = pcs.id
+    LEFT JOIN tm_categoria tc ON pg.cat_id = tc.cat_id
+    LEFT JOIN sectores s ON pg.sector_id = s.sector_id
+    WHERE (s.sector_id = :sector_id OR tc.cat_id = 26) 
+    AND pcs.est = 1
+    GROUP BY c.client_id, c.client_rs
+    ORDER BY cantidad_proyectos DESC;";
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(":sector_id", $sector_id, PDO::PARAM_INT);
         $stmt->execute();
@@ -1844,11 +1853,11 @@ ORDER BY cantidad_proyectos DESC";
     }
 
 
-   public function get_proyectos_total_excel($fecha_desde = null, $fecha_hasta = null)
-{
-    $conn = parent::get_conexion();
+    public function get_proyectos_total_excel($fecha_desde = null, $fecha_hasta = null)
+    {
+        $conn = parent::get_conexion();
 
-    $sql = "SELECT 
+        $sql = "SELECT 
                 c.client_id,
                 c.client_rs,
                 tc.cat_nom AS categoria,
@@ -1860,74 +1869,71 @@ ORDER BY cantidad_proyectos DESC";
             LEFT JOIN tm_categoria tc ON pg.cat_id = tc.cat_id
             WHERE pcs.est = 1";
 
-    // Agregar condición solo si hay fechas
-    if ($fecha_desde && $fecha_hasta) {
-        $sql .= " AND pg.fech_inicio BETWEEN :fecha_desde AND :fecha_hasta";
-    }
-    $sql .= " GROUP BY c.client_id, c.client_rs, tc.cat_nom
+        // Agregar condición solo si hay fechas
+        if ($fecha_desde && $fecha_hasta) {
+            $sql .= " AND pg.fech_inicio BETWEEN :fecha_desde AND :fecha_hasta";
+        }
+        $sql .= " GROUP BY c.client_id, c.client_rs, tc.cat_nom
               ORDER BY c.client_rs, tc.cat_nom";
-    $stmt = $conn->prepare($sql);
-    if ($fecha_desde && $fecha_hasta) {
-        $stmt->bindValue(":fecha_desde", $fecha_desde, PDO::PARAM_STR);
-        $stmt->bindValue(":fecha_hasta", $fecha_hasta, PDO::PARAM_STR);
+        $stmt = $conn->prepare($sql);
+        if ($fecha_desde && $fecha_hasta) {
+            $stmt->bindValue(":fecha_desde", $fecha_desde, PDO::PARAM_STR);
+            $stmt->bindValue(":fecha_hasta", $fecha_hasta, PDO::PARAM_STR);
+        }
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+
+
+   
+public function get_proyectos_total_x_client_id($client_id, $sector_id)
+{
+    $conn = parent::get_conexion();
+
+    $sql = "SELECT  
+        pg.id,
+        pg.titulo,
+        pg.fech_vantive,
+        pg.fech_crea,
+        pg.refProy,
+        pg.fech_fin,
+        pg.fech_inicio,
+        s.sector_nombre,
+        c.cat_nom AS producto,
+        cl.client_rs AS cliente,
+        tm_estados.estados_nombre AS estado,
+        pcs.id AS id_proyecto_cantidad_servicios,
+        prc.posicion_recurrencia,
+        IF(pr.id IS NULL, NULL, 'SI') AS rechequeo,
+        pr.id_proyecto_gestionado_origen AS rechequeo_de,  
+        SUM(d.hs_dimensionadas) AS dimensionamiento
+    FROM proyecto_gestionado pg
+    LEFT JOIN sectores s ON pg.sector_id = s.sector_id
+    LEFT JOIN tm_categoria c ON pg.cat_id = c.cat_id
+    LEFT JOIN dimensionamiento d ON pg.id = d.id_proyecto_gestionado
+    LEFT JOIN proyecto_cantidad_servicios pcs ON pg.id_proyecto_cantidad_servicios = pcs.id
+    LEFT JOIN proyectos p ON pcs.proy_id = p.proy_id
+    LEFT JOIN proyecto_recurrencia prc ON pg.id = prc.id_proyecto_gestionado
+    LEFT JOIN clientes cl ON p.client_id = cl.client_id
+    LEFT JOIN tm_estados ON pg.estados_id = tm_estados.estados_id
+    LEFT JOIN proyecto_rechequeo pr ON pg.id = pr.id_proyecto_gestionado
+    WHERE cl.client_id = :client_id
+      AND (
+          (:sector_id = 4) OR (pg.cat_id IN (
+              SELECT cat_id FROM tm_categoria WHERE sector_id = :sector_id OR cat_id = 26
+          ))
+      )
+    GROUP BY pg.id, pg.titulo, pg.fech_vantive, s.sector_nombre, c.cat_nom, cl.client_rs
+    ORDER BY pg.id";
+
+    $stmt = $conn->prepare($sql);
+    $stmt->bindValue(":client_id", $client_id, PDO::PARAM_INT);
+    $stmt->bindValue(":sector_id", $sector_id, PDO::PARAM_INT);
     $stmt->execute();
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
-    public function get_proyectos_total_x_client_id($client_id)
-    {
-        $conn = parent::get_conexion();
-        $sql = "SELECT  
-    pg.id,
-    pg.titulo,
-    pg.fech_vantive,
-    pg.fech_crea,
-    pg.refProy,
-    pg.fech_fin,
-    pg.fech_inicio,
-    s.sector_nombre,
-    c.cat_nom AS producto,
-    cl.client_rs AS cliente,
-    tm_estados.estados_nombre AS estado,
-    pcs.id AS id_proyecto_cantidad_servicios,
-    prc.posicion_recurrencia,
-    IF(pr.id IS NULL, NULL, 'SI') AS rechequeo,
-    pr.id_proyecto_gestionado_origen AS rechequeo_de,  
-    SUM(d.hs_dimensionadas) AS dimensionamiento
-FROM proyecto_gestionado pg
-LEFT JOIN sectores s 
-    ON pg.sector_id = s.sector_id
-LEFT JOIN tm_categoria c 
-    ON pg.cat_id = c.cat_id
-LEFT JOIN dimensionamiento d 
-    ON pg.id = d.id_proyecto_gestionado
-LEFT JOIN proyecto_cantidad_servicios pcs 
-    ON pg.id_proyecto_cantidad_servicios = pcs.id
-LEFT JOIN proyectos p 
-    ON pcs.proy_id = p.proy_id
-LEFT JOIN proyecto_recurrencia prc 
-    ON pg.id = prc.id_proyecto_gestionado
-LEFT JOIN clientes cl 
-    ON p.client_id = cl.client_id
-LEFT JOIN tm_estados 
-    ON pg.estados_id = tm_estados.estados_id
-LEFT JOIN proyecto_rechequeo pr 
-    ON pg.id = pr.id_proyecto_gestionado
-WHERE cl.client_id = :client_id
-GROUP BY 
-    pg.id, 
-    pg.titulo, 
-    pg.fech_vantive, 
-    s.sector_nombre, 
-    c.cat_nom, 
-    cl.client_rs
-ORDER BY pg.id";
-        $stmt = $conn->prepare($sql);
-        $stmt->bindValue(":client_id", $client_id, PDO::PARAM_INT);
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
 
     public function get_sectores_x_sector_id($sector_id)
     {
