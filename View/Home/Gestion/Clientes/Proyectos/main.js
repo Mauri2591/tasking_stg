@@ -643,9 +643,6 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
     $("#combo_sector_proy_nuevo").prop("disabled", false);
     $("#client_refPro_proy_nuevo").prop("disabled", false);
 
-
-    $("#valor_recurrencia").text("").hide();
-
     $.post("../../../../../Controller/ctrProyectos.php?proy=get_datos_proyecto_creado", {
         id: $("#mdl_id_proyecto_gestionado").val()
     }, function (data, textStatus, jqXHR) {
@@ -665,16 +662,7 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
         VALIDAR_SI_HAY_FECHA_INICIO = !!data.fech_inicio;
 
         if (data) {
-            console.log(data);
-
             $("#combo_recurrente_proy_nuevo").hide();
-
-            if (data.posicion_recurrencia == null) {
-                document.getElementById("valor_recurrencia").style.display = "none";
-            } else {
-                document.getElementById("valor_recurrencia").style.display = "flex";
-                $("#valor_recurrencia").text(data.posicion_recurrencia);
-            }
 
             $("#cont_activos").show();
             $("#cont_activos_ips_urls_otros").hide();
@@ -845,7 +833,6 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
             });
 
         } else {
-            document.getElementById("valor_recurrencia").style.display = "none";
             validar_combo_prioridad(1);
             $("#cont_activos").hide();
             $("#cont_activos_ips_urls_otros").show();

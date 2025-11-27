@@ -43,9 +43,7 @@
                                 </div>
 
                                 <div class="mb-3 col-sm-2">
-                                    <span class="badge bg-light fs-10 mb-1 text-dark">Recurrencia</span>
-                                    <span class="badge border border-dark bg-success text-light fs-12"
-                                        id="valor_recurrencia" style="display: none;"></span>
+
                                     <select id="combo_recurrente_proy_nuevo" class="form-select form-select-sm"
                                         aria-label=".form-select-sm example">
                                         <option value="0">NO</option>
@@ -88,12 +86,14 @@
                                         id="client_refPro_proy_nuevo">
                                 </div>
 
-                                <div class="mb-2 col-sm-2">
-                                    <span class="badge bg-light fs-10 mb-1 text-dark"><span class="text-danger fs-13">*
-                                        </span>Dimensionamiento </span>
-                                    <input autofocus type="number" class="form-control form-control-sm"
-                                        id="hs_dimensionadas">
+
+                                <div class="mb-1 col-sm-2">
+                                    <label class="badge bg-light fs-10 mb-1 text-dark d-flex align-items-center justify-content-center" style="white-space: nowrap;">
+                                        <span class="text-danger fs-13">* </span> Horas
+                                    </label>
+                                    <input autofocus type="number" class="form-control form-control-sm" id="hs_dimensionadas">
                                 </div>
+
                             </div>
                         </div>
 
@@ -261,8 +261,8 @@
 
                             <button id="btn_finalizar_estado_proyecto" type="submit" class="btn btn-sm"
                                 style="background-color: gray; color:#fff">Fin sin impl</button>
-                            
-                                <button id="btn_editar_proyecto" type="button" class="btn btn-sm btn-success">
+
+                            <button id="btn_editar_proyecto" type="button" class="btn btn-sm btn-success">
                                 Guardar Edición
                             </button>
 

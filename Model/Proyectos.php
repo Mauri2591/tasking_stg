@@ -1739,10 +1739,19 @@ WHERE
             // SELECT tc.cat_nom FROM proyecto_gestionado pg LEFT JOIN tm_categoria tc ON pg.cat_id = tc.cat_id WHERE pg.estados_id = 4 AND tc.est = 1 UNION ALL 
             // -- Proyectos antiguos 
             // SELECT tc.cat_nom FROM tm_ticket t LEFT JOIN tm_categoria tc ON t.cat_id = tc.cat_id WHERE t.estados_id = 4 AND tc.est = 1 ) AS sub GROUP BY cat_nom;";
-            $sql = "SELECT COUNT(proyecto_gestionado.id) AS total, tm_categoria.cat_nom 
-            FROM proyecto_gestionado INNER JOIN tm_categoria ON proyecto_gestionado.cat_id=tm_categoria.cat_id 
-            WHERE proyecto_gestionado.estados_id=4 
-            GROUP BY proyecto_gestionado.cat_id";
+            
+            // $sql = "SELECT COUNT(proyecto_gestionado.id) AS total, tm_categoria.cat_nom 
+            // FROM proyecto_gestionado INNER JOIN tm_categoria ON proyecto_gestionado.cat_id=tm_categoria.cat_id 
+            // WHERE proyecto_gestionado.estados_id=4 
+            // GROUP BY proyecto_gestionado.cat_id";
+            $sql="SELECT 
+                tm_categoria.cat_nom,
+                COUNT(proyecto_gestionado.id) AS total
+            FROM proyecto_gestionado
+            INNER JOIN tm_categoria ON proyecto_gestionado.cat_id = tm_categoria.cat_id
+            WHERE proyecto_gestionado.estados_id = 4
+            GROUP BY tm_categoria.cat_nom
+            ORDER BY total DESC";
             $stmt = $conn->prepare($sql);
         } else {
             //             $sql = "SELECT 
