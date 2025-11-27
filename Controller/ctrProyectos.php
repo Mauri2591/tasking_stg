@@ -1587,7 +1587,7 @@ case 'get_proyectos_total_x_client_id':
         $posicion_recurrencia = $row['posicion_recurrencia'] ?? '';
         $rechequeo = $row['rechequeo'] ?? '';
         $rechequeo_de = $row['rechequeo_de'] ?? '';
-        $refProy = $row['refProy'] ?? '';
+        $refProy = $row['referencia'] ?? '';
         $fech_crea = $row['fech_crea'] ?? '';
         $sector_nombre = $row['sector_nombre'] ?? '';
         $producto = $row['producto'] ?? '';
