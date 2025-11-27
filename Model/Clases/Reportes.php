@@ -17,6 +17,7 @@ class Reportes
             'ID',
             'CLIENTE',
             'TITULO',
+            'REFERENCIA',
             'RECURRENTE',
             'RECHEQUEO DE PROYECTO',
             'FECHA VANTIVE',
@@ -25,6 +26,9 @@ class Reportes
             'SECTOR',
             'PRODUCTO',
             'HORAS',
+            'IPS',
+            'URLS',
+            'OTROS',
             'ESTADO'
         ];
         $sheet->fromArray($headers, NULL, 'A1');
@@ -63,17 +67,21 @@ class Reportes
                 // 📋 Insertar fila
                 $sheet->fromArray([
                     $key + 1,
-                    $row['cliente'],
-                    $row['titulo'],
+                    $row['cliente'] ?? '-',
+                    $row['titulo'] ?? '-',
+                    $row['referencia'] ?? '-',
                     (empty($row['posicion_recurrencia']) ? '-' : $row['posicion_recurrencia']),
                     $num_rechequeo_de,
                     (!empty($row['fech_vantive']) ? date('d/m/Y', strtotime($row['fech_vantive'])) : 'SIN FECHA'),
                     (!empty($row['fech_inicio']) ? date('d/m/Y', strtotime($row['fech_inicio'])) : 'SIN FECHA'),
                     (!empty($row['fech_fin']) ? date('d/m/Y', strtotime($row['fech_fin'])) : 'SIN FECHA'),
-                    $row['sector_nombre'],
-                    $row['producto'],
-                    $row['dimensionamiento'],
-                    $row['estado']
+                    $row['sector_nombre'] ?? '-',
+                    $row['producto'] ?? '-',
+                    $row['dimensionamiento'] ?? '-',
+                    $row['ips'] ?? '-',
+                    $row['urls'] ?? '-',
+                    $row['otros'] ?? '-',
+                    $row['estado'] ?? '-'
                 ], NULL, 'A' . $rowNum);
 
                 // 🎨 Si tiene rechequeo_de, pinta la celda F (RECHEQUEO DE PROYECTO)
@@ -133,7 +141,7 @@ class Reportes
         }
 
         // ===== Estilos del encabezado =====
-        $headerRange = 'A1:M1';
+        $headerRange = 'A1:P1';
         $headerStyle = $sheet->getStyle($headerRange);
         $headerStyle->getFont()->setBold(true)->getColor()->setRGB('FFFFFF');
         $headerStyle->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
@@ -142,14 +150,14 @@ class Reportes
         $headerStyle->getBorders()->getBottom()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
 
         // Centrar columnas
-        $centerColumns = ['A', 'D', 'E', 'F', 'G', 'H', 'I', 'L'];
+        $centerColumns = ['A', 'D', 'E', 'F', 'G', 'H', 'I', 'L','M','N'];
         foreach ($centerColumns as $col) {
             $sheet->getStyle($col)->getAlignment()
                 ->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
         }
 
         // Autoajuste de columnas
-        foreach (range('A', 'M') as $col) {
+        foreach (range('A', 'N') as $col) {
             $sheet->getColumnDimension($col)->setAutoSize(true);
         }
 
