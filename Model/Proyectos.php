@@ -1933,7 +1933,7 @@ ORDER BY cantidad_proyectos DESC";
         LEFT JOIN tm_estados ON pg.estados_id = tm_estados.estados_id
         LEFT JOIN proyecto_rechequeo pr ON pg.id = pr.id_proyecto_gestionado
         LEFT JOIN hosts ON pg.id = hosts.id_proyecto_gestionado
-        WHERE cl.client_id = 15
+        WHERE cl.client_id = :client_id
         AND (
             (:sector_id = 4) OR (pg.cat_id IN (
                 SELECT cat_id FROM tm_categoria WHERE sector_id = :sector_id OR cat_id = 26
