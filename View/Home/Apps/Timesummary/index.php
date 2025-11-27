@@ -248,7 +248,7 @@ if (isset($_SESSION['usu_id'])) {
                                 title: "Bien",
                                 text: response.success,
                                 showConfirmButton: false,
-                                timer: 900
+                                timer: 1000
                             });
 
                             setTimeout(() => {
@@ -322,7 +322,7 @@ if (isset($_SESSION['usu_id'])) {
                                 title:"Bien",
                                 text: "Tarea eliminada correctamente",
                                 showConfirmButton: false,
-                                timer: 1300
+                                timer: 1000
                             });
 
                             $("#mdlEditarTimesummary").modal("hide");
