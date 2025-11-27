@@ -1854,7 +1854,7 @@ ORDER BY cantidad_proyectos DESC";
     WHERE (s.sector_id = :sector_id OR tc.cat_id = 26) 
     AND pcs.est = 1
     GROUP BY c.client_id, c.client_rs
-    ORDER BY cantidad_proyectos DESC;";
+    ORDER BY cantidad_proyectos DESC";
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(":sector_id", $sector_id, PDO::PARAM_INT);
         $stmt->execute();
@@ -1862,9 +1862,11 @@ ORDER BY cantidad_proyectos DESC";
     }
 
 
+
     public function get_proyectos_total_excel($fecha_desde = null, $fecha_hasta = null)
     {
         $conn = parent::get_conexion();
+        $sector_id = $_SESSION['sector_id'] ?? null;
 
         $sql = "SELECT 
                 c.client_id,
@@ -1877,24 +1879,25 @@ ORDER BY cantidad_proyectos DESC";
             LEFT JOIN proyecto_gestionado pg ON pg.id_proyecto_cantidad_servicios = pcs.id
             LEFT JOIN tm_categoria tc ON pg.cat_id = tc.cat_id
             WHERE pcs.est = 1";
-
-        // Agregar condición solo si hay fechas
-        if ($fecha_desde && $fecha_hasta) {
+        if (!empty($fecha_desde) && !empty($fecha_hasta)) {
             $sql .= " AND pg.fech_inicio BETWEEN :fecha_desde AND :fecha_hasta";
+        }
+        if (!empty($sector_id) && $sector_id != 4) {
+            $sql .= " AND pg.sector_id = :sector_id";
         }
         $sql .= " GROUP BY c.client_id, c.client_rs, tc.cat_nom
               ORDER BY c.client_rs, tc.cat_nom";
         $stmt = $conn->prepare($sql);
-        if ($fecha_desde && $fecha_hasta) {
+        if (!empty($fecha_desde) && !empty($fecha_hasta)) {
             $stmt->bindValue(":fecha_desde", $fecha_desde, PDO::PARAM_STR);
             $stmt->bindValue(":fecha_hasta", $fecha_hasta, PDO::PARAM_STR);
+        }
+        if (!empty($sector_id) && $sector_id != 4) {
+            $stmt->bindValue(":sector_id", $sector_id, PDO::PARAM_INT);
         }
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
-
-
-
 
     public function get_proyectos_total_x_client_id($client_id, $sector_id)
     {
