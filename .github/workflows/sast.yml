@@ -1,4 +1,4 @@
-name: SAST Semgrep Scan (Estandar Estable)
+name: SAST Semgrep Scan
 
 on:
   push:
@@ -8,79 +8,16 @@ on:
 jobs:
   semgrep-scan:
     runs-on: self-hosted
-
     steps:
       - name: Checkout del repositorio
         uses: actions/checkout@v4
 
-      - name: Instalar Semgrep si no está disponible
+      - name: Ejecutar Semgrep
         run: |
-          if ! command -v semgrep &> /dev/null
-          then
-            pip install semgrep
-          fi
-
-      - name: Ejecutar Semgrep (estable y con bajo ruido)
-        run: |
-          semgrep ci \
-            --config auto \
-            --config p/security \
-            --config p/secrets \
-            --exclude node_modules \
-            --exclude vendor \
-            --exclude dist \
-            --exclude build \
-            --exclude .next \
-            --json \
-            > semgrep_result.json
-        env:
-          SEMGREP_REDUCE_FP: "1"
-          SEMGREP_EXIT_CODE: "0"
+          semgrep scan --config auto --json > semgrep_result.json
 
       - name: Guardar resultados como artifact
         uses: actions/upload-artifact@v4
         with:
-          name: semgrep-report-estandar
+          name: semgrep-report
           path: semgrep_result.json
-
-
-
-# name: SAST Semgrep Scan (Intensivo)
-
-# on:
-#   push:
-#     branches: [ "main" ]
-#   pull_request:
-
-# jobs:
-#   semgrep-scan:
-#     runs-on: self-hosted
-#     steps:
-#       - name: Checkout del repositorio
-#         uses: actions/checkout@v4
-
-#       - name: Instalar Semgrep si no está disponible
-#         run: |
-#           if ! command -v semgrep &> /dev/null
-#           then
-#             pip install semgrep
-#           fi
-
-#       - name: Ejecutar Semgrep (INTENSIVO, profundo, menos falsos positivos, sin fallar)
-#         run: |
-#           semgrep scan \
-#             --config auto \
-#             --config p/ci \
-#             --config p/security \
-#             --json > semgrep_result.json
-#         env:
-#           SEMGREP_TIMEOUT: "0"          # escaneo profundo real
-#           SEMGREP_REDUCE_FP: "1"        # menos falsos positivos
-#           SEMGREP_SUPPRESS_ERRORS: "1"  # evita fallos por errores menores
-#           SEMGREP_EXIT_CODE: "0"        # NO falla por hallazgos
-
-#       - name: Guardar resultados como artifact
-#         uses: actions/upload-artifact@v4
-#         with:
-#           name: semgrep-report-intensivo
-#           path: semgrep_result.json
