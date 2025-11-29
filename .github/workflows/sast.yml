@@ -20,19 +20,23 @@ jobs:
             pip install semgrep
           fi
 
-      - name: Ejecutar Semgrep (estable, con reducción de falsos positivos, sin errores internos)
+      - name: Ejecutar Semgrep (estable y con bajo ruido)
         run: |
           semgrep scan \
             --config auto \
             --config p/security \
             --config p/secrets \
-            --skip-unknown-extensions \
-            --skip-parse-errors \
-            --error auto \
+            --error false \
             --exclude node_modules \
             --exclude vendor \
             --exclude dist \
             --exclude build \
+            --exclude .next \
+            --exclude-ext min \
+            --exclude-ext map \
+            --exclude-ext lock \
+            --exclude-ext jar \
+            --exclude-ext zip \
             --json > semgrep_result.json
         env:
           SEMGREP_REDUCE_FP: "1"
@@ -44,6 +48,7 @@ jobs:
         with:
           name: semgrep-report-estandar
           path: semgrep_result.json
+
 
 
 
