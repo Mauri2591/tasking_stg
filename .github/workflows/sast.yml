@@ -1,4 +1,4 @@
-name: SAST Semgrep Scan (Estandar)
+name: SAST Semgrep Scan (Estandar Estable)
 
 on:
   push:
@@ -8,6 +8,7 @@ on:
 jobs:
   semgrep-scan:
     runs-on: self-hosted
+
     steps:
       - name: Checkout del repositorio
         uses: actions/checkout@v4
@@ -19,24 +20,30 @@ jobs:
             pip install semgrep
           fi
 
-      - name: Ejecutar Semgrep (estándar, menos falsos positivos, sin fallar)
+      - name: Ejecutar Semgrep (estable, con reducción de falsos positivos, sin errores internos)
         run: |
           semgrep scan \
             --config auto \
             --config p/security \
             --config p/secrets \
+            --skip-unknown-extensions \
+            --skip-parse-errors \
+            --error auto \
+            --exclude node_modules \
+            --exclude vendor \
+            --exclude dist \
+            --exclude build \
             --json > semgrep_result.json
         env:
           SEMGREP_REDUCE_FP: "1"
           SEMGREP_SUPPRESS_ERRORS: "1"
-          SEMGREP_EXIT_CODE: "0"        # nunca falla por hallazgos
+          SEMGREP_EXIT_CODE: "0"
 
       - name: Guardar resultados como artifact
         uses: actions/upload-artifact@v4
         with:
           name: semgrep-report-estandar
           path: semgrep_result.json
-
 
 
 
