@@ -22,7 +22,7 @@ jobs:
 
       - name: Ejecutar Semgrep (estable y con bajo ruido)
         run: |
-          semgrep scan \
+          semgrep ci \
             --config auto \
             --config p/security \
             --config p/secrets \
@@ -32,12 +32,9 @@ jobs:
             --exclude build \
             --exclude .next \
             --json \
-            --quiet \
-            . \
             > semgrep_result.json
         env:
           SEMGREP_REDUCE_FP: "1"
-          SEMGREP_SUPPRESS_ERRORS: "1"
           SEMGREP_EXIT_CODE: "0"
 
       - name: Guardar resultados como artifact
