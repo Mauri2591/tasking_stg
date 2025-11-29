@@ -16,3 +16,5 @@ services:
         volumes:
             - .:/var/www
             - logs:/var/www/logs
+        security_opt:
+            - no-new-privileges:true
