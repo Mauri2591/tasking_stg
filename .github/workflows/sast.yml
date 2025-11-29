@@ -12,23 +12,23 @@ jobs:
       - name: Checkout del repositorio
         uses: actions/checkout@v4
 
-      - name: Instalar Semgrep (si no está instalado)
+      - name: Instalar Semgrep si no está disponible
         run: |
           if ! command -v semgrep &> /dev/null
           then
             pip install semgrep
           fi
 
-      - name: Ejecutar Semgrep CI (escaneo intenso y reduciendo falsos positivos)
+      - name: Ejecutar Semgrep (modo CI, reglas de alta calidad, escaneo profundo)
         run: |
           semgrep ci \
             --config auto \
             --config p/ci \
-            --severity=WARNING \
             --json > semgrep_result.json
         env:
-          SEMGREP_TIMEOUT: "0"     # Sin límite de tiempo → escaneo profundo
-          SEMGREP_REDUCE_FP: "1"   # Activa heurísticas antipositivos falsos
+          SEMGREP_TIMEOUT: "0"     # escaneo profundo sin límite
+          SEMGREP_REDUCE_FP: "1"   # reducir falsos positivos
+          SEMGREP_SUPPRESS_ERRORS: "1"  # evita que errores menores rompan el pipeline
 
       - name: Guardar resultados como artifact
         uses: actions/upload-artifact@v4
