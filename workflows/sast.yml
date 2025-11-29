@@ -1,0 +1,23 @@
+name: SAST Semgrep Scan
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+
+jobs:
+  semgrep-scan:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout del repositorio
+        uses: actions/checkout@v4
+
+      - name: Ejecutar Semgrep
+        run: |
+          semgrep scan --config auto --json > semgrep_result.json
+
+      - name: Guardar resultados como artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: semgrep-report
+          path: semgrep_result.json
