@@ -13,7 +13,6 @@ jobs:
       - name: Checkout del repositorio
         uses: actions/checkout@v4
 
-      # Opcional: instalar semgrep si falta
       - name: Instalar Semgrep si no está disponible
         run: |
           if ! command -v semgrep &> /dev/null
@@ -21,23 +20,25 @@ jobs:
             pip install semgrep
           fi
 
+      - name: Generar timestamp con horario de Argentina (UTC-3)
+        id: timestamp
+        run: |
+          export TZ="America/Argentina/Buenos_Aires"
+          echo "stamp=$(date +'%Y_%m_%d__%H-%M-%S')" >> $GITHUB_ENV
+
       - name: Ejecutar Semgrep estable (auto + menos falsos positivos)
         run: |
-          TIMESTAMP=$(date +"%Y_%m_%d__%H-%M-%S")
-          RESULT_FILE="resultados__${TIMESTAMP}.json"
-
           semgrep scan \
             --config auto \
-            --json > "$RESULT_FILE"
-
-          echo "RESULT_FILE=$RESULT_FILE" >> $GITHUB_ENV
+            --json > resultados__${stamp}.json
         env:
           SEMGREP_REDUCE_FP: "1"
           SEMGREP_DISABLE_DEEP_SEMANTIC: "1"
           SEMGREP_EXIT_CODE: "0"
+          stamp: ${{ env.stamp }}
 
       - name: Guardar resultados como artifact
         uses: actions/upload-artifact@v4
         with:
-          name: semgrep-report
-          path: ${{ env.RESULT_FILE }}
+          name: semgrep-report-${{ env.stamp }}
+          path: resultados__${{ env.stamp }}.json
