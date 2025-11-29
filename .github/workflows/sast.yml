@@ -23,9 +23,14 @@ jobs:
 
       - name: Ejecutar Semgrep estable (auto + menos falsos positivos)
         run: |
+          TIMESTAMP=$(date +"%Y_%m_%d__%H-%M-%S")
+          RESULT_FILE="resultados__${TIMESTAMP}.json"
+
           semgrep scan \
             --config auto \
-            --json > semgrep_result.json
+            --json > "$RESULT_FILE"
+
+          echo "RESULT_FILE=$RESULT_FILE" >> $GITHUB_ENV
         env:
           SEMGREP_REDUCE_FP: "1"
           SEMGREP_DISABLE_DEEP_SEMANTIC: "1"
@@ -35,5 +40,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: semgrep-report
-          path: semgrep_result.json
-#prueba
+          path: ${{ env.RESULT_FILE }}
