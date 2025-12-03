@@ -43,7 +43,7 @@
                                 </div>
 
                                 <div class="mb-3 col-sm-2">
-
+                                    <span class="badge bg-light fs-10 mb-1 text-dark">Recurrencia</span>
                                     <select id="combo_recurrente_proy_nuevo" class="form-select form-select-sm"
                                         aria-label=".form-select-sm example">
                                         <option value="0">NO</option>
