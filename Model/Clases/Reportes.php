@@ -286,6 +286,7 @@ public static function getDatosReporteSinFiltroXlsx($data, $nombre)
     $headers = [
         'ID',
         'CLIENTE',
+        'REF',
         'PRODUCTO',
         'SECTOR',
         'DIMENSIONAMIENTO',
@@ -312,6 +313,7 @@ public static function getDatosReporteSinFiltroXlsx($data, $nombre)
         $sheet->fromArray([
             $row - 1,
             $fila['client_rs'],
+            $fila['refProy'],
             $fila['producto'],
             $fila['sector'],
             $fila['dimensionamiento'],
@@ -329,10 +331,10 @@ public static function getDatosReporteSinFiltroXlsx($data, $nombre)
     }
 
     // AutoFilter
-    $sheet->setAutoFilter("A1:M" . ($row - 1));
+    $sheet->setAutoFilter("A1:N" . ($row - 1));
 
     // Encabezado estilo
-    $sheet->getStyle("A1:M1")->applyFromArray([
+    $sheet->getStyle("A1:N1")->applyFromArray([
         'font' => ['bold' => true, 'color' => ['rgb' => 'FFFFFF']],
         'fill' => [
             'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
@@ -344,13 +346,13 @@ public static function getDatosReporteSinFiltroXlsx($data, $nombre)
     // Filas alternadas (excepto columnas G y H)
     for ($i = 2; $i < $row; $i++) {
         if ($i % 2 == 0) {
-            $sheet->getStyle("A{$i}:F{$i}")
+            $sheet->getStyle("A{$i}:G{$i}")
                 ->getFill()
                 ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
                 ->getStartColor()
                 ->setRGB('F2F2F2');
 
-            $sheet->getStyle("I{$i}:M{$i}")
+            $sheet->getStyle("I{$i}:N{$i}")
                 ->getFill()
                 ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
                 ->getStartColor()
@@ -360,20 +362,20 @@ public static function getDatosReporteSinFiltroXlsx($data, $nombre)
 
     // ✅ Pintar HS NEGATIVAS y HS RESTANTES según reglas
     for ($i = 2; $i < $row; $i++) {
-        $valorNegativas = $sheet->getCell("G{$i}")->getValue();
-        $valorRestantes = $sheet->getCell("H{$i}")->getValue();
+        $valorNegativas = $sheet->getCell("H{$i}")->getValue();
+        $valorRestantes = $sheet->getCell("I{$i}")->getValue();
 
         // HS NEGATIVAS
         if ($valorNegativas !== '00:00') {
             // Tiene valor → Naranja
-            $sheet->getStyle("G{$i}")
+            $sheet->getStyle("H{$i}")
                 ->getFill()
                 ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
                 ->getStartColor()
                 ->setRGB('FFA500'); // Naranja
         } else {
             // No tiene valor → Verde claro
-            $sheet->getStyle("G{$i}")
+            $sheet->getStyle("H{$i}")
                 ->getFill()
                 ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
                 ->getStartColor()
@@ -383,14 +385,14 @@ public static function getDatosReporteSinFiltroXlsx($data, $nombre)
         // HS RESTANTES
         if ($valorRestantes !== '00:00') {
             // Tiene valor → Celeste claro
-            $sheet->getStyle("H{$i}")
+            $sheet->getStyle("I{$i}")
                 ->getFill()
                 ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
                 ->getStartColor()
                 ->setRGB('ADD8E6'); // Celeste claro
         } else {
             // No tiene valor → Verde claro
-            $sheet->getStyle("H{$i}")
+            $sheet->getStyle("I{$i}")
                 ->getFill()
                 ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
                 ->getStartColor()
@@ -399,13 +401,13 @@ public static function getDatosReporteSinFiltroXlsx($data, $nombre)
     }
 
     // Centrado
-    foreach (range('A', 'M') as $col) {
+    foreach (range('A', 'N') as $col) {
         $sheet->getStyle($col)->getAlignment()
             ->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
     }
 
     // Bordes
-    $sheet->getStyle("A1:M" . ($row - 1))->applyFromArray([
+    $sheet->getStyle("A1:N" . ($row - 1))->applyFromArray([
         'borders' => [
             'outline' => ['borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN],
             'inside'  => ['borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN]
@@ -413,7 +415,7 @@ public static function getDatosReporteSinFiltroXlsx($data, $nombre)
     ]);
 
     // AutoSize
-    foreach (range('A', 'M') as $col) {
+    foreach (range('A', 'N') as $col) {
         $sheet->getColumnDimension($col)->setAutoSize(true);
     }
 
@@ -516,21 +518,21 @@ public static function getDatosReporteSinFiltroXlsx($data, $nombre)
         foreach ($headers as $titulo => $ancho) {
             $table->addCell($ancho, $bgStyle)->addText(
                 $titulo,
-                ['color' => 'FFFFFF', 'bold' => true]
+                ['color' => 'FFFFFF', 'bold' => true, 'size' => 8]
             );
         }
 
         // Filas con datos
         foreach ($data as $fila) {
             $table->addRow();
-            $table->addCell($headers['CLIENTE'])->addText($fila['client_rs']);
-            $table->addCell($headers['PRODUCTO'])->addText($fila['producto']);
-            $table->addCell($headers['SECTOR'])->addText($fila['sector']);
-            $table->addCell($headers['USUARIOS'])->addText($fila['usuarios_asignados']);
-            $table->addCell($headers['HS'])->addText($fila['dimensionamiento']);
-            $table->addCell($headers['INICIO'])->addText($fila['fech_inicio']);
-            $table->addCell($headers['FIN'])->addText($fila['fech_fin']);
-            $table->addCell($headers['ESTADO'])->addText($fila['estado']);
+            $table->addCell($headers['CLIENTE'])->addText($fila['client_rs'], ['size' => 7]);
+            $table->addCell($headers['PRODUCTO'])->addText($fila['producto'], ['size' => 7]);
+            $table->addCell($headers['SECTOR'])->addText($fila['sector'], ['size' => 7]);
+            $table->addCell($headers['USUARIOS'])->addText($fila['usuarios_asignados'], ['size' => 7]);
+            $table->addCell($headers['HS'])->addText($fila['dimensionamiento'], ['size' => 7]);
+            $table->addCell($headers['INICIO'])->addText($fila['fech_inicio'], ['size' => 7]);
+            $table->addCell($headers['FIN'])->addText($fila['fech_fin'], ['size' => 7]);
+            $table->addCell($headers['ESTADO'])->addText($fila['estado'], ['size' => 7]);
         }
 
         $section->addPageBreak();
@@ -547,7 +549,7 @@ public static function getDatosReporteSinFiltroXlsx($data, $nombre)
 
             // Nombre cliente + producto
             $section->addText(
-                strtoupper($fila['client_rs'] . " - " . $fila['producto']),
+                strtoupper($fila['client_rs']. " REF ".$fila['refProy']),
                 ['bold' => true, 'size' => 12]
             );
 
@@ -556,13 +558,17 @@ public static function getDatosReporteSinFiltroXlsx($data, $nombre)
                     "   |   Fin: " . ($fila['fech_fin'] ?: "N/A")
             );
 
+            $section->addText(
+                "Producto: " . ($fila['producto'])
+            );
+
             // Dimensionamiento y fechas
             $section->addText(
                 "Dimensionamiento: " . ($fila['dimensionamiento'] . " hs" ?: "N/A")
             );
 
             $section->addText(
-                "Horas consumidas total: " . ($fila['horas_consumidas_total'] . " hs" ?: "N/A")
+                "Horas consumidas total: " . (empty($fila['horas_consumidas_total']) ? "00:00 hs" : $fila['horas_consumidas_total'] . " hs")
             );
 
             $section->addTextBreak(0.5);

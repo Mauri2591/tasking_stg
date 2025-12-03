@@ -515,6 +515,7 @@ ORDER BY timesummary_carga.fecha DESC;";
             COUNT(DISTINCT proyecto_cantidad_servicios.id) AS total_proyectos_cantidad_servicios,
             proyecto_gestionado.fech_inicio,
             proyecto_gestionado.fech_fin,
+            proyecto_gestionado.refProy,
             dimensionamiento.hs_dimensionadas AS dimensionamiento,
             -- hs_restante: lo que falta (nunca negativo)
             CASE 
@@ -625,6 +626,7 @@ ORDER BY timesummary_carga.fecha DESC;";
         COUNT(DISTINCT proyecto_cantidad_servicios.id) AS total_proyectos_cantidad_servicios,
         proyecto_gestionado.fech_inicio,
         proyecto_gestionado.fech_fin,
+        proyecto_gestionado.refProy,
         dimensionamiento.hs_dimensionadas AS dimensionamiento,
         -- hs_restante: lo que falta (nunca negativo)
         CASE 
@@ -737,6 +739,7 @@ ORDER BY timesummary_carga.fecha DESC;";
             COUNT(DISTINCT proyecto_cantidad_servicios.id) AS total_proyectos_cantidad_servicios,
             proyecto_gestionado.fech_inicio,
             proyecto_gestionado.fech_fin,
+            proyecto_gestionado.refProy,
             dimensionamiento.hs_dimensionadas AS dimensionamiento,
             -- hs_restante: lo que falta (nunca negativo)
             CASE 
@@ -847,6 +850,7 @@ ORDER BY timesummary_carga.fecha DESC;";
             COUNT(DISTINCT proyecto_gestionado.id) AS proyectos_gestionados,
             COUNT(DISTINCT proyecto_cantidad_servicios.id) AS total_proyectos_cantidad_servicios,
             proyecto_gestionado.fech_inicio,
+            proyecto_gestionado.refProy,
             proyecto_gestionado.fech_fin,
             dimensionamiento.hs_dimensionadas AS dimensionamiento,
             -- hs_restante: lo que falta (nunca negativo)
