@@ -43,7 +43,7 @@
                                 </div>
 
                                 <div class="mb-3 col-sm-2">
-                                    <span class="badge bg-light fs-10 mb-1 text-dark">Recurrencia</span>
+                                    <span id="recurrencia" class="badge bg-light fs-10 mb-1 text-dark">Recurrencia</span>
                                     <select id="combo_recurrente_proy_nuevo" class="form-select form-select-sm"
                                         aria-label=".form-select-sm example">
                                         <option value="0">NO</option>
@@ -242,8 +242,8 @@
                                 <textarea class="form-control" id="descripcion_proy" rows="3"></textarea>
                             </div>
 
-                            <div id="cont_activos">
-                                <span class="mt-4 badge bg-light border border-primary text-primary"
+                            <div id="cont_activos" class="mt-2">
+                                <span class="mt-3 badge bg-light border border-primary text-primary"
                                     style="font-weight: bold;">Activos</span><span
                                     onclick='consultar_activos_borrdor($("#valor_cantidad_servicios").val())'
                                     data-placement="top" title="Consultar activos" type="button"><i id="icon_activos"

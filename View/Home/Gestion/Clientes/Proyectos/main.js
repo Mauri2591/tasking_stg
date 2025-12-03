@@ -417,6 +417,17 @@ function validar_combo_prioridad(valorInicial) {
 }
 
 function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
+
+    if (!id) {
+        $("#cont_activos_ips_urls_otros").show();
+        $("#cont_archivo").show();
+        $("#cont_activos").hide();
+        $("#recurrencia").show();
+    } else {
+        $("#cont_activos").show();
+        $("#recurrencia").hide();
+    }
+
     let UPDATE_PROY_RECURRENCIA = false;
 
     $.post("../../../../../Controller/ctrProyectos.php?proy=validar_si_es_recurrente", {
