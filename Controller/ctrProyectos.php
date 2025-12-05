@@ -43,6 +43,18 @@ switch ($_GET['proy']) {
         }
         break;
 
+    case 'get_workshop':
+        echo json_encode($proyecto->get_workshop($_POST['id_proyecto_gestionado']));
+        break;
+
+    case 'insert_workshop':
+        $proyecto->insert_workshop($_POST['id_proyecto_gestionado']);
+        break;
+
+    case 'update_workshop':
+        $proyecto->update_workshop($_POST['id_proyecto_gestionado'],$_POST['est']);
+        break;
+
     case 'insert_nuevos_host':
         $proyecto->insert_nuevos_host($_POST['id_proyecto_gestionado'], $_POST['id_proyecto_cantidad_servicios'], $_SESSION['usu_id'], $_POST['tipo'], $_POST['host']);
         break;
@@ -1562,102 +1574,102 @@ switch ($_GET['proy']) {
         echo json_encode($results);
         break;
 
-    
 
 
-case 'get_proyectos_total_x_client_id':
-    $datos = $proyecto->get_proyectos_total_x_client_id($_POST['client_id'], $_SESSION['sector_id']);
 
-    $id_to_pos = [];
-    foreach ($datos as $index => $fila) {
-        $id_to_pos[$fila['id']] = $index + 1;
-    }
+    case 'get_proyectos_total_x_client_id':
+        $datos = $proyecto->get_proyectos_total_x_client_id($_POST['client_id'], $_SESSION['sector_id']);
 
-    $data = [];
-    $colores = [
-        "ETHICAL HACKING" => "bg-warning text-dark",
-        "SOC" => "bg-dark text-light",
-        "SASE" => "bg-info text-light",
-        "CALIDAD Y PROCESOS" => "bg-light text-dark",
-        "INCIDENT RESPONSE" => "bg-danger text-light"
-    ];
-
-    foreach ($datos as $key => $row) {
-        $titulo = $row['titulo'] ?? '-';
-        $posicion_recurrencia = $row['posicion_recurrencia'] ?? '';
-        $rechequeo = $row['rechequeo'] ?? '';
-        $rechequeo_de = $row['rechequeo_de'] ?? '';
-        $refProy = $row['referencia'] ?? '';
-        $fech_crea = $row['fech_crea'] ?? '';
-        $sector_nombre = $row['sector_nombre'] ?? '';
-        $producto = $row['producto'] ?? '';
-        $dimensionamiento = $row['dimensionamiento'] ?? 0;
-        $estado = $row['estado'] ?? '';
-        $id_proyecto_cantidad_servicios = (string)($row['id_proyecto_cantidad_servicios'] ?? '0');
-        $id = (string)($row['id'] ?? '0');
-
-        $sub_array = [];
-
-        $sub_array[] = '<span class="badge bg-light text-dark">' . ($key + 1) . '</span>';
-        $sub_array[] = htmlspecialchars($titulo);
-        $sub_array[] = $posicion_recurrencia === '' ? '-' : '<span class="badge bg-success">' . htmlspecialchars($posicion_recurrencia) . '</span>';
-
-        if ($rechequeo === "SI") {
-            $num_rechequeo_de = isset($id_to_pos[$rechequeo_de]) ? $id_to_pos[$rechequeo_de] : $rechequeo_de;
-            $sub_array[] = '<span class="mx-1 badge bg-danger">SI</span><span class="badge bg-light text-dark">' . $num_rechequeo_de . '</span>';
-        } else {
-            $sub_array[] = '-';
+        $id_to_pos = [];
+        foreach ($datos as $index => $fila) {
+            $id_to_pos[$fila['id']] = $index + 1;
         }
 
-        $sub_array[] = strlen($refProy) > 20
-            ? '<p class="text-center m-0 p-0">' . wordwrap(htmlspecialchars($refProy), 20, '<br>', true) . '</p>'
-            : '<p class="text-center m-0 p-0">' . htmlspecialchars($refProy) . '</p>';
+        $data = [];
+        $colores = [
+            "ETHICAL HACKING" => "bg-warning text-dark",
+            "SOC" => "bg-dark text-light",
+            "SASE" => "bg-info text-light",
+            "CALIDAD Y PROCESOS" => "bg-light text-dark",
+            "INCIDENT RESPONSE" => "bg-danger text-light"
+        ];
 
-        $sub_array[] = !empty($fech_crea)
-            ? '<p class="text-center m-0 p-0">' . date('d/m/Y', strtotime($fech_crea)) . '</p>'
-            : '<p class="text-center m-0 p-0">SIN FECHA</p>';
+        foreach ($datos as $key => $row) {
+            $titulo = $row['titulo'] ?? '-';
+            $posicion_recurrencia = $row['posicion_recurrencia'] ?? '';
+            $rechequeo = $row['rechequeo'] ?? '';
+            $rechequeo_de = $row['rechequeo_de'] ?? '';
+            $refProy = $row['referencia'] ?? '';
+            $fech_crea = $row['fech_crea'] ?? '';
+            $sector_nombre = $row['sector_nombre'] ?? '';
+            $producto = $row['producto'] ?? '';
+            $dimensionamiento = $row['dimensionamiento'] ?? 0;
+            $estado = $row['estado'] ?? '';
+            $id_proyecto_cantidad_servicios = (string)($row['id_proyecto_cantidad_servicios'] ?? '0');
+            $id = (string)($row['id'] ?? '0');
 
-        $clase = array_key_exists($sector_nombre, $colores) ? $colores[$sector_nombre] : "bg-secondary text-light";
-        $sub_array[] = '<p class="text-center m-0 p-0"><span class="badge ' . $clase . ' border border-dark">' . htmlspecialchars($sector_nombre) . '</span></p>';
+            $sub_array = [];
 
-        $sub_array[] = '<span class="badge bg-light border border-dark text-dark">' . htmlspecialchars($producto) . '</span>';
-        $sub_array[] = '<p class="text-center p-0 m-0"><span class="badge bg-light border border-dark text-dark">' . $dimensionamiento . '</span></p>';
-        $sub_array[] = '<p class="p-0 m-0 text-center">' . htmlspecialchars($estado) . '</p>';
+            $sub_array[] = '<span class="badge bg-light text-dark">' . ($key + 1) . '</span>';
+            $sub_array[] = htmlspecialchars($titulo);
+            $sub_array[] = $posicion_recurrencia === '' ? '-' : '<span class="badge bg-success">' . htmlspecialchars($posicion_recurrencia) . '</span>';
 
-        if ($_SESSION['sector_id'] == "4") {
-            if ($estado != "FIN SIN IMPLEM" && $estado != "ELIMINADO" && $estado != "CANCELADO" && $estado != "BORRADOR" && $rechequeo != "SI") {
-                $sub_array[] = '<span type="button" onclick="crearRechequeo(' . $id . ')" data-placement="top" title="Agregar rechequeo"><i class="ri-add-fill text-danger fs-18"></i></span>';
+            if ($rechequeo === "SI") {
+                $num_rechequeo_de = isset($id_to_pos[$rechequeo_de]) ? $id_to_pos[$rechequeo_de] : $rechequeo_de;
+                $sub_array[] = '<span class="mx-1 badge bg-danger">SI</span><span class="badge bg-light text-dark">' . $num_rechequeo_de . '</span>';
             } else {
-                $sub_array[] = '<span><i class="ri-subtract-line" style="color:gray"></i></span>';
+                $sub_array[] = '-';
             }
+
+            $sub_array[] = strlen($refProy) > 20
+                ? '<p class="text-center m-0 p-0">' . wordwrap(htmlspecialchars($refProy), 20, '<br>', true) . '</p>'
+                : '<p class="text-center m-0 p-0">' . htmlspecialchars($refProy) . '</p>';
+
+            $sub_array[] = !empty($fech_crea)
+                ? '<p class="text-center m-0 p-0">' . date('d/m/Y', strtotime($fech_crea)) . '</p>'
+                : '<p class="text-center m-0 p-0">SIN FECHA</p>';
+
+            $clase = array_key_exists($sector_nombre, $colores) ? $colores[$sector_nombre] : "bg-secondary text-light";
+            $sub_array[] = '<p class="text-center m-0 p-0"><span class="badge ' . $clase . ' border border-dark">' . htmlspecialchars($sector_nombre) . '</span></p>';
+
+            $sub_array[] = '<span class="badge bg-light border border-dark text-dark">' . htmlspecialchars($producto) . '</span>';
+            $sub_array[] = '<p class="text-center p-0 m-0"><span class="badge bg-light border border-dark text-dark">' . $dimensionamiento . '</span></p>';
+            $sub_array[] = '<p class="p-0 m-0 text-center">' . htmlspecialchars($estado) . '</p>';
+
+            if ($_SESSION['sector_id'] == "4") {
+                if ($estado != "FIN SIN IMPLEM" && $estado != "ELIMINADO" && $estado != "CANCELADO" && $estado != "BORRADOR" && $rechequeo != "SI") {
+                    $sub_array[] = '<span type="button" onclick="crearRechequeo(' . $id . ')" data-placement="top" title="Agregar rechequeo"><i class="ri-add-fill text-danger fs-18"></i></span>';
+                } else {
+                    $sub_array[] = '<span><i class="ri-subtract-line" style="color:gray"></i></span>';
+                }
+            }
+
+            if ($estado == "FIN SIN IMPLEM" || $estado == "ELIMINADO" || $estado == "CANCELADO") {
+                $sub_array[] = '<span><i class="ri-subtract-line" style="color:gray"></i></span>';
+            } else {
+                $sub_array[] = '<a href="' . URL . 'View/Home/Gestion/Sectores/GestionarProy/?p=' .
+                    Openssl::set_ssl_encrypt($id_proyecto_cantidad_servicios) .
+                    '&pg=' . Openssl::set_ssl_encrypt($id) .
+                    '" target="_blank" rel="noopener noreferrer" title="Ver proyecto"><i class="ri-send-plane-fill text-primary fs-18"></i></a>';
+            }
+
+            $data[] = $sub_array;
         }
 
-        if ($estado == "FIN SIN IMPLEM" || $estado == "ELIMINADO" || $estado == "CANCELADO") {
-            $sub_array[] = '<span><i class="ri-subtract-line" style="color:gray"></i></span>';
-        } else {
-            $sub_array[] = '<a href="' . URL . 'View/Home/Gestion/Sectores/GestionarProy/?p=' .
-                Openssl::set_ssl_encrypt($id_proyecto_cantidad_servicios) .
-                '&pg=' . Openssl::set_ssl_encrypt($id) .
-                '" target="_blank" rel="noopener noreferrer" title="Ver proyecto"><i class="ri-send-plane-fill text-primary fs-18"></i></a>';
-        }
+        $results = [
+            "sEcho" => 1,
+            "iTotalRecords" => count($data),
+            "iTotalDisplayRecords" => count($data),
+            "aaData" => $data
+        ];
 
-        $data[] = $sub_array;
-    }
+        echo json_encode($results);
+        break;
 
-    $results = [
-        "sEcho" => 1,
-        "iTotalRecords" => count($data),
-        "iTotalDisplayRecords" => count($data),
-        "aaData" => $data
-    ];
-
-    echo json_encode($results);
-    break;
-
-case 'get_nombre_proyectos_total_x_client_id':
-    $datos = $proyecto->get_proyectos_total_x_client_id($_POST['client_id'], $_SESSION['sector_id']);
-    echo json_encode($datos);
-    break;
+    case 'get_nombre_proyectos_total_x_client_id':
+        $datos = $proyecto->get_proyectos_total_x_client_id($_POST['client_id'], $_SESSION['sector_id']);
+        echo json_encode($datos);
+        break;
 
 
 

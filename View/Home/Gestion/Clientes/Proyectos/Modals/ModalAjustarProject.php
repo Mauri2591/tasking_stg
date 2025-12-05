@@ -1,7 +1,7 @@
 <!-- Modal -->
 <div class="modal fade" id="ModalAltaProject" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
     aria-labelledby="staticBackdropLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
+    <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="card-body">
                 <h5 class="mb-0 pb-0">Crear Proyecto</h5>
@@ -73,7 +73,7 @@
                                     </select>
                                 </div>
 
-                                <div class="mb-3 col-sm-8">
+                                <div class="mb-3 col-sm-6">
                                     <span class="badge bg-light fs-10 mb-1 text-dark">Titulo</span>
                                     <input readonly type="text"
                                         class="bg-primary text-light form-control form-control-sm"
@@ -94,7 +94,17 @@
                                     <input autofocus type="number" class="form-control form-control-sm" id="hs_dimensionadas">
                                 </div>
 
+                                <div class="mb-3 col-sm-2" id="cont_combo_workshop">
+                                    <span id="recurrencia" class="badge bg-info fs-10 mb-1 text-light border">Workshop</span>
+                                    <select id="combo_workshop" class="form-select form-select-sm fw-bold"
+                                        aria-label=".form-select-sm example">
+                                        <option value="NO">NO</option>
+                                        <option value="SI">SI</option>
+                                    </select>
+                                </div>
+
                             </div>
+
                         </div>
 
                         <span class="mt-2 mb-2 badge bg-light border border-primary fs-10 text-primary"

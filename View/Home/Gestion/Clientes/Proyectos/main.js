@@ -417,16 +417,36 @@ function validar_combo_prioridad(valorInicial) {
 }
 
 function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
-
     if (!id) {
         $("#cont_activos_ips_urls_otros").show();
         $("#cont_archivo").show();
         $("#cont_activos").hide();
         $("#recurrencia").show();
+        $("#cont_combo_workshop").hide();
     } else {
         $("#cont_activos").show();
         $("#recurrencia").hide();
+        $("#cont_combo_workshop").show();
     }
+
+    $.post("../../../../../Controller/ctrProyectos.php?proy=get_workshop", {
+            id_proyecto_gestionado: $("#id_proyecto_gestionado").val()
+        },
+        function (data, textStatus, jqXHR) {
+            console.log(data);
+            
+            if (data === false || data == null) {
+                $("#combo_workshop").val("NO");
+            } else {
+                if (data.est == 1) {
+                    $("#combo_workshop").val("SI");
+                } else {
+                    $("#combo_workshop").val("NO");
+                }
+            }
+        },
+        "json"
+    );
 
     let UPDATE_PROY_RECURRENCIA = false;
 
@@ -841,6 +861,66 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
                         });
                     }
                 });
+
+
+                $.post("../../../../../Controller/ctrProyectos.php?proy=get_workshop", {
+                        id_proyecto_gestionado: $("#id_proyecto_gestionado").val()
+                    },
+                    function (data, textStatus, jqXHR) {
+
+                        if (data == false) {
+                            if ($("#combo_workshop").val() == "SI") {
+                                $.ajax({
+                                    type: "POST",
+                                    url: "../../../../../Controller/ctrProyectos.php?proy=insert_workshop",
+                                    data: {
+                                        id_proyecto_gestionado: $("#id_proyecto_gestionado").val()
+                                    },
+                                    dataType: "json",
+                                    success: function (response) {
+                                    },
+                                    error: function (err) {
+                                        console.log(err);
+                                    }
+                                });
+                            }
+                        } else {
+                            if (data.est == 0 && $("#combo_workshop").val() == "SI") {
+                                $.ajax({
+                                    type: "POST",
+                                    url: "../../../../../Controller/ctrProyectos.php?proy=update_workshop",
+                                    data: {
+                                        id_proyecto_gestionado: $("#id_proyecto_gestionado").val(),
+                                        est: 1
+                                    },
+                                    dataType: "json",
+                                    success: function (response) {
+                                    },
+                                    error: function (err) {
+                                        console.log(err);
+                                    }
+                                });
+                            } else if (data.est == 1 && $("#combo_workshop").val() == "NO") {
+                                $.ajax({
+                                    type: "POST",
+                                    url: "../../../../../Controller/ctrProyectos.php?proy=update_workshop",
+                                    data: {
+                                        id_proyecto_gestionado: $("#id_proyecto_gestionado").val(),
+                                        est: 0
+                                    },
+                                    dataType: "json",
+                                    success: function (response) {
+                                    },
+                                    error: function (err) {
+                                        console.log(err);
+                                        
+                                    }
+                                });
+                            }
+                        }
+                    },
+                    "json"
+                );
             });
 
         } else {

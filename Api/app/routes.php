@@ -171,6 +171,7 @@ return function (App $app) {
             pg.prioridad_id AS id_prioridad,
             prioridad.prioridad,
             prr.posicion_recurrencia AS recurrencia,
+            IF(workshop.est = 1,'SI','NO') AS workshop,
             IF(pr.id IS NOT NULL,'SI','NO') AS rechequeo,
             IF(pg.descripcion = '', NULL, pg.descripcion) AS descripcion_proyecto,
             IF(pg.fech_inicio = '', NULL, pg.fech_inicio) AS fecha_inicio,
@@ -202,6 +203,7 @@ return function (App $app) {
         LEFT JOIN proyecto_recurrencia prr ON pg.id = prr.id_proyecto_gestionado
         LEFT JOIN dimensionamiento d ON pg.id = d.id_proyecto_gestionado
         LEFT JOIN hosts h ON pg.id = h.id_proyecto_gestionado AND h.est = 1
+        LEFT JOIN workshop ON pg.id=workshop.id_proyecto_gestionado
         INNER JOIN prioridad ON pg.prioridad_id=prioridad.id
         INNER JOIN proyecto_cantidad_servicios pcs ON pg.id_proyecto_cantidad_servicios = pcs.id
         INNER JOIN proyectos ON pcs.proy_id = proyectos.proy_id

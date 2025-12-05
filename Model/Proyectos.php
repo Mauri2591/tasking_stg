@@ -1709,20 +1709,15 @@ WHERE
     public function get_datos_proyecto_gestionado($id)
     {
         $conn = parent::get_conexion();
-        $sql = "SELECT proyecto_gestionado.*, 
-				   proyecto_recurrencia.posicion_recurrencia,
-                   tm_categoria.cat_nom, 
-                   tm_subcategoria.cats_nom,
-                   if(proyecto_rechequeo.id, 'SI','NO') AS rechequeo
-            FROM proyecto_gestionado 
-            LEFT JOIN tm_categoria 
-                   ON proyecto_gestionado.cat_id = tm_categoria.cat_id 
-            LEFT JOIN tm_subcategoria 
-                   ON proyecto_gestionado.cats_id = tm_subcategoria.cats_id
-                   LEFT JOIN proyecto_rechequeo ON proyecto_rechequeo.id_proyecto_gestionado=proyecto_gestionado.id
-                   LEFT JOIN proyecto_recurrencia ON proyecto_gestionado.id=proyecto_recurrencia.id_proyecto_gestionado
-            WHERE proyecto_gestionado.id = :id
-              AND proyecto_gestionado.est = 1";
+        $sql = "SELECT proyecto_gestionado.*, proyecto_recurrencia.posicion_recurrencia, 
+        tm_categoria.cat_nom, tm_subcategoria.cats_nom, if(proyecto_rechequeo.id, 'SI','NO') AS rechequeo, 
+        if(workshop.est = 1,'SI','NO') AS workshop FROM proyecto_gestionado 
+        LEFT JOIN tm_categoria ON proyecto_gestionado.cat_id = tm_categoria.cat_id 
+        LEFT JOIN tm_subcategoria ON proyecto_gestionado.cats_id = tm_subcategoria.cats_id 
+        LEFT JOIN proyecto_rechequeo ON proyecto_rechequeo.id_proyecto_gestionado=proyecto_gestionado.id 
+        LEFT JOIN proyecto_recurrencia ON proyecto_gestionado.id=proyecto_recurrencia.id_proyecto_gestionado 
+        LEFT JOIN workshop ON proyecto_gestionado.id=workshop.id_proyecto_gestionado 
+        WHERE proyecto_gestionado.id = :id AND proyecto_gestionado.est = 1";
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(':id', $id, PDO::PARAM_INT);
         $stmt->execute();
@@ -2502,6 +2497,35 @@ WHERE pg.id_proyecto_cantidad_servicios = :id_proyecto_cantidad_servicios";
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(":id_proyecto_gestionado", $id_proyecto_gestionado, PDO::PARAM_INT);
         $stmt->bindValue(":id_proyecto_gestionado_origen", $id_proyecto_gestionado_origen, PDO::PARAM_INT);
+        $stmt->execute();
+    }
+
+    public function get_workshop($id_proyecto_gestionado)
+    {
+        $conn = parent::get_conexion();
+        $sql = "SELECT * FROM workshop WHERE id_proyecto_gestionado = :id_proyecto_gestionado LIMIT 1";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue(":id_proyecto_gestionado", $id_proyecto_gestionado, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    public function insert_workshop($id_proyecto_gestionado)
+    {
+        $conn = parent::get_conexion();
+        $sql = "INSERT INTO workshop (id_proyecto_gestionado) VALUES (:id_proyecto_gestionado)";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue(":id_proyecto_gestionado", $id_proyecto_gestionado, PDO::PARAM_INT);
+        $stmt->execute();
+    }
+
+    public function update_workshop($id_proyecto_gestionado, $est)
+    {
+        $conn = parent::get_conexion();
+        $sql = "UPDATE workshop SET est=:est WHERE id_proyecto_gestionado=:id_proyecto_gestionado";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue(":est", $est, PDO::PARAM_INT);
+        $stmt->bindValue(":id_proyecto_gestionado", $id_proyecto_gestionado, PDO::PARAM_INT);
         $stmt->execute();
     }
 
