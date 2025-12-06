@@ -12,6 +12,24 @@ $proyecto = new Proyectos();
 $validacion = new Validaciones();
 Headers::get_csp();
 
+function convertirNombrePipeline($texto, $id)
+{
+    $texto = trim((string)$texto);
+    $id    = trim((string)$id);
+
+    if ($texto === '') {
+        return "Cliente-SinNombre_Pg-$id";
+    }
+    $texto = mb_strtolower($texto, 'UTF-8');
+    $texto = preg_replace('/[^\p{L}0-9\s]/u', '', $texto);
+    $palabras = preg_split('/\s+/', $texto, -1, PREG_SPLIT_NO_EMPTY);
+    $palabras = array_map(function ($p) {
+        return mb_convert_case($p, MB_CASE_TITLE, 'UTF-8');
+    }, $palabras);
+    $camel = implode('', $palabras);
+    return "Cliente-{$camel}_Pg-{$id}";
+}
+
 switch ($_GET['proy']) {
     case 'get_paises':
         $htmlOption = '';
@@ -1537,7 +1555,7 @@ switch ($_GET['proy']) {
                     </div>
                 </div>
             </div>
-<?php
+        <?php
         }
         break;
 
@@ -1675,22 +1693,26 @@ switch ($_GET['proy']) {
         echo json_encode($proyecto->getDatosCliente($_POST['id']));
         break;
 
-case 'descargarPipeline':
+    case "validarContenedorBtnDockerfile":
+        $datos = $proyecto->get_datos_proyecto_gestionado($_POST['id']);
+        if ($datos->cat_id == 12) {
+        ?>
+            <span onclick="descargarPipeline(<?php echo $datos->id ?>)"
+                type="button"
+                class="badge border border-dark text-light py-1 px-2 mx-2 mt-2 mb-3 d-inline-flex align-items-center gap-2 w-auto"
+                style="background-color: palevioletred; display: none;">
+                Descargar pipeline <i class="ri-code-s-slash-fill fs-16 text-light"></i>
+            </span>
+<?php
+        }
+        break;
 
-    // ----------------------------------------------
-    // 1. OBTENER DATOS DEL FORMULARIO
-    // ----------------------------------------------
-    $id   = $_POST['id_proyecto_gestionado'];
-    $ref  = $_POST['refProy'];
-    $rs   = $_POST['client_rs'];
-
-    // Normalizar nombre de carpeta (sin espacios)
-    $carpeta = "cliente-" . preg_replace('/\s+/', '_', $rs) . "-proy-" . $id;
-
-    // ----------------------------------------------
-    // 2. YAML COMPLETO DEL PIPELINE
-    // ----------------------------------------------
-    $pipeline = "
+    case 'descargarPipeline':
+        $id   = $_POST['id_proyecto_gestionado'];
+        $ref  = $_POST['refProy'];
+        $rs   = $_POST['client_rs'];
+        $carpeta = convertirNombrePipeline($rs, $id);
+        $pipeline = "
 name: SAST Scan CI/CD
 
 on:
@@ -1732,37 +1754,22 @@ jobs:
           path: $carpeta/resultados__\${{ env.stamp }}.json
 ";
 
-    // ----------------------------------------------
-    // 3. CREAR CARPETA TEMPORAL
-    // ----------------------------------------------
-    $tempDir = sys_get_temp_dir() . "/pipeline_" . uniqid();
-    mkdir("$tempDir/.github/workflows", 0777, true);
+        $tempDir = sys_get_temp_dir() . "/pipeline_" . uniqid();
+        mkdir("$tempDir/.github/workflows", 0777, true);
 
-    // ----------------------------------------------
-    // 4. GUARDAR pipeline.yml
-    // ----------------------------------------------
-    file_put_contents("$tempDir/.github/workflows/pipeline.yml", $pipeline);
+        file_put_contents("$tempDir/.github/workflows/pipeline.yml", $pipeline);
 
-    // ----------------------------------------------
-    // 5. CREAR ZIP
-    // ----------------------------------------------
-    $zipPath = "$tempDir/pipeline.zip";
-    $zip = new ZipArchive();
-    $zip->open($zipPath, ZipArchive::CREATE | ZipArchive::OVERWRITE);
-    $zip->addFile("$tempDir/.github/workflows/pipeline.yml", ".github/workflows/pipeline.yml");
-    $zip->close();
-
-    // ----------------------------------------------
-    // 6. DESCARGA DEL ZIP
-    // ----------------------------------------------
-    header("Content-Type: application/zip");
-    header("Content-Disposition: attachment; filename=pipeline.zip");
-    header("Content-Length: " . filesize($zipPath));
-    readfile($zipPath);
-    exit;
-
-break;
-
+        $zipPath = "$tempDir/pipeline.zip";
+        $zip = new ZipArchive();
+        $zip->open($zipPath, ZipArchive::CREATE | ZipArchive::OVERWRITE);
+        $zip->addFile("$tempDir/.github/workflows/pipeline.yml", ".github/workflows/pipeline.yml");
+        $zip->close();
+        header("Content-Type: application/zip");
+        header("Content-Disposition: attachment; filename=pipeline.zip");
+        header("Content-Length: " . filesize($zipPath));
+        readfile($zipPath);
+        exit;
+        break;
 
     case 'get_datos_ver_recurrente':
         $datos = $proyecto->get_datos_ver_recurrente($_POST['id_proyecto_cantidad_servicios']);
@@ -1794,14 +1801,12 @@ break;
             $_POST['fech_crea'],
             $_POST['est']
         );
-
         echo json_encode([
             "Status" => "success",
             "id_proyecto_gestionado" => $id_proyecto_gestionado
         ]);
         http_response_code(200);
         break;
-
 
     case 'insert_dimensionamiento_recurrente_proy_gestionado':
         $proyecto->insert_dimensionamiento_recurrente_proy_gestionado($_POST['id_proyecto_gestionado'], $_POST['hs_dimensionadas'], $_POST['usu_crea']);
