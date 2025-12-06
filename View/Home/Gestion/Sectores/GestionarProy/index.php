@@ -204,10 +204,13 @@ if (isset($_SESSION['usu_id'])) {
                                         </span>
                                         <br>
 
-                                        <span onclick="descargarPipeline(<?php echo Openssl::get_ssl_decrypt($_GET['pg']) ?>)"
-                                            type="button" class="badge border border-dark text-light py-2 px-2 mx-2 mt-2 mb-3 d-inline-flex align-items-center gap-2 w-auto" style="background-color: palevioletred;">
-                                            Descargar pipeline
-                                        </span>
+                                        <div id="contDescargarPipeline">
+                                            <span onclick="descargarPipeline(<?php echo Openssl::get_ssl_decrypt($_GET['pg']) ?>)"
+                                                type="button" class="badge border border-dark text-light py-2 px-2 mx-2 mt-2 mb-3 d-inline-flex align-items-center gap-2 w-auto" style="background-color: palevioletred; display: none;">
+                                                Descargar pipeline
+                                            </span>
+                                        </div>
+
 
                                     </div>
                                     <div class="col-xl-2 bg-success" style="max-height: 500px;border-radius: 5px;">
@@ -384,6 +387,12 @@ if (isset($_SESSION['usu_id'])) {
                 },
                 function(data, textStatus, jqXHR) {
                     console.log(data);
+
+                    if (data.cat_nom == "SAST") {
+                        $("#contDescargarPipeline").show();
+                    } else {
+                        $("#contDescargarPipeline").hide();
+                    }
 
                     if (data.workshop == "SI") {
                         document.getElementById("workshop").style.display = "flex";
@@ -854,7 +863,9 @@ if (isset($_SESSION['usu_id'])) {
 
         function descargarPipeline(id) {
             $("#ModalVerTecnologiasPipeline").modal("show");
-            $.post("../../../../../Controller/ctrProyectos.php?proy=getDatosCliente", {id:id},
+            $.post("../../../../../Controller/ctrProyectos.php?proy=getDatosCliente", {
+                    id: id
+                },
                 function(data, textStatus, jqXHR) {
                     $("#id_proyecto_gestionado_pipeline").val(data.id);
                     $("#refProy_pipeline").val(data.refProy);
