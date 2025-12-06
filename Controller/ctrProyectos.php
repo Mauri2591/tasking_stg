@@ -1711,13 +1711,20 @@ switch ($_GET['proy']) {
         $id   = $_POST['id_proyecto_gestionado'];
         $ref  = $_POST['refProy'];
         $rs   = $_POST['client_rs'];
+
+        // Nombre carpeta: Cliente-UnionAgricolaDeAvellanedaCooperativaLimitada_Pg-6
         $carpeta = convertirNombrePipeline($rs, $id);
-        $pipeline = "
-name: SAST Scan CI/CD
+
+        // Nombre del pipeline para GitHub Actions:
+        // "SAST Scan – Cliente Unión Agrícola De Avellaneda Cooperativa Limitada Pg-6"
+        $nombrePipeline = "SAST Scan – Cliente {$rs} Pg-{$id}";
+
+        $pipeline = <<<YAML
+name: "$nombrePipeline"
 
 on:
   push:
-    branches: [\"main\"]
+    branches: ["main"]
   pull_request:
 
 jobs:
@@ -1735,16 +1742,16 @@ jobs:
       - name: Generar timestamp Argentina (UTC-3)
         id: timestamp
         run: |
-          export TZ=\"America/Argentina/Buenos_Aires\"
-          echo \"stamp=\$(date +'%Y_%m_%d__%H-%M-%S')\" >> \$GITHUB_ENV
+          export TZ="America/Argentina/Buenos_Aires"
+          echo "stamp=\$(date +'%Y_%m_%d__%H-%M-%S')" >> \$GITHUB_ENV
 
       - name: Ejecutar Semgrep
         run: |
           semgrep scan --config auto --json > $carpeta/resultados__\${stamp}.json
         env:
-          SEMGREP_REDUCE_FP: \"1\"
-          SEMGREP_DISABLE_DEEP_SEMANTIC: \"1\"
-          SEMGREP_EXIT_CODE: \"0\"
+          SEMGREP_REDUCE_FP: "1"
+          SEMGREP_DISABLE_DEEP_SEMANTIC: "1"
+          SEMGREP_EXIT_CODE: "0"
           stamp: \${{ env.stamp }}
 
       - name: Guardar resultados como artifact
@@ -1752,30 +1759,26 @@ jobs:
         with:
           name: semgrep-report-\${{ env.stamp }}
           path: $carpeta/resultados__\${{ env.stamp }}.json
-";
+YAML;
 
         $tempDir = sys_get_temp_dir() . "/pipeline_" . uniqid();
         mkdir("$tempDir/.github/workflows", 0777, true);
 
         file_put_contents("$tempDir/.github/workflows/pipeline.yml", $pipeline);
 
+        $zipName = "pipeline-" . convertirNombrePipeline($rs, $id) . ".zip";
+
         $zipPath = "$tempDir/pipeline.zip";
         $zip = new ZipArchive();
         $zip->open($zipPath, ZipArchive::CREATE | ZipArchive::OVERWRITE);
         $zip->addFile("$tempDir/.github/workflows/pipeline.yml", ".github/workflows/pipeline.yml");
         $zip->close();
+
         header("Content-Type: application/zip");
-        header("Content-Disposition: attachment; filename=pipeline.zip");
+        header("Content-Disposition: attachment; filename=$zipName");
         header("Content-Length: " . filesize($zipPath));
         readfile($zipPath);
         exit;
-        break;
-
-    case 'get_datos_ver_recurrente':
-        $datos = $proyecto->get_datos_ver_recurrente($_POST['id_proyecto_cantidad_servicios']);
-        foreach ($datos as $key => $value) {
-            echo '<span class="badge bg-primary border border-dark fs-11 text-light">' . $key . '</span>' . " " . $value . "<hr class=my-1 py-1>";
-        }
         break;
 
     case 'get_datos_recurrente_para_insert':
