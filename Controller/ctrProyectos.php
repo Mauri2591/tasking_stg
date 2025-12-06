@@ -1675,19 +1675,27 @@ switch ($_GET['proy']) {
         echo json_encode($proyecto->getDatosCliente($_POST['id']));
         break;
 
-    case 'descargarPipeline':
-        if (isset($_POST['comboHerramienta']) && isset($_POST['btnDescargarPipeline'])) {
-            // Datos del formulario para SEMGREP
-            $id = $_POST['id_proyecto_gestionado'];
-            $refProy = $_POST['refProy'];
-            $client_rs = $_POST['client_rs'];
+case 'descargarPipeline':
 
-            $yaml = "
+    // ----------------------------------------------
+    // 1. OBTENER DATOS DEL FORMULARIO
+    // ----------------------------------------------
+    $id   = $_POST['id_proyecto_gestionado'];
+    $ref  = $_POST['refProy'];
+    $rs   = $_POST['client_rs'];
+
+    // Normalizar nombre de carpeta (sin espacios)
+    $carpeta = "cliente-" . preg_replace('/\s+/', '_', $rs) . "-proy-" . $id;
+
+    // ----------------------------------------------
+    // 2. YAML COMPLETO DEL PIPELINE
+    // ----------------------------------------------
+    $pipeline = "
 name: SAST Scan CI/CD
 
 on:
   push:
-    branches: [ \"main\" ]
+    branches: [\"main\"]
   pull_request:
 
 jobs:
@@ -1695,14 +1703,12 @@ jobs:
     runs-on: self-hosted
 
     steps:
-      - name: Datos del proyecto
-        run: |
-          echo \"ID Proyecto: $id\"
-          echo \"Cliente: $client_rs\"
-          echo \"Referencia: $refProy\"
-
       - name: Checkout del repositorio
         uses: actions/checkout@v4
+
+      - name: Crear carpeta de cliente
+        run: |
+          mkdir -p $carpeta
 
       - name: Generar timestamp Argentina (UTC-3)
         id: timestamp
@@ -1712,9 +1718,7 @@ jobs:
 
       - name: Ejecutar Semgrep
         run: |
-          semgrep scan \\
-            --config auto \\
-            --json > resultados__\${stamp}.json
+          semgrep scan --config auto --json > $carpeta/resultados__\${stamp}.json
         env:
           SEMGREP_REDUCE_FP: \"1\"
           SEMGREP_DISABLE_DEEP_SEMANTIC: \"1\"
@@ -1725,43 +1729,39 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: semgrep-report-\${{ env.stamp }}
-          path: resultados__\${{ env.stamp }}.json
+          path: $carpeta/resultados__\${{ env.stamp }}.json
 ";
 
+    // ----------------------------------------------
+    // 3. CREAR CARPETA TEMPORAL
+    // ----------------------------------------------
+    $tempDir = sys_get_temp_dir() . "/pipeline_" . uniqid();
+    mkdir("$tempDir/.github/workflows", 0777, true);
 
-            $tmpFolder = sys_get_temp_dir() . "/pipeline_" . uniqid();
-            mkdir($tmpFolder, 0777, true);
+    // ----------------------------------------------
+    // 4. GUARDAR pipeline.yml
+    // ----------------------------------------------
+    file_put_contents("$tempDir/.github/workflows/pipeline.yml", $pipeline);
 
-            mkdir($tmpFolder . "/.github/workflow", 0777, true);
+    // ----------------------------------------------
+    // 5. CREAR ZIP
+    // ----------------------------------------------
+    $zipPath = "$tempDir/pipeline.zip";
+    $zip = new ZipArchive();
+    $zip->open($zipPath, ZipArchive::CREATE | ZipArchive::OVERWRITE);
+    $zip->addFile("$tempDir/.github/workflows/pipeline.yml", ".github/workflows/pipeline.yml");
+    $zip->close();
 
-            // Crear archivo pipeline.yml
-            file_put_contents($tmpFolder . "/.github/workflow/pipeline.yml", $yaml);
+    // ----------------------------------------------
+    // 6. DESCARGA DEL ZIP
+    // ----------------------------------------------
+    header("Content-Type: application/zip");
+    header("Content-Disposition: attachment; filename=pipeline.zip");
+    header("Content-Length: " . filesize($zipPath));
+    readfile($zipPath);
+    exit;
 
-            $zipPath = $tmpFolder . "/pipeline.zip";
-            $zip = new ZipArchive();
-
-            if ($zip->open($zipPath, ZipArchive::CREATE) === TRUE) {
-                // agregar archivo respetando las carpetas internas
-                $zip->addFile($tmpFolder . "/.github/workflow/pipeline.yml", ".github/workflow/pipeline.yml");
-                $zip->close();
-            } else {
-                die("No se pudo crear el ZIP");
-            }
-
-            header("Content-Type: application/zip");
-            header("Content-Disposition: attachment; filename=pipeline.zip");
-            header("Content-Length: " . filesize($zipPath));
-            readfile($zipPath);
-
-            // Borrar archivos temporales
-            unlink($tmpFolder . "/.github/workflow/pipeline.yml");
-            rmdir($tmpFolder . "/.github/workflow");
-            rmdir($tmpFolder . "/.github");
-            unlink($zipPath);
-            rmdir($tmpFolder);
-            exit;
-        }
-        break;
+break;
 
 
     case 'get_datos_ver_recurrente':
