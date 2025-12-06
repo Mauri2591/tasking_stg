@@ -52,7 +52,7 @@ switch ($_GET['proy']) {
         break;
 
     case 'update_workshop':
-        $proyecto->update_workshop($_POST['id_proyecto_gestionado'],$_POST['est']);
+        $proyecto->update_workshop($_POST['id_proyecto_gestionado'], $_POST['est']);
         break;
 
     case 'insert_nuevos_host':
@@ -1671,7 +1671,97 @@ switch ($_GET['proy']) {
         echo json_encode($datos);
         break;
 
+    case 'getDatosCliente':
+        echo json_encode($proyecto->getDatosCliente($_POST['id']));
+        break;
 
+    case 'descargarPipeline':
+        if (isset($_POST['comboHerramienta']) && isset($_POST['btnDescargarPipeline'])) {
+            // Datos del formulario para SEMGREP
+            $id = $_POST['id_proyecto_gestionado'];
+            $refProy = $_POST['refProy'];
+            $client_rs = $_POST['client_rs'];
+
+            $yaml = "
+name: SAST Scan CI/CD
+
+on:
+  push:
+    branches: [ \"main\" ]
+  pull_request:
+
+jobs:
+  semgrep-scan:
+    runs-on: self-hosted
+
+    steps:
+      - name: Datos del proyecto
+        run: |
+          echo \"ID Proyecto: $id\"
+          echo \"Cliente: $client_rs\"
+          echo \"Referencia: $refProy\"
+
+      - name: Checkout del repositorio
+        uses: actions/checkout@v4
+
+      - name: Generar timestamp Argentina (UTC-3)
+        id: timestamp
+        run: |
+          export TZ=\"America/Argentina/Buenos_Aires\"
+          echo \"stamp=\$(date +'%Y_%m_%d__%H-%M-%S')\" >> \$GITHUB_ENV
+
+      - name: Ejecutar Semgrep
+        run: |
+          semgrep scan \\
+            --config auto \\
+            --json > resultados__\${stamp}.json
+        env:
+          SEMGREP_REDUCE_FP: \"1\"
+          SEMGREP_DISABLE_DEEP_SEMANTIC: \"1\"
+          SEMGREP_EXIT_CODE: \"0\"
+          stamp: \${{ env.stamp }}
+
+      - name: Guardar resultados como artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: semgrep-report-\${{ env.stamp }}
+          path: resultados__\${{ env.stamp }}.json
+";
+
+
+            $tmpFolder = sys_get_temp_dir() . "/pipeline_" . uniqid();
+            mkdir($tmpFolder, 0777, true);
+
+            mkdir($tmpFolder . "/.github/workflow", 0777, true);
+
+            // Crear archivo pipeline.yml
+            file_put_contents($tmpFolder . "/.github/workflow/pipeline.yml", $yaml);
+
+            $zipPath = $tmpFolder . "/pipeline.zip";
+            $zip = new ZipArchive();
+
+            if ($zip->open($zipPath, ZipArchive::CREATE) === TRUE) {
+                // agregar archivo respetando las carpetas internas
+                $zip->addFile($tmpFolder . "/.github/workflow/pipeline.yml", ".github/workflow/pipeline.yml");
+                $zip->close();
+            } else {
+                die("No se pudo crear el ZIP");
+            }
+
+            header("Content-Type: application/zip");
+            header("Content-Disposition: attachment; filename=pipeline.zip");
+            header("Content-Length: " . filesize($zipPath));
+            readfile($zipPath);
+
+            // Borrar archivos temporales
+            unlink($tmpFolder . "/.github/workflow/pipeline.yml");
+            rmdir($tmpFolder . "/.github/workflow");
+            rmdir($tmpFolder . "/.github");
+            unlink($zipPath);
+            rmdir($tmpFolder);
+            exit;
+        }
+        break;
 
 
     case 'get_datos_ver_recurrente':

@@ -111,7 +111,7 @@
                 success: function(response) {
                     Swal.fire({
                         icon: "success",
-                        title: "Perfil actualizado",
+                        title: "Bien",
                         text: response.Success,
                         timer: 1500,
                         showConfirmButton: false

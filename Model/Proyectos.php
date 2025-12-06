@@ -1943,6 +1943,17 @@ ORDER BY cantidad_proyectos DESC";
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    public function getDatosCliente($id){
+        $conn=parent::get_conexion();
+        $sql="SELECT id, refProy, clientes.client_rs FROM proyecto_gestionado 
+        INNER JOIN proyectos ON proyecto_gestionado.id_proyecto_cantidad_servicios=proyectos.proy_id 
+        INNER JOIN clientes ON proyectos.client_id=clientes.client_id WHERE proyecto_gestionado.id=:id";
+        $stmt=$conn->prepare($sql);
+        $stmt->bindValue(":id",$id,PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
 
     public function get_sectores_x_sector_id($sector_id)
     {

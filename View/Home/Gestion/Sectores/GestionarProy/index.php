@@ -24,7 +24,9 @@ if (isset($_SESSION['usu_id'])) {
     <div class="page-content">
         <div class="container-fluid">
 
-            <?php include_once __DIR__ . "/../Modales/mdlAgregarUsuarioProy.php"; ?>
+            <?php include_once __DIR__ . "/../Modales/mdlAgregarUsuarioProy.php";
+            include_once __DIR__ . "/../Modales/mdlPipeline.php";
+            ?>
 
             <!-- start page title -->
             <div class="row">
@@ -106,7 +108,7 @@ if (isset($_SESSION['usu_id'])) {
                                                 <span id="rechequeo" style="display: none; color:orangered" class="badge ml-1 border border-dark bg-light"></span>
                                                 <span id="proy_recurrencia" style="display: none; color:orangered" class="badge ml-1 border border-dark bg-light"></span>
                                                 <span id="workshop" style="display: flex;" class="badge mx-1 text-light border border-dark bg-info">workshop</span>
-                                                
+
                                                 <span
                                                     class="badge bg-light border border-dark text-dark mx-2 mb-1">Detalle:</span>
                                             </div>
@@ -200,6 +202,13 @@ if (isset($_SESSION['usu_id'])) {
                                             <span title="Descargar el documento adjunto en el proyecto"
                                                 id="documento_proy"></span>
                                         </span>
+                                        <br>
+
+                                        <span onclick="descargarPipeline(<?php echo Openssl::get_ssl_decrypt($_GET['pg']) ?>)"
+                                            type="button" class="badge border border-dark text-light py-2 px-2 mx-2 mt-2 mb-3 d-inline-flex align-items-center gap-2 w-auto" style="background-color: palevioletred;">
+                                            Descargar pipeline
+                                        </span>
+
                                     </div>
                                     <div class="col-xl-2 bg-success" style="max-height: 500px;border-radius: 5px;">
                                         <div style="min-height: 250px;">
@@ -314,6 +323,8 @@ if (isset($_SESSION['usu_id'])) {
                 "html"
             );
 
+
+
             $.post("../../../../../Controller/ctrProyectos.php?proy=validar_boton_mostrar_agregar_usuario_proy", {
                 id_proyecto_gestionado: id_proyecto_gestionado
             }, function(data) {
@@ -366,13 +377,15 @@ if (isset($_SESSION['usu_id'])) {
 
             validar_boton_usuario_asignado_y_calidad()
 
+
+
             $.post("../../../../../Controller/ctrProyectos.php?proy=get_datos_proyecto_gestionado", {
                     id: id_proyecto_gestionado
                 },
                 function(data, textStatus, jqXHR) {
                     console.log(data);
 
-                     if (data.workshop == "SI") {
+                    if (data.workshop == "SI") {
                         document.getElementById("workshop").style.display = "flex";
                     } else {
                         document.getElementById("workshop").style.display = "none";
@@ -838,6 +851,19 @@ if (isset($_SESSION['usu_id'])) {
             }
             finalizar_proyecto(id_proyecto_gestionado)
         });
+
+        function descargarPipeline(id) {
+            $("#ModalVerTecnologiasPipeline").modal("show");
+            $.post("../../../../../Controller/ctrProyectos.php?proy=getDatosCliente", {id:id},
+                function(data, textStatus, jqXHR) {
+                    $("#id_proyecto_gestionado_pipeline").val(data.id);
+                    $("#refProy_pipeline").val(data.refProy);
+                    $("#client_rs_pipeline").val(data.client_rs);
+                },
+                "json"
+            );
+            document.getElementById("formPipelineHerramienta").reset();
+        }
 
 
         function agregarUsuario() {
