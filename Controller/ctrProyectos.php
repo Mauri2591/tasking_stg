@@ -1699,9 +1699,9 @@ switch ($_GET['proy']) {
         ?>
             <span onclick="descargarPipeline(<?php echo $datos->id ?>)"
                 type="button"
-                class="badge border border-dark text-light py-1 px-2 mx-2 mt-2 mb-3 d-inline-flex align-items-center gap-2 w-auto"
-                style="background-color: palevioletred; display: none;">
-                Descargar pipeline <i class="ri-code-s-slash-fill fs-16 text-light"></i>
+                class="badge bg-dark py-1 px-2 mx-2 mb-3 d-inline-flex align-items-center gap-2 w-auto"
+                style="color: palevioletred; display: none;">
+                Descargar pipeline <i class="ri-code-s-slash-fill fs-16" style="color: palevioletred;"></i>
             </span>
 <?php
         }

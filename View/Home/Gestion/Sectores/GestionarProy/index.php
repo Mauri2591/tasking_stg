@@ -88,7 +88,7 @@ if (isset($_SESSION['usu_id'])) {
                                         <div class="col-xl-5 bg-success" style="margin-right: 5px; border-radius: 5px;">
                                             <div class="d-flex align-items-center">
                                                 <div class="d-flex align-items-center mt-1">
-                                                    <span id="prioridad" class="badge mx-1"></span>
+                                                    <span id="prioridad" class="badge mx-1" style="width: 3rem;"></span>
                                                     <span id="titulo_categoria"
                                                         class="badge bg-light text-dark border border-primary mx-2"></span>
                                                     <span id="titulo_subCategoria"
@@ -197,7 +197,7 @@ if (isset($_SESSION['usu_id'])) {
                                             </div><!-- end card body -->
                                         </div><!-- end card -->
                                         <span
-                                            class="badge bg-light border border-dark text-dark mx-2 mt-2 mb-3 d-inline-flex align-items-center gap-2 w-auto">
+                                            class="badge bg-dark text-success mx-2 mt-2 mb-3 d-inline-flex align-items-center gap-2 w-auto">
                                             Documento:
                                             <span title="Descargar el documento adjunto en el proyecto"
                                                 id="documento_proy"></span>
