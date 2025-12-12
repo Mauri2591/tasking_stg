@@ -1697,11 +1697,11 @@ switch ($_GET['proy']) {
         $datos = $proyecto->get_datos_proyecto_gestionado($_POST['id']);
         if ($datos->cat_id == 12) {
         ?>
-            <span onclick="descargarPipeline(<?php echo $datos->id ?>)"
-                type="button"
+            <span
                 class="badge bg-dark py-1 px-2 mx-2 mb-3 d-inline-flex align-items-center gap-2 w-auto"
                 style="color: palevioletred; display: none;">
-                Descargar pipeline <i class="ri-code-s-slash-fill fs-16" style="color: palevioletred;"></i>
+                Descargar pipeline <i onclick="descargarPipeline(<?php echo $datos->id ?>)"
+                    type="button" title="Descargar pipeline del cliente" class="ri-code-s-slash-fill fs-16" style="color: palevioletred;"></i>
             </span>
 <?php
         }
@@ -1712,11 +1712,8 @@ switch ($_GET['proy']) {
         $ref  = $_POST['refProy'];
         $rs   = $_POST['client_rs'];
 
-        // Nombre carpeta: Cliente-UnionAgricolaDeAvellanedaCooperativaLimitada_Pg-6
         $carpeta = convertirNombrePipeline($rs, $id);
 
-        // Nombre del pipeline para GitHub Actions:
-        // "SAST Scan – Cliente Unión Agrícola De Avellaneda Cooperativa Limitada Pg-6"
         $nombrePipeline = "SAST Scan – Cliente {$rs} Pg-{$id}";
 
         $pipeline = <<<YAML
@@ -1769,10 +1766,44 @@ YAML;
         $zipName = "pipeline-" . convertirNombrePipeline($rs, $id) . ".zip";
 
         $zipPath = "$tempDir/pipeline.zip";
+
+
         $zip = new ZipArchive();
         $zip->open($zipPath, ZipArchive::CREATE | ZipArchive::OVERWRITE);
+
+        // Agregar el pipeline YAML dentro de .github
         $zip->addFile("$tempDir/.github/workflows/pipeline.yml", ".github/workflows/pipeline.yml");
+
+        // Crear archivo de instrucciones
+        $instrucciones = <<<TXT
+Guía de Implementación del Pipeline SAST en GitHub Actions:
+
+    1) Copiar la carpeta .github a la raíz del repositorio.
+            Ejemplo: /<repositorio>/.github/workflows/pipeline.yml
+
+    2) Confirmar que el repositorio tenga activado GitHub Actions.
+
+    3) Registrar el runner self-hosted desde:
+    Settings → Actions → Runners → New self-hosted runner.
+
+    4) Enviar a EH la URL del repositorio y el token generado a fin de configurar un nuevo Run Scanner.
+            Aclaracion: El token tiene una vida útil de 1 hora.
+
+    5) Realizar un push a la rama correspondiente para ejecutar el primer análisis.
+
+    6) Podrán verificar el status de escaneo en cada commit.
+
+Ante cualquier duda o consulta, contactarse por email.
+TXT;
+
+        // Guardar el archivo instrucciones.txt en la carpeta temporal
+        file_put_contents("$tempDir/instrucciones.txt", $instrucciones);
+
+        // Añadirlo al ZIP en la raíz (NO dentro de .github)
+        $zip->addFile("$tempDir/instrucciones.txt", "instrucciones.txt");
+
         $zip->close();
+
 
         header("Content-Type: application/zip");
         header("Content-Disposition: attachment; filename=$zipName");

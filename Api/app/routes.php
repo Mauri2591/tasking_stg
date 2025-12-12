@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 
@@ -19,6 +20,7 @@ use Slim\Interfaces\RouteCollectorProxyInterface as Group;
 use App\Domain\User\UserRepository;
 
 use Dotenv\Dotenv;
+
 $dotenv = Dotenv::createImmutable(dirname(__DIR__, 2));
 $dotenv->load();
 
@@ -26,7 +28,7 @@ return function (App $app) {
 
 
     $app->get('/', function (Request $request, Response $response) {
-        $response->getBody()->write('<strong>Bienvenido a la API de Tasking.</strong> Si necesita ayuda, escríbale a Mauricio R. González del equipo de Ethickal Hacking');
+        $response->getBody()->write('<strong>Bienvenido a la API de Tasking.</strong> Si necesita ayuda, póngase en contacto con el equipo de Ethickal Hacking');
         return $response;
     });
 
@@ -34,7 +36,7 @@ return function (App $app) {
 
     /** LOGIN: Genera Access Token + Refresh Token */
     $app->post('/login', function (Request $request, Response $response) use ($app) {
-        
+
         $data = $request->getParsedBody();
         $usu_nom = $data['usuario'] ?? '';
         $pass = $data['password'] ?? '';
@@ -55,9 +57,7 @@ return function (App $app) {
                 // 'exp' => time() + 60 // prueba que expire en 1 minuto
             ];
 
-
             $accessToken = JWT::encode($payload, $_ENV['JWT_SECRET'], 'HS256');
-                    
 
             // Refresh Token (expira en 7 días)
             $refreshToken = bin2hex(random_bytes(32));
@@ -140,6 +140,29 @@ return function (App $app) {
 
         $response->getBody()->write(json_encode(['message' => 'Logout exitoso']));
         return $response->withHeader('Content-Type', 'application/json');
+    });
+
+    $app->get('/clientes', function (Request $request, Response $response) use ($app) {
+        $authHeader = $request->getHeaderLine('Authorization');
+        if (!$authHeader || !preg_match('/Bearer\s(\S+)/', $authHeader, $matches)) {
+            $response->getBody()->write(json_encode(['error' => 'Token no proporcionado']));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(401);
+        }
+        $token = $matches[1];
+        try {
+            $decoded = JWT::decode($token, new Key($_ENV['JWT_SECRET'], 'HS256'));
+        } catch (Exception $e) {
+            $response->getBody()->write(json_encode(['error' => 'Token inválido o expirado']));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(403);
+        }
+        // 2. Ejecutar la consulta
+        $pdo = $app->getContainer()->get(PDO::class);
+        $sql = "SELECT client_id,client_rs,pais_id,client_cuit,client_correo,client_tel, est AS estado FROM clientes";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute();
+        $rows= $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $response->getBody()->write(json_encode($rows, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+        return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
     });
 
     $app->get('/proyectosTasking', function (Request $request, Response $response) use ($app) {
@@ -278,6 +301,422 @@ return function (App $app) {
         return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
     });
 
+    $app->get('/proyectosTaskingEhAbiertos', function (Request $request, Response $response) use ($app) {
+        // 1. Validar token JWT
+        $authHeader = $request->getHeaderLine('Authorization');
+
+        if (!$authHeader || !preg_match('/Bearer\s(\S+)/', $authHeader, $matches)) {
+            $response->getBody()->write(json_encode(['error' => 'Token no proporcionado']));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(401);
+        }
+
+        $token = $matches[1];
+
+        try {
+            $decoded = JWT::decode($token, new Key($_ENV['JWT_SECRET'], 'HS256'));
+        } catch (Exception $e) {
+            $response->getBody()->write(json_encode(['error' => 'Token inválido o expirado']));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(403);
+        }
+
+        // 2. Ejecutar la consulta
+        $pdo = $app->getContainer()->get(PDO::class);
+        $sql = "SELECT 
+            pg.id AS id_proyecto,
+            clientes.client_id AS id_cliente,
+            clientes.client_rs AS nombre_cliente,
+            pg.titulo AS titulo_proyecto,
+            pg.refProy AS referencia,
+            pg.prioridad_id AS id_prioridad,
+            prioridad.prioridad,
+            prr.posicion_recurrencia AS recurrencia,
+            IF(workshop.est = 1,'SI','NO') AS workshop,
+            IF(pr.id IS NOT NULL,'SI','NO') AS rechequeo,
+            IF(pg.descripcion = '', NULL, pg.descripcion) AS descripcion_proyecto,
+            IF(pg.fech_inicio = '', NULL, pg.fech_inicio) AS fecha_inicio,
+            IF(pg.fech_fin = '', NULL, pg.fech_fin) AS fecha_fin,
+            pg.fech_vantive,
+            GROUP_CONCAT(DISTINCT up.usu_asignado) AS ids_usuarios_asignados,
+            GROUP_CONCAT(DISTINCT tu.usu_nom) AS nombres_usuarios_asignados,
+            pg.estados_id AS id_estado_proyecto,
+            te.estados_nombre AS nombre_estado_proyecto,
+            tc.cat_id AS producto_id,
+            tc.cat_nom AS producto_nombre,
+            tm_subcategoria.cats_id AS tipo_id,
+            tm_subcategoria.cats_nom AS tipo_nombre,
+            d.hs_dimensionadas,
+            CONCAT(
+                '{',
+                '\"ips\": [', IFNULL(GROUP_CONCAT(DISTINCT CASE WHEN h.tipo = 'IP' THEN CONCAT('\"', h.host, '\"') END SEPARATOR ','), ''), '],',
+                '\"urls\": [', IFNULL(GROUP_CONCAT(DISTINCT CASE WHEN h.tipo = 'URL' THEN CONCAT('\"', h.host, '\"') END SEPARATOR ','), ''), '],',
+                '\"otros\": [', IFNULL(GROUP_CONCAT(DISTINCT CASE WHEN h.tipo NOT IN ('IP','URL') THEN CONCAT('\"', h.host, '\"') END SEPARATOR ','), ''), ']',
+                '}'
+            ) AS hosts
+        FROM proyecto_gestionado pg
+        LEFT JOIN usuario_proyecto up ON pg.id = up.id_proyecto_gestionado
+        LEFT JOIN tm_usuario tu ON up.usu_asignado = tu.usu_id
+        LEFT JOIN tm_estados te ON pg.estados_id = te.estados_id
+        LEFT JOIN tm_categoria tc ON pg.cat_id = tc.cat_id
+        LEFT JOIN tm_subcategoria ON pg.cats_id = tm_subcategoria.cats_id
+        LEFT JOIN proyecto_rechequeo pr ON pg.id = pr.id_proyecto_gestionado
+        LEFT JOIN proyecto_recurrencia prr ON pg.id = prr.id_proyecto_gestionado
+        LEFT JOIN dimensionamiento d ON pg.id = d.id_proyecto_gestionado
+        LEFT JOIN hosts h ON pg.id = h.id_proyecto_gestionado AND h.est = 1
+        LEFT JOIN workshop ON pg.id=workshop.id_proyecto_gestionado
+        LEFT JOIN sectores on PG.sector_id=sectores.sector_id
+        INNER JOIN prioridad ON pg.prioridad_id=prioridad.id
+        INNER JOIN proyecto_cantidad_servicios pcs ON pg.id_proyecto_cantidad_servicios = pcs.id
+        INNER JOIN proyectos ON pcs.proy_id = proyectos.proy_id
+        INNER JOIN clientes ON proyectos.client_id = clientes.client_id
+        WHERE pg.estados_id IN(2) AND sectores.sector_id=1
+        GROUP BY pg.id";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute();
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        if (empty($rows)) {
+            $response->getBody()->write(json_encode(['error' => 'Sin datos']));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(404);
+        }
+
+        // 3. Transformar datos
+        foreach ($rows as &$row) {
+            $row['hosts'] = json_decode($row['hosts'], true);
+
+            // Cliente
+            $row['cliente'] = [
+                'id' => $row['id_cliente'],
+                'nombre' => $row['nombre_cliente']
+            ];
+
+            // Usuarios
+            $row['usuarios'] = [
+                'ids' => $row['ids_usuarios_asignados'] ? explode(',', $row['ids_usuarios_asignados']) : [],
+                'nombres' => $row['nombres_usuarios_asignados'] ? explode(',', $row['nombres_usuarios_asignados']) : []
+            ];
+
+            // Producto
+            $row['producto'] = [
+                'id' => $row['producto_id'],
+                'nombre' => $row['producto_nombre']
+            ];
+
+            // Tipo
+            $row['tipo'] = [
+                'id' => $row['tipo_id'],
+                'nombre' => $row['tipo_nombre']
+            ];
+
+            $row['prioridad'] = [
+                'id' => $row['id_prioridad'],
+                'nombre' => $row['prioridad']
+            ];
+
+            //Estados
+            $row['estado'] = [
+                'id' => $row['id_estado_proyecto'],
+                'nombre' => $row['nombre_estado_proyecto']
+            ];
+
+            // Eliminar campos planos
+            unset(
+                $row['id_cliente'],
+                $row['nombre_cliente'],
+                $row['ids_usuarios_asignados'],
+                $row['nombres_usuarios_asignados'],
+                $row['producto_id'],
+                $row['producto_nombre'],
+                $row['tipo_id'],
+                $row['tipo_nombre'],
+                $row['id_estado_proyecto'],
+                $row['nombre_estado_proyecto'],
+                $row['id_prioridad']
+            );
+        }
+        $response->getBody()->write(json_encode($rows, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+        return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+    });
+
+
+    $app->get('/proyectosTaskingEhPorEstado/{estados_id}', function (Request $request, Response $response, array $args) use ($app) {
+        // 1. Validar token JWT
+        $authHeader = $request->getHeaderLine('Authorization');
+        // Preparo el parametro 
+        $estados_id = (int) $args['estados_id'] ?? 0;
+
+        if (!$authHeader || !preg_match('/Bearer\s(\S+)/', $authHeader, $matches)) {
+            $response->getBody()->write(json_encode(['error' => 'Token no proporcionado']));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(401);
+        }
+
+        $token = $matches[1];
+
+        try {
+            $decoded = JWT::decode($token, new Key($_ENV['JWT_SECRET'], 'HS256'));
+        } catch (Exception $e) {
+            $response->getBody()->write(json_encode(['error' => 'Token inválido o expirado']));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(403);
+        }
+
+        // 2. Ejecutar la consulta
+        $pdo = $app->getContainer()->get(PDO::class);
+        $sql = "SELECT 
+            pg.id AS id_proyecto,
+            clientes.client_id AS id_cliente,
+            clientes.client_rs AS nombre_cliente,
+            pg.titulo AS titulo_proyecto,
+            pg.refProy AS referencia,
+            pg.prioridad_id AS id_prioridad,
+            prioridad.prioridad,
+            prr.posicion_recurrencia AS recurrencia,
+            IF(workshop.est = 1,'SI','NO') AS workshop,
+            IF(pr.id IS NOT NULL,'SI','NO') AS rechequeo,
+            IF(pg.descripcion = '', NULL, pg.descripcion) AS descripcion_proyecto,
+            IF(pg.fech_inicio = '', NULL, pg.fech_inicio) AS fecha_inicio,
+            IF(pg.fech_fin = '', NULL, pg.fech_fin) AS fecha_fin,
+            pg.fech_vantive,
+            GROUP_CONCAT(DISTINCT up.usu_asignado) AS ids_usuarios_asignados,
+            GROUP_CONCAT(DISTINCT tu.usu_nom) AS nombres_usuarios_asignados,
+            pg.estados_id AS id_estado_proyecto,
+            te.estados_nombre AS nombre_estado_proyecto,
+            tc.cat_id AS producto_id,
+            tc.cat_nom AS producto_nombre,
+            tm_subcategoria.cats_id AS tipo_id,
+            tm_subcategoria.cats_nom AS tipo_nombre,
+            d.hs_dimensionadas,
+            CONCAT(
+                '{',
+                '\"ips\": [', IFNULL(GROUP_CONCAT(DISTINCT CASE WHEN h.tipo = 'IP' THEN CONCAT('\"', h.host, '\"') END SEPARATOR ','), ''), '],',
+                '\"urls\": [', IFNULL(GROUP_CONCAT(DISTINCT CASE WHEN h.tipo = 'URL' THEN CONCAT('\"', h.host, '\"') END SEPARATOR ','), ''), '],',
+                '\"otros\": [', IFNULL(GROUP_CONCAT(DISTINCT CASE WHEN h.tipo NOT IN ('IP','URL') THEN CONCAT('\"', h.host, '\"') END SEPARATOR ','), ''), ']',
+                '}'
+            ) AS hosts
+        FROM proyecto_gestionado pg
+        LEFT JOIN usuario_proyecto up ON pg.id = up.id_proyecto_gestionado
+        LEFT JOIN tm_usuario tu ON up.usu_asignado = tu.usu_id
+        LEFT JOIN tm_estados te ON pg.estados_id = te.estados_id
+        LEFT JOIN tm_categoria tc ON pg.cat_id = tc.cat_id
+        LEFT JOIN tm_subcategoria ON pg.cats_id = tm_subcategoria.cats_id
+        LEFT JOIN proyecto_rechequeo pr ON pg.id = pr.id_proyecto_gestionado
+        LEFT JOIN proyecto_recurrencia prr ON pg.id = prr.id_proyecto_gestionado
+        LEFT JOIN dimensionamiento d ON pg.id = d.id_proyecto_gestionado
+        LEFT JOIN hosts h ON pg.id = h.id_proyecto_gestionado AND h.est = 1
+        LEFT JOIN workshop ON pg.id=workshop.id_proyecto_gestionado
+        LEFT JOIN sectores on PG.sector_id=sectores.sector_id
+        INNER JOIN prioridad ON pg.prioridad_id=prioridad.id
+        INNER JOIN proyecto_cantidad_servicios pcs ON pg.id_proyecto_cantidad_servicios = pcs.id
+        INNER JOIN proyectos ON pcs.proy_id = proyectos.proy_id
+        INNER JOIN clientes ON proyectos.client_id = clientes.client_id
+        WHERE pg.estados_id = :estados_id AND sectores.sector_id=1
+        GROUP BY pg.id";
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindValue(":estados_id", $estados_id, PDO::PARAM_INT);
+        $stmt->execute();
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        if (empty($rows)) {
+            $response->getBody()->write(json_encode(['error' => 'Sin datos']));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(404);
+        }
+
+        // 3. Transformar datos
+        foreach ($rows as &$row) {
+            $row['hosts'] = json_decode($row['hosts'], true);
+
+            // Cliente
+            $row['cliente'] = [
+                'id' => $row['id_cliente'],
+                'nombre' => $row['nombre_cliente']
+            ];
+
+            // Usuarios
+            $row['usuarios'] = [
+                'ids' => $row['ids_usuarios_asignados'] ? explode(',', $row['ids_usuarios_asignados']) : [],
+                'nombres' => $row['nombres_usuarios_asignados'] ? explode(',', $row['nombres_usuarios_asignados']) : []
+            ];
+
+            // Producto
+            $row['producto'] = [
+                'id' => $row['producto_id'],
+                'nombre' => $row['producto_nombre']
+            ];
+
+            // Tipo
+            $row['tipo'] = [
+                'id' => $row['tipo_id'],
+                'nombre' => $row['tipo_nombre']
+            ];
+
+            $row['prioridad'] = [
+                'id' => $row['id_prioridad'],
+                'nombre' => $row['prioridad']
+            ];
+
+            //Estados
+            $row['estado'] = [
+                'id' => $row['id_estado_proyecto'],
+                'nombre' => $row['nombre_estado_proyecto']
+            ];
+
+            // Eliminar campos planos
+            unset(
+                $row['id_cliente'],
+                $row['nombre_cliente'],
+                $row['ids_usuarios_asignados'],
+                $row['nombres_usuarios_asignados'],
+                $row['producto_id'],
+                $row['producto_nombre'],
+                $row['tipo_id'],
+                $row['tipo_nombre'],
+                $row['id_estado_proyecto'],
+                $row['nombre_estado_proyecto'],
+                $row['id_prioridad']
+            );
+        }
+        $response->getBody()->write(json_encode($rows, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+        return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+    });
+
+
+    $app->get('/proyectosTaskingEhPorId/{id}', function (Request $request, Response $response, array $args) use ($app) {
+        // 1. Validar token JWT
+        $authHeader = $request->getHeaderLine('Authorization');
+
+        // Preparo el parametro 
+        $id = (int) $args['id'] ?? 0;
+
+        if (!$authHeader || !preg_match('/Bearer\s(\S+)/', $authHeader, $matches)) {
+            $response->getBody()->write(json_encode(['error' => 'Token no proporcionado']));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(401);
+        }
+
+        $token = $matches[1];
+
+        try {
+            $decoded = JWT::decode($token, new Key($_ENV['JWT_SECRET'], 'HS256'));
+        } catch (Exception $e) {
+            $response->getBody()->write(json_encode(['error' => 'Token inválido o expirado']));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(403);
+        }
+
+        // 2. Ejecutar la consulta
+        $pdo = $app->getContainer()->get(PDO::class);
+        $sql = "SELECT 
+            pg.id AS id_proyecto,
+            clientes.client_id AS id_cliente,
+            clientes.client_rs AS nombre_cliente,
+            pg.titulo AS titulo_proyecto,
+            pg.refProy AS referencia,
+            pg.prioridad_id AS id_prioridad,
+            prioridad.prioridad,
+            prr.posicion_recurrencia AS recurrencia,
+            IF(workshop.est = 1,'SI','NO') AS workshop,
+            IF(pr.id IS NOT NULL,'SI','NO') AS rechequeo,
+            IF(pg.descripcion = '', NULL, pg.descripcion) AS descripcion_proyecto,
+            IF(pg.fech_inicio = '', NULL, pg.fech_inicio) AS fecha_inicio,
+            IF(pg.fech_fin = '', NULL, pg.fech_fin) AS fecha_fin,
+            pg.fech_vantive,
+            GROUP_CONCAT(DISTINCT up.usu_asignado) AS ids_usuarios_asignados,
+            GROUP_CONCAT(DISTINCT tu.usu_nom) AS nombres_usuarios_asignados,
+            pg.estados_id AS id_estado_proyecto,
+            te.estados_nombre AS nombre_estado_proyecto,
+            tc.cat_id AS producto_id,
+            tc.cat_nom AS producto_nombre,
+            tm_subcategoria.cats_id AS tipo_id,
+            tm_subcategoria.cats_nom AS tipo_nombre,
+            d.hs_dimensionadas,
+            CONCAT(
+                '{',
+                '\"ips\": [', IFNULL(GROUP_CONCAT(DISTINCT CASE WHEN h.tipo = 'IP' THEN CONCAT('\"', h.host, '\"') END SEPARATOR ','), ''), '],',
+                '\"urls\": [', IFNULL(GROUP_CONCAT(DISTINCT CASE WHEN h.tipo = 'URL' THEN CONCAT('\"', h.host, '\"') END SEPARATOR ','), ''), '],',
+                '\"otros\": [', IFNULL(GROUP_CONCAT(DISTINCT CASE WHEN h.tipo NOT IN ('IP','URL') THEN CONCAT('\"', h.host, '\"') END SEPARATOR ','), ''), ']',
+                '}'
+            ) AS hosts
+        FROM proyecto_gestionado pg
+        LEFT JOIN usuario_proyecto up ON pg.id = up.id_proyecto_gestionado
+        LEFT JOIN tm_usuario tu ON up.usu_asignado = tu.usu_id
+        LEFT JOIN tm_estados te ON pg.estados_id = te.estados_id
+        LEFT JOIN tm_categoria tc ON pg.cat_id = tc.cat_id
+        LEFT JOIN tm_subcategoria ON pg.cats_id = tm_subcategoria.cats_id
+        LEFT JOIN proyecto_rechequeo pr ON pg.id = pr.id_proyecto_gestionado
+        LEFT JOIN proyecto_recurrencia prr ON pg.id = prr.id_proyecto_gestionado
+        LEFT JOIN dimensionamiento d ON pg.id = d.id_proyecto_gestionado
+        LEFT JOIN hosts h ON pg.id = h.id_proyecto_gestionado AND h.est = 1
+        LEFT JOIN workshop ON pg.id=workshop.id_proyecto_gestionado
+        LEFT JOIN sectores on PG.sector_id=sectores.sector_id
+        INNER JOIN prioridad ON pg.prioridad_id=prioridad.id
+        INNER JOIN proyecto_cantidad_servicios pcs ON pg.id_proyecto_cantidad_servicios = pcs.id
+        INNER JOIN proyectos ON pcs.proy_id = proyectos.proy_id
+        INNER JOIN clientes ON proyectos.client_id = clientes.client_id
+        WHERE pg.id = :id AND sectores.sector_id=1
+        GROUP BY pg.id";
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindValue(":id", $id, PDO::PARAM_INT);
+        $stmt->execute();
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        if (empty($rows)) {
+            $response->getBody()->write(json_encode(['error' => 'Sin datos']));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(404);
+        }
+
+        // 3. Transformar datos
+        foreach ($rows as &$row) {
+            $row['hosts'] = json_decode($row['hosts'], true);
+
+            // Cliente
+            $row['cliente'] = [
+                'id' => $row['id_cliente'],
+                'nombre' => $row['nombre_cliente']
+            ];
+
+            // Usuarios
+            $row['usuarios'] = [
+                'ids' => $row['ids_usuarios_asignados'] ? explode(',', $row['ids_usuarios_asignados']) : [],
+                'nombres' => $row['nombres_usuarios_asignados'] ? explode(',', $row['nombres_usuarios_asignados']) : []
+            ];
+
+            // Producto
+            $row['producto'] = [
+                'id' => $row['producto_id'],
+                'nombre' => $row['producto_nombre']
+            ];
+
+            // Tipo
+            $row['tipo'] = [
+                'id' => $row['tipo_id'],
+                'nombre' => $row['tipo_nombre']
+            ];
+
+            $row['prioridad'] = [
+                'id' => $row['id_prioridad'],
+                'nombre' => $row['prioridad']
+            ];
+
+            //Estados
+            $row['estado'] = [
+                'id' => $row['id_estado_proyecto'],
+                'nombre' => $row['nombre_estado_proyecto']
+            ];
+
+            // Eliminar campos planos
+            unset(
+                $row['id_cliente'],
+                $row['nombre_cliente'],
+                $row['ids_usuarios_asignados'],
+                $row['nombres_usuarios_asignados'],
+                $row['producto_id'],
+                $row['producto_nombre'],
+                $row['tipo_id'],
+                $row['tipo_nombre'],
+                $row['id_estado_proyecto'],
+                $row['nombre_estado_proyecto'],
+                $row['id_prioridad']
+            );
+        }
+        $response->getBody()->write(json_encode($rows, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+        return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+    });
 
     // Grupo protegido /users
     $app->group('/users', function (Group $group) {

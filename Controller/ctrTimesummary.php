@@ -204,12 +204,13 @@ switch ($_GET['accion']) {
         // Primero agregamos datosTelecom
         foreach ($datosTelecom as $telecom) {
             $htmlTable .= '
-        <tr>
-            <td class="px-1 text-center fw-bold text-primary">' . htmlspecialchars($telecom['client_rs']) . '</td>
+            <br>
+            <tr>
+            <td class="px-1 text-center">' . htmlspecialchars($telecom['client_rs']) . '</td>
             <td class="px-1 text-center">TELECOM</td>
-            <td class="px-1 text-center">00:00</td>
-            <td class="px-1 text-center">00:00</td>
-            <td class="px-1 text-center">00:00</td>
+            <td class="px-1 text-center bg-light" style="border:.1rem solid gainsboro">-</td>
+            <td class="px-1 text-center bg-light" style="border:.1rem solid gainsboro">-</td>
+            <td class="px-1 text-center bg-light" style="border:.1rem solid gainsboro">-</td>
         </tr>';
         }
 
@@ -220,12 +221,12 @@ switch ($_GET['accion']) {
             <tr>
                 <td class="px-1 text-center">' . substr($val['titulo'], 0, 30) . '</td>
                 <td class="px-1 text-center">' . substr($val['producto'], 0, 10) . '</td>
-                <td class="px-1 text-center fw-bold text-success">' . $val['hs_dimensionadas'] . '</td>
-                <td class="px-1 text-center fw-bold">' . $val['horas_consumidas'] . '</td>
+                <td class="px-1 text-center bg-light" style="border:.1rem solid gainsboro">' . $val['hs_dimensionadas'] . '</td>
+                <td class="px-1 text-center bg-light fw-bold" style="border:.1rem solid gainsboro">' . $val['horas_consumidas'] . '</td>
                 ' . (
                     $val['comparacion_horas'] == "HORAS_TOTAL_MENOR_QUE_DIM"
-                    ? '<td class="px-1 text-center fw-bold text-success">' . $val['horas_total'] . '</td>'
-                    : '<td class="px-1 text-center fw-bold text-danger">' . $val['horas_total'] . '</td>'
+                    ? '<td class="px-1 text-center bg-light fw-bold text-success"  style="border:.1rem solid gainsboro">' . $val['horas_total'] . '</td>'
+                    : '<td class="px-1 text-center bg-light fw-bold text-danger"  style="border:.1rem solid gainsboro">' . $val['horas_total'] . '</td>'
                 ) . '
             </tr>';
             }
@@ -238,12 +239,12 @@ switch ($_GET['accion']) {
                 <tr>
                     <td class="px-1 text-center">' . substr($val['titulo'], 0, 30) . '</td>
                     <td class="px-1 text-center">' . substr($val['producto'], 0, 10) . '</td>
-                    <td class="px-1 text-center fw-bold text-success">' . $val['hs_dimensionadas'] . '</td>
-                    <td class="px-1 text-center fw-bold">' . $val['horas_consumidas'] . '</td>
+                    <td class="px-1 text-center bg-light" style="border:.1rem solid gainsboro">' . $val['hs_dimensionadas'] . '</td>
+                    <td class="px-1 text-center bg-light fw-bold" style="border:.1rem solid gainsboro">' . $val['horas_consumidas'] . '</td>
                     ' . (
                         $val['comparacion_horas'] == "HORAS_TOTAL_MENOR_QUE_DIM"
-                        ? '<td class="px-1 text-center fw-bold text-success">' . $val['horas_total'] . '</td>'
-                        : '<td class="px-1 text-center fw-bold text-danger">' . $val['horas_total'] . '</td>'
+                        ? '<td class="px-1 text-center fw-bold text-success bg-light" style="border:.1rem solid gainsboro">' . $val['horas_total'] . '</td>'
+                        : '<td class="px-1 text-center fw-bold text-danger bg-light" style="border:.1rem solid gainsboro">' . $val['horas_total'] . '</td>'
                     ) . '
                 </tr>';
                     $proyectos_mostrados[] = $id_proyecto;
