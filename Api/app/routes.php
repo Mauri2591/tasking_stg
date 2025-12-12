@@ -28,7 +28,7 @@ return function (App $app) {
 
 
     $app->get('/', function (Request $request, Response $response) {
-        $response->getBody()->write('<strong>Bienvenido a la API de Tasking.</strong> Si necesita ayuda, póngase en contacto con el equipo de Ethickal Hacking');
+        $response->getBody()->write('<strong>Bienvenido a la API de Tasking.</strong> Si necesita ayuda, póngase en contacto con el equipo de Ethickal Hacking. Gracias');
         return $response;
     });
 
