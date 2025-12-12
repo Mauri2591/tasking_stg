@@ -363,7 +363,7 @@ return function (App $app) {
         LEFT JOIN dimensionamiento d ON pg.id = d.id_proyecto_gestionado
         LEFT JOIN hosts h ON pg.id = h.id_proyecto_gestionado AND h.est = 1
         LEFT JOIN workshop ON pg.id=workshop.id_proyecto_gestionado
-        LEFT JOIN sectores on PG.sector_id=sectores.sector_id
+        LEFT JOIN sectores on pg.sector_id=sectores.sector_id
         INNER JOIN prioridad ON pg.prioridad_id=prioridad.id
         INNER JOIN proyecto_cantidad_servicios pcs ON pg.id_proyecto_cantidad_servicios = pcs.id
         INNER JOIN proyectos ON pcs.proy_id = proyectos.proy_id
@@ -502,7 +502,7 @@ return function (App $app) {
         LEFT JOIN dimensionamiento d ON pg.id = d.id_proyecto_gestionado
         LEFT JOIN hosts h ON pg.id = h.id_proyecto_gestionado AND h.est = 1
         LEFT JOIN workshop ON pg.id=workshop.id_proyecto_gestionado
-        LEFT JOIN sectores on PG.sector_id=sectores.sector_id
+        LEFT JOIN sectores on pg.sector_id=sectores.sector_id
         INNER JOIN prioridad ON pg.prioridad_id=prioridad.id
         INNER JOIN proyecto_cantidad_servicios pcs ON pg.id_proyecto_cantidad_servicios = pcs.id
         INNER JOIN proyectos ON pcs.proy_id = proyectos.proy_id
@@ -643,7 +643,7 @@ return function (App $app) {
         LEFT JOIN dimensionamiento d ON pg.id = d.id_proyecto_gestionado
         LEFT JOIN hosts h ON pg.id = h.id_proyecto_gestionado AND h.est = 1
         LEFT JOIN workshop ON pg.id=workshop.id_proyecto_gestionado
-        LEFT JOIN sectores on PG.sector_id=sectores.sector_id
+        LEFT JOIN sectores on pg.sector_id=sectores.sector_id
         INNER JOIN prioridad ON pg.prioridad_id=prioridad.id
         INNER JOIN proyecto_cantidad_servicios pcs ON pg.id_proyecto_cantidad_servicios = pcs.id
         INNER JOIN proyectos ON pcs.proy_id = proyectos.proy_id
