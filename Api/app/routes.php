@@ -157,10 +157,14 @@ return function (App $app) {
         }
         // 2. Ejecutar la consulta
         $pdo = $app->getContainer()->get(PDO::class);
-        $sql = "SELECT client_id,client_rs,pais_id,client_cuit,client_correo,client_tel, est AS estado FROM clientes";
+        $sql = "SELECT client_id,client_rs,client_cuit,client_correo,client_tel, clientes.est 
+            AS estado, IF(clientes.est = 1,'ACTIVO','INACTIVO') 
+            AS estado_descripcion, tm_pais.pais_id, tm_pais.pais_nombre 
+            FROM clientes 
+            INNER JOIN tm_pais ON clientes.pais_id=tm_pais.pais_id";
         $stmt = $pdo->prepare($sql);
         $stmt->execute();
-        $rows= $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
         $response->getBody()->write(json_encode($rows, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
         return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
     });
@@ -186,53 +190,63 @@ return function (App $app) {
         // 2. Ejecutar la consulta
         $pdo = $app->getContainer()->get(PDO::class);
         $sql = "SELECT 
-            pg.id AS id_proyecto,
-            clientes.client_id AS id_cliente,
-            clientes.client_rs AS nombre_cliente,
-            pg.titulo AS titulo_proyecto,
-            pg.refProy AS referencia,
-            pg.prioridad_id AS id_prioridad,
-            prioridad.prioridad,
-            prr.posicion_recurrencia AS recurrencia,
-            IF(workshop.est = 1,'SI','NO') AS workshop,
-            IF(pr.id IS NOT NULL,'SI','NO') AS rechequeo,
-            IF(pg.descripcion = '', NULL, pg.descripcion) AS descripcion_proyecto,
-            IF(pg.fech_inicio = '', NULL, pg.fech_inicio) AS fecha_inicio,
-            IF(pg.fech_fin = '', NULL, pg.fech_fin) AS fecha_fin,
-            pg.fech_vantive,
-            GROUP_CONCAT(DISTINCT up.usu_asignado) AS ids_usuarios_asignados,
-            GROUP_CONCAT(DISTINCT tu.usu_nom) AS nombres_usuarios_asignados,
-            pg.estados_id AS id_estado_proyecto,
-            te.estados_nombre AS nombre_estado_proyecto,
-            tc.cat_id AS producto_id,
-            tc.cat_nom AS producto_nombre,
-            tm_subcategoria.cats_id AS tipo_id,
-            tm_subcategoria.cats_nom AS tipo_nombre,
-            d.hs_dimensionadas,
-            CONCAT(
-                '{',
-                '\"ips\": [', IFNULL(GROUP_CONCAT(DISTINCT CASE WHEN h.tipo = 'IP' THEN CONCAT('\"', h.host, '\"') END SEPARATOR ','), ''), '],',
-                '\"urls\": [', IFNULL(GROUP_CONCAT(DISTINCT CASE WHEN h.tipo = 'URL' THEN CONCAT('\"', h.host, '\"') END SEPARATOR ','), ''), '],',
-                '\"otros\": [', IFNULL(GROUP_CONCAT(DISTINCT CASE WHEN h.tipo NOT IN ('IP','URL') THEN CONCAT('\"', h.host, '\"') END SEPARATOR ','), ''), ']',
-                '}'
+        pg.id AS id_proyecto,
+        clientes.client_id AS id_cliente,
+        clientes.client_rs AS nombre_cliente,
+        pg.titulo AS titulo_proyecto,
+        pg.refProy AS referencia,
+        pg.prioridad_id AS id_prioridad,
+        prioridad.prioridad,
+        prr.posicion_recurrencia AS recurrencia,
+        tm_pais.pais_nombre AS pais_nombre,
+        tm_pais.pais_id AS pais_id,
+        IF(workshop.est = 1,'SI','NO') AS workshop,
+        IF(pr.id IS NOT NULL,'SI','NO') AS rechequeo,
+        IF(pg.descripcion = '', NULL, pg.descripcion) AS descripcion_proyecto,
+        IF(pg.fech_inicio = '', NULL, pg.fech_inicio) AS fecha_inicio,
+        IF(pg.fech_fin = '', NULL, pg.fech_fin) AS fecha_fin,
+        pg.fech_vantive,
+        GROUP_CONCAT(DISTINCT up.usu_asignado) AS ids_usuarios_asignados,
+        GROUP_CONCAT(DISTINCT tu.usu_nom) AS nombres_usuarios_asignados,
+        pg.estados_id AS id_estado_proyecto,
+        te.estados_nombre AS nombre_estado_proyecto,
+        tc.cat_id AS producto_id,
+        tc.cat_nom AS producto_nombre,
+        tm_subcategoria.cats_id AS tipo_id,
+        tm_subcategoria.cats_nom AS tipo_nombre,
+        d.hs_dimensionadas,
+        CONCAT(
+        '{',
+        '\"ips\": [', IFNULL(GROUP_CONCAT(DISTINCT CASE WHEN h.tipo = 'IP' THEN CONCAT('\"', h.host, '\"') END), ''), '],',
+        '\"urls\": [', IFNULL(GROUP_CONCAT(DISTINCT CASE WHEN h.tipo = 'URL' THEN CONCAT('\"', h.host, '\"') END), ''), '],',
+        '\"otros\": [', IFNULL(GROUP_CONCAT(DISTINCT CASE WHEN h.tipo NOT IN ('IP','URL') THEN CONCAT('\"', h.host, '\"') END), ''), ']',
+        '}'
             ) AS hosts
-        FROM proyecto_gestionado pg
-        LEFT JOIN usuario_proyecto up ON pg.id = up.id_proyecto_gestionado
-        LEFT JOIN tm_usuario tu ON up.usu_asignado = tu.usu_id
-        LEFT JOIN tm_estados te ON pg.estados_id = te.estados_id
-        LEFT JOIN tm_categoria tc ON pg.cat_id = tc.cat_id
-        LEFT JOIN tm_subcategoria ON pg.cats_id = tm_subcategoria.cats_id
-        LEFT JOIN proyecto_rechequeo pr ON pg.id = pr.id_proyecto_gestionado
-        LEFT JOIN proyecto_recurrencia prr ON pg.id = prr.id_proyecto_gestionado
-        LEFT JOIN dimensionamiento d ON pg.id = d.id_proyecto_gestionado
-        LEFT JOIN hosts h ON pg.id = h.id_proyecto_gestionado AND h.est = 1
-        LEFT JOIN workshop ON pg.id=workshop.id_proyecto_gestionado
-        INNER JOIN prioridad ON pg.prioridad_id=prioridad.id
-        INNER JOIN proyecto_cantidad_servicios pcs ON pg.id_proyecto_cantidad_servicios = pcs.id
-        INNER JOIN proyectos ON pcs.proy_id = proyectos.proy_id
-        INNER JOIN clientes ON proyectos.client_id = clientes.client_id
-        WHERE pg.estados_id NOT IN(14,15,16,17)
-        GROUP BY pg.id";
+            FROM proyecto_gestionado pg
+            LEFT JOIN usuario_proyecto up ON pg.id = up.id_proyecto_gestionado
+            LEFT JOIN tm_usuario tu ON up.usu_asignado = tu.usu_id
+            LEFT JOIN tm_estados te ON pg.estados_id = te.estados_id
+            LEFT JOIN tm_categoria tc ON pg.cat_id = tc.cat_id
+            LEFT JOIN tm_subcategoria ON pg.cats_id = tm_subcategoria.cats_id
+            LEFT JOIN proyecto_rechequeo pr ON pg.id = pr.id_proyecto_gestionado
+            LEFT JOIN proyecto_recurrencia prr ON pg.id = prr.id_proyecto_gestionado
+            LEFT JOIN dimensionamiento d ON pg.id = d.id_proyecto_gestionado
+            LEFT JOIN hosts h ON pg.id = h.id_proyecto_gestionado AND h.est = 1
+            LEFT JOIN workshop ON pg.id = workshop.id_proyecto_gestionado
+
+            INNER JOIN proyecto_cantidad_servicios pcs 
+                ON pg.id_proyecto_cantidad_servicios = pcs.id
+            INNER JOIN proyectos 
+                ON pcs.proy_id = proyectos.proy_id
+            INNER JOIN clientes 
+                ON proyectos.client_id = clientes.client_id
+            INNER JOIN tm_pais 
+                ON clientes.pais_id = tm_pais.pais_id
+            INNER JOIN prioridad 
+                ON pg.prioridad_id = prioridad.id
+
+            WHERE pg.estados_id NOT IN (14,15,16,17)
+            GROUP BY pg.id";
         $stmt = $pdo->prepare($sql);
         $stmt->execute();
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -250,6 +264,12 @@ return function (App $app) {
             $row['cliente'] = [
                 'id' => $row['id_cliente'],
                 'nombre' => $row['nombre_cliente']
+            ];
+
+            //Paises
+            $row['pais'] = [
+                'id' => $row['pais_id'],
+                'nombre' => $row['pais_nombre']
             ];
 
             // Usuarios
@@ -293,7 +313,9 @@ return function (App $app) {
                 $row['tipo_nombre'],
                 $row['id_estado_proyecto'],
                 $row['nombre_estado_proyecto'],
-                $row['id_prioridad']
+                $row['id_prioridad'],
+                $row['id_pais'],
+                $row['pais_nombre']
             );
         }
 
@@ -351,7 +373,9 @@ return function (App $app) {
                 '\"urls\": [', IFNULL(GROUP_CONCAT(DISTINCT CASE WHEN h.tipo = 'URL' THEN CONCAT('\"', h.host, '\"') END SEPARATOR ','), ''), '],',
                 '\"otros\": [', IFNULL(GROUP_CONCAT(DISTINCT CASE WHEN h.tipo NOT IN ('IP','URL') THEN CONCAT('\"', h.host, '\"') END SEPARATOR ','), ''), ']',
                 '}'
-            ) AS hosts
+            ) AS hosts,
+         tm_pais.pais_id,
+         tm_pais.pais_nombre
         FROM proyecto_gestionado pg
         LEFT JOIN usuario_proyecto up ON pg.id = up.id_proyecto_gestionado
         LEFT JOIN tm_usuario tu ON up.usu_asignado = tu.usu_id
@@ -368,6 +392,7 @@ return function (App $app) {
         INNER JOIN proyecto_cantidad_servicios pcs ON pg.id_proyecto_cantidad_servicios = pcs.id
         INNER JOIN proyectos ON pcs.proy_id = proyectos.proy_id
         INNER JOIN clientes ON proyectos.client_id = clientes.client_id
+        INNER JOIN tm_pais ON clientes.pais_id=tm_pais.pais_id
         WHERE pg.estados_id IN(2) AND sectores.sector_id=1
         GROUP BY pg.id";
         $stmt = $pdo->prepare($sql);
@@ -387,6 +412,12 @@ return function (App $app) {
             $row['cliente'] = [
                 'id' => $row['id_cliente'],
                 'nombre' => $row['nombre_cliente']
+            ];
+
+            //Pais
+            $row['pais'] = [
+                'id' => $row['pais_id'],
+                'nombre' => $row['pais_nombre']
             ];
 
             // Usuarios
@@ -430,7 +461,9 @@ return function (App $app) {
                 $row['tipo_nombre'],
                 $row['id_estado_proyecto'],
                 $row['nombre_estado_proyecto'],
-                $row['id_prioridad']
+                $row['id_prioridad'],
+                $row['pais_id'],
+                $row['pais_nombre']
             );
         }
         $response->getBody()->write(json_encode($rows, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
@@ -490,7 +523,9 @@ return function (App $app) {
                 '\"urls\": [', IFNULL(GROUP_CONCAT(DISTINCT CASE WHEN h.tipo = 'URL' THEN CONCAT('\"', h.host, '\"') END SEPARATOR ','), ''), '],',
                 '\"otros\": [', IFNULL(GROUP_CONCAT(DISTINCT CASE WHEN h.tipo NOT IN ('IP','URL') THEN CONCAT('\"', h.host, '\"') END SEPARATOR ','), ''), ']',
                 '}'
-            ) AS hosts
+            ) AS hosts,
+            tm_pais.pais_id,
+            tm_pais.pais_nombre
         FROM proyecto_gestionado pg
         LEFT JOIN usuario_proyecto up ON pg.id = up.id_proyecto_gestionado
         LEFT JOIN tm_usuario tu ON up.usu_asignado = tu.usu_id
@@ -507,6 +542,7 @@ return function (App $app) {
         INNER JOIN proyecto_cantidad_servicios pcs ON pg.id_proyecto_cantidad_servicios = pcs.id
         INNER JOIN proyectos ON pcs.proy_id = proyectos.proy_id
         INNER JOIN clientes ON proyectos.client_id = clientes.client_id
+        INNER JOIN tm_pais ON clientes.pais_id=tm_pais.pais_id
         WHERE pg.estados_id = :estados_id AND sectores.sector_id=1
         GROUP BY pg.id";
         $stmt = $pdo->prepare($sql);
@@ -527,6 +563,12 @@ return function (App $app) {
             $row['cliente'] = [
                 'id' => $row['id_cliente'],
                 'nombre' => $row['nombre_cliente']
+            ];
+
+            // Pais
+            $row['pais'] = [
+                'id' => $row['pais_id'],
+                'nombre' => $row['pais_nombre']
             ];
 
             // Usuarios
@@ -570,7 +612,10 @@ return function (App $app) {
                 $row['tipo_nombre'],
                 $row['id_estado_proyecto'],
                 $row['nombre_estado_proyecto'],
-                $row['id_prioridad']
+                $row['id_prioridad'],
+                $row['pais_id'],
+                $row['pais_nombre']
+
             );
         }
         $response->getBody()->write(json_encode($rows, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
@@ -631,7 +676,9 @@ return function (App $app) {
                 '\"urls\": [', IFNULL(GROUP_CONCAT(DISTINCT CASE WHEN h.tipo = 'URL' THEN CONCAT('\"', h.host, '\"') END SEPARATOR ','), ''), '],',
                 '\"otros\": [', IFNULL(GROUP_CONCAT(DISTINCT CASE WHEN h.tipo NOT IN ('IP','URL') THEN CONCAT('\"', h.host, '\"') END SEPARATOR ','), ''), ']',
                 '}'
-            ) AS hosts
+            ) AS hosts,
+            tm_pais.pais_id,
+            tm_pais.pais_nombre
         FROM proyecto_gestionado pg
         LEFT JOIN usuario_proyecto up ON pg.id = up.id_proyecto_gestionado
         LEFT JOIN tm_usuario tu ON up.usu_asignado = tu.usu_id
@@ -648,6 +695,7 @@ return function (App $app) {
         INNER JOIN proyecto_cantidad_servicios pcs ON pg.id_proyecto_cantidad_servicios = pcs.id
         INNER JOIN proyectos ON pcs.proy_id = proyectos.proy_id
         INNER JOIN clientes ON proyectos.client_id = clientes.client_id
+        INNER JOIN tm_pais ON clientes.pais_id=tm_pais.pais_id
         WHERE pg.id = :id AND sectores.sector_id=1
         GROUP BY pg.id";
         $stmt = $pdo->prepare($sql);
@@ -668,6 +716,11 @@ return function (App $app) {
             $row['cliente'] = [
                 'id' => $row['id_cliente'],
                 'nombre' => $row['nombre_cliente']
+            ];
+            // Pais
+            $row['pais'] = [
+                'id' => $row['pais_id'],
+                'nombre' => $row['pais_nombre']
             ];
 
             // Usuarios
@@ -711,7 +764,9 @@ return function (App $app) {
                 $row['tipo_nombre'],
                 $row['id_estado_proyecto'],
                 $row['nombre_estado_proyecto'],
-                $row['id_prioridad']
+                $row['id_prioridad'],
+                $row['pais_id'],
+                $row['pais_nombre'],
             );
         }
         $response->getBody()->write(json_encode($rows, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
