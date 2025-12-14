@@ -162,6 +162,17 @@ class Proyectos extends Conexion
         $stmt->execute();
     }
 
+        public function eliminar_proyectos_desarrollo_tasking($id_proyecto_gestionado)
+    {
+        $conn = parent::get_conexion();
+        $sql = "DELETE FROM proyectos_tasking WHERE id_proyecto_gestionado = :id_proyecto_gestionado";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue(":id_proyecto_gestionado", $id_proyecto_gestionado, PDO::PARAM_INT);
+        $stmt->execute();
+    }
+
+    
+
     public function get_datos_proyectos_tasking()
     {
         $conn = parent::get_conexion();

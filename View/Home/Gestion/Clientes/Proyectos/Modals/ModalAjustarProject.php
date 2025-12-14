@@ -246,17 +246,19 @@
 
                             <p id="contenedor_validad_proy_Desa_interno_tasking" class="text-danger my-2"><strong>Atención: <br></strong> Los proyectos de (Desarrollo de Tasking) solo se pueden cargar de a uno cada 2 meses. Una vez finalizado el proyecto cargado en curso se podrá generar uno nuevo</p>
 
-                            <div id="cont_activos" class="mt-2">
-                                <span class="mt-3 badge bg-light border border-primary text-primary"
-                                    style="font-weight: bold;">Activos</span><span
-                                    onclick='consultar_activos_borrdor($("#valor_cantidad_servicios").val())'
-                                    data-placement="top" title="Consultar activos" type="button"><i id="icon_activos"
-                                        class=" ri-file-add-fill text-success fs-20"></i>
-                                </span>
-                            </div>
-
+                            <section id="contenedor_cont_activos">
+                                <div id="cont_activos" class="mt-2">
+                                    <span class="mt-3 badge bg-light border border-primary text-primary"
+                                        style="font-weight: bold;">Activos</span><span
+                                        onclick='consultar_activos_borrdor($("#valor_cantidad_servicios").val())'
+                                        data-placement="top" title="Consultar activos" type="button"><i id="icon_activos"
+                                            class=" ri-file-add-fill text-success fs-20"></i>
+                                    </span>
+                                </div>
+                            </section>
                         </div>
-
+                        <hr>
+                        <br>
                         <div id="cont_btn_Modal_Ajustar_proy" class="text-end mt-3">
                             <button id="btn_crear_proyecto" type="submit" class="btn btn-sm btn-primary">Crear</button>
 

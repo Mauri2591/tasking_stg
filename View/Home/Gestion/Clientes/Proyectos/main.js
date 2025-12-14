@@ -679,11 +679,14 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
         id: $("#mdl_id_proyecto_gestionado").val()
     }, function (data, textStatus, jqXHR) {
         console.log(data);
+            $("#contenedor_cont_activos").show();
 
         if (data.cat_id == 73) {
             $("#cont_combo_workshop").hide();
+            $("#contenedor_cont_activos").hide();
         } else {
             $("#cont_combo_workshop").show();
+            $("#contenedor_cont_activos").show();
         }
 
         if (data.recurrencia != '' || data.recurrencia != null) {
@@ -1732,6 +1735,7 @@ document.getElementById("btn_eliminar_proyecto").addEventListener("click", (e) =
                     },
                     "json"
                 );
+
                 Swal.fire({
                     icon: "success",
                     title: "Bien",
@@ -1758,14 +1762,16 @@ document.getElementById("btn_eliminar_proyecto").addEventListener("click", (e) =
             showConfirmButton: true
         }).then((resutl) => {
             if (resutl.isConfirmed) {
-                // $.post("../../../../../Controller/ctrProyectos.php?proy=cambiar_estado_proyecto_cantidad_servicios", {
-                //         id_proyecto_cantidad_servicios: ID_PROYECTO_CANTIDAD_SERVICIOS
-                //     },
-                //     function (data, textStatus, jqXHR) {
 
-                //     },
-                //     "json"
-                // );
+                $.post("../../../../../Controller/ctrProyectos.php?proy=eliminar_proyectos_desarrollo_tasking", {
+                        id_proyecto_gestionado: ID_PROYECTO_GESTIONADO
+                    },
+                    function (data, textStatus, jqXHR) {
+
+                    },
+                    "json"
+                );
+
                 $.post("../../../../../Controller/ctrProyectos.php?proy=cambiar_a_eliminado_proyecto_gestionado", {
                         id: ID_PROYECTO_GESTIONADO,
                         estados_id: 16
@@ -1815,6 +1821,16 @@ document.getElementById("btn_finalizar_estado_proyecto").addEventListener("click
                 },
                 "json"
             );
+
+            $.post("../../../../../Controller/ctrProyectos.php?proy=eliminar_proyectos_desarrollo_tasking", {
+                    id_proyecto_gestionado: ID_PROYECTO_GESTIONADO
+                },
+                function (data, textStatus, jqXHR) {
+
+                },
+                "json"
+            );
+
             Swal.fire({
                 icon: "success",
                 title: "Bien",
