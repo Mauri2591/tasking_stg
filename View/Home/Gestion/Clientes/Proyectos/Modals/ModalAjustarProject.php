@@ -156,14 +156,6 @@
 
                                 </div>
 
-                                <!-- <div class="mb-3 col-sm-3">
-                                    <span class="badge bg-light fs-10 mb-1 text-dark">Usuario Asignado</span>
-                                    <select id="combo_usuario_x_sector" class="form-select form-select-sm"
-                                        aria-label=".form-select-sm example">
-
-                                    </select>
-                                </div> -->
-
                                 <div class="mb-3 col-sm-3">
                                     <span class="badge bg-light fs-10 mb-1 text-dark"><span class="text-danger fs-13">*
                                         </span>Fecha Inicio</span>
@@ -251,6 +243,8 @@
                                     style="font-weight: bold;">Descripcion</span><br>
                                 <textarea class="form-control" id="descripcion_proy" rows="3"></textarea>
                             </div>
+
+                            <p id="contenedor_validad_proy_Desa_interno_tasking" class="text-danger my-2"><strong>Atención: <br></strong> Los proyectos de (Desarrollo de Tasking) solo se pueden cargar de a uno cada 2 meses. Una vez finalizado el proyecto cargado en curso se podrá generar uno nuevo</p>
 
                             <div id="cont_activos" class="mt-2">
                                 <span class="mt-3 badge bg-light border border-primary text-primary"

@@ -53,6 +53,8 @@ switch ($_GET['proy']) {
                 $_POST['cantidad_servicios'],
             );
 
+
+
             while ($iniciador <= $cantidad_servicios) {
                 $proyecto->proyecto_cantidad_servicios($proy_id, $_SESSION['usu_id'], $iniciador);
                 $iniciador++;
@@ -195,6 +197,10 @@ switch ($_GET['proy']) {
             $_POST['captura_imagen']
         );
 
+        if ($_POST['cats_id'] == 73) {
+            $proyecto->insert_proyectos_tasking($id_proyecto_gestionado);
+        }
+
         //Insertás los activos con el proy_id
         foreach ($hosts as $host) {
             $proyecto->insert_host($id_proyecto_gestionado, $id_proyecto_cantidad_servicios, $_SESSION['usu_id'], $host['tipo'], $host['valor']);
@@ -222,8 +228,16 @@ switch ($_GET['proy']) {
         http_response_code(200);
         break;
 
+    case 'update_proyecto_desarrollo_tasking':
+        $proyecto->update_proyecto_desarrollo_tasking($_POST['id_proyecto_gestionado']);
+        break;
+
     case 'insertar_usuarios_a_recurrente':
         $proyecto->insert_usuarios_proyecto($_POST['id_proyecto_gestionado'], $_POST['usu_asignado']);
+        break;
+
+    case 'get_datos_proyectos_tasking':
+        echo json_encode($proyecto->get_datos_proyectos_tasking());
         break;
 
     case 'get_sector_x_proy':
@@ -439,14 +453,19 @@ switch ($_GET['proy']) {
         } else {
             echo json_encode(["status" => "error", "message" => "Hubo un problema actualizando el proyecto, horas o usuarios"]);
         }
+        break;
 
-        // 6. Si hay recurrencia, inserta clones
-        // if (isset($_POST['recurrencia']) && $_POST['recurrencia'] != "0") {
-        //     for ($i = 1; $i <= (int) $_POST['recurrencia']; $i++) {
-        //         $proyecto->insert_proyecto_recurrencia((int) $_POST['id_proyecto_gestionado'], (int) $_POST['cat_id']);
-        //     }
-        // }
-
+    case 'get_datos_ver_recurrente':
+        $datos = $proyecto->get_datos_ver_recurrente($_POST['id_proyecto_cantidad_servicios']);
+        $htmlList = '';
+        foreach ($datos as $key => $val) {
+            $htmlList .= '
+                <ul class="list-unstyled">
+                <li class="badge border border-primary py-1 bg-light fs-11 text-primary">' . $key . ' : ' . $val . '</li>
+                </ul>
+            ';
+        }
+        echo $htmlList;
         break;
 
     case 'get_proyectos_recurrentes':
@@ -1410,22 +1429,26 @@ switch ($_GET['proy']) {
         ?>
             <div class="d-flex align-items-center mt-4">
                 <div class="flex-grow-1 ms-2">
-                    <h6 id="colaborador_descripcion" class="mb-1"><a>
-                            <i class="ri-add-circle-fill fs-14 text-secondary"></i>
-                            <?php echo $val['usu_nom'] ?> <span class="text-muted">(<span id="fecha_descripcion"
-                                    class="text-muted fs-12"><?php echo $val['fech_crea'] ?></span>)</span></a>
-                    </h6>
+                    <div style="display:flex">
+                        <h6 id="colaborador_descripcion" class="mb-1"><a>
+                                <i class="ri-add-circle-fill fs-14 text-secondary"></i>
+                                <?php echo $val['usu_nom'] ?> <span class="text-muted">(<span id="fecha_descripcion"
+                                        class="text-muted fs-12"><?php echo $val['fech_crea'] ?></span>)</span></a>
+                        </h6>
+                        <?php if (isset($_SESSION) && $_SESSION['usu_id'] == $val['usu_crea'] && $val['estados_id'] != 3 && $val['estados_id'] != 1) : ?>
+                            <br><i id="btn_eliminar_descripcion" data-placement="top" title="Eliminar" type="button"
+                                onclick="eliminar_descripcion(<?php echo $val['id'] ?>)"
+                                class=" ri-delete-bin-2-fill ms-3 fs-14 text-danger"></i>
+                        <?php endif; ?>
+                    </div>
                     <p id="sector_descripcion" class="text-muted fs-11" style="margin-left: 1rem;">
                         <?php echo $val['sector_nombre'] ?></p>
                 </div>
             </div>
             <div class="d-flex">
-                <p class="ms-5"><strong style="margin-right: 10px;">Nota:</strong> <?php echo $val['descripcion_proyecto'] ?></p>
-                <?php if (isset($_SESSION) && $_SESSION['usu_id'] == $val['usu_crea'] && $val['estados_id'] != 3) : ?>
-                    <br><i id="btn_eliminar_descripcion" data-placement="top" title="Eliminar" type="button"
-                        onclick="eliminar_descripcion(<?php echo $val['id'] ?>)"
-                        class=" ri-delete-bin-2-fill ms-3 fs-14 text-danger"></i>
-                <?php endif; ?>
+                <div class="ms-5" style="display:flex"><strong style="margin-right: 10px;">Nota:</strong>
+                    <p class="fs-20"><?php echo $val['descripcion_proyecto'] ?>
+                </div>
             </div>
 
             <?php if (isset($val['captura_imagen']) && !empty($val['captura_imagen'])) {
@@ -1441,7 +1464,7 @@ switch ($_GET['proy']) {
                 $archivos = explode(",", $val['documento']);
                 $ruta_base = URL . "View/Home/Public/Uploads/Proyectos/" . $val['carpeta_documentos_proy'] . "/";
 
-                echo '<div class="ms-5 mt-1">';
+                echo '<div class="ms-5">';
                 echo '<strong>Archivos subidos:</strong><br>';
 
                 foreach ($archivos as $archivo) {
@@ -1495,6 +1518,7 @@ switch ($_GET['proy']) {
                 echo '</div>';
             }
             ?>
+            <br>
             <br>
         <?php
         }

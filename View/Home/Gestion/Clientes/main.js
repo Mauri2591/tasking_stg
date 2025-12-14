@@ -133,56 +133,6 @@ $(document).ready(function () {
         ajax_insert_cliente(data);
     });
 
-    // function get_data_crear_proyecto() {
-        //     let formData = new FormData();
-        //     formData.append('client_id', document.getElementById("client_id_hidden").value);
-        //     formData.append('pais_id', document.getElementById("pais_id_carga_proy_hidden").value);
-        //     formData.append('cantidad_servicios', document.getElementById("combo_cantidad_servicios_proy_nuevo").value);
-        //     formData.append('fechaVantive', document.getElementById("fechaVantive").value);
-        //     return formData;
-    // }
-
-    // function ajax_crear_proyecto(data) {
-        //     $.ajax({
-        //         type: "POST",
-        //         url: "../../../../Controller/ctrProyectos.php?proy=crear_proyecto",
-        //         data: data,
-        //         dataType: "json",
-        //         processData: false,
-        //         contentType: false,
-        //         success: function (response) {
-        //             let htmlmje = `<div id="mje_campos_obligatorios_vacios_insert_proy" class="alert alert-warning text-center" role="alert">
-        //             <a class="alert-link">Error! <br></a>Hay campos vacios
-        //       </div>`;
-        //             if (response.Status == "Error") {
-        //                 document.getElementById("cont_mje_proy_crear").innerHTML = htmlmje;
-        //                 setTimeout(() => {
-        //                     document.getElementById("mje_campos_obligatorios_vacios_insert_proy").remove();
-        //                 }, 1300);
-
-        //             } else if (response.Status == "Success") {
-        //                 Swal.fire({
-        //                     icon: "success",
-        //                     title: "Proyecto creado y enviado a Borrador",
-        //                     showConfirmButton: false,
-        //                     timer: 1300
-        //                 });
-        //                 document.getElementById("form_crear_proyecto").reset();
-        //                 $("#ModalAltaProject").modal("hide");
-
-        //                 setTimeout(() => {
-        //                     if ($.fn.DataTable.isDataTable('#table_proyectos_borrador')) {
-        //                         $('#table_proyectos_borrador').DataTable().ajax.reload(null, false);
-        //                     }
-        //                 }, 500);
-
-        //             }
-        //         }, error: function (error) {
-        //             console.log(error);
-        //         }
-        //     });
-    // }
-
     $.post("../../../../Controller/ctrProyectos.php?proy=get_paises",
         function (data, textStatus, jqXHR) {
             document.getElementById("combo_paises").innerHTML = data;
@@ -219,6 +169,7 @@ $(document).ready(function () {
         },
         "html"
     );
+
     document.getElementById("combo_sector_proy_nuevo").addEventListener("change", function () {
         $.post("../../../../Controller/ctrProyectos.php?proy=get_combo_subcategorias_x_sector", { sector_id: this.value },
             function (data, textStatus, jqXHR) {

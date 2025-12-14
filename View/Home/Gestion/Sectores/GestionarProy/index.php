@@ -157,7 +157,7 @@ if (isset($_SESSION['usu_id'])) {
                                 <div class="col-lg-12 row">
                                     <div class="col-xl-10">
                                         <span
-                                            class="badge bg-light border border-dark text-dark mx-2 mt-2 mb-3">Imagen:</span>
+                                            class="badge bg-dark text-success mx-2 mt-2 mb-3 d-inline-flex align-items-center gap-2 w-auto">Imagen:</span>
                                         <div class="card">
                                             <div class="card-body p-0 " id="cont_imagen">
                                                 <div data-simplebar="init" style="min-height: 460px;">
@@ -205,7 +205,7 @@ if (isset($_SESSION['usu_id'])) {
                                         <br>
 
                                         <div id="contDescargarPipeline">
-                                        
+
                                         </div>
 
                                     </div>
@@ -388,7 +388,8 @@ if (isset($_SESSION['usu_id'])) {
                     console.log(data);
 
                     $.post("../../../../../Controller/ctrProyectos.php?proy=validarContenedorBtnDockerfile", {
-                            id: id_proyecto_gestionado,pg:pg
+                            id: id_proyecto_gestionado,
+                            pg: pg
                         },
                         function(data, textStatus, jqXHR) {
                             $("#contDescargarPipeline").html(data);
@@ -768,6 +769,16 @@ if (isset($_SESSION['usu_id'])) {
                         showConfirmButton: true
                     }).then((result) => {
                         if (result.isConfirmed) {
+                            
+                            $.post("../../../../../Controller/ctrProyectos.php?proy=update_proyecto_desarrollo_tasking", {
+                                    id_proyecto_gestionado: id_proyecto_gestionado
+                                },
+                                function(data, textStatus, jqXHR) {
+
+                                },
+                                "json"
+                            );
+
                             $.post("../../../../../Controller/ctrProyectos.php?proy=get_datos_proyecto_gestionado", {
                                 id: id_proyecto_gestionado
                             }, function(data) {

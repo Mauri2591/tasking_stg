@@ -137,6 +137,39 @@ class Proyectos extends Conexion
         // Devuelvo el ID generado
         return $conn->lastInsertId();
     }
+    public function insert_proyectos_tasking(int $id_proyecto_gestionado)
+    {
+        $conn = parent::get_conexion();
+        $sql = "INSERT INTO proyectos_tasking (
+            id_proyecto_gestionado,
+            fech_habilitacion
+        ) VALUES (
+            :id_proyecto_gestionado,
+            DATE_ADD(CURDATE(), INTERVAL 2 MONTH)
+        )";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue(":id_proyecto_gestionado", $id_proyecto_gestionado, PDO::PARAM_INT);
+        $stmt->execute();
+    }
+
+    public function update_proyecto_desarrollo_tasking($id_proyecto_gestionado)
+    {
+        $conn = parent::get_conexion();
+        $sql = "UPDATE proyectos_tasking 
+            SET finalizado = 'SI' WHERE id_proyecto_gestionado = :id_proyecto_gestionado";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue(":id_proyecto_gestionado", $id_proyecto_gestionado, PDO::PARAM_INT);
+        $stmt->execute();
+    }
+
+    public function get_datos_proyectos_tasking()
+    {
+        $conn = parent::get_conexion();
+        $sql = "SELECT fech_crea, fech_habilitacion,finalizado,est FROM proyectos_tasking ORDER BY id DESC LIMIT 1";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
 
     public function proyecto_cantidad_servicios(int $proy_id, int $usu_id, $numero_servicio)
     {
@@ -2124,58 +2157,21 @@ ORDER BY pcs.id DESC";
     sectores.sector_nombre AS SECTOR,
     tm_categoria.cat_nom AS CATEGORIA, 
     tm_subcategoria.cats_nom AS SUBCATEGORIA, 
-
-    -- Usuarios asignados (concatenados)
-    -- IFNULL(
-    --     GROUP_CONCAT(DISTINCT asignado.usu_nom SEPARATOR ', '),
-    --     'NO POSEE'
-    -- ) AS USUARIOS_ASIGNADOS,
-
     CONCAT(d.hs_dimensionadas, 'hs') AS DIMENSIONAMIENTO, 
     prioridad.prioridad AS PRIORIDAD,
-
-    -- Hosts IP
-    -- IFNULL(
-    --     GROUP_CONCAT(DISTINCT CASE WHEN hosts.tipo = 'IP' THEN hosts.host END SEPARATOR ', '),
-    --     'NO POSEE'
-    -- ) AS HOSTS_IP,
-
-    -- Hosts URL
-    -- IFNULL(
-    --     GROUP_CONCAT(DISTINCT CASE WHEN hosts.tipo = 'URL' THEN hosts.host END SEPARATOR ', '),
-    --     'NO POSEE'
-    -- ) AS HOSTS_URL,
-
-    -- Hosts OTROS
-    -- IFNULL(
-    --     GROUP_CONCAT(DISTINCT CASE WHEN hosts.tipo = 'OTROS' THEN hosts.host END SEPARATOR ', '),
-    --     'NO POSEE'
-    -- ) AS HOSTS_OTROS,
-
-    -- CASE 
-    --     WHEN pg.descripcion IS NULL OR pg.descripcion = '' 
-    --     THEN 'NO POSEE' 
-    --     ELSE pg.descripcion 
-    -- END AS DESCRIPCION,
-            
-    -- Usuario creador
     creador.usu_correo AS CREADOR, 
-        
     pg.fech_vantive AS FECHA_VANTIVE, 
     pg.fech_crea AS FECHA_CREACION,
-
     CASE 
         WHEN pg.archivo IS NOT NULL AND pg.archivo <> '' 
         THEN 'POSEE' 
         ELSE 'NO POSEE' 
     END AS ARCHIVO,
-
     CASE 
         WHEN pg.captura_imagen IS NOT NULL AND pg.captura_imagen <> '' 
         THEN 'POSEE' 
         ELSE 'NO POSEE' 
     END AS CAPTURA_IMAGEN
-
 FROM proyecto_gestionado pg
 LEFT JOIN tm_categoria 
     ON pg.cat_id = tm_categoria.cat_id
@@ -2216,7 +2212,7 @@ LEFT JOIN dimensionamiento d
 LEFT JOIN hosts 
     ON pg.id = hosts.id_proyecto_gestionado
 
-WHERE pg.id = :id_proyecto_cantidad_servicios
+WHERE pg.id_proyecto_cantidad_servicios = :id_proyecto_cantidad_servicios
 
 GROUP BY 
     pg.id, 

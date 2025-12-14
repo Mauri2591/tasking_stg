@@ -417,6 +417,7 @@ function validar_combo_prioridad(valorInicial) {
 }
 
 function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
+
     if (!id) {
         $("#cont_activos_ips_urls_otros").show();
         $("#cont_archivo").show();
@@ -429,12 +430,13 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
         $("#cont_combo_workshop").show();
     }
 
+
+
     $.post("../../../../../Controller/ctrProyectos.php?proy=get_workshop", {
             id_proyecto_gestionado: $("#id_proyecto_gestionado").val()
         },
         function (data, textStatus, jqXHR) {
-            console.log(data);
-            
+
             if (data === false || data == null) {
                 $("#combo_workshop").val("NO");
             } else {
@@ -551,7 +553,6 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
     $("#id_proyecto_cantidad_servicios").val(id_proyecto_cantidad_servicios);
     $("#proy_id").val(proy_id);
 
-
     function get_data_editar_proyecto() {
         let formData = new FormData();
 
@@ -562,7 +563,7 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
 
         let hs_dimensionadas = document.getElementById('hs_dimensionadas').value.trim();
 
-        // Validar que sea numérico y positivo
+
         if (isNaN(hs_dimensionadas) || hs_dimensionadas === "" || parseFloat(hs_dimensionadas) <= 0) {
             Swal.fire({
                 icon: "warning",
@@ -570,7 +571,7 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
                 text: "El campo 'hs_dimensionadas' debe ser un número positivo.",
                 timer: 1500
             });
-            return null; // 🚨 DEVUELVE null explícitamente
+            return null;
         }
 
         // 🔹 Aseguramos que el ID venga del campo correcto
@@ -677,6 +678,13 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
     $.post("../../../../../Controller/ctrProyectos.php?proy=get_datos_proyecto_creado", {
         id: $("#mdl_id_proyecto_gestionado").val()
     }, function (data, textStatus, jqXHR) {
+        console.log(data);
+
+        if (data.cat_id == 73) {
+            $("#cont_combo_workshop").hide();
+        } else {
+            $("#cont_combo_workshop").show();
+        }
 
         if (data.recurrencia != '' || data.recurrencia != null) {
             $("#combo_categoria_proy_nuevo").prop("disabled", true);
@@ -731,6 +739,8 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
                     $("#combo_subcategoria_proy_nuevo").html(res);
                     $("#combo_subcategoria_proy_nuevo").val(data.cats_id);
                 });
+
+
 
                 $.post("../../../../../Controller/ctrProyectos.php?proy=get_usuarios_x_sector", {
                     sector_id: data.sector_id,
@@ -814,8 +824,8 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
                 e.stopPropagation();
 
                 let dataForm = get_data_editar_proyecto();
-                if (!dataForm) return; // Detiene si hubo error en la validación
 
+                if (!dataForm) return; // Detiene si hubo error en la validación
                 $.ajax({
                     type: "POST",
                     url: "../../../../../Controller/ctrProyectos.php?proy=update_proyecto",
@@ -877,8 +887,7 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
                                         id_proyecto_gestionado: $("#id_proyecto_gestionado").val()
                                     },
                                     dataType: "json",
-                                    success: function (response) {
-                                    },
+                                    success: function (response) {},
                                     error: function (err) {
                                         console.log(err);
                                     }
@@ -894,8 +903,7 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
                                         est: 1
                                     },
                                     dataType: "json",
-                                    success: function (response) {
-                                    },
+                                    success: function (response) {},
                                     error: function (err) {
                                         console.log(err);
                                     }
@@ -909,11 +917,10 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
                                         est: 0
                                     },
                                     dataType: "json",
-                                    success: function (response) {
-                                    },
+                                    success: function (response) {},
                                     error: function (err) {
                                         console.log(err);
-                                        
+
                                     }
                                 });
                             }
@@ -951,6 +958,66 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
         },
         "html"
     );
+    $("#contenedor_validad_proy_Desa_interno_tasking").hide();
+
+
+
+    $("#combo_subcategoria_proy_nuevo").change(function (e) {
+        e.preventDefault();
+        $("#btn_crear_proyecto").show();
+
+       if (this.value == 73) {
+    $.post(
+        "../../../../../Controller/ctrProyectos.php?proy=get_datos_proyectos_tasking",
+        function (data) {
+
+            console.log(data);
+
+            // si no hay datos o viene false desde backend
+            if (!data || data === false) {
+                $("#btn_crear_proyecto").show();
+                return;
+            }
+
+            const hoy = new Date();
+            hoy.setHours(0, 0, 0, 0);
+
+            const fechaHabilitacion = new Date(
+                data.fech_habilitacion + "T00:00:00"
+            );
+
+            // VALIDACIÓN REAL
+            if (hoy >= fechaHabilitacion && data.finalizado === "SI") {
+                $("#btn_crear_proyecto").show();
+            } else {
+                $("#btn_crear_proyecto").hide();
+                Swal.fire({
+                    icon: "warning",
+                    title: "No habilitado",
+                    text: "No es posible cargar un nuevo proyecto de Desarrollo Tasking hasta que el anterior haya finalizado y se haya cumplido el plazo de dos meses",
+                    showConfirmButton: true
+                });
+            }
+        },
+        "json"
+    );
+}
+
+
+
+        if (this.value == 73) { //Es un proyecto para Tasking
+            $("#cont_activos_ips_urls_otros").hide();
+            $("#contenedor_validad_proy_Desa_interno_tasking").show();
+            $("#recurrencia").hide();
+            $("#combo_recurrente_proy_nuevo").hide();
+        } else {
+            $("#cont_activos_ips_urls_otros").show();
+            $("#contenedor_validad_proy_Desa_interno_tasking").hide();
+            $("#recurrencia").show();
+            $("#combo_recurrente_proy_nuevo").show();
+        }
+    });
+
     $.post("../../../../../Controller/ctrProyectos.php?proy=get_combo_prioridad_proy_nuevo_eh",
         function (data, textStatus, jqXHR) {
             $("#combo_prioridad_proy_nuevo").html(data)
@@ -1177,6 +1244,8 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
 
         let data = get_datos_insert_proyecto_gestionado();
         let hs_dimensionadas = data.get('hs_dimensionadas').trim();
+
+        let validarHsDimRequerido = false;
 
         // Validar campo vacío
         if (hs_dimensionadas === '') {
@@ -1949,6 +2018,7 @@ function gestionar_proy_recurrente(id_proyecto_cantidad_servicios, conteo_id_rec
             id_proyecto_cantidad_servicios: id_proyecto_cantidad_servicios
         },
         function (data, textStatus, jqXHR) {
+            console.log(data);
             $("#contenido_proyecto_gestionado_para_insert_recurrente").html(data)
         },
         "html"
