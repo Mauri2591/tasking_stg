@@ -966,42 +966,42 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
         e.preventDefault();
         $("#btn_crear_proyecto").show();
 
-       if (this.value == 73) {
-    $.post(
-        "../../../../../Controller/ctrProyectos.php?proy=get_datos_proyectos_tasking",
-        function (data) {
+        if (this.value == 73) {
+            $.post(
+                "../../../../../Controller/ctrProyectos.php?proy=get_datos_proyectos_tasking",
+                function (data) {
 
-            console.log(data);
+                    console.log(data);
 
-            // si no hay datos o viene false desde backend
-            if (!data || data === false) {
-                $("#btn_crear_proyecto").show();
-                return;
-            }
+                    // si no hay datos o viene false desde backend
+                    if (!data || data === false) {
+                        $("#btn_crear_proyecto").show();
+                        return;
+                    }
 
-            const hoy = new Date();
-            hoy.setHours(0, 0, 0, 0);
+                    const hoy = new Date();
+                    hoy.setHours(0, 0, 0, 0);
 
-            const fechaHabilitacion = new Date(
-                data.fech_habilitacion + "T00:00:00"
+                    const fechaHabilitacion = new Date(
+                        data.fech_habilitacion + "T00:00:00"
+                    );
+
+                    // VALIDACIÓN REAL
+                    if (hoy >= fechaHabilitacion && data.finalizado === "SI") {
+                        $("#btn_crear_proyecto").show();
+                    } else {
+                        $("#btn_crear_proyecto").hide();
+                        Swal.fire({
+                            icon: "warning",
+                            title: "Error",
+                            text: "No es posible cargar un nuevo proyecto de Desarrollo Tasking hasta que el anterior haya finalizado y se haya cumplido el plazo de dos meses",
+                            showConfirmButton: true
+                        });
+                    }
+                },
+                "json"
             );
-
-            // VALIDACIÓN REAL
-            if (hoy >= fechaHabilitacion && data.finalizado === "SI") {
-                $("#btn_crear_proyecto").show();
-            } else {
-                $("#btn_crear_proyecto").hide();
-                Swal.fire({
-                    icon: "warning",
-                    title: "No habilitado",
-                    text: "No es posible cargar un nuevo proyecto de Desarrollo Tasking hasta que el anterior haya finalizado y se haya cumplido el plazo de dos meses",
-                    showConfirmButton: true
-                });
-            }
-        },
-        "json"
-    );
-}
+        }
 
 
 
