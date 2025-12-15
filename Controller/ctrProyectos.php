@@ -240,8 +240,8 @@ switch ($_GET['proy']) {
         echo json_encode($proyecto->get_datos_proyectos_tasking());
         break;
 
-        case 'eliminar_proyectos_desarrollo_tasking':
-        echo json_encode($proyecto->eliminar_proyectos_desarrollo_tasking($_POST['id_proyecto_gestionado']));
+        case 'inhabilitar_proyectos_desarrollo_tasking':
+        echo json_encode($proyecto->inhabilitar_proyectos_desarrollo_tasking($_POST['id_proyecto_gestionado']));
             break;
 
     case 'get_sector_x_proy':

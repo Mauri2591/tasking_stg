@@ -162,21 +162,20 @@ class Proyectos extends Conexion
         $stmt->execute();
     }
 
-        public function eliminar_proyectos_desarrollo_tasking($id_proyecto_gestionado)
+        public function inhabilitar_proyectos_desarrollo_tasking($id_proyecto_gestionado)
     {
         $conn = parent::get_conexion();
-        $sql = "DELETE FROM proyectos_tasking WHERE id_proyecto_gestionado = :id_proyecto_gestionado";
+        $sql = "UPDATE proyectos_tasking SET est=0 WHERE id_proyecto_gestionado = :id_proyecto_gestionado";
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(":id_proyecto_gestionado", $id_proyecto_gestionado, PDO::PARAM_INT);
         $stmt->execute();
     }
 
-    
 
     public function get_datos_proyectos_tasking()
     {
         $conn = parent::get_conexion();
-        $sql = "SELECT fech_crea, fech_habilitacion,finalizado,est FROM proyectos_tasking ORDER BY id DESC LIMIT 1";
+        $sql = "SELECT fech_crea, fech_habilitacion,finalizado,est FROM proyectos_tasking WHERE est=1 ORDER BY id DESC LIMIT 1";
         $stmt = $conn->prepare($sql);
         $stmt->execute();
         return $stmt->fetch(PDO::FETCH_ASSOC);

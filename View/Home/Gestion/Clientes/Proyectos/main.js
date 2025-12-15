@@ -679,7 +679,7 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
         id: $("#mdl_id_proyecto_gestionado").val()
     }, function (data, textStatus, jqXHR) {
         console.log(data);
-            $("#contenedor_cont_activos").show();
+        $("#contenedor_cont_activos").show();
 
         if (data.cat_id == 73) {
             $("#cont_combo_workshop").hide();
@@ -968,7 +968,7 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
     $("#combo_subcategoria_proy_nuevo").change(function (e) {
         e.preventDefault();
         $("#btn_crear_proyecto").show();
-
+        $("#btn_eliminar_proyecto").show();
         if (this.value == 73) {
             $.post(
                 "../../../../../Controller/ctrProyectos.php?proy=get_datos_proyectos_tasking",
@@ -979,6 +979,7 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
                     // si no hay datos o viene false desde backend
                     if (!data || data === false) {
                         $("#btn_crear_proyecto").show();
+                        $("#btn_eliminar_proyecto").show();
                         return;
                     }
 
@@ -992,8 +993,10 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
                     // VALIDACIÓN REAL
                     if (hoy >= fechaHabilitacion && data.finalizado === "SI") {
                         $("#btn_crear_proyecto").show();
+                        $("#btn_eliminar_proyecto").show();
                     } else {
                         $("#btn_crear_proyecto").hide();
+                        $("#btn_eliminar_proyecto").hide();
                         Swal.fire({
                             icon: "warning",
                             title: "Error",
@@ -1763,7 +1766,7 @@ document.getElementById("btn_eliminar_proyecto").addEventListener("click", (e) =
         }).then((resutl) => {
             if (resutl.isConfirmed) {
 
-                $.post("../../../../../Controller/ctrProyectos.php?proy=eliminar_proyectos_desarrollo_tasking", {
+                $.post("../../../../../Controller/ctrProyectos.php?proy=inhabilitar_proyectos_desarrollo_tasking", {
                         id_proyecto_gestionado: ID_PROYECTO_GESTIONADO
                     },
                     function (data, textStatus, jqXHR) {
@@ -1822,7 +1825,7 @@ document.getElementById("btn_finalizar_estado_proyecto").addEventListener("click
                 "json"
             );
 
-            $.post("../../../../../Controller/ctrProyectos.php?proy=eliminar_proyectos_desarrollo_tasking", {
+            $.post("../../../../../Controller/ctrProyectos.php?proy=inhabilitar_proyectos_desarrollo_tasking", {
                     id_proyecto_gestionado: ID_PROYECTO_GESTIONADO
                 },
                 function (data, textStatus, jqXHR) {
