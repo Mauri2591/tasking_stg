@@ -171,7 +171,6 @@ class Proyectos extends Conexion
         $stmt->execute();
     }
 
-
     public function get_datos_proyectos_tasking()
     {
         $conn = parent::get_conexion();
@@ -1345,7 +1344,6 @@ ORDER BY id_proyecto_cantidad_servicios ASC";
     public function get_datos_proyecto_creado(int $id)
     {
         $conn = parent::get_conexion();
-        // $sql = "SELECT proyecto_gestionado.*, dimensionamiento.hs_dimensionadas FROM proyecto_gestionado LEFT JOIN dimensionamiento ON proyecto_gestionado.id=dimensionamiento.id_proyecto_gestionado WHERE id_proyecto_cantidad_servicios=? AND proyecto_gestionado.est=1";
         $sql = "SELECT 
     pg.*, 
     d.hs_dimensionadas,
@@ -1357,7 +1355,7 @@ LEFT JOIN
         ON pg.id = d.id_proyecto_gestionado
 LEFT JOIN 
     proyecto_recurrencia pr
-        ON pg.id = pr.id  -- 👈 clave: vincular el proyecto_gestionado con su fila en proyecto_recurrencia
+        ON pg.id = pr.id 
 WHERE 
     pg.id = ?
     AND pg.est = 1";

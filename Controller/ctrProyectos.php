@@ -197,7 +197,7 @@ switch ($_GET['proy']) {
             $_POST['captura_imagen']
         );
 
-        if ($_POST['cats_id'] == 73) {
+        if ($_POST['cat_id'] == 78) {
             $proyecto->insert_proyectos_tasking($id_proyecto_gestionado);
         }
 

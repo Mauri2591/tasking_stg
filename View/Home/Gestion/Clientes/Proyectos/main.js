@@ -681,7 +681,7 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
         console.log(data);
         $("#contenedor_cont_activos").show();
 
-        if (data.cat_id == 73) {
+        if (data.cat_id == 78) {
             $("#cont_combo_workshop").hide();
             $("#contenedor_cont_activos").hide();
         } else {
@@ -965,11 +965,11 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
 
 
 
-    $("#combo_subcategoria_proy_nuevo").change(function (e) {
+    $("#combo_categoria_proy_nuevo").change(function (e) {
         e.preventDefault();
         $("#btn_crear_proyecto").show();
         $("#btn_eliminar_proyecto").show();
-        if (this.value == 73) {
+        if (this.value == 78) {
             $.post(
                 "../../../../../Controller/ctrProyectos.php?proy=get_datos_proyectos_tasking",
                 function (data) {
@@ -1011,7 +1011,7 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
 
 
 
-        if (this.value == 73) { //Es un proyecto para Tasking
+        if (this.value == 78) { //Es un proyecto para Tasking
             $("#cont_activos_ips_urls_otros").hide();
             $("#contenedor_validad_proy_Desa_interno_tasking").show();
             $("#recurrencia").hide();

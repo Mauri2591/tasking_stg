@@ -304,6 +304,11 @@
                                                     class="nav-link" data-key="t-mailbox">Desarrollo Interno</a>
                                             </li>
 
+                                               <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/Ethical_hacking/Desarrollo_Tasking/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Desarrollo Tasking</a>
+                                            </li>
+
                                             <li class="nav-item">
                                                 <a href="<?php echo URL . "View/Home/Gestion/Sectores/Ethical_hacking/IR/"; ?>"
                                                     class="nav-link" data-key="t-mailbox">Incident Response</a>
