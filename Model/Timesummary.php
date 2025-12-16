@@ -427,30 +427,53 @@ ORDER BY pg.titulo";
     {
         $conn = parent::get_conexion();
         $sql = "SELECT 
-    tm_categoria.cat_nom AS producto,
-    tareas.nombre AS tarea,
-    timesummary_carga.fecha,
-    TIME_FORMAT(timesummary_carga.hora_desde, '%H:%i') AS hora_desde,
-    TIME_FORMAT(timesummary_carga.hora_hasta, '%H:%i') AS hora_hasta,
-    TIME_FORMAT(TIMEDIFF(timesummary_carga.hora_hasta, timesummary_carga.hora_desde), '%H:%i') AS horas_consumidas,
-    timesummary_carga.descripcion,
-    timesummary_carga.fech_crea AS fecha_carga,
-    CASE WHEN timesummary_carga.es_telecom = 'Telecom' THEN 'TELECOM' ELSE clientes.client_rs END AS cliente,
-    proyecto_gestionado.refProy AS referencia,
-    tm_usuario.usu_nom,
-        tm_usuario.usu_ape
-FROM timesummary_carga
-LEFT JOIN tm_categoria 
-    ON timesummary_carga.id_producto = tm_categoria.cat_id
-LEFT JOIN tareas 
-    ON timesummary_carga.id_tarea = tareas.id
-LEFT JOIN clientes 
-    ON timesummary_carga.id_proyecto_gestionado = clientes.client_id
-LEFT JOIN proyecto_gestionado 
-    ON timesummary_carga.id_proyecto_gestionado = proyecto_gestionado.id
-INNER JOIN tm_usuario 
-    ON timesummary_carga.usu_id = tm_usuario.usu_id
-WHERE timesummary_carga.usu_id = :usu_id ORDER BY timesummary_carga.fecha DESC";
+            tm_categoria.cat_nom AS producto,
+            tareas.nombre AS tarea,
+            timesummary_carga.fecha,
+            TIME_FORMAT(timesummary_carga.hora_desde, '%H:%i') AS hora_desde,
+            TIME_FORMAT(timesummary_carga.hora_hasta, '%H:%i') AS hora_hasta,
+            TIME_FORMAT(
+                TIMEDIFF(timesummary_carga.hora_hasta, timesummary_carga.hora_desde),
+                '%H:%i'
+            ) AS horas_consumidas,
+            timesummary_carga.descripcion,
+            timesummary_carga.fech_crea AS fecha_carga,
+
+            CASE 
+                WHEN timesummary_carga.es_telecom = 'Telecom'
+                    THEN 'TELECOM'
+                ELSE clientes.client_rs
+            END AS cliente,
+
+            proyecto_gestionado.refProy AS referencia,
+            tm_usuario.usu_nom,
+            tm_usuario.usu_ape
+
+            FROM timesummary_carga
+
+            INNER JOIN tm_usuario 
+                ON timesummary_carga.usu_id = tm_usuario.usu_id
+
+            LEFT JOIN tm_categoria 
+                ON timesummary_carga.id_producto = tm_categoria.cat_id
+
+            LEFT JOIN tareas 
+                ON timesummary_carga.id_tarea = tareas.id
+
+            LEFT JOIN proyecto_gestionado 
+                ON timesummary_carga.id_proyecto_gestionado = proyecto_gestionado.id
+
+            LEFT JOIN proyecto_cantidad_servicios 
+                ON proyecto_gestionado.id_proyecto_cantidad_servicios = proyecto_cantidad_servicios.id
+
+            LEFT JOIN proyectos 
+                ON proyecto_cantidad_servicios.proy_id = proyectos.proy_id
+
+            LEFT JOIN clientes 
+                ON proyectos.client_id = clientes.client_id
+
+            WHERE timesummary_carga.usu_id = :usu_id
+            ORDER BY timesummary_carga.fecha DESC";
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(":usu_id", $usu_id, PDO::PARAM_INT);
         $stmt->execute();
