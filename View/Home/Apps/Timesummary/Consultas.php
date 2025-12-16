@@ -22,6 +22,22 @@ if (isset($_SESSION['usu_id'])) {
             word-wrap: break-word;
             white-space: normal !important;
         }
+
+        #tab_usuarios_x_sector span.badge {
+            cursor: pointer;
+            opacity: 0.7;
+            transition: all 0.2s ease-in-out;
+        }
+
+        #tab_usuarios_x_sector span.badge:hover {
+            opacity: 1;
+        }
+
+        #tab_usuarios_x_sector span.badge.active {
+            background-color: #405189 !important;
+            border-color: #0a58ca !important;
+            opacity: 1;
+        }
     </style>
 
 
@@ -226,7 +242,7 @@ if (isset($_SESSION['usu_id'])) {
                         width: "15%"
                     }, // FIN
                     {
-                        width: "25%"
+                        width: "20%"
                     }, // CONSUMIDAS
                     {
                         width: "40%"
@@ -384,6 +400,17 @@ if (isset($_SESSION['usu_id'])) {
 
         function verTareasUsuario(usu_id) {
             window.usu_id = usu_id;
+
+            // quitar active a todos los usuarios
+            $("#tab_usuarios_x_sector span.badge").removeClass("active");
+
+            // marcar activo el que coincide con el usu_id
+            $("#tab_usuarios_x_sector span.badge")
+                .filter(function() {
+                    return $(this).attr("onclick").includes("(" + usu_id + ")");
+                })
+                .addClass("active");
+
             $("#table_tareas_usuarios").DataTable().ajax.reload();
         }
     </script>
