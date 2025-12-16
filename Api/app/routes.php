@@ -244,8 +244,9 @@ return function (App $app) {
                 ON clientes.pais_id = tm_pais.pais_id
             INNER JOIN prioridad 
                 ON pg.prioridad_id = prioridad.id
-
-            WHERE pg.estados_id NOT IN (14,15,16,17)
+            WHERE pg.estados_id NOT IN (14,15,16,17) AND pg.sector_id = 1
+            AND tc.cat_id <> 78
+            AND tm_subcategoria.cats_id NOT IN (79,80,82)
             GROUP BY pg.id";
         $stmt = $pdo->prepare($sql);
         $stmt->execute();
@@ -393,7 +394,9 @@ return function (App $app) {
         INNER JOIN proyectos ON pcs.proy_id = proyectos.proy_id
         INNER JOIN clientes ON proyectos.client_id = clientes.client_id
         INNER JOIN tm_pais ON clientes.pais_id=tm_pais.pais_id
-        WHERE pg.estados_id IN(2) AND sectores.sector_id=1
+        WHERE pg.estados_id IN(2) AND sectores.sector_id=1 AND sectores.sector_id = 1
+        AND tc.cat_id <> 78
+        AND tm_subcategoria.cats_id NOT IN (79,80,82)
         GROUP BY pg.id";
         $stmt = $pdo->prepare($sql);
         $stmt->execute();
@@ -543,8 +546,10 @@ return function (App $app) {
         INNER JOIN proyectos ON pcs.proy_id = proyectos.proy_id
         INNER JOIN clientes ON proyectos.client_id = clientes.client_id
         INNER JOIN tm_pais ON clientes.pais_id=tm_pais.pais_id
-        WHERE pg.estados_id = :estados_id AND sectores.sector_id=1
-        GROUP BY pg.id";
+        WHERE pg.estados_id = :estados_id AND sectores.sector_id=1   AND sectores.sector_id = 1
+        AND tc.cat_id <> 78
+        AND tm_subcategoria.cats_id NOT IN (79,80,82)
+        GROUP BY pg.id;";
         $stmt = $pdo->prepare($sql);
         $stmt->bindValue(":estados_id", $estados_id, PDO::PARAM_INT);
         $stmt->execute();
@@ -696,7 +701,9 @@ return function (App $app) {
         INNER JOIN proyectos ON pcs.proy_id = proyectos.proy_id
         INNER JOIN clientes ON proyectos.client_id = clientes.client_id
         INNER JOIN tm_pais ON clientes.pais_id=tm_pais.pais_id
-        WHERE pg.id = :id AND sectores.sector_id=1
+        WHERE pg.id = :id AND sectores.sector_id=1 AND sectores.sector_id = 1
+        AND tc.cat_id <> 78
+        AND tm_subcategoria.cats_id NOT IN (79,80,82)
         GROUP BY pg.id";
         $stmt = $pdo->prepare($sql);
         $stmt->bindValue(":id", $id, PDO::PARAM_INT);
