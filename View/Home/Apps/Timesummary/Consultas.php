@@ -11,7 +11,20 @@ if (isset($_SESSION['usu_id'])) {
     include_once __DIR__ . "/../../../../View/Home/Public/Template/head.php";
     include_once __DIR__ . "/../../../../View/Home/Public/Template/main_content.php";
     ?>
-    
+
+    <style>
+        table.dataTable {
+            width: 100% !important;
+            table-layout: fixed;
+        }
+
+        table.dataTable td {
+            word-wrap: break-word;
+            white-space: normal !important;
+        }
+    </style>
+
+
     <div class="page-content">
         <div class="container-fluid">
 
@@ -63,15 +76,14 @@ if (isset($_SESSION['usu_id'])) {
                                             <thead>
                                                 <tr>
                                                     <th style="width: 10%;text-align: center;">CLIENTE</th>
-                                                    <th style="width: 5%;text-align: center;">REF</th>
-                                                    <th style="width: 5%;text-align: center;">PRODUCTO</th>
-                                                    <th style="width: 5%;text-align: center;">TAREA</th>
+                                                    <th style="width: 10%;text-align: center;">REF</th>
+                                                    <th style="width: 20%;text-align: center;">PRODUCTO</th>
+                                                    <th style="width: 10%;text-align: center;">TAREA</th>
                                                     <th style="width: 10%;text-align: center;">FECHA</th>
-                                                    <th style="width: 5%;text-align: center;">INICIO</th>
-                                                    <th style="width: 5%;text-align: center;">FIN</th>
-                                                    <th style="width: 5%;text-align: center;">CONSUMIDAS</th>
-                                                    <th style="width: 30%;text-align: center;">DESCRIPCION</th>
-                                                    <th style="width: 5%;text-align: center;">COLABORADOR</th>
+                                                    <th style="width: 10%;text-align: center;">INICIO</th>
+                                                    <th style="width: 10%;text-align: center;">FIN</th>
+                                                    <th style="width: 20%;text-align: center;">CONSUMIDAS</th>
+                                                    <th style="width: 40%;text-align: center;">DESCRIPCION</th>
                                                 </tr>
                                             </thead>
                                         </table>
@@ -96,7 +108,6 @@ if (isset($_SESSION['usu_id'])) {
                                                     <th style="width: 5%;text-align: center;">FIN</th>
                                                     <th style="width: 5%;text-align: center;">CONSUMIDAS</th>
                                                     <th style="width: 30%;text-align: center;">DESCRIPCION</th>
-                                                    <th style="width: 5%;text-align: center;">COLABORADOR</th>
                                                 </tr>
                                             </thead>
                                         </table>
@@ -119,20 +130,57 @@ if (isset($_SESSION['usu_id'])) {
         var tabla;
         var URL = "<?php echo URL ?>";
         document.addEventListener("DOMContentLoaded", function() {
-            // Inicializa DataTable vacía
+
             tabla = $("#table_tareas_usuarios").DataTable({
                 "aProcessing": true,
                 "aServerSide": true,
+                autoWidth: false,
                 dom: 'Bfrtip',
+                columns: [{
+                        width: "25%"
+                    }, // CLIENTE
+                    {
+                        width: "10%"
+                    }, // REF
+                    {
+                        width: "20%"
+                    }, // PRODUCTO
+                    {
+                        width: "15%"
+                    }, // TAREA
+                    {
+                        width: "15%"
+                    }, // FECHA
+                    {
+                        width: "15%"
+                    }, // INICIO
+                    {
+                        width: "15%"
+                    }, // FIN
+                    {
+                        width: "25%"
+                    }, // CONSUMIDAS
+                    {
+                        width: "40%"
+                    }, // DESCRIPCION
+                ],
+
                 buttons: ['copyHtml5', 'excelHtml5', 'csvHtml5', 'pdfHtml5'],
                 "ajax": {
                     url: "../../../../Controller/ctrTimesummary.php?accion=get_tareas_x_usuario",
                     type: "post",
                     dataType: "json",
                     data: function(d) {
-                        d.usu_id = window.usu_id || 0; // Valor dinámico
+                        d.usu_id = window.usu_id || 0;
                     }
                 },
+
+                // 🔴 ESTO ES LO ÚNICO NUEVO
+                columnDefs: [{
+                    targets: "_all",
+                    className: "text-center"
+                }],
+
                 "bDestroy": true,
                 "responsive": true,
                 "bInfo": true,
@@ -149,20 +197,55 @@ if (isset($_SESSION['usu_id'])) {
                     }
                 }
             });
+
 
             tabla = $("#table_get_tareas_x_usuario_x_usu_id").DataTable({
                 "aProcessing": true,
                 "aServerSide": true,
+                autoWidth: false,
                 dom: 'Bfrtip',
+                columns: [{
+                        width: "25%"
+                    }, // CLIENTE
+                    {
+                        width: "10%"
+                    }, // REF
+                    {
+                        width: "20%"
+                    }, // PRODUCTO
+                    {
+                        width: "15%"
+                    }, // TAREA
+                    {
+                        width: "15%"
+                    }, // FECHA
+                    {
+                        width: "15%"
+                    }, // INICIO
+                    {
+                        width: "15%"
+                    }, // FIN
+                    {
+                        width: "25%"
+                    }, // CONSUMIDAS
+                    {
+                        width: "40%"
+                    }, // DESCRIPCION
+                ],
+
                 buttons: ['copyHtml5', 'excelHtml5', 'csvHtml5', 'pdfHtml5'],
                 "ajax": {
                     url: "../../../../Controller/ctrTimesummary.php?accion=get_tareas_x_usuario_x_usu_id",
                     type: "post",
-                    dataType: "json",
-                    data: function(d) {
-
-                    }
+                    dataType: "json"
                 },
+
+                // 🔴 ESTO ES LO ÚNICO NUEVO
+                columnDefs: [{
+                    targets: "_all",
+                    className: "text-center"
+                }],
+
                 "bDestroy": true,
                 "responsive": true,
                 "bInfo": true,
@@ -179,6 +262,7 @@ if (isset($_SESSION['usu_id'])) {
                     }
                 }
             });
+
 
             $.post("../../../../Controller/ctrTimesummary.php?accion=get_sectores", function(data) {
                 $("#tab_sectores").html(data);
@@ -266,7 +350,7 @@ if (isset($_SESSION['usu_id'])) {
             if (valor === "") {
                 $("#hiddenIdClienteXlsx").val('');
                 $("#getNombreClienteXlsx").val('');
-                return; 
+                return;
             }
             $.post(
                 "../../../../Controller/ctrTimesummary.php?accion=getNombreCliente", {
@@ -302,7 +386,6 @@ if (isset($_SESSION['usu_id'])) {
             window.usu_id = usu_id;
             $("#table_tareas_usuarios").DataTable().ajax.reload();
         }
-
     </script>
 
 <?php } else {
