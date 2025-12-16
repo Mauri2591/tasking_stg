@@ -11,42 +11,7 @@ if (isset($_SESSION['usu_id'])) {
     include_once __DIR__ . "/../../../../View/Home/Public/Template/head.php";
     include_once __DIR__ . "/../../../../View/Home/Public/Template/main_content.php";
     ?>
-    <style>
-        table.dataTable td {
-            vertical-align: middle !important;
-        }
-
-        .descripcion-cell {
-            white-space: normal;
-            word-break: break-word;
-        }
-
-        .usuario-item {
-            cursor: pointer;
-            padding: 6px 10px;
-            border-radius: 6px;
-            margin: 2px;
-            display: inline-block;
-            background-color: #405189;
-            transition: all .2s ease;
-        }
-
-        .usuario-item:hover {
-            background-color: #dee2e6;
-        }
-
-        .usuario-item.activo {
-            background-color: #6085ffff;
-            color: #fff;
-            font-weight: 600;
-        }
-
-        .dropdown-menu {
-            z-index: 1055 !important;
-        }
-    </style>
-
-
+    
     <div class="page-content">
         <div class="container-fluid">
 
@@ -97,15 +62,16 @@ if (isset($_SESSION['usu_id'])) {
                                         <table style="text-align: center;" id="table_tareas_usuarios">
                                             <thead>
                                                 <tr>
-                                                    <th style="width: 20%;text-align: center;">TITULO</th>
+                                                    <th style="width: 10%;text-align: center;">CLIENTE</th>
                                                     <th style="width: 5%;text-align: center;">REF</th>
-                                                    <th style="width: 10%;text-align: center;">PRODUCTO</th>
-                                                    <th style="width: 10%;text-align: center;">TAREA</th>
+                                                    <th style="width: 5%;text-align: center;">PRODUCTO</th>
+                                                    <th style="width: 5%;text-align: center;">TAREA</th>
                                                     <th style="width: 10%;text-align: center;">FECHA</th>
-                                                    <th style="width: 10%;text-align: center;">INICIO</th>
-                                                    <th style="width: 10%;text-align: center;">FIN</th>
-                                                    <th style="width: 10%;text-align: center;">CONSUMIDAS</th>
-                                                    <th style="width: 40%;text-align: center;">DESCRIPCION</th>
+                                                    <th style="width: 5%;text-align: center;">INICIO</th>
+                                                    <th style="width: 5%;text-align: center;">FIN</th>
+                                                    <th style="width: 5%;text-align: center;">CONSUMIDAS</th>
+                                                    <th style="width: 30%;text-align: center;">DESCRIPCION</th>
+                                                    <th style="width: 5%;text-align: center;">COLABORADOR</th>
                                                 </tr>
                                             </thead>
                                         </table>
@@ -121,15 +87,16 @@ if (isset($_SESSION['usu_id'])) {
                                         <table style="text-align: center;" id="table_get_tareas_x_usuario_x_usu_id">
                                             <thead>
                                                 <tr>
-                                                    <th style="width: 20%;text-align: center;">TITULO</th>
+                                                    <th style="width: 10%;text-align: center;">CLIENTE</th>
                                                     <th style="width: 5%;text-align: center;">REF</th>
-                                                    <th style="width: 10%;text-align: center;">PRODUCTO</th>
-                                                    <th style="width: 10%;text-align: center;">TAREA</th>
+                                                    <th style="width: 5%;text-align: center;">PRODUCTO</th>
+                                                    <th style="width: 5%;text-align: center;">TAREA</th>
                                                     <th style="width: 10%;text-align: center;">FECHA</th>
-                                                    <th style="width: 10%;text-align: center;">INICIO</th>
-                                                    <th style="width: 10%;text-align: center;">FIN</th>
-                                                    <th style="width: 10%;text-align: center;">CONSUMIDAS</th>
-                                                    <th style="width: 40%;text-align: center;">DESCRIPCION</th>
+                                                    <th style="width: 5%;text-align: center;">INICIO</th>
+                                                    <th style="width: 5%;text-align: center;">FIN</th>
+                                                    <th style="width: 5%;text-align: center;">CONSUMIDAS</th>
+                                                    <th style="width: 30%;text-align: center;">DESCRIPCION</th>
+                                                    <th style="width: 5%;text-align: center;">COLABORADOR</th>
                                                 </tr>
                                             </thead>
                                         </table>
@@ -148,172 +115,116 @@ if (isset($_SESSION['usu_id'])) {
     include_once __DIR__ . "/../../../../View/Home/Public/Template/footer.php";
     include_once __DIR__ . "/Modales/mdlReportes.php";
     ?>
-
     <script>
+        var tabla;
         var URL = "<?php echo URL ?>";
-        var tablaUsuarios = null;
-        var tablaUsuarioLogueado = null;
-
         document.addEventListener("DOMContentLoaded", function() {
-
-            // =======================
-            // SECTOR 4 (tabla con tabs/usuarios)
-            // =======================
-            if ($('#table_tareas_usuarios').length) {
-
-                tablaUsuarios = $('#table_tareas_usuarios').DataTable({
-                    processing: true,
-                    serverSide: false,
-                    autoWidth: false,
-                    responsive: false,
-                    scrollX: true,
-
-                    dom: 'Bfrtip',
-                    buttons: ['copyHtml5', 'excelHtml5', 'csvHtml5', 'pdfHtml5'],
-
-                    ajax: {
-                        url: "../../../../Controller/ctrTimesummary.php?accion=get_tareas_x_usuario",
-                        type: "post",
-                        dataType: "json",
-                        dataSrc: "aaData",
-                        data: function(d) {
-                            d.usu_id = window.usu_id || 0;
-                        }
-                    },
-
-                    pageLength: 10,
-
-                    columnDefs: [{
-                            targets: 7, // CONSUMIDAS
-                            className: 'text-center align-middle',
-                            createdCell: function(td) {
-                                td.style.textAlign = 'center';
-                                td.style.verticalAlign = 'middle';
-                            }
-                        },
-                        {
-                            targets: 8, // DESCRIPCIÓN
-                            width: '40%',
-                            createdCell: function(td) {
-                                td.style.textAlign = 'center';
-                                td.style.verticalAlign = 'middle';
-                                td.style.whiteSpace = 'normal';
-                                td.style.wordBreak = 'break-word';
-                            }
-                        },
-                        {
-                            targets: '_all',
-                            className: 'text-center align-middle'
-                        }
-                    ]
-
-                });
-
-
-                // Tabs SOLO en sector 4
-                $.post("../../../../Controller/ctrTimesummary.php?accion=get_sectores", function(data) {
-                    $("#tab_sectores").html(data);
-
-                    let tabActivo = $("#tab_sectores .nav-link.active");
-                    if (tabActivo.length) {
-                        cargarUsuarios(tabActivo.data("sector-id"));
+            // Inicializa DataTable vacía
+            tabla = $("#table_tareas_usuarios").DataTable({
+                "aProcessing": true,
+                "aServerSide": true,
+                dom: 'Bfrtip',
+                buttons: ['copyHtml5', 'excelHtml5', 'csvHtml5', 'pdfHtml5'],
+                "ajax": {
+                    url: "../../../../Controller/ctrTimesummary.php?accion=get_tareas_x_usuario",
+                    type: "post",
+                    dataType: "json",
+                    data: function(d) {
+                        d.usu_id = window.usu_id || 0; // Valor dinámico
                     }
-                });
-
-                $("#tab_sectores").on("click", ".nav-link", function(e) {
-                    e.preventDefault();
-                    $("#tab_sectores .nav-link").removeClass("active");
-                    $(this).addClass("active");
-                    cargarUsuarios($(this).data("sector-id"));
-                });
-
-                function cargarUsuarios(sectorId) {
-                    $.post(
-                        "../../../../Controller/ctrTimesummary.php?accion=get_usuarios_por_sector", {
-                            sector_id: sectorId
-                        },
-                        function(data) {
-                            $("#tab_usuarios_x_sector").html(data);
-
-                            let primerUsuario = $("#tab_usuarios_x_sector .usuario-item").first();
-                            if (primerUsuario.length) {
-                                $('.usuario-item').removeClass('activo');
-                                primerUsuario.addClass('activo');
-
-                                window.usu_id = primerUsuario.data('usu-id');
-                                tablaUsuarios.ajax.reload();
-                            }
-
-                        },
-                        "html"
-                    );
+                },
+                "bDestroy": true,
+                "responsive": true,
+                "bInfo": true,
+                "iDisplayLength": 10,
+                "language": {
+                    "sProcessing": "Procesando...",
+                    "sZeroRecords": "No hay tareas registradas.",
+                    "sEmptyTable": "Ninguna tarea disponible.",
+                    "sInfo": "Mostrando _TOTAL_ registros",
+                    "sSearch": "Buscar:",
+                    "oPaginate": {
+                        "sNext": "Siguiente",
+                        "sPrevious": "Anterior"
+                    }
                 }
-            }
+            });
 
-            // =======================
-            // RESTO DE SECTORES (tabla simple)
-            // =======================
-            if ($('#table_get_tareas_x_usuario_x_usu_id').length) {
+            tabla = $("#table_get_tareas_x_usuario_x_usu_id").DataTable({
+                "aProcessing": true,
+                "aServerSide": true,
+                dom: 'Bfrtip',
+                buttons: ['copyHtml5', 'excelHtml5', 'csvHtml5', 'pdfHtml5'],
+                "ajax": {
+                    url: "../../../../Controller/ctrTimesummary.php?accion=get_tareas_x_usuario_x_usu_id",
+                    type: "post",
+                    dataType: "json",
+                    data: function(d) {
 
-                tablaUsuarioLogueado = $('#table_get_tareas_x_usuario_x_usu_id').DataTable({
-                    processing: true,
-                    serverSide: false,
-                    autoWidth: false,
-                    responsive: false,
-                    scrollX: true,
+                    }
+                },
+                "bDestroy": true,
+                "responsive": true,
+                "bInfo": true,
+                "iDisplayLength": 10,
+                "language": {
+                    "sProcessing": "Procesando...",
+                    "sZeroRecords": "No hay tareas registradas.",
+                    "sEmptyTable": "Ninguna tarea disponible.",
+                    "sInfo": "Mostrando _TOTAL_ registros",
+                    "sSearch": "Buscar:",
+                    "oPaginate": {
+                        "sNext": "Siguiente",
+                        "sPrevious": "Anterior"
+                    }
+                }
+            });
 
-                    dom: 'Bfrtip',
-                    buttons: ['copyHtml5', 'excelHtml5', 'csvHtml5', 'pdfHtml5'],
+            $.post("../../../../Controller/ctrTimesummary.php?accion=get_sectores", function(data) {
+                $("#tab_sectores").html(data);
 
-                    ajax: {
-                        url: "../../../../Controller/ctrTimesummary.php?accion=get_tareas_x_usuario_x_usu_id",
-                        type: "post",
-                        dataType: "json",
-                        dataSrc: "aaData"
+                let tabActivo = $("#tab_sectores .nav-link.active");
+                let sectorId = tabActivo.data("sector-id");
+                cargarUsuarios(sectorId);
+            });
+
+            $("#tab_sectores").on("click", ".nav-link", function(e) {
+                e.preventDefault();
+                $("#tab_sectores .nav-link").removeClass("active");
+                $(this).addClass("active");
+                let sectorId = $(this).data("sector-id");
+                cargarUsuarios(sectorId);
+            });
+
+            function cargarUsuarios(sectorId) {
+                $.post("../../../../Controller/ctrTimesummary.php?accion=get_usuarios_por_sector", {
+                        sector_id: sectorId
                     },
-
-                    pageLength: 10,
-
-                    columnDefs: [{
-                            targets: 7, // CONSUMIDAS
-                            className: 'text-center align-middle',
-                            createdCell: function(td) {
-                                td.style.textAlign = 'center';
-                                td.style.verticalAlign = 'middle';
-                            }
-                        },
-                        {
-                            targets: 8, // DESCRIPCIÓN
-                            width: '40%',
-                            createdCell: function(td) {
-                                td.style.textAlign = 'center';
-                                td.style.verticalAlign = 'middle';
-                                td.style.whiteSpace = 'normal';
-                                td.style.wordBreak = 'break-word';
-                            }
-                        },
-                        {
-                            targets: '_all',
-                            className: 'text-center align-middle'
+                    function(data) {
+                        $("#tab_usuarios_x_sector").html(data);
+                        let primerUsuario = $("#tab_usuarios_x_sector span").first();
+                        if (primerUsuario.length > 0) {
+                            let usu_id = primerUsuario.attr("onclick").match(/\d+/)[0];
+                            window.usu_id = usu_id;
+                            $("#table_tareas_usuarios").DataTable().ajax.reload();
                         }
-                    ]
-
-                });
-
+                    },
+                    "html"
+                );
             }
+
         });
 
-        window.mdlDeReporteXlsx = function() {
-            $("#hiddenIdClienteXlsx").val('');
-            $("#getNombreClienteXlsx").val('');
-            $("#nombreClienteXlsx").val('');
-            $("#idCheckValidarClienteXlsx").prop("checked", false);
-            $("#nombreClienteXlsx").prop("disabled", true);
-            $("#mdlReportesXlsx").modal("show");
-            validaridCheckValidarCliente("#idCheckValidarClienteXlsx", "#nombreClienteXlsx");
-        };
+        function validaridCheckValidarCliente(idCheck, idInput) {
+            $(idCheck).off("change");
+            $(idCheck).on("change", function() {
+                const checked = $(this).is(":checked");
+                $(this).val(checked ? "SI" : "NO");
+                $(idInput).prop("disabled", !checked);
+            });
+        }
 
-        window.mdlDeReporteDocx = function() {
+        function mdlDeReporteDocx() {
             $("#hiddenIdClienteDocx").val('');
             $("#getNombreClienteDocx").val('');
             $("#nombreClienteDocx").val('');
@@ -322,26 +233,76 @@ if (isset($_SESSION['usu_id'])) {
             $("#nombreClienteDocx").prop("disabled", true);
             $("#mdlReportesDocx").modal("show");
             validaridCheckValidarCliente("#idCheckValidarClienteDocx", "#nombreClienteDocx");
-        };
+            document.getElementById("nombreClienteDocx").addEventListener("input", inputNombreClienteDocx);
+        }
 
-        // tu función sigue igual
-        $(document).on('click', '.usuario-item', function() {
 
-            // Quitar activo de todos
-            $('.usuario-item').removeClass('activo');
-
-            // Activar el seleccionado
-            $(this).addClass('activo');
-
-            // Tomar usuario
-            let usu_id = $(this).data('usu-id');
-            window.usu_id = usu_id;
-
-            // Recargar tabla
-            if (tablaUsuarios) {
-                tablaUsuarios.ajax.reload();
+        function inputNombreClienteDocx() {
+            let texto = $("#nombreClienteDocx").val().trim();
+            if (texto === "") {
+                $("#hiddenIdClienteDocx").val('');
+                $("#getNombreClienteDocx").val('');
+                return;
             }
-        });
+            $.post(
+                "../../../../Controller/ctrTimesummary.php?accion=getNombreCliente", {
+                    client_rs: texto
+                },
+                function(data) {
+                    if (data && data.cliente_id) {
+                        $("#getNombreClienteDocx").val(data.client_rs);
+                        $("#hiddenIdClienteDocx").val(data.cliente_id);
+                    } else {
+                        $("#getNombreClienteDocx").val('');
+                        $("#hiddenIdClienteDocx").val('');
+                    }
+                },
+                "json"
+            );
+        }
+
+        function inputNombreClienteXlsx() {
+            let valor = $("#nombreClienteXlsx").val().trim();
+            if (valor === "") {
+                $("#hiddenIdClienteXlsx").val('');
+                $("#getNombreClienteXlsx").val('');
+                return; 
+            }
+            $.post(
+                "../../../../Controller/ctrTimesummary.php?accion=getNombreCliente", {
+                    client_rs: valor
+                },
+                function(data) {
+                    if (data && data.cliente_id) {
+                        $("#getNombreClienteXlsx").val(data.client_rs);
+                        $("#hiddenIdClienteXlsx").val(data.cliente_id);
+                    } else {
+                        $("#getNombreClienteXlsx").val('');
+                        $("#hiddenIdClienteXlsx").val('');
+                    }
+                },
+                "json"
+            );
+        }
+
+        function mdlDeReporteXlsx() {
+            $("#hiddenIdClienteXlsx").val('');
+            $("#getNombreClienteXlsx").val('');
+            $("#nombreClienteXlsx").val('');
+            $("#idCheckValidarClienteXlsx").prop("checked", false);
+            $("#nombreClienteXlsx").prop("disabled", true);
+            $("#mdlReportesXlsx").modal("show");
+            validaridCheckValidarCliente("#idCheckValidarClienteXlsx", "#nombreClienteXlsx");
+            document
+                .getElementById("nombreClienteXlsx")
+                .addEventListener("input", inputNombreClienteXlsx);
+        }
+
+        function verTareasUsuario(usu_id) {
+            window.usu_id = usu_id;
+            $("#table_tareas_usuarios").DataTable().ajax.reload();
+        }
+
     </script>
 
 <?php } else {

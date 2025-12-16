@@ -387,32 +387,22 @@ switch ($_GET['accion']) {
         }
         break;
 
-case 'get_usuarios_por_sector':
-    $sector_id = $_POST['sector_id'];
-    $data = $timesummary->get_usuarios_por_sector($sector_id);
+    case 'get_usuarios_por_sector':
+        $sector_id = $_POST['sector_id'];
+        $data = $timesummary->get_usuarios_por_sector($sector_id);
 
-    if (empty($data)) {
-        echo "<span class='text-muted'>No hay usuarios en este sector.</span>";
-    } else {
-        foreach ($data as $val) {
+        if (empty($data)) {
+            echo "<span class='text-muted'>No hay usuarios en este sector.</span>";
+        } else {
+            foreach ($data as $val) {
             ?>
-            <span
-                class="usuario-item badge border border-secondary me-2"
-                data-usu-id="<?php echo $val['usu_id']; ?>"
-            >
-                <?php
-                echo htmlspecialchars(
-                    $val['usu_nom'] . ' ' . $val['usu_ape'],
-                    ENT_QUOTES,
-                    'UTF-8'
-                );
-                ?>
-            </span>
-            <?php
+                <span type="button" onclick="verTareasUsuario(<?php echo $val['usu_id'] ?>)" class="me-2 bg-primary badge border border-secondary text-light">
+                    <?php echo htmlspecialchars($val['usu_nom'] . ' ' . $val['usu_ape'], ENT_QUOTES, 'UTF-8'); ?>
+                </span>
+<?php
+            }
         }
-    }
-    break;
-
+        break;
 
     case 'get_tareas_x_usuario':
         $datos = $timesummary->get_tareas_x_usuario($_POST['usu_id']);
@@ -462,7 +452,8 @@ case 'get_usuarios_por_sector':
             $sub_array[] = $row['hora_desde'];
             $sub_array[] = $row['hora_hasta'];
             $sub_array[] = $row['horas_consumidas'];
-            $sub_array[] = '<p style="text-align:center">'.$row['descripcion'].'</p>';
+            $sub_array[] = $row['descripcion'];
+            $sub_array[] = '<span class="badge bg-primary text-light border border-secondary">' . $row['usu_nom'] . '</span>';
             $data[] = $sub_array;
         }
         $results = array(
