@@ -298,8 +298,6 @@ class Reportes
         exit;
     }
 
-
-
     public static function getDatosReporteSinFiltroXlsx($data, $nombre)
     {
         $spreadsheet = new Spreadsheet();
@@ -328,7 +326,7 @@ class Reportes
         $row = 2;
         foreach ($data as $fila) {
 
-            $dimensionamiento = self::normalizarHoras($fila['dimensionamiento']);
+            $dimensionamiento=self::normalizarHoras($fila['dimensionamiento']);
 
             // Si HS NEGATIVAS está vacío, asignar "00:00"
             $hsNegativas = (!empty($fila['hs_resto']) && strtoupper($fila['hs_resto']) !== 'NULL') ? $fila['hs_resto'] : '00:00';
@@ -337,7 +335,6 @@ class Reportes
             $hsRestantes = (!empty($fila['hs_restante']) && strtoupper($fila['hs_restante']) !== 'NULL')
                 ? self::normalizarHoras($fila['hs_restante'])
                 : self::normalizarHoras($fila['dimensionamiento']);
-
 
             $sheet->fromArray([
                 $row - 1,
@@ -458,8 +455,6 @@ class Reportes
         $writer->save('php://output');
         exit;
     }
-
-
 
     public static function getDatosReporteSinFiltroDocx($data, $nombre, $fechaDesde = null, $fechaHasta = null)
     {
