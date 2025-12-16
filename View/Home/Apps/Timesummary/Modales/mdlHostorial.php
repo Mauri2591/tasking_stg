@@ -13,7 +13,7 @@
                                 <th class="text-center">Titulo</th>
                                 <th class="text-center">Horas</th>
                                 <th class="text-center">Producto</th>
-                                <th class="text-center">PM</th>
+                                <th class="text-center">Tipo</th>
                                 <th class="text-center">Estado</th>
                                 <th class="text-center"></th>
                             </tr>

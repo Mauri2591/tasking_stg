@@ -295,12 +295,12 @@ switch ($_GET['accion']) {
                 $sub_array[] = '<p class="text-center p-0 m-0"><span class="badge border border-dark bg-light text-dark">' . $row['hs_dimensionadas'] . '</span></p>';
                 $sub_array[] = '<span class="text-center badge border border-dark bg-light text-dark">' . $row['producto'] . '</span>';
                 $sub_array[] = $row['es_pm'] == "SI"
-                    ? '<span class="text-center badge bg-success fs-9 fw-bold text-light">Si</span>'
-                    : '<span class="text-center badge bg-danger bg-light text-dark">Asignado</span>';
+                    ? '<span class="badge text-center border border-dark fs-9 fw-bold text-dark">PM</span>'
+                    : '<span class="text-center badge bg-danger text-light">Asignado</span>';
                 $sub_array[] = $row['est'] == 1
                     ? '<span class="text-center badge border border-success text-success"> Activo </span>'
                     : '<span class="badge" style="background-color:gray;color:white"> Inactivo </span>';
-                $sub_array[] = '<a type="button" title="Desea inactivar esta tarea?" onclick="cambiarEstadoTareaHistorial(' . $row['id_timesummary_estados'] . ')" class="ri-edit-fill text-danger"></a>';
+                $sub_array[] = '<a type="button" title="Desea inactivar esta tarea?" onclick="cambiarEstadoTareaHistorial(' . $row['id_timesummary_estados'] . ')" class="ri-edit-fill text-secondary fs-14"></a>';
 
                 $data[] = $sub_array;
             }
