@@ -12,15 +12,34 @@ if (isset($_SESSION['usu_id'])) {
     include_once __DIR__ . "/../../../../View/Home/Public/Template/main_content.php";
     ?>
     <style>
-       table.dataTable td {
-  vertical-align: middle !important;
-}
+        table.dataTable td {
+            vertical-align: middle !important;
+        }
 
-.descripcion-cell {
-  white-space: normal;
-  word-break: break-word;
-}
+        .descripcion-cell {
+            white-space: normal;
+            word-break: break-word;
+        }
 
+        .usuario-item {
+            cursor: pointer;
+            padding: 6px 10px;
+            border-radius: 6px;
+            margin: 2px;
+            display: inline-block;
+            background-color: #405189;
+            transition: all .2s ease;
+        }
+
+        .usuario-item:hover {
+            background-color: #dee2e6;
+        }
+
+        .usuario-item.activo {
+            background-color: #6085ffff;
+            color: #fff;
+            font-weight: 600;
+        }
     </style>
 
 
@@ -212,12 +231,15 @@ if (isset($_SESSION['usu_id'])) {
                         function(data) {
                             $("#tab_usuarios_x_sector").html(data);
 
-                            let primerUsuario = $("#tab_usuarios_x_sector span").first();
+                            let primerUsuario = $("#tab_usuarios_x_sector .usuario-item").first();
                             if (primerUsuario.length) {
-                                let usu_id = primerUsuario.attr("onclick").match(/\d+/)[0];
-                                window.usu_id = usu_id;
+                                $('.usuario-item').removeClass('activo');
+                                primerUsuario.addClass('activo');
+
+                                window.usu_id = primerUsuario.data('usu-id');
                                 tablaUsuarios.ajax.reload();
                             }
+
                         },
                         "html"
                     );
@@ -248,30 +270,29 @@ if (isset($_SESSION['usu_id'])) {
 
                     pageLength: 10,
 
-                    columnDefs: [
-  {
-    targets: 7, // CONSUMIDAS
-    className: 'text-center align-middle',
-    createdCell: function (td) {
-      td.style.textAlign = 'center';
-      td.style.verticalAlign = 'middle';
-    }
-  },
-  {
-    targets: 8, // DESCRIPCIÓN
-    width: '40%',
-    createdCell: function (td) {
-      td.style.textAlign = 'center';
-      td.style.verticalAlign = 'middle';
-      td.style.whiteSpace = 'normal';
-      td.style.wordBreak = 'break-word';
-    }
-  },
-  {
-    targets: '_all',
-    className: 'text-center align-middle'
-  }
-]
+                    columnDefs: [{
+                            targets: 7, // CONSUMIDAS
+                            className: 'text-center align-middle',
+                            createdCell: function(td) {
+                                td.style.textAlign = 'center';
+                                td.style.verticalAlign = 'middle';
+                            }
+                        },
+                        {
+                            targets: 8, // DESCRIPCIÓN
+                            width: '40%',
+                            createdCell: function(td) {
+                                td.style.textAlign = 'center';
+                                td.style.verticalAlign = 'middle';
+                                td.style.whiteSpace = 'normal';
+                                td.style.wordBreak = 'break-word';
+                            }
+                        },
+                        {
+                            targets: '_all',
+                            className: 'text-center align-middle'
+                        }
+                    ]
 
                 });
 
@@ -279,10 +300,23 @@ if (isset($_SESSION['usu_id'])) {
         });
 
         // tu función sigue igual
-        function verTareasUsuario(usu_id) {
+        $(document).on('click', '.usuario-item', function() {
+
+            // Quitar activo de todos
+            $('.usuario-item').removeClass('activo');
+
+            // Activar el seleccionado
+            $(this).addClass('activo');
+
+            // Tomar usuario
+            let usu_id = $(this).data('usu-id');
             window.usu_id = usu_id;
-            if (tablaUsuarios) tablaUsuarios.ajax.reload();
-        }
+
+            // Recargar tabla
+            if (tablaUsuarios) {
+                tablaUsuarios.ajax.reload();
+            }
+        });
     </script>
 
 <?php } else {
