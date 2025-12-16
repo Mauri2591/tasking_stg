@@ -40,6 +40,10 @@ if (isset($_SESSION['usu_id'])) {
             color: #fff;
             font-weight: 600;
         }
+
+        .dropdown-menu {
+            z-index: 1055 !important;
+        }
     </style>
 
 
@@ -298,6 +302,27 @@ if (isset($_SESSION['usu_id'])) {
 
             }
         });
+
+        window.mdlDeReporteXlsx = function() {
+            $("#hiddenIdClienteXlsx").val('');
+            $("#getNombreClienteXlsx").val('');
+            $("#nombreClienteXlsx").val('');
+            $("#idCheckValidarClienteXlsx").prop("checked", false);
+            $("#nombreClienteXlsx").prop("disabled", true);
+            $("#mdlReportesXlsx").modal("show");
+            validaridCheckValidarCliente("#idCheckValidarClienteXlsx", "#nombreClienteXlsx");
+        };
+
+        window.mdlDeReporteDocx = function() {
+            $("#hiddenIdClienteDocx").val('');
+            $("#getNombreClienteDocx").val('');
+            $("#nombreClienteDocx").val('');
+            $("#hiddenDocx").val('Docx');
+            $("#idCheckValidarClienteDocx").prop("checked", false);
+            $("#nombreClienteDocx").prop("disabled", true);
+            $("#mdlReportesDocx").modal("show");
+            validaridCheckValidarCliente("#idCheckValidarClienteDocx", "#nombreClienteDocx");
+        };
 
         // tu función sigue igual
         $(document).on('click', '.usuario-item', function() {
