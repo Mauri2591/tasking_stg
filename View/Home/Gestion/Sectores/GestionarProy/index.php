@@ -273,7 +273,7 @@ if (isset($_SESSION['usu_id'])) {
 
                                         </section>
                                         <section id="cont_usuario_finalizador" style="font-size: 11px; display: none;"
-                                            class="ms-2 badge bg-light text-success border border-success">
+                                            class="ms-2 badge bg-dark text-success border border-success">
 
 
                                         </section>
