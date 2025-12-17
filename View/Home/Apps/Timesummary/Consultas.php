@@ -150,6 +150,9 @@ if (isset($_SESSION['usu_id'])) {
             tabla = $("#table_tareas_usuarios").DataTable({
                 "aProcessing": true,
                 "aServerSide": true,
+                order: [
+                    [4, "desc"]
+                ], // 🔥 FECHA DESC
                 autoWidth: false,
                 dom: 'Bfrtip',
                 columns: [{
@@ -219,6 +222,9 @@ if (isset($_SESSION['usu_id'])) {
                 "aProcessing": true,
                 "aServerSide": true,
                 autoWidth: false,
+                order: [
+                    [4, "desc"]
+                ], // 🔥 FECHA DESC
                 dom: 'Bfrtip',
                 columns: [{
                         width: "25%"
