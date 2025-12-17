@@ -108,9 +108,8 @@ if (isset($_SESSION['usu_id'])) {
                                                 <span id="rechequeo" style="display: none; color:orangered" class="badge ml-1 border border-dark bg-light"></span>
                                                 <span id="proy_recurrencia" style="display: none; color:orangered" class="badge ml-1 border border-dark bg-light"></span>
                                                 <span id="workshop" style="display: flex;" class="badge mx-1 text-light border border-dark bg-info">workshop</span>
-
-                                                <span
-                                                    class="badge bg-light border border-dark text-dark mx-2 mb-1">Detalle:</span>
+                                                <span class="badge bg-light border border-dark text-dark mx-2 mb-1">Ref: <span id="referencia_proy"></span></span>
+                                                <span class="badge bg-light border border-dark text-dark mx-2 mb-1">Detalle:</span>
                                             </div>
 
                                             <div class="card-body p-0">
@@ -386,6 +385,8 @@ if (isset($_SESSION['usu_id'])) {
                 },
                 function(data, textStatus, jqXHR) {
                     console.log(data);
+
+                    $("#referencia_proy").text(data.refProy)
 
                     $.post("../../../../../Controller/ctrProyectos.php?proy=validarContenedorBtnDockerfile", {
                             id: id_proyecto_gestionado,
@@ -769,7 +770,7 @@ if (isset($_SESSION['usu_id'])) {
                         showConfirmButton: true
                     }).then((result) => {
                         if (result.isConfirmed) {
-                            
+
                             $.post("../../../../../Controller/ctrProyectos.php?proy=update_proyecto_desarrollo_tasking", {
                                     id_proyecto_gestionado: id_proyecto_gestionado
                                 },
