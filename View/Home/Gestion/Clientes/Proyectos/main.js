@@ -970,6 +970,7 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
         $("#btn_crear_proyecto").show();
         $("#btn_eliminar_proyecto").show();
         if (this.value == 78) {
+            $("#combo_recurrente_proy_nuevo").val(0)
             $.post(
                 "../../../../../Controller/ctrProyectos.php?proy=get_datos_proyectos_tasking",
                 function (data) {
@@ -1008,8 +1009,6 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
                 "json"
             );
         }
-
-
 
         if (this.value == 78) { //Es un proyecto para Tasking
             $("#cont_activos_ips_urls_otros").hide();
