@@ -162,7 +162,7 @@ class Proyectos extends Conexion
         $stmt->execute();
     }
 
-        public function inhabilitar_proyectos_desarrollo_tasking($id_proyecto_gestionado)
+    public function inhabilitar_proyectos_desarrollo_tasking($id_proyecto_gestionado)
     {
         $conn = parent::get_conexion();
         $sql = "UPDATE proyectos_tasking SET est=0 WHERE id_proyecto_gestionado = :id_proyecto_gestionado";
@@ -2017,6 +2017,7 @@ ORDER BY cantidad_proyectos DESC";
         $sql = "SELECT 
                 tc.cat_id,
                 tc.cat_nom,
+                tc.nombre_ruta,
                 s.sector_id,
                 COUNT(pg.id) AS total
             FROM tm_categoria tc

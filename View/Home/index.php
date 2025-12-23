@@ -32,6 +32,10 @@ if (isset($_SESSION['usu_id'])) {
             background-color: #bbb;
             border-radius: 5px;
         }
+
+        #botonesProductos:hover{
+            background-color: #e5ebffff;
+        }
     </style>
     <?php
     include_once __DIR__ . "/Public/Template/main_content.php";
@@ -126,7 +130,6 @@ if (isset($_SESSION['usu_id'])) {
     ?>
         <script>
             document.addEventListener("DOMContentLoaded", function() {
-
                 $.post("../../Controller/ctrProyectos.php?proy=get_sectores_x_sector_id",
                     function(data, textStatus, jqXHR) {
                         $("#cont_get_categorias_x_sector").html(data);

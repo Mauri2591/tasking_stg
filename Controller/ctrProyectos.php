@@ -240,9 +240,9 @@ switch ($_GET['proy']) {
         echo json_encode($proyecto->get_datos_proyectos_tasking());
         break;
 
-        case 'inhabilitar_proyectos_desarrollo_tasking':
+    case 'inhabilitar_proyectos_desarrollo_tasking':
         echo json_encode($proyecto->inhabilitar_proyectos_desarrollo_tasking($_POST['id_proyecto_gestionado']));
-            break;
+        break;
 
     case 'get_sector_x_proy':
         echo json_encode($proyecto->get_sector_x_proy($_POST['id']));
@@ -1524,7 +1524,7 @@ switch ($_GET['proy']) {
             ?>
             <br>
             <br>
-        <?php
+            <?php
         }
         break;
 
@@ -1559,8 +1559,37 @@ switch ($_GET['proy']) {
 
     case 'get_sectores_x_sector_id':
         $data = $proyecto->get_sectores_x_sector_id($_SESSION['sector_id']);
-        foreach ($data as $val) {
-        ?>
+        // var_dump($data);
+        if ($_SESSION['sector_id'] != 4) {
+            foreach ($data as $val) {
+            ?>
+                <a type="button" href="<?php echo URL."View/Home/".$val['nombre_ruta']; ?>" class="col" id="botonesProductos" style="min-width: 150px; flex: 0 0 auto; text-align: center;">
+                    <div class="py-1 border border-light">
+                        <h5 class="text-muted text-uppercase fs-13 text-center px-1">
+                            <?php echo $val['cat_nom'] ?>
+                            <?php if (!empty($val['total'])): ?>
+                                <i title="Nuevos para trabajar" class="ri-add-circle-fill text-success fs-16 float-end align-middle"></i>
+                            <?php else: ?>
+                                <i title="Sin proyectos para trabajar"
+                                    class="ri-indeterminate-circle-fill text-danger fs-16 float-end align-middle"></i>
+                            <?php endif; ?>
+                        </h5>
+                        <div class="d-flex align-items-center">
+                            <div class="flex-grow-1 ms-3">
+                                <h5 class="mb-0">
+                                    <span class="counter-value" data-target="<?php echo $val['total'] ?>">
+                                        <?php echo $val['total'] ?>
+                                    </span>
+                                </h5>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            <?php
+            }
+        } else {
+            foreach ($data as $val) {
+            ?>
             <div class="col" style="min-width: 150px; flex: 0 0 auto; text-align: center;">
                 <div class="py-1 border border-light">
                     <h5 class="text-muted text-uppercase fs-13 text-center px-1">
@@ -1584,7 +1613,7 @@ switch ($_GET['proy']) {
                 </div>
             </div>
         <?php
-        }
+        }}
         break;
 
     case 'get_proyectos_total':
