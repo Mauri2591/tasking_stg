@@ -244,7 +244,7 @@
                                 <textarea class="form-control" id="descripcion_proy" rows="3"></textarea>
                             </div>
 
-                            <p id="contenedor_validad_proy_Desa_interno_tasking" class="text-danger my-2"><strong>Atención: <br></strong> Los proyectos de (Desarrollo de Tasking) solo se pueden cargar de a uno cada 2 meses. Una vez finalizado el proyecto cargado en curso se podrá generar uno nuevo</p>
+                            <p id="contenedor_validad_proy_Desa_interno_tasking" class="text-danger my-2"><strong>Atención: <br></strong> Los proyectos de Desarrollo de Tasking podrán cargarse con una periodicidad mínima de dos (2) meses. Una vez finalizado el proyecto en curso y cumplido dicho período, se podrá generar un nuevo proyecto</p>
 
                             <section id="contenedor_cont_activos">
                                 <div id="cont_activos" class="mt-2">
