@@ -1,17 +1,17 @@
 <?php
-require_once __DIR__ . "/../../../../../../Config/Conexion.php";
-require_once __DIR__ . "/../../../../../../Config/Config.php";
+require_once __DIR__ . "/../../../../../Config/Conexion.php";
+require_once __DIR__ . "/../../../../../Config/Config.php";
 if (isset($_SESSION['usu_id'])) {
-    require_once __DIR__ . "/../../../../../../Config/Config.php";
-    require_once __DIR__ . "/../../../../../../Model/Clases/Headers.php";
+    require_once __DIR__ . "/../../../../../Config/Config.php";
+    require_once __DIR__ . "/../../../../../Model/Clases/Headers.php";
 
     Headers::get_cors();
 ?>
 
     <?php
-    include_once __DIR__ . "/../../../../Public/Template/head.php";
-    include_once __DIR__ . "/../../../../Public/Template/head.php";
-    include_once __DIR__ . "/../../../../Public/Template/main_content.php";
+    include_once __DIR__ . "/../../../Public/Template/head.php";
+    include_once __DIR__ . "/../../../Public/Template/head.php";
+    include_once __DIR__ . "/../../../Public/Template/main_content.php";
     ?>
     <div class="page-content">
         <div class="container-fluid">
@@ -105,7 +105,7 @@ if (isset($_SESSION['usu_id'])) {
                                 </div>
                             </div>
                             <?php
-                            include_once __DIR__ . "/../Modals/ModalVerHosts.php";
+                            include_once __DIR__ . "/../Ethical_hacking/Modals/ModalVerHosts.php";
                             ?>
                             <div class="tab-pane" id="tab_abiertos" role="tabpanel">
                                 <div class="card card-body">
@@ -221,7 +221,7 @@ if (isset($_SESSION['usu_id'])) {
     </div>
     <!-- End Page-content -->
     <?php
-    include_once __DIR__ . "/../../../../Public/Template/footer.php";
+    include_once __DIR__ . "/../../../Public/Template/footer.php";
     ?>
     <script src="main.js?sheet=<?php echo rand(); ?>"></script>
 

@@ -310,7 +310,7 @@
                                             </li>
 
                                             <li class="nav-item">
-                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/Ethical_hacking/IR/"; ?>"
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/IR/"; ?>"
                                                     class="nav-link" data-key="t-mailbox">Incident Response</a>
                                             </li>
 
