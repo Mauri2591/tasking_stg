@@ -2,10 +2,18 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-sm-6">
-                <script>
-                    document.write(new Date().getFullYear())
-                </script> © Telecom - MSSP.
+                © <span id="anio"></span> Telecom - MSSP.
             </div>
+
+            <script>
+                document.addEventListener("DOMContentLoaded", () => {
+                    const anio = document.getElementById("anio");
+                    if (anio) {
+                        anio.textContent = new Date().getFullYear();
+                    }
+                });
+            </script>
+
 
         </div>
     </div>
@@ -31,7 +39,7 @@
     </div>
 </div> -->
 
-<!-- Theme Settings -->  <!-- ACA ESTA PARA QUE SE MUESTRE EL PANEL DERECHO -->
+<!-- Theme Settings --> <!-- ACA ESTA PARA QUE SE MUESTRE EL PANEL DERECHO -->
 <!-- <div style="visibility: false;" class="offcanvas offcanvas-end border-0" tabindex="-1" id="theme-settings-offcanvas">
     <div class="d-flex align-items-center bg-primary bg-gradient p-3 offcanvas-header">
         <h5 class="m-0 me-2 text-white">Theme Customizer</h5>
