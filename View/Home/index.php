@@ -33,7 +33,7 @@ if (isset($_SESSION['usu_id'])) {
             border-radius: 5px;
         }
 
-        #botonesProductos:hover {
+        #botonesProductos:hover{
             background-color: #e5ebffff;
         }
     </style>
@@ -119,16 +119,15 @@ if (isset($_SESSION['usu_id'])) {
 
 <script>
 document.addEventListener("DOMContentLoaded", () => {
+  const el = document.getElementById("text_bienvenido");
+  if (!el) return;
+
   setTimeout(() => {
-    const el = document.getElementById("text_bienvenido");
-    if (el) {
-      el.style.display = "none";
-    }
+    el.style.display = "none";
   }, 3000);
 });
 </script>
-
-
+<?php unset($_SESSION['bienvenido']); ?>
 
     <?php
     if (($_SESSION['sector_id']) != "4"):
