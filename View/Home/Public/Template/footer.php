@@ -694,15 +694,27 @@
 <script
     src="<?php echo URL ?>/View/Home/Public/velzon/assets/js/pages/plugins/lord-icon-2.1.0.js?sheet=<?php echo rand(); ?>">
 </script>
+
+<script src="<?php echo URL ?>View/Home/Public/velzon/assets/libs/choices.js/public/assets/scripts/choices.min.js" defer></script>
+
+
+<script>
+fetch("<?php echo URL ?>View/Home/Public/velzon/assets/lang/en.json?sheet=<?php echo rand(); ?>")
+  .then(res => res.json())
+  .then(lang => {
+    console.log("Idioma cargado:", lang);
+    // ejemplo:
+    // document.getElementById("title").textContent = lang.title;
+  })
+  .catch(err => console.error("Error cargando idioma", err));
+</script>
+
+
 <script
-    src="<?php echo URL ?>/View\Home\Public\velzon\assets\libs\choices.js\public\assets\scripts\choices.min.js?sheet=<?php echo rand(); ?>">
+  src="<?php echo URL ?>View/Home/Public/velzon/assets/js/plugins.js?sheet=<?php echo rand(); ?>"
+>
 </script>
 
-<script src="<?php echo URL ?>/Tasking/View/Home/assets/lang/en.json?sheet=<?php echo rand(); ?>">
-</script>
-
-<script src="<?php echo URL ?>/View\Home\Public\velzon\assets\assets/js/plugins.js?sheet=<?php echo rand(); ?>">
-</script>
 
 <!-- App js -->
 <!-- <script src="<?php echo URL ?>/View/Home/Public/velzon/assets/js/app_mio.js?sheet=<?php echo rand(); ?>"></script> -->
@@ -721,7 +733,8 @@
 
 <!-- Modal Js -->
 <script
-    src="<?php echo URL ?>/View\Home\Public\velzon\assets\assets/js/pages/modal.init.js?sheet=<?php echo rand(); ?>">
+  src="<?php echo URL ?>View/Home/Public/velzon/assets/js/pages/modal.init.js?sheet=<?php echo rand(); ?>"
+  defer>
 </script>
 
 <!-- Charjs -->
