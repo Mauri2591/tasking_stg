@@ -117,14 +117,17 @@ if (isset($_SESSION['usu_id'])) {
     include_once __DIR__ . "/Public/Template/footer.php";
     ?>
 
-    <script>
-        setTimeout(() => {
-            const el = document.getElementById("text_bienvenido");
-            if (el) {
-                el.style.display = "none";
-            }
-        }, 3000);
-    </script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  setTimeout(() => {
+    const el = document.getElementById("text_bienvenido");
+    if (el) {
+      el.style.display = "none";
+    }
+  }, 3000);
+});
+</script>
+
 
 
     <?php
