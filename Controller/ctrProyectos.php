@@ -664,11 +664,20 @@ switch ($_GET['proy']) {
                     . ')" title="Asignarme el proyecto" class="badge bg-light border border-dark text-dark">Sin asignar</span>';
             }
 
-            $sub_array[] = '<span type="button" onclick="ver_hosts_eh('
-                . $row['id_proyecto_gestionado']
-                . ')">
+            if ($row['estados_id'] == 4) {
+                $sub_array[] = '<a href="' . URL . 'View/Home/Gestion/Sectores/GestionarProy/?p='
+                    . Openssl::set_ssl_encrypt($row['id_proyecto_cantidad_servicios'])
+                    . '&pg=' . Openssl::set_ssl_encrypt($row['id_proyecto_gestionado'])
+                    . '" title="Ver proyecto">
+                <i class="ri-send-plane-fill text-primary fs-18"></i>
+            </a>';
+            } else {
+                $sub_array[] = '<span type="button" onclick="ver_hosts_eh('
+                    . $row['id_proyecto_gestionado']
+                    . ')">
             <i class="text-secondary fs-18 ri-global-line" title="Ver hosts"></i>
         </span>';
+            }
 
             if (in_array($row['estados_id'], [2, 3, 4])) {
                 $sub_array[] = '<a href="' . URL . 'View/Home/Gestion/Sectores/GestionarProy/?p='
