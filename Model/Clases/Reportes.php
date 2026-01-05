@@ -369,7 +369,7 @@ class Reportes
                 $consumidas,
                 $hsNegativas,
                 $hsRestantes,
-                self::normalizarHoras($fila['horas_consumidas_por_usuario']),
+                $fila['horas_consumidas_por_usuario'], // ← NO normalizar
                 $fila['usuario_pm_calidad'],
                 $fila['fech_inicio'],
                 $fila['fech_fin'],
