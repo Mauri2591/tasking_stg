@@ -7,8 +7,7 @@ use PhpOffice\PhpWord\IOFactory;
 
 class Reportes
 {
-
-    private static function normalizarHoras($valor)
+    private static function normalizarHoras($valor): string
     {
         if ($valor === null || $valor === '' || strtoupper((string)$valor) === 'NULL') {
             return '00:00';
@@ -16,15 +15,14 @@ class Reportes
 
         $valor = trim((string)$valor);
 
-        // Si ya viene en HHH:MM (duración) → OK
+        // HHH:MM
         if (preg_match('/^\d{1,4}:\d{2}$/', $valor)) {
             return $valor;
         }
 
-        // Si es número → SIEMPRE horas completas (duración)
+        // Número → horas
         if (is_numeric($valor)) {
-            $horas = (int) floor($valor);
-            return $horas . ':00'; // ❌ NO usar %02d
+            return ((int)$valor) . ':00';
         }
 
         return '00:00';
@@ -39,9 +37,13 @@ class Reportes
 
     private static function minToHoras(int $min): string
     {
-        $sign = $min < 0 ? '-' : '';
-        $min  = abs($min);
-        return $sign . intdiv($min, 60) . ':' . str_pad($min % 60, 2, '0', STR_PAD_LEFT);
+        if ($min <= 0) {
+            return '00:00';
+        }
+
+        $hh = intdiv($min, 60);
+        $mm = $min % 60;
+        return $hh . ':' . str_pad($mm, 2, '0', STR_PAD_LEFT);
     }
 
     public static function get_reporte_excel($data, $nombre)
@@ -326,29 +328,36 @@ class Reportes
             'SECTOR',
             'DIMENSIONAMIENTO',
             'HS CONSUMIDAS TOTAL',
-            'HS NEGATIVAS', // hs_resto
-            'HS RESTANTES', // hs_restante
+            'HS NEGATIVAS',
+            'HS RESTANTES',
             'HS POR USUARIO',
-            'HS PM',        // horas_pm
+            'HS PM',
             'FECHA INICIO',
             'FECHA FIN',
             'ESTADO'
         ];
-        $sheet->fromArray($headers, NULL, 'A1');
+        $sheet->fromArray($headers, null, 'A1');
 
-        // Datos
         $row = 2;
+
         foreach ($data as $fila) {
 
             $dimensionamiento = self::normalizarHoras($fila['dimensionamiento']);
             $consumidas       = self::normalizarHoras($fila['horas_consumidas_total'] ?? '00:00');
 
-            $hsRestantes = self::minToHoras(
-                self::horasToMin($dimensionamiento) - self::horasToMin($consumidas)
-            );
+            $minResto =
+                self::horasToMin($dimensionamiento) -
+                self::horasToMin($consumidas);
 
-            // Si HS NEGATIVAS está vacío, asignar "00:00"
-            $hsNegativas = (!empty($fila['hs_resto']) && strtoupper($fila['hs_resto']) !== 'NULL') ? $fila['hs_resto'] : '00:00';
+            if ($minResto < 0) {
+                // Excedido
+                $hsRestantes = '00:00';
+                $hsNegativas = self::minToHoras(abs($minResto));
+            } else {
+                // Dentro del dimensionamiento
+                $hsRestantes = self::minToHoras($minResto);
+                $hsNegativas = '00:00';
+            }
 
             $sheet->fromArray([
                 $row - 1,
@@ -357,15 +366,15 @@ class Reportes
                 $fila['producto'],
                 $fila['sector'],
                 $dimensionamiento,
-                $fila['horas_consumidas_total'],
-                $hsNegativas,   // Columna G
-                $hsRestantes,   // Columna H
-                $fila['horas_consumidas_por_usuario'],
-                $fila['usuario_pm_calidad'], // Columna J
+                $consumidas,
+                $hsNegativas,
+                $hsRestantes,
+                self::normalizarHoras($fila['horas_consumidas_por_usuario']),
+                $fila['usuario_pm_calidad'],
                 $fila['fech_inicio'],
                 $fila['fech_fin'],
                 $fila['estado']
-            ], NULL, 'A' . $row);
+            ], null, 'A' . $row);
 
             $row++;
         }
@@ -373,71 +382,49 @@ class Reportes
         // AutoFilter
         $sheet->setAutoFilter("A1:N" . ($row - 1));
 
-        // Encabezado estilo
+        // Estilo encabezado
         $sheet->getStyle("A1:N1")->applyFromArray([
             'font' => ['bold' => true, 'color' => ['rgb' => 'FFFFFF']],
             'fill' => [
                 'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
                 'startColor' => ['rgb' => '43578F']
             ],
-            'alignment' => ['horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER]
+            'alignment' => [
+                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER
+            ]
         ]);
 
-        // Filas alternadas (excepto columnas G y H)
+        // Filas alternadas
         for ($i = 2; $i < $row; $i++) {
-            if ($i % 2 == 0) {
-                $sheet->getStyle("A{$i}:G{$i}")
-                    ->getFill()
+            if ($i % 2 === 0) {
+                $sheet->getStyle("A{$i}:G{$i}")->getFill()
                     ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
-                    ->getStartColor()
-                    ->setRGB('F2F2F2');
+                    ->getStartColor()->setRGB('F2F2F2');
 
-                $sheet->getStyle("I{$i}:N{$i}")
-                    ->getFill()
+                $sheet->getStyle("I{$i}:N{$i}")->getFill()
                     ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
-                    ->getStartColor()
-                    ->setRGB('F2F2F2');
+                    ->getStartColor()->setRGB('F2F2F2');
             }
         }
 
-        // ✅ Pintar HS NEGATIVAS y HS RESTANTES según reglas
+        // Colores HS
         for ($i = 2; $i < $row; $i++) {
-            $valorNegativas = $sheet->getCell("H{$i}")->getValue();
-            $valorRestantes = $sheet->getCell("I{$i}")->getValue();
+            $neg = $sheet->getCell("H{$i}")->getValue();
+            $res = $sheet->getCell("I{$i}")->getValue();
 
             // HS NEGATIVAS
-            if ($valorNegativas !== '00:00') {
-                // Tiene valor → Naranja
-                $sheet->getStyle("H{$i}")
-                    ->getFill()
-                    ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
-                    ->getStartColor()
-                    ->setRGB('FFA500'); // Naranja
-            } else {
-                // No tiene valor → Verde claro
-                $sheet->getStyle("H{$i}")
-                    ->getFill()
-                    ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
-                    ->getStartColor()
-                    ->setRGB('90EE90'); // Verde claro
-            }
+            $sheet->getStyle("H{$i}")->getFill()
+                ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
+                ->getStartColor()->setRGB(
+                    $neg !== '00:00' ? 'FFA500' : '90EE90'
+                );
 
             // HS RESTANTES
-            if ($valorRestantes !== '00:00') {
-                // Tiene valor → Celeste claro
-                $sheet->getStyle("I{$i}")
-                    ->getFill()
-                    ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
-                    ->getStartColor()
-                    ->setRGB('ADD8E6'); // Celeste claro
-            } else {
-                // No tiene valor → Verde claro
-                $sheet->getStyle("I{$i}")
-                    ->getFill()
-                    ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
-                    ->getStartColor()
-                    ->setRGB('90EE90'); // Verde claro
-            }
+            $sheet->getStyle("I{$i}")->getFill()
+                ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
+                ->getStartColor()->setRGB(
+                    $res !== '00:00' ? 'ADD8E6' : '90EE90'
+                );
         }
 
         // Centrado
