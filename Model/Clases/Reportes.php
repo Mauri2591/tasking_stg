@@ -16,18 +16,32 @@ class Reportes
 
         $valor = trim((string)$valor);
 
-        // Si ya viene en HH:MM → devolver tal cual
-        if (preg_match('/^\d{1,3}:\d{2}$/', $valor)) {
+        // Si ya viene en HHH:MM (duración) → OK
+        if (preg_match('/^\d{1,4}:\d{2}$/', $valor)) {
             return $valor;
         }
 
-        // Si es solo un número → son horas
+        // Si es número → SIEMPRE horas completas (duración)
         if (is_numeric($valor)) {
-            return sprintf('%02d:00', (int)$valor);
+            $horas = (int) floor($valor);
+            return $horas . ':00'; // ❌ NO usar %02d
         }
 
-        // Fallback seguro
         return '00:00';
+    }
+
+    private static function horasToMin(string $h): int
+    {
+        $h = self::normalizarHoras($h);
+        [$hh, $mm] = array_map('intval', explode(':', $h));
+        return ($hh * 60) + $mm;
+    }
+
+    private static function minToHoras(int $min): string
+    {
+        $sign = $min < 0 ? '-' : '';
+        $min  = abs($min);
+        return $sign . intdiv($min, 60) . ':' . str_pad($min % 60, 2, '0', STR_PAD_LEFT);
     }
 
     public static function get_reporte_excel($data, $nombre)
@@ -326,15 +340,15 @@ class Reportes
         $row = 2;
         foreach ($data as $fila) {
 
-            $dimensionamiento=self::normalizarHoras($fila['dimensionamiento']);
+            $dimensionamiento = self::normalizarHoras($fila['dimensionamiento']);
+            $consumidas       = self::normalizarHoras($fila['horas_consumidas_total'] ?? '00:00');
+
+            $hsRestantes = self::minToHoras(
+                self::horasToMin($dimensionamiento) - self::horasToMin($consumidas)
+            );
 
             // Si HS NEGATIVAS está vacío, asignar "00:00"
             $hsNegativas = (!empty($fila['hs_resto']) && strtoupper($fila['hs_resto']) !== 'NULL') ? $fila['hs_resto'] : '00:00';
-
-            // Si HS RESTANTES está vacío, asignar "00:00"
-            $hsRestantes = (!empty($fila['hs_restante']) && strtoupper($fila['hs_restante']) !== 'NULL')
-                ? self::normalizarHoras($fila['hs_restante'])
-                : self::normalizarHoras($fila['dimensionamiento']);
 
             $sheet->fromArray([
                 $row - 1,
