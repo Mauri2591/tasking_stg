@@ -663,7 +663,12 @@ switch ($_GET['proy']) {
                     . $row['id_proyecto_gestionado']
                     . ')" title="Asignarme el proyecto" class="badge bg-light border border-dark text-dark">Sin asignar</span>';
             }
-
+            $sub_array[] = '<span type="button" onclick="ver_hosts_eh('
+                . $row['id_proyecto_gestionado']
+                . ')">
+            <i class="text-secondary fs-18 ri-global-line" title="Ver hosts"></i>
+        </span>';
+        
             if ($row['estados_id'] == 4) {
                 $sub_array[] = '<a href="' . URL . 'View/Home/Gestion/Sectores/GestionarProy/?p='
                     . Openssl::set_ssl_encrypt($row['id_proyecto_cantidad_servicios'])
@@ -671,12 +676,6 @@ switch ($_GET['proy']) {
                     . '" title="Ver proyecto">
                 <i class="ri-send-plane-fill text-primary fs-18"></i>
             </a>';
-            } else {
-                $sub_array[] = '<span type="button" onclick="ver_hosts_eh('
-                    . $row['id_proyecto_gestionado']
-                    . ')">
-            <i class="text-secondary fs-18 ri-global-line" title="Ver hosts"></i>
-        </span>';
             }
 
             if (in_array($row['estados_id'], [2, 3, 4])) {
@@ -1572,7 +1571,7 @@ switch ($_GET['proy']) {
         if ($_SESSION['sector_id'] != 4) {
             foreach ($data as $val) {
             ?>
-                <a type="button" href="<?php echo URL."View/Home/".$val['nombre_ruta']; ?>" class="col" id="botonesProductos" style="min-width: 150px; flex: 0 0 auto; text-align: center;">
+                <a type="button" href="<?php echo URL . "View/Home/" . $val['nombre_ruta']; ?>" class="col" id="botonesProductos" style="min-width: 150px; flex: 0 0 auto; text-align: center;">
                     <div class="py-1 border border-light">
                         <h5 class="text-muted text-uppercase fs-13 text-center px-1">
                             <?php echo $val['cat_nom'] ?>
@@ -1599,30 +1598,31 @@ switch ($_GET['proy']) {
         } else {
             foreach ($data as $val) {
             ?>
-            <div class="col" style="min-width: 150px; flex: 0 0 auto; text-align: center;">
-                <div class="py-1 border border-light">
-                    <h5 class="text-muted text-uppercase fs-13 text-center px-1">
-                        <?php echo $val['cat_nom'] ?>
-                        <?php if (!empty($val['total'])): ?>
-                            <i title="Nuevos para trabajar" class="ri-add-circle-fill text-success fs-16 float-end align-middle"></i>
-                        <?php else: ?>
-                            <i title="Sin proyectos para trabajar"
-                                class="ri-indeterminate-circle-fill text-danger fs-16 float-end align-middle"></i>
-                        <?php endif; ?>
-                    </h5>
-                    <div class="d-flex align-items-center">
-                        <div class="flex-grow-1 ms-3">
-                            <h5 class="mb-0">
-                                <span class="counter-value" data-target="<?php echo $val['total'] ?>">
-                                    <?php echo $val['total'] ?>
-                                </span>
-                            </h5>
+                <div class="col" style="min-width: 150px; flex: 0 0 auto; text-align: center;">
+                    <div class="py-1 border border-light">
+                        <h5 class="text-muted text-uppercase fs-13 text-center px-1">
+                            <?php echo $val['cat_nom'] ?>
+                            <?php if (!empty($val['total'])): ?>
+                                <i title="Nuevos para trabajar" class="ri-add-circle-fill text-success fs-16 float-end align-middle"></i>
+                            <?php else: ?>
+                                <i title="Sin proyectos para trabajar"
+                                    class="ri-indeterminate-circle-fill text-danger fs-16 float-end align-middle"></i>
+                            <?php endif; ?>
+                        </h5>
+                        <div class="d-flex align-items-center">
+                            <div class="flex-grow-1 ms-3">
+                                <h5 class="mb-0">
+                                    <span class="counter-value" data-target="<?php echo $val['total'] ?>">
+                                        <?php echo $val['total'] ?>
+                                    </span>
+                                </h5>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        <?php
-        }}
+            <?php
+            }
+        }
         break;
 
     case 'get_proyectos_total':
@@ -1762,7 +1762,7 @@ switch ($_GET['proy']) {
     case "validarContenedorBtnDockerfile":
         $datos = $proyecto->get_datos_proyecto_gestionado($_POST['id']);
         if ($datos->cat_id == 12) {
-        ?>
+            ?>
             <span
                 class="badge bg-dark py-1 px-2 mx-2 mb-3 d-inline-flex align-items-center gap-2 w-auto"
                 style="color: palevioletred; display: none;">
