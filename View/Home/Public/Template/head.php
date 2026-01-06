@@ -9,9 +9,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta content="Premium Multipurpose Admin & Dashboard Template" name="description" />
     <meta content="Themesbrand" name="author" />
+    
     <!-- App favicon -->
     <link rel="shortcut icon"
-        href="<?php echo URL ?>/View/Home/Public/velzon/assets/images/favicon.ico?sheet=<?php echo rand(); ?>">
+        href="<?php echo URL; ?>/View/Home/Public/velzon/assets/images/portada_tasking.png?sheet=<?php echo rand(); ?>">
 
     <!-- Layout config Js -->
     <script src="<?php echo URL ?>/View/Home/Public/velzon/assets/js/layout.js?sheet=<?php echo rand(); ?>"></script>
@@ -71,6 +72,7 @@
             formData.append('idCheckValidarUsuPass', document.getElementById("idCheckValidarUsuPass").value);
             return formData;
         }
+
         function btnEditPerfil() {
             $.post(URL + "Controller/ctrUsuarios.php?usuarios=get_usuario_x_id",
                 function(data, textStatus, jqXHR) {
@@ -80,7 +82,7 @@
                 },
                 "json"
             );
-            
+
             $("#idCheckValidarUsuPass").val("NO")
             document.getElementById("usu_pass").setAttribute("disabled", "");
             $("#modalEditPerfil").modal("show");
@@ -158,7 +160,7 @@
             font-weight: 500;
         }
 
-        .dropdown-item{
+        .dropdown-item {
             padding: 0 1rem;
         }
     </style>

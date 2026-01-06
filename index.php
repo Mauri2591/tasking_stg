@@ -1,6 +1,5 @@
 <?php
 require_once __DIR__ . "/Config/Config.php";
-// require_once __DIR__ . "/Config/Conexion.php";
 ?>
 <!doctype html>
 <html lang="en" data-layout="vertical" data-topbar="light" data-sidebar="dark" data-sidebar-size="lg"
