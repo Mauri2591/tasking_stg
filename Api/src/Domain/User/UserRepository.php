@@ -19,7 +19,7 @@ class UserRepository
     {
         $sql = "SELECT usu_id, usu_nom, usu_ape, usu_correo, usu_pass 
             FROM tm_usuario 
-            WHERE usu_nom = :usu_nom AND usu_correo='dev@teco.com.ar' AND est = 1";
+            WHERE usu_nom = :usu_nom AND usu_correo='dev@personal.com.ar' AND est = 1";
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute(['usu_nom' => $usu_nom]);
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
