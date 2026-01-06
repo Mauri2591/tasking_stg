@@ -152,7 +152,7 @@ class Proyectos extends Conexion
         $stmt->execute();
     }
 
-    public function update_proyecto_desarrollo_tasking($id_proyecto_gestionado)
+    public function update_proyecto_DesarrolloTasking($id_proyecto_gestionado)
     {
         $conn = parent::get_conexion();
         $sql = "UPDATE proyectos_tasking 
@@ -162,7 +162,7 @@ class Proyectos extends Conexion
         $stmt->execute();
     }
 
-    public function inhabilitar_proyectos_desarrollo_tasking($id_proyecto_gestionado)
+    public function inhabilitar_proyectos_DesarrolloTasking($id_proyecto_gestionado)
     {
         $conn = parent::get_conexion();
         $sql = "UPDATE proyectos_tasking SET est=0 WHERE id_proyecto_gestionado = :id_proyecto_gestionado";

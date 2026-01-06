@@ -1,5 +1,5 @@
 $(document).ready(function () {
-    tabla = $("#table_proyectos_nuevos_eh_desarrollo_tasking").dataTable({
+    tabla = $("#table_proyectos_nuevos_eh_ProyectosPropios").dataTable({
         "aProcessing": true,
         "aServerSide": true,
         dom: 'Bfrtip',
@@ -18,7 +18,7 @@ $(document).ready(function () {
             dataType: "json",
             data: {
                 sector_id: 1, // eh
-                cat_id: 78, //desarrollo tasking
+                cat_id: 9, //ProyectosPropios
                 estados_id: 1 //nuevos
             },
             error: function (e) {
@@ -56,7 +56,7 @@ $(document).ready(function () {
         }
     });
 
-    tabla = $("#table_proyectos_abiertos_eh_desarrollo_tasking").dataTable({
+    tabla = $("#table_proyectos_abiertos_eh_ProyectosPropios").dataTable({
         "aProcessing": true,
         "aServerSide": true,
         dom: 'Bfrtip',
@@ -75,8 +75,8 @@ $(document).ready(function () {
             dataType: "json",
             data: {
                 sector_id: 1, // eh
-                cat_id: 78, //desarrollo tasking
-                estados_id: 2 //abierto
+                cat_id: 9, //ProyectosPropios
+                estados_id: 2 //abiertos
             },
             error: function (e) {
             }
@@ -113,7 +113,7 @@ $(document).ready(function () {
         }
     });
 
-    tabla = $("#table_proyectos_realizados_eh_desarrollo_tasking").dataTable({
+    tabla = $("#table_proyectos_realizados_eh_ProyectosPropios").dataTable({
         "aProcessing": true,
         "aServerSide": true,
         dom: 'Bfrtip',
@@ -132,8 +132,8 @@ $(document).ready(function () {
             dataType: "json",
             data: {
                 sector_id: 1, // eh
-                cat_id: 40, //va Express
-                estados_id: 3 //realizado
+                cat_id: 9, //ProyectosPropios
+                estados_id: 3 //realizados
             },
             error: function (e) {
             }
@@ -170,7 +170,7 @@ $(document).ready(function () {
         }
     });
 
-    tabla = $("#table_proyectos_cerrado_calidad_eh_desarrollo_tasking").dataTable({
+    tabla = $("#table_proyectos_cerrados_calidad_eh_ProyectosPropios").dataTable({
         "aProcessing": true,
         "aServerSide": true,
         dom: 'Bfrtip',
@@ -189,7 +189,7 @@ $(document).ready(function () {
             dataType: "json",
             data: {
                 sector_id: 1, // eh
-                cat_id: 78, //desarrollo tasking
+                cat_id: 9, //ProyectosPropios
                 estados_id: 4 //cerrados calidad
             },
             error: function (e) {
@@ -228,7 +228,6 @@ $(document).ready(function () {
     });
 });
 
-
 function cambiar_a_borrador(id_proyecto_gestionado) {
     Swal.fire({
         icon: "info",
@@ -243,22 +242,10 @@ function cambiar_a_borrador(id_proyecto_gestionado) {
                 },
                 "json"
             );
-
-            setTimeout(() => {
-                if ($.fn.DataTable.isDataTable('#table_proyectos_nuevos_eh_pentest')) {
-                    $('#table_proyectos_nuevos_eh_pentest').DataTable().ajax.reload(null, false);
-                }
-                if ($.fn.DataTable.isDataTable('#table_proyectos_borrador')) {
-                    $('#table_proyectos_borrador').DataTable().ajax.reload(null, false);
-                }
-                if ($.fn.DataTable.isDataTable('#table_proyectos_abiertos_eh_desarrollo_tasking')) {
-                    $('#table_proyectos_abiertos_eh_desarrollo_tasking').DataTable().ajax.reload(null, false);
-                }
-                if ($.fn.DataTable.isDataTable('#table_proyectos_nuevos_eh_desarrollo_tasking')) {
-                    $('#table_proyectos_nuevos_eh_desarrollo_tasking').DataTable().ajax.reload(null, false);
-                }
-            }, 500);
-
+            $('#table_proyectos_nuevos_eh_pentest').DataTable().ajax.reload(null, false);
+            $('#table_proyectos_borrador').DataTable().ajax.reload(null, false);
+            $('#table_proyectos_abiertos_eh_ProyectosPropios').DataTable().ajax.reload(null, false);
+            $('#table_proyectos_nuevos_eh_ProyectosPropios').DataTable().ajax.reload(null, false);
             Swal.fire({
                 icon: "success",
                 title: "Bien",
@@ -284,16 +271,6 @@ function cambiar_a_abierto(id_proyecto_gestionado) {
                 },
                 "json"
             );
-
-            setTimeout(() => {
-                if ($.fn.DataTable.isDataTable('#table_proyectos_nuevos_eh_desarrollo_tasking')) {
-                    $('#table_proyectos_nuevos_eh_desarrollo_tasking').DataTable().ajax.reload(null, false);
-                }
-                if ($.fn.DataTable.isDataTable('#table_proyectos_abiertos_eh_desarrollo_tasking')) {
-                    $('#table_proyectos_abiertos_eh_desarrollo_tasking').DataTable().ajax.reload(null, false);
-                }
-            }, 500);
-
             Swal.fire({
                 icon: "success",
                 title: "Bien",
@@ -301,11 +278,13 @@ function cambiar_a_abierto(id_proyecto_gestionado) {
                 timer: 1500,
                 showConfirmButton: false
             });
-
+            $('#table_proyectos_nuevos_eh_ProyectosPropios').DataTable().ajax.reload(null, false);
+            $('#table_proyectos_abiertos_eh_ProyectosPropios').DataTable().ajax.reload(null, false);
         }
     })
 }
 function asignar_proyecto(id_proyecto_gestionado) {
+
     Swal.fire({
         icon: "info",
         title: "Desea tomar este proyecto?",
@@ -326,12 +305,7 @@ function asignar_proyecto(id_proyecto_gestionado) {
                 showCancelButton: false,
                 timer: 1300
             });
-
-            setTimeout(() => {
-                if ($.fn.DataTable.isDataTable('#table_proyectos_nuevos_eh_desarrollo_tasking')) {
-                    $('#table_proyectos_nuevos_eh_desarrollo_tasking').DataTable().ajax.reload(null, false);
-                }
-            }, 500);
+            $('#table_proyectos_nuevos_eh_ProyectosPropios').DataTable().ajax.reload(null, false);
         }
     })
 
@@ -371,19 +345,8 @@ function cambiar_a_nuevo(id_proyecto_gestionado) {
                 function (data, textStatus, jqXHR) {
 
                 },
+                "json"
             );
-            setTimeout(() => {
-                if ($.fn.DataTable.isDataTable('#table_proyectos_abiertos_eh_desarrollo_tasking')) {
-                    $('#table_proyectos_abiertos_eh_desarrollo_tasking').DataTable().ajax.reload(null, false);
-                }
-                if ($.fn.DataTable.isDataTable('#table_proyectos_nuevos_eh_desarrollo_tasking')) {
-                    $('#table_proyectos_nuevos_eh_desarrollo_tasking').DataTable().ajax.reload(null, false);
-                }
-                if ($.fn.DataTable.isDataTable('#table_proyectos_borrador')) {
-                    $('#table_proyectos_borrador').DataTable().ajax.reload(null, false);
-                }
-            }, 500);
-
             Swal.fire({
                 icon: "success",
                 title: "Bien",
@@ -391,6 +354,8 @@ function cambiar_a_nuevo(id_proyecto_gestionado) {
                 timer: 1500,
                 showConfirmButton: false
             });
+            $('#table_proyectos_abiertos_eh_ProyectosPropios').DataTable().ajax.reload(null, false);
+            $('#table_proyectos_nuevos_eh_ProyectosPropios').DataTable().ajax.reload(null, false);
         }
     })
 }
@@ -416,8 +381,8 @@ function cambiar_a_realizado(id_proyecto_gestionado) {
                 timer: 1500,
                 showConfirmButton: false
             });
-            $('#table_proyectos_abiertos_eh_desarrollo_tasking').DataTable().ajax.reload(null, false);
-            $('#table_proyectos_realizados_eh_desarrollo_tasking').DataTable().ajax.reload(null, false);
+            $('#table_proyectos_abiertos_eh_ProyectosPropios').DataTable().ajax.reload(null, false);
+            $('#table_proyectos_realizados_eh_ProyectosPropios').DataTable().ajax.reload(null, false);
         }
     })
 }

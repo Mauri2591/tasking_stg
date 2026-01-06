@@ -69,7 +69,7 @@ if (isset($_SESSION['usu_id'])) {
                         <div class="tab-content text-muted">
                             <div class="tab-pane active" id="tab_nuevos" role="tabpanel">
                                 <div class="card card-body">
-                                    <table id="table_proyectos_nuevos_eh_proyectos_propios"
+                                    <table id="table_proyectos_nuevos_eh_ProyectosPropios"
                                         style="text-align: center; width: 100%;">
                                         <thead style="text-align: center;">
                                             <tr style="text-align: center;">
@@ -110,7 +110,7 @@ if (isset($_SESSION['usu_id'])) {
                             ?>
                             <div class="tab-pane" id="tab_abiertos" role="tabpanel">
                                 <div class="card card-body">
-                                    <table id="table_proyectos_abiertos_eh_proyectos_propios"
+                                    <table id="table_proyectos_abiertos_eh_ProyectosPropios"
                                         style="text-align: center; width: 100%;">
                                         <thead style="text-align: center;">
                                             <tr style="text-align: center;">
@@ -146,7 +146,7 @@ if (isset($_SESSION['usu_id'])) {
 
                             <div class="tab-pane" id="tab_realizados" role="tabpanel">
                                 <div class="card card-body">
-                                    <table id="table_proyectos_realizados_eh_proyectos_propios"
+                                    <table id="table_proyectos_realizados_eh_ProyectosPropios"
                                         style="text-align: center; width: 100%;">
                                         <thead style="text-align: center;">
                                             <tr style="text-align: center;">
@@ -182,7 +182,7 @@ if (isset($_SESSION['usu_id'])) {
 
                             <div class="tab-pane" id="tab_cerrados_calidad" role="tabpanel">
                                 <div class="card card-body">
-                                    <table id="table_proyectos_cerrados_calidad_eh_proyectos_propios"
+                                    <table id="table_proyectos_cerrados_calidad_eh_ProyectosPropios"
                                         style="text-align: center; width: 100%;">
                                         <thead style="text-align: center;">
                                             <tr style="text-align: center;">

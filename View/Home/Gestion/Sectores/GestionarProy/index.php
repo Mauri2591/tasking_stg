@@ -771,7 +771,7 @@ if (isset($_SESSION['usu_id'])) {
                     }).then((result) => {
                         if (result.isConfirmed) {
 
-                            $.post("../../../../../Controller/ctrProyectos.php?proy=update_proyecto_desarrollo_tasking", {
+                            $.post("../../../../../Controller/ctrProyectos.php?proy=update_proyecto_DesarrolloTasking", {
                                     id_proyecto_gestionado: id_proyecto_gestionado
                                 },
                                 function(data, textStatus, jqXHR) {

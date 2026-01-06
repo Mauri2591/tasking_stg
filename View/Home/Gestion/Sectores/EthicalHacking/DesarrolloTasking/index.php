@@ -67,7 +67,7 @@ if (isset($_SESSION['usu_id'])) {
                         <div class="tab-content text-muted">
                             <div class="tab-pane active" id="tab_nuevos" role="tabpanel">
                                 <div class="card card-body">
-                                    <table id="table_proyectos_nuevos_eh_desarrollo_tasking" style="text-align: center; width: 100%;">
+                                    <table id="table_proyectos_nuevos_eh_DesarrolloTasking" style="text-align: center; width: 100%;">
                                         <thead style="text-align: center;">
                                             <tr style="text-align: center;">
                                                 <th style="width: 300px;text-align: center;">TITULO</th>
@@ -107,7 +107,7 @@ if (isset($_SESSION['usu_id'])) {
                             ?>
                             <div class="tab-pane" id="tab_abiertos" role="tabpanel">
                                 <div class="card card-body">
-                                    <table id="table_proyectos_abiertos_eh_desarrollo_tasking" style="text-align: center; width: 100%;">
+                                    <table id="table_proyectos_abiertos_eh_DesarrolloTasking" style="text-align: center; width: 100%;">
                                         <thead style="text-align: center;">
                                             <tr style="text-align: center;">
                                                 <th style="width: 300px;text-align: center;">TITULO</th>
@@ -143,7 +143,7 @@ if (isset($_SESSION['usu_id'])) {
 
                             <div class="tab-pane" id="tab_realizados" role="tabpanel">
                                 <div class="card card-body">
-                                    <table id="table_proyectos_realizados_eh_desarrollo_tasking" style="text-align: center; width: 100%;">
+                                    <table id="table_proyectos_realizados_eh_DesarrolloTasking" style="text-align: center; width: 100%;">
                                         <thead style="text-align: center;">
                                             <tr style="text-align: center;">
                                                 <th style="width: 300px;text-align: center;">TITULO</th>
@@ -177,7 +177,7 @@ if (isset($_SESSION['usu_id'])) {
 
                             <div class="tab-pane" id="cerrado_calidad" role="tabpanel">
                                 <div class="card card-body">
-                                    <table id="table_proyectos_cerrado_calidad_eh_desarrollo_tasking"
+                                    <table id="table_proyectos_cerrado_calidad_eh_DesarrolloTasking"
                                         style="text-align: center; width: 100%;">
                                         <thead style="text-align: center;">
                                             <tr style="text-align: center;">

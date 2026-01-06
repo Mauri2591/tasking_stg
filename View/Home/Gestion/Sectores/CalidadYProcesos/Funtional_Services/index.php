@@ -103,7 +103,7 @@ if (isset($_SESSION['usu_id'])) {
                                 </div>
                             </div>
                             <?php
-                            include_once __DIR__ . "/../../Ethical_hacking/Modals/ModalVerHosts.php";
+                            include_once __DIR__ . "/../../EthicalHacking/Modals/ModalVerHosts.php";
                             ?>
                             <div class="tab-pane" id="tab_abiertos" role="tabpanel">
                                 <div class="card card-body">

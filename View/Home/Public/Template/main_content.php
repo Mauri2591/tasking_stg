@@ -154,7 +154,7 @@
                                 <div class="menu-dropdown collapse" id="sidebarSector">
                                     <ul class="nav nav-sm flex-column">
                                         <li class="nav-item">
-                                            <a href="<?php echo URL . "View/Home/Gestion/Sectores/Ethical_hacking/"; ?>"
+                                            <a href="<?php echo URL . "View/Home/Gestion/Sectores/EthicalHacking/"; ?>"
                                                 class="nav-link" data-key="t-mailbox">Ethical Hacking</a>
                                         </li>
 
@@ -220,7 +220,7 @@
                                                 class="nav-link" data-key="t-mailbox">Proyecto no estandar</a>
                                         </li>
                                         <li class="nav-item">
-                                            <a href="<?php echo URL . "View/Home/Gestion/Sectores/CalidadYProcesos/Desarrollo_Interno/"; ?>"
+                                            <a href="<?php echo URL . "View/Home/Gestion/Sectores/CalidadYProcesos/DesarrolloInterno/"; ?>"
                                                 class="nav-link" data-key="t-mailbox">Desarrollo Interno</a>
                                         </li>
                                         <li class="nav-item">
@@ -266,48 +266,48 @@
                                     <div class="menu-dropdown collapse" id="sidebarEmail">
                                         <ul class="nav nav-sm flex-column">
                                             <li class="nav-item">
-                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/Ethical_hacking/Va/"; ?>"
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/EthicalHacking/Va/"; ?>"
                                                     class="nav-link" data-key="t-mailbox">Va's</a>
                                             </li>
                                             <li class="nav-item">
-                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/Ethical_hacking/Va_Express/"; ?>"
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/EthicalHacking/VaExpress/"; ?>"
                                                     class="nav-link" data-key="t-mailbox">Va Express</a>
                                             </li>
                                             <li class="nav-item">
-                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/Ethical_hacking/Pentest/"; ?>"
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/EthicalHacking/Pentest/"; ?>"
                                                     class="nav-link" data-key="t-mailbox">Pentest</a>
                                             </li>
                                             <li class="nav-item">
-                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/Ethical_hacking/Sast/"; ?>"
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/EthicalHacking/Sast/"; ?>"
                                                     class="nav-link" data-key="t-mailbox">SAST</a>
                                             </li>
                                             <li class="nav-item">
-                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/Ethical_hacking/Pentest_Wifi/"; ?>"
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/EthicalHacking/PentestWifi/"; ?>"
                                                     class="nav-link" data-key="t-mailbox">Pentest Wifi</a>
                                             </li>
                                             <li class="nav-item">
-                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/Ethical_hacking/Red_Team/"; ?>"
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/EthicalHacking/RedTeam/"; ?>"
                                                     class="nav-link" data-key="t-mailbox">Red Team</a>
                                             </li>
                                             <li class="nav-item">
-                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/Ethical_hacking/Proyectos_Propios/"; ?>"
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/EthicalHacking/ProyectosPropios/"; ?>"
                                                     class="nav-link" data-key="t-mailbox">Proyectos Propios</a>
                                             </li>
                                             <li class="nav-item">
-                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/Ethical_hacking/CBI/"; ?>"
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/EthicalHacking/CBI/"; ?>"
                                                     class="nav-link" data-key="t-mailbox">CBI</a>
                                             </li>
                                             <li class="nav-item">
-                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/Ethical_hacking/Tetra/"; ?>"
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/EthicalHacking/Tetra/"; ?>"
                                                     class="nav-link" data-key="t-mailbox">Tetra</a>
                                             </li>
                                             <li class="nav-item">
-                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/Ethical_hacking/Desarrollo_Interno/"; ?>"
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/EthicalHacking/DesarrolloInterno/"; ?>"
                                                     class="nav-link" data-key="t-mailbox">Desarrollo Interno</a>
                                             </li>
 
                                             <li class="nav-item">
-                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/Ethical_hacking/Desarrollo_Tasking/"; ?>"
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/EthicalHacking/DesarrolloTasking/"; ?>"
                                                     class="nav-link" data-key="t-mailbox">Desarrollo Tasking</a>
                                             </li>
 
@@ -369,7 +369,7 @@
                                                     class="nav-link" data-key="t-mailbox">EDR</a>
                                             </li>
                                             <li class="nav-item">
-                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/SOC/DESARROLLO_INTERNO/"; ?>"
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/SOC/DesarrolloInterno/"; ?>"
                                                     class="nav-link" data-key="t-mailbox">Desarrollo Interno</a>
                                             </li>
                                             <li class="nav-item">
@@ -455,7 +455,7 @@
                                             </li>
 
                                             <li class="nav-item">
-                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/SASE/Desarrollo_interno/"; ?>"
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/SASE/DesarrolloInterno/"; ?>"
                                                     class="nav-link" data-key="t-mailbox">Desarrollo Interno</a>
                                             </li>
 
@@ -531,7 +531,7 @@
                                         <div class="menu-dropdown collapse" id="sidebarSector">
                                             <ul class="nav nav-sm flex-column">
                                                 <li class="nav-item">
-                                                    <a href="<?php echo URL . "View/Home/Gestion/Sectores/Ethical_hacking/"; ?>"
+                                                    <a href="<?php echo URL . "View/Home/Gestion/Sectores/EthicalHacking/"; ?>"
                                                         class="nav-link" data-key="t-mailbox">Ethical Hacking</a>
                                                 </li>
 

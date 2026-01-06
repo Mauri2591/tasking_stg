@@ -1,5 +1,5 @@
 $(document).ready(function () {
-    tabla = $("#table_proyectos_nuevos_sase_desarrollo_interno").dataTable({
+    tabla = $("#table_proyectos_nuevos_sase_DesarrolloInterno").dataTable({
         "aProcessing": true,
         "aServerSide": true,
         dom: 'Bfrtip',
@@ -57,7 +57,7 @@ $(document).ready(function () {
         }
     });
 
-    tabla = $("#table_proyectos_abiertos_sase_desarrollo_interno").dataTable({
+    tabla = $("#table_proyectos_abiertos_sase_DesarrolloInterno").dataTable({
         "aProcessing": true,
         "aServerSide": true,
         dom: 'Bfrtip',
@@ -115,7 +115,7 @@ $(document).ready(function () {
         }
     });
 
-    tabla = $("#table_proyectos_realizados_sase_desarrollo_interno").dataTable({
+    tabla = $("#table_proyectos_realizados_sase_DesarrolloInterno").dataTable({
         "aProcessing": true,
         "aServerSide": true,
         dom: 'Bfrtip',
@@ -173,7 +173,7 @@ $(document).ready(function () {
         }
     });
 
-    tabla = $("#table_proyectos_cerrados_calidad_sase_desarrollo_interno").dataTable({
+    tabla = $("#table_proyectos_cerrados_calidad_sase_DesarrolloInterno").dataTable({
         "aProcessing": true,
         "aServerSide": true,
         dom: 'Bfrtip',
@@ -250,15 +250,15 @@ function cambiar_a_borrador(id_proyecto_gestionado) {
                 "json"
             );
             setTimeout(() => {
-                if ($.fn.DataTable.isDataTable('#table_proyectos_abiertos_sase_desarrollo_interno')) {
-                    $('#table_proyectos_abiertos_sase_desarrollo_interno').DataTable().ajax.reload(null, false);
+                if ($.fn.DataTable.isDataTable('#table_proyectos_abiertos_sase_DesarrolloInterno')) {
+                    $('#table_proyectos_abiertos_sase_DesarrolloInterno').DataTable().ajax.reload(null, false);
                     $('#table_proyectos_borrador').DataTable().ajax.reload(null, false);
                 }
             }, 500);
 
             setTimeout(() => {
-                if ($.fn.DataTable.isDataTable('#table_proyectos_nuevos_sase_desarrollo_interno')) {
-                    $('#table_proyectos_nuevos_sase_desarrollo_interno').DataTable().ajax.reload(null, false);
+                if ($.fn.DataTable.isDataTable('#table_proyectos_nuevos_sase_DesarrolloInterno')) {
+                    $('#table_proyectos_nuevos_sase_DesarrolloInterno').DataTable().ajax.reload(null, false);
                     $('#table_proyectos_borrador').DataTable().ajax.reload(null, false);
                 }
             }, 500);
@@ -299,9 +299,9 @@ function cambiar_a_abierto(id_proyecto_gestionado) {
             });
 
             setTimeout(() => {
-                if ($.fn.DataTable.isDataTable('#table_proyectos_nuevos_sase_desarrollo_interno')) {
-                    $('#table_proyectos_nuevos_sase_desarrollo_interno').DataTable().ajax.reload(null, false);
-                    $('#table_proyectos_abiertos_sase_desarrollo_interno').DataTable().ajax.reload(null, false);
+                if ($.fn.DataTable.isDataTable('#table_proyectos_nuevos_sase_DesarrolloInterno')) {
+                    $('#table_proyectos_nuevos_sase_DesarrolloInterno').DataTable().ajax.reload(null, false);
+                    $('#table_proyectos_abiertos_sase_DesarrolloInterno').DataTable().ajax.reload(null, false);
                 }
             }, 500);
         }
@@ -334,8 +334,8 @@ function asignar_proyecto(id_proyecto_gestionado) {
             });
 
             setTimeout(() => {
-                if ($.fn.DataTable.isDataTable('#table_proyectos_nuevos_sase_desarrollo_interno')) {
-                    $('#table_proyectos_nuevos_sase_desarrollo_interno').DataTable().ajax.reload(null, false);
+                if ($.fn.DataTable.isDataTable('#table_proyectos_nuevos_sase_DesarrolloInterno')) {
+                    $('#table_proyectos_nuevos_sase_DesarrolloInterno').DataTable().ajax.reload(null, false);
                 }
             }, 500);
         }
@@ -397,9 +397,9 @@ function cambiar_a_nuevo(id_proyecto_gestionado) {
             });
 
             setTimeout(() => {
-                if ($.fn.DataTable.isDataTable('#table_proyectos_abiertos_sase_desarrollo_interno')) {
-                    $('#table_proyectos_nuevos_sase_desarrollo_interno').DataTable().ajax.reload(null, false);
-                    $('#table_proyectos_abiertos_sase_desarrollo_interno').DataTable().ajax.reload(null, false);
+                if ($.fn.DataTable.isDataTable('#table_proyectos_abiertos_sase_DesarrolloInterno')) {
+                    $('#table_proyectos_nuevos_sase_DesarrolloInterno').DataTable().ajax.reload(null, false);
+                    $('#table_proyectos_abiertos_sase_DesarrolloInterno').DataTable().ajax.reload(null, false);
                 }
             }, 500);
         }
@@ -432,9 +432,9 @@ function cambiar_a_realizado(id_proyecto_gestionado) {
             });
 
               setTimeout(() => {
-                if ($.fn.DataTable.isDataTable('#table_proyectos_realizados_sase_desarrollo_interno')) {
-                    $('#table_proyectos_realizados_sase_desarrollo_interno').DataTable().ajax.reload(null, false);
-                    $('#table_proyectos_abiertos_sase_desarrollo_interno').DataTable().ajax.reload(null, false);
+                if ($.fn.DataTable.isDataTable('#table_proyectos_realizados_sase_DesarrolloInterno')) {
+                    $('#table_proyectos_realizados_sase_DesarrolloInterno').DataTable().ajax.reload(null, false);
+                    $('#table_proyectos_abiertos_sase_DesarrolloInterno').DataTable().ajax.reload(null, false);
                 }
             }, 500);
         }

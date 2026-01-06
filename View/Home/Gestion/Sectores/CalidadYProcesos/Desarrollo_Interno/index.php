@@ -66,7 +66,7 @@ if (isset($_SESSION['usu_id'])) {
                         <div class="tab-content text-muted">
                             <div class="tab-pane active" id="tab_nuevos" role="tabpanel">
                                 <div class="card card-body">
-                                    <table id="table_proyectos_calidad_Desarrollo_Interno"
+                                    <table id="table_proyectos_calidad_DesarrolloInterno"
                                         style="text-align: center; width: 100%;">
                                         <thead style="text-align: center;">
                                             <tr style="text-align: center;">
@@ -103,11 +103,11 @@ if (isset($_SESSION['usu_id'])) {
                                 </div>
                             </div>
                             <?php
-                            include_once __DIR__ . "/../../Ethical_hacking/Modals/ModalVerHosts.php";
+                            include_once __DIR__ . "/../../EthicalHacking/Modals/ModalVerHosts.php";
                             ?>
                             <div class="tab-pane" id="tab_abiertos" role="tabpanel">
                                 <div class="card card-body">
-                                    <table id="table_proyectos_abiertos_calidad_Desarrollo_Interno"
+                                    <table id="table_proyectos_abiertos_calidad_DesarrolloInterno"
                                         style="text-align: center; width: 100%;">
                                         <thead style="text-align: center;">
                                             <tr style="text-align: center;">
@@ -144,7 +144,7 @@ if (isset($_SESSION['usu_id'])) {
 
                             <div class="tab-pane" id="tab_realizados" role="tabpanel">
                                 <div class="card card-body">
-                                    <table id="table_proyectos_realizados_calidad_Desarrollo_Interno"
+                                    <table id="table_proyectos_realizados_calidad_DesarrolloInterno"
                                         style="text-align: center; width: 100%;">
                                         <thead style="text-align: center;">
                                             <tr style="text-align: center;">
@@ -179,7 +179,7 @@ if (isset($_SESSION['usu_id'])) {
 
                             <div class="tab-pane" id="tab_cerrados_calidad" role="tabpanel">
                                 <div class="card card-body">
-                                    <table id="table_proyectos_cerrados_calidad_Desarrollo_Interno"
+                                    <table id="table_proyectos_cerrados_calidad_DesarrolloInterno"
                                         style="text-align: center; width: 100%;">
                                         <thead style="text-align: center;">
                                             <tr style="text-align: center;">

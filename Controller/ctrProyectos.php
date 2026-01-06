@@ -228,8 +228,8 @@ switch ($_GET['proy']) {
         http_response_code(200);
         break;
 
-    case 'update_proyecto_desarrollo_tasking':
-        $proyecto->update_proyecto_desarrollo_tasking($_POST['id_proyecto_gestionado']);
+    case 'update_proyecto_DesarrolloTasking':
+        $proyecto->update_proyecto_DesarrolloTasking($_POST['id_proyecto_gestionado']);
         break;
 
     case 'insertar_usuarios_a_recurrente':
@@ -240,8 +240,8 @@ switch ($_GET['proy']) {
         echo json_encode($proyecto->get_datos_proyectos_tasking());
         break;
 
-    case 'inhabilitar_proyectos_desarrollo_tasking':
-        echo json_encode($proyecto->inhabilitar_proyectos_desarrollo_tasking($_POST['id_proyecto_gestionado']));
+    case 'inhabilitar_proyectos_DesarrolloTasking':
+        echo json_encode($proyecto->inhabilitar_proyectos_DesarrolloTasking($_POST['id_proyecto_gestionado']));
         break;
 
     case 'get_sector_x_proy':
