@@ -4,7 +4,6 @@
             <div class="col-sm-6">
                 © <span id="anio"></span> Personal Tech - MSSP.
             </div>
-
             <script>
                 document.addEventListener("DOMContentLoaded", () => {
                     const anio = document.getElementById("anio");

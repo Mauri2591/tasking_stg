@@ -33,6 +33,18 @@ require_once __DIR__ . "/Config/Config.php";
     <link href="<?php echo URL; ?>/View/Home/Public/velzon/assets/css/custom.min.css?sheet=<?php echo rand(); ?>"
         rel="stylesheet" type="text/css" />
 
+    <style>
+        .parentesis {
+            display: inline-block;
+            font-weight: 500;
+            font-size: 1rem;
+            color: aliceblue;
+            transform: scaleX(1.35) scaleY(0.70);
+            letter-spacing: -0.15em;
+            /* junta ( ) */
+        }
+    </style>
+
 </head>
 
 <body class="bg-primary">
@@ -122,9 +134,15 @@ require_once __DIR__ . "/Config/Config.php";
                     <div class="col-lg-12">
                         <div class="text-center">
                             <p class="mb-0 text-light fs-16">&copy;
+
+
+                                <span>
+                                    <span style="font-family: 'Poppins', sans-serif;color:#fff; font-size: 1.2rem; font-weight: 600;">
+                                        pers</span><span class="parentesis">()</span><span style="font-family: 'Poppins', sans-serif;color:#fff; font-size: 1.2rem;"><span style="font-family: 'Poppins', sans-serif;color:#fff; font-size: 1.2rem;font-weight: 600; margin-left: .2rem;">nal</span> tech</span>
+                                </span>
                                 <script>
                                     document.write(new Date().getFullYear())
-                                </script> Personal Tech - MSSP
+                                </script>
                             </p>
                         </div>
                     </div>

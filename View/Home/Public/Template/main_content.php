@@ -6,16 +6,16 @@
                 <div class="navbar-header">
                     <div class="d-flex">
                         <!-- LOGO -->
-                        <div class="navbar-brand-box horizontal-logo">
+                        <div class="navbar-brand-box horizontal-logo mb-4 mt-2">
                             <a href="index.html" class="logo logo-dark">
                                 <span class="logo-sm">
                                     <img class="mt-5"
-                                        src="<?php echo URL ?>View/Home/Public/velzon/assets/images/icono_telecom.png"
+                                        src="<?php echo URL ?>View/Home/Public/velzon/assets/images/personal-blanco-nuevo.png"
                                         alt="logo telecom" height="22">
                                 </span>
                                 <span class="logo-lg">
                                     <img class="mt-5"
-                                        src="<?php echo URL ?>View/Home/Public/velzon/assets/images/icono_telecom.png"
+                                        src="<?php echo URL ?>View/Home/Public/velzon/assets/images/personal-blanco-nuevo.png"
                                         alt="logo telecom" height="17">
                                 </span>
                             </a>
@@ -84,30 +84,31 @@
     <!-- ========== App Menu ========== -->
     <div class="app-menu navbar-menu">
         <!-- LOGO -->
-        <div class="navbar-brand-box">
+        <div class="navbar-brand-box mb-4 mt-2">
             <!-- Dark Logo-->
             <a href="index.html" class="logo logo-dark">
                 <span class="logo-sm">
-                    <img src="<?php echo URL ?>View/Home/Public/velzon/assets/images/icono_telecom.png" alt=""
+                    <img src="<?php echo URL ?>View/Home/Public/velzon/assets/images/personal-blanco-nuevo.png" alt=""
                         height="22">
                 </span>
                 <span class="logo-lg">
-                    <img src="<?php echo URL ?>View/Home/Public/velzon/assets/images/icono_telecom.png" alt=""
+                    <img src="<?php echo URL ?>View/Home/Public/velzon/assets/images/personal-blanco-nuevo.png" alt=""
                         height="17">
                 </span>
             </a>
             <!-- Light Logo-->
             <a href="<?php echo URL . "View/Home/"; ?>" class="logo logo-light">
                 <span class="logo-sm">
-                    <img src="<?php echo URL ?>View/Home/Public/velzon/assets/images/icono_telecom.png" alt=""
+                    <img src="<?php echo URL ?>View/Home/Public/velzon/assets/images/personal-blanco-nuevo.png" alt=""
                         height="22">
                 </span>
                 <span class="logo-lg p-0">
                     <h1> <img class="mt-5"
-                            src="<?php echo URL ?>View/Home/Public/velzon/assets/images/icono_telecom.png" alt="">
+                            src="<?php echo URL ?>View/Home/Public/velzon/assets/images/personal-blanco-nuevo.png" alt="">
                     </h1>
                 </span>
             </a>
+
             <button type="button" class="btn btn-sm p-0 fs-20 header-item float-end btn-vertical-sm-hover"
                 id="vertical-hover">
                 <i class="ri-record-circle-line"></i>
@@ -146,6 +147,7 @@
                             </li>
                             <li class="menu-title"><i class="ri-more-fill"></i> <span data-key="t-pages">Proyectos</span>
                             </li>
+
                             <li class="nav-item">
                                 <a href="#sidebarSector" class="nav-link collapsed" data-bs-toggle="collapse" role="button"
                                     aria-expanded="false" aria-controls="sidebarSector" data-key="t-email">Sector</a>
@@ -177,19 +179,19 @@
                                             <a href="<?php echo URL . "View/Home/Gestion/Sectores/CalidadYProcesos/IR/"; ?>"
                                                 class="nav-link" data-key="t-mailbox">Incident Response</a>
                                         </li>
-                                         <li class="nav-item">
+                                        <li class="nav-item">
                                             <a href="<?php echo URL . "View/Home/Gestion/Sectores/CalidadYProcesos/SOC/"; ?>"
                                                 class="nav-link" data-key="t-mailbox">SOC</a>
                                         </li>
-                                         <li class="nav-item">
+                                        <li class="nav-item">
                                             <a href="<?php echo URL . "View/Home/Gestion/Sectores/CalidadYProcesos/SASE/"; ?>"
                                                 class="nav-link" data-key="t-mailbox">SASE</a>
                                         </li>
-                                         <li class="nav-item">
+                                        <li class="nav-item">
                                             <a href="<?php echo URL . "View/Home/Gestion/Sectores/CalidadYProcesos/EH/"; ?>"
                                                 class="nav-link" data-key="t-mailbox">EH</a>
                                         </li>
-                                         <li class="nav-item">
+                                        <li class="nav-item">
                                             <a href="<?php echo URL . "View/Home/Gestion/Sectores/CalidadYProcesos/Gestion_Estrategica/"; ?>"
                                                 class="nav-link" data-key="t-mailbox">Gestion Estrategica</a>
                                         </li>
@@ -217,15 +219,15 @@
                                             <a href="<?php echo URL . "View/Home/Gestion/Sectores/CalidadYProcesos/Proyecto_No_Estandar/"; ?>"
                                                 class="nav-link" data-key="t-mailbox">Proyecto no estandar</a>
                                         </li>
-                                         <li class="nav-item">
+                                        <li class="nav-item">
                                             <a href="<?php echo URL . "View/Home/Gestion/Sectores/CalidadYProcesos/Desarrollo_Interno/"; ?>"
                                                 class="nav-link" data-key="t-mailbox">Desarrollo Interno</a>
                                         </li>
-                                         <li class="nav-item">
+                                        <li class="nav-item">
                                             <a href="<?php echo URL . "View/Home/Gestion/Sectores/CalidadYProcesos/Cloud/"; ?>"
                                                 class="nav-link" data-key="t-mailbox">Cloud</a>
                                         </li>
-                                         <li class="nav-item">
+                                        <li class="nav-item">
                                             <a href="<?php echo URL . "View/Home/Gestion/Sectores/CalidadYProcesos/Nuevas_Soluciones/"; ?>"
                                                 class="nav-link" data-key="t-mailbox">Nuevas Soluciones</a>
                                         </li>
@@ -304,7 +306,7 @@
                                                     class="nav-link" data-key="t-mailbox">Desarrollo Interno</a>
                                             </li>
 
-                                               <li class="nav-item">
+                                            <li class="nav-item">
                                                 <a href="<?php echo URL . "View/Home/Gestion/Sectores/Ethical_hacking/Desarrollo_Tasking/"; ?>"
                                                     class="nav-link" data-key="t-mailbox">Desarrollo Tasking</a>
                                             </li>
