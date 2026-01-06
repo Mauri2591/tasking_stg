@@ -124,7 +124,7 @@ require_once __DIR__ . "/Config/Config.php";
                             <p class="mb-0 text-light fs-16">&copy;
                                 <script>
                                     document.write(new Date().getFullYear())
-                                </script> Telecom - MSSP
+                                </script> Personal Tech - MSSP
                             </p>
                         </div>
                     </div>

@@ -2,7 +2,7 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-sm-6">
-                © <span id="anio"></span> Telecom - MSSP.
+                © <span id="anio"></span> Personal Tech - MSSP.
             </div>
 
             <script>
