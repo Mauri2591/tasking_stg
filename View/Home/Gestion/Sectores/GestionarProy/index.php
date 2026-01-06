@@ -41,7 +41,7 @@ if (isset($_SESSION['usu_id'])) {
         <!-- container-fluid -->
         <div class="col-lg-12">
             <div class="card-body d-flex bg-light p-0">
-                <div class="col-lg-12 border-1 border border-primary">
+                <div class="col-lg-12" style="border:  .1rem solid #dfdfdf;">
                     <div class="card" style="height: 100%;">
                         <span id="titulo_servicio" class="badge bg-primary fw-bold text-light p-2 fs-12"></span>
                         <div class="card-body p-0">
