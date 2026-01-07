@@ -156,7 +156,7 @@ if (isset($_SESSION['usu_id'])) {
                                 <div class="col-lg-12 row">
                                     <div class="col-xl-10">
                                         <span
-                                            class="badge bg-success text-light mx-2 mt-2 mb-3 d-inline-flex align-items-center gap-2 w-auto">Imagen:</span>
+                                            class="badge bg-success text-light mx-2 mt-2 mb-3 d-inline-flex align-items-center gap-2 w-auto">Imagen</span>
                                         <div class="card">
                                             <div class="card-body p-0 " id="cont_imagen">
                                                 <div data-simplebar="init" style="min-height: 460px;">
@@ -197,7 +197,7 @@ if (isset($_SESSION['usu_id'])) {
                                         </div><!-- end card -->
                                         <span
                                             class="badge bg-success text-light mx-2 mt-2 mb-3 d-inline-flex align-items-center gap-2 w-auto">
-                                            Documento:
+                                            Documento
                                             <span title="Descargar el documento adjunto en el proyecto"
                                                 id="documento_proy"></span>
                                         </span>
@@ -454,7 +454,7 @@ if (isset($_SESSION['usu_id'])) {
                         if (data.archivo) {
                             let archivo = data.archivo;
                             let li_archivo = `<a href="${URL}/View/Home/Public/Uploads/Calidad/${archivo}" download target="_blank">
-                                            <i class=" ri-file-excel-2-fill text-success" style="font-size:24px"></i>
+                                            <i class=" ri-file-excel-2-fill text-light" style="font-size:24px"></i>
                                         </a>`;
                             $("#documento_proy").html(li_archivo)
                         } else {
