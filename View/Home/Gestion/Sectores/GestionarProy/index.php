@@ -454,7 +454,7 @@ if (isset($_SESSION['usu_id'])) {
                         if (data.archivo) {
                             let archivo = data.archivo;
                             let li_archivo = `<a href="${URL}/View/Home/Public/Uploads/Calidad/${archivo}" download target="_blank">
-                                            <i class=" ri-file-download-line text-success" style="font-size:1.5rem"></i>
+                                            <i class=" ri-file-download-line text-success" style="font-size:1.3rem"></i>
                                         </a>`;
                             $("#documento_proy").html(li_archivo)
                         } else {
