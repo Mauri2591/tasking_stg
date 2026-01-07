@@ -2165,7 +2165,7 @@ ORDER BY pcs.id DESC";
     pg.refProy AS REFERENCIA, 
     sectores.sector_nombre AS SECTOR,
     tm_categoria.cat_nom AS CATEGORIA, 
-    tm_subcategoria.cats_nom AS SUBCATEGORIA, 
+    tm_subcategoria.cats_nom AS TIPO, 
     CONCAT(d.hs_dimensionadas, 'hs') AS DIMENSIONAMIENTO, 
     prioridad.prioridad AS PRIORIDAD,
     creador.usu_correo AS CREADOR, 
