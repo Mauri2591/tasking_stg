@@ -74,6 +74,7 @@ switch ($_GET['usuarios']) {
         echo json_encode(["Success" => "Perfil actualizado correctamente."]);
         break;
 
+
     case 'get_sectores':
         $data = $usuarios->get_sectores();
         $option = '';
@@ -84,48 +85,22 @@ switch ($_GET['usuarios']) {
         break;
 
     case 'insert_usuario':
-        if (
-            isset($_POST['usu_nom'], $_POST['usu_correo'], $_POST['usu_tel'], $_POST['sector_id']) &&
-            !empty($_POST['usu_nom']) &&
-            !empty($_POST['usu_correo']) &&
-            !empty($_POST['usu_tel']) &&
-            !empty($_POST['sector_id'])
-        ) {
-            // Validación de formato de email
-            $correo = $_POST['usu_correo'];
-            if (!preg_match('/^[\w\.\-]+@([\w\-]+\.)+[a-zA-Z]{2,10}$/', $correo)) {
-                http_response_code(400);
-                echo json_encode(["Error" => "El correo ingresado no es válido."]);
-                exit;
-            }
 
-            // Validación de dominio real (opcional)
-            $dominio = substr(strrchr($correo, "@"), 1);
-            if (!checkdnsrr($dominio, "MX") && !checkdnsrr($dominio, "A")) {
-                http_response_code(400);
-                echo json_encode(["Error" => "El dominio del correo no existe."]);
-                exit;
-            }
+        $usuarios->insert_usuario(
+            $_SESSION['usu_id'],
+            $_POST['usu_nom'],
+            $_POST['usu_ape'],
+            $_POST['usu_correo'],
+            password_hash("111", PASSWORD_DEFAULT),
+            $_POST['usu_tel'],
+            (int) $_POST['sector_id'],
+            2
+        );
 
-            $password_default = "111";
-            $data = $usuarios->insert_usuario(
-                $_SESSION['usu_id'],
-                $_POST['usu_nom'],
-                $correo,
-                password_hash($password_default, PASSWORD_DEFAULT),
-                $_POST['usu_tel'],
-                $_POST['sector_id'],
-                2 // rol_id fijo si lo necesitás
-            );
-
-            http_response_code(201);
-            echo json_encode(["Success" => "Usuario creado correctamente"]);
-        } else {
-            http_response_code(400);
-            echo json_encode(["Error" => "Datos vacíos o incompletos"]);
-            exit;
-        }
+        echo json_encode(["Success" => "OK"]);
         break;
+
+
 
     default:
         break;

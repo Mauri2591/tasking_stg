@@ -20,10 +20,11 @@ document.addEventListener("DOMContentLoaded", function () {
             data: {
                 // usu_sector: 1
             },
-            error: function (e) {
-            }
+            error: function (e) {}
         },
-        "order": [[0, "desc"]], //Ordenar descendentemente
+        "order": [
+            [0, "desc"]
+        ], //Ordenar descendentemente
         "bDestroy": true,
         "responsive": true,
         "bInfo": true,
@@ -64,43 +65,45 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function get_datos_ajax() {
         let formData = new FormData();
-        formData.append('usu_nom', document.getElementById("usu_nom").value);
-        formData.append('usu_correo', document.getElementById("usu_correo").value);
-        formData.append('usu_tel', document.getElementById("usu_tel").value);
-        formData.append('sector_id', document.getElementById("combo_usuarios").value);
+        formData.append('usu_nom', document.getElementById('nombre').value);
+        formData.append('usu_ape', document.getElementById('apellido').value);
+        formData.append('usu_correo', document.getElementById('correo').value);
+        formData.append('usu_tel', document.getElementById('usu_tel').value);
+        formData.append('sector_id', document.getElementById('combo_usuarios').value);
         return formData;
     }
 
+    $("#btnIngresarUsuario").on("click", function (e) {
+        e.preventDefault();
 
-    let htmlmje = `<div id="mje_campos_obligatorios_vacios_insert_usuario" class="alert alert-warning text-center" role="alert">
-    <a class="alert-link">Error! <br></a>Hay campos vacíos
-        </div>`;
+        let formData = get_datos_ajax();
 
-    $("#btnIngresarUsuario").off().click("click", function () {
         $.ajax({
             type: "POST",
             url: "../../../../Controller/ctrUsuarios.php?usuarios=insert_usuario",
-            data: get_datos_ajax(),
+            data: formData,
             contentType: false,
             processData: false,
-            success: function (response) {
+            success: function () {
                 $('#table_usuarios').DataTable().ajax.reload();
+
                 Swal.fire({
                     icon: "success",
                     title: "Usuario creado correctamente",
-                    showConfirmButton: false,
-                    timer: 1300
+                    timer: 1200,
+                    showConfirmButton: false
                 });
+
                 document.getElementById("form_insert_usuario").reset();
             },
-            error: function (err) {
-                document.getElementById("cont_mje_campos_obligatorios_vacios_insert_usuario").innerHTML = htmlmje;
-                setTimeout(() => {
-                    document.getElementById("mje_campos_obligatorios_vacios_insert_usuario")?.remove();
-                }, 1300);
+            error: function (xhr) {
+                Swal.fire("Error", xhr.responseText, "error");
             }
         });
     });
 
-})
 
+
+
+
+})

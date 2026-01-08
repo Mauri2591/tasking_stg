@@ -323,11 +323,7 @@ switch ($_GET['proy']) {
         );
         echo json_encode($results);
         break;
-
-    // case 'update_proyecto_recurrencia_posicion_recurrencia':
-    //     $proyecto->update_proyecto_recurrencia_posicion_recurrencia($_POST['id']);
-    //     break;
-
+        
     case 'get_proyectos_nuevos_x_sector':
         $datos = $proyecto->get_proyectos_nuevos_x_sector($_POST['sector_id']);
         $data = array();

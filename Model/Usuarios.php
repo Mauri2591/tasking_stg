@@ -67,18 +67,33 @@ class Usuarios extends Conexion
         $stmt->execute();
     }
 
-    public function insert_usuario($usu_crea, $usu_nom, $usu_correo, $usu_pass, $usu_tel, $sector_id, $rol_id)
-    {
+    public function insert_usuario(
+        $usu_crea,
+        $usu_nom,
+        $usu_ape,
+        $usu_correo,
+        $usu_pass,
+        $usu_tel,
+        $sector_id,
+        $rol_id
+    ) {
         $conn = parent::get_conexion();
-        $sql = "INSERT INTO tm_usuario (usu_crea,usu_nom, usu_correo,usu_pass,usu_tel,sector_id, rol_id) VALUES (:usu_crea,:usu_nom,:usu_correo, :usu_pass, :usu_tel,:sector_id, :rol_id)";
+
+        $sql = "INSERT INTO tm_usuario
+        (usu_crea, usu_nom, usu_ape, usu_correo, usu_pass, usu_tel, sector_id, rol_id)
+        VALUES
+        (:usu_crea, :usu_nom, :usu_ape, :usu_correo, :usu_pass, :usu_tel, :sector_id, :rol_id)";
+
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(':usu_crea', $usu_crea, PDO::PARAM_INT);
-        $stmt->bindValue(':usu_nom', htmlspecialchars($usu_nom, ENT_QUOTES), PDO::PARAM_STR);
-        $stmt->bindValue(':usu_correo', htmlspecialchars($usu_correo, ENT_QUOTES), PDO::PARAM_STR);
-        $stmt->bindValue(':usu_pass', htmlspecialchars($usu_pass, ENT_QUOTES), PDO::PARAM_STR);
-        $stmt->bindValue(':usu_tel', htmlspecialchars($usu_tel, ENT_QUOTES),  PDO::PARAM_STR);
-        $stmt->bindValue(':sector_id', htmlspecialchars($sector_id, ENT_QUOTES),  PDO::PARAM_STR);
-        $stmt->bindValue(':rol_id', $rol_id,  PDO::PARAM_INT);
-        $stmt->execute();
+        $stmt->bindValue(':usu_nom', $usu_nom, PDO::PARAM_STR);
+        $stmt->bindValue(':usu_ape', $usu_ape, PDO::PARAM_STR);
+        $stmt->bindValue(':usu_correo', $usu_correo, PDO::PARAM_STR);
+        $stmt->bindValue(':usu_pass', $usu_pass, PDO::PARAM_STR);
+        $stmt->bindValue(':usu_tel', $usu_tel, PDO::PARAM_STR);
+        $stmt->bindValue(':sector_id', (int)$sector_id, PDO::PARAM_INT);
+        $stmt->bindValue(':rol_id', $rol_id, PDO::PARAM_INT);
+
+        return $stmt->execute();
     }
 }

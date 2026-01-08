@@ -142,6 +142,10 @@
                                             <a href="<?php echo URL . "View/Home/Gestion/Clientes/Proyectos/" ?>"
                                                 class="nav-link" data-key="t-chat">Proyectos</a>
                                         </li>
+                                        <li class="nav-item">
+                                            <a href="<?php echo URL . "View/Home/Gestion/Integraciones/" ?>"
+                                                class="nav-link" data-key="t-chat">Integraciones</a>
+                                        </li>
                                     </ul>
                                 </div>
                             </li>

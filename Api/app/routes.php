@@ -2,9 +2,8 @@
 
 declare(strict_types=1);
 
-
 require __DIR__ . '/../vendor/autoload.php';
-
+require_once __DIR__ . '/../../Model/Clases/Openssl.php';
 
 use App\Application\Actions\User\ListUsersAction;
 use App\Application\Actions\User\ViewUserAction;
@@ -33,8 +32,7 @@ return function (App $app) {
     });
 
 
-
-    /** LOGIN: Genera Access Token + Refresh Token */
+    // ******************   INICIO TASKING ***********************
     $app->post('/login', function (Request $request, Response $response) use ($app) {
 
         $data = $request->getParsedBody();
@@ -791,4 +789,60 @@ return function (App $app) {
         $group->get('', ListProjectsAction::class);
         $group->get('/{id}', ViewProjectAction::class);
     })->add(JwtMiddleware::class);
+    // ******************   FIN TASKING ***********************
+
+
+
+    // ******************   INICIO TIMASUMMARY ***********************
+    $app->get('/cargasTimesummary', function (Request $request, Response $response) use ($app) {
+
+        $apiKeyPlana = $request->getHeaderLine('X-API-KEY');
+
+        if (empty($apiKeyPlana)) {
+            $response->getBody()->write(json_encode(["error" => "API Key requerida"]));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(401);
+        }
+
+        $pdo = $app->getContainer()->get(PDO::class);
+
+        $stmt = $pdo->prepare("SELECT api_key, sector_id FROM api_keys WHERE est = 1");
+        $stmt->execute();
+
+        $keys = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $sector_id = null;
+
+        foreach ($keys as $row) {
+            $key_plana_db = Openssl::get_ssl_decrypt($row['api_key']);
+
+            if (hash_equals($key_plana_db, $apiKeyPlana)) {
+                $sector_id = (int)$row['sector_id'];
+                break;
+            }
+        }
+
+        if (!$sector_id) {
+            $response->getBody()->write(json_encode(["error" => "API Key inválida"]));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(403);
+        }
+
+        if ($sector_id == '4') {
+            $stmt = $pdo->prepare("SELECT * FROM timesummary_carga");
+        } else {
+            $stmt = $pdo->prepare("SELECT * FROM timesummary_carga WHERE sector_id=:sector_id");
+            $stmt->bindValue(':sector_id',$sector_id,PDO::PARAM_INT);
+        }
+
+        $stmt->execute();
+
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $response->getBody()->write(json_encode($rows, JSON_UNESCAPED_UNICODE));
+
+        return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+    });
+
+    // ******************   FIN TIMASUMMARY ***********************
+
+
 };

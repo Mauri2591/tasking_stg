@@ -33,41 +33,90 @@ if (isset($_SESSION['usu_id'])) {
                     <span class="badge bg-success">Alta Usuario</span>
 
                     <br>
-                    <form action="" id="form_insert_usuario" method="post">
+                    <form method="post">
+
+                        <!-- NOMBRE -->
                         <div class="input-group input-group-sm mt-1">
-                            <span class="input-group-text" id="inputGroup-sizing-sm">NOMBRE<span
-                                    class="badge text-danger p-0 m-0 fs-12">*</span></span>
-                            <input id="usu_nom" type="text" class="form-control" aria-label="Sizing example input"
-                                aria-describedby="inputGroup-sizing-sm">
-                        </div>
-                        <div class="input-group input-group-sm mt-1">
-                            <span class="input-group-text" id="inputGroup-sizing-sm">CORREO</span>
-                            <input id="usu_correo" type="email" class="form-control" aria-label="Sizing example input"
-                                aria-describedby="inputGroup-sizing-sm">
-                        </div>
-                        <div class="input-group input-group-sm mt-1">
-                            <span class="input-group-text" id="inputGroup-sizing-sm">TELEFONO</span>
-                            <input id="usu_tel" type="text" class="form-control" aria-label="Sizing example input"
-                                aria-describedby="inputGroup-sizing-sm">
+                            <span class="input-group-text">
+                                NOMBRE <span class="text-danger">*</span>
+                            </span>
+                            <input
+                                type="text"
+                                class="form-control"
+                                id="nombre"
+                                name="nombre"
+                                required>
                         </div>
 
+                        <!-- Apellido -->
+                        <div class="input-group input-group-sm mt-1">
+                            <span class="input-group-text">
+                                APELLIDO <span class="text-danger">*</span>
+                            </span>
+                            <input
+                                type="text"
+                                class="form-control"
+                                id="apellido"
+                                name="apellido"
+                                required>
+                        </div>
+
+                        <!-- CORREO -->
+                        <div class="input-group input-group-sm mt-1">
+                            <span class="input-group-text">
+                                CORREO <span class="text-danger">*</span>
+                            </span>
+                            <input
+                                type="email"
+                                class="form-control"
+                                id="correo"
+                                name="correo"
+                                required>
+                        </div>
+
+                        <!-- TELÉFONO -->
+                        <div class="input-group input-group-sm mt-1">
+                            <span class="input-group-text">
+                                TELÉFONO <span class="text-danger">*</span>
+                            </span>
+                            <input
+                                type="text"
+                                class="form-control"
+                                id="usu_tel"
+                                name="usu_tel"
+                                required>
+                        </div>
+
+                        <!-- SECTOR -->
                         <div class="mt-1 mb-1">
-                            <select id="combo_usuarios" class="form-select form-select-sm"
-                                aria-label=".form-select-sm example">
-
+                            <select
+                                id="combo_usuarios"
+                                name="sector_id"
+                                class="form-select form-select-sm"
+                                required>
+                                <option value="">Seleccione sector</option>
+                                <!-- opciones cargadas por AJAX -->
                             </select>
                         </div>
 
+                        <!-- BOTÓN -->
                         <div>
-                            <button type="button" id="btnIngresarUsuario" name="btnIngresarUsuario"
-                                class="mt-2 btn btn-success waves-effect waves-success btn-sm"
-                                style="width: 100%;">Agregar</button>
+                            <button
+                                type="button"
+                                id="btnIngresarUsuario"
+                                class="mt-2 btn btn-success btn-sm w-100">
+                                Agregar
+                            </button>
                         </div>
-                        <div class="text-center"> <code>Los campos con (*) son obligatorios</code>
+
+                        <div class="text-center mt-1">
+                            <code>Los campos con (*) son obligatorios</code>
                         </div>
-                        <div id="cont_mje_campos_obligatorios_vacios_insert_usuario">
-                        </div>
+
+                        <div id="cont_mje_campos_obligatorios_vacios_insert_usuario"></div>
+
                     </form>
+
 
                 </div>
                 <div class="col-lg-10" style="margin-left: 5px;">
