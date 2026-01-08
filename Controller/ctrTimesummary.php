@@ -288,6 +288,7 @@ switch ($_GET['accion']) {
 
     case 'get_titulos_proyectos_total':
         $datos = $timesummary->get_titulos_proyectos_total($_SESSION['usu_id']);
+        $data=[];
         if ($_SESSION['sector_id'] == "4") {
             foreach ($datos as $row) {
                 $sub_array = array();
