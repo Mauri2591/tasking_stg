@@ -995,7 +995,7 @@ ORDER BY id_proyecto_cantidad_servicios ASC";
     pg.estados_id,
     proyecto_recurrencia.posicion_recurrencia,
     pg.titulo,
-    prio.id AS prioridad,
+    prio.prioridad AS prioridad,
     prio.prioridad AS prioridad_nom,
     CASE 
         WHEN proyecto_rechequeo.id_proyecto_gestionado IS NOT NULL THEN 'SI'
