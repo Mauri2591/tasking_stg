@@ -74,7 +74,6 @@ switch ($_GET['case']) {
             $sub_array[] = $row['herramienta'];
             $sub_array[] = $row['sector'];
             $sub_array[] = $row['usu_crea'];
-            $sub_array[] = $row['estado'];
             $sub_array[] = '<span title="Inhabilitar Api Key" type="button" onclick=inactivarApiKey(' . $row['id'] . ')><i class="ri-send-plane-fill text-primary fs-16"></i></span>';
             $data[] = $sub_array;
         }

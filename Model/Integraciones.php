@@ -14,7 +14,7 @@ class Integraciones extends Conexion
     public function get_api_keys()
     {
         $conn = parent::get_conexion();
-        $sql = "SELECT api_keys.id, api_key, herramienas_integraciones.herramienta AS herramienta, sectores.sector_nombre AS sector, tm_usuario.usu_nom AS usu_crea, IF(api_keys.est = 1, 'ACTIVO','INACTIVO') AS estado FROM api_keys INNER JOIN herramienas_integraciones ON api_keys.id_herramienta=herramienas_integraciones.id INNER JOIN sectores ON api_keys.sector_id=sectores.sector_id INNER JOIN tm_usuario ON api_keys.usu_crea=tm_usuario.usu_id WHERE api_keys.est=1";
+        $sql = "SELECT api_keys.id, api_key, herramienas_integraciones.herramienta AS herramienta, sectores.sector_nombre AS sector, tm_usuario.usu_nom AS usu_crea FROM api_keys INNER JOIN herramienas_integraciones ON api_keys.id_herramienta=herramienas_integraciones.id INNER JOIN sectores ON api_keys.sector_id=sectores.sector_id INNER JOIN tm_usuario ON api_keys.usu_crea=tm_usuario.usu_id WHERE api_keys.est=1";
         $stmt = $conn->prepare($sql);
         $stmt->execute();
         $resul = $stmt->fetchAll(PDO::FETCH_ASSOC);

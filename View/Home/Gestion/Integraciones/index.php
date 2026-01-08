@@ -74,7 +74,6 @@ if (isset($_SESSION['usu_id'])) {
                                     <th style="width: 5%;text-align: center;">HERRAMIENTA</th>
                                     <th style="width: 10%;text-align: center;">SECTOR</th>
                                     <th style="width: 10%;text-align: center;">CREADOR</th>
-                                    <th style="width: 10%;text-align: center;">ESTADO</th>
                                     <th style="width: 10%;text-align: center;"></th>
                                 </tr>
                             </thead>
@@ -82,7 +81,6 @@ if (isset($_SESSION['usu_id'])) {
                                 <tr style="text-align: center;">
                                     <td style="width: 50%px;"></td>
                                     <td style="width: 5%;"></td>
-                                    <td style="width: 10%;"></td>
                                     <td style="width: 10%;"></td>
                                     <td style="width: 10%;"></td>
                                     <td style="width: 10%;"></td>
