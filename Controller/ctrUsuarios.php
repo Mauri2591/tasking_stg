@@ -85,38 +85,29 @@ switch ($_GET['usuarios']) {
         break;
 
     case 'insert_usuario':
+        $usu_nom    = $_POST['usu_nom']    ?? '';
+        $usu_ape    = $_POST['usu_ape']    ?? '';
+        $usu_correo = $_POST['usu_correo'] ?? '';
+        $usu_tel    = $_POST['usu_tel']    ?? '';
+        $sector_id  = $_POST['sector_id']  ?? 0;
 
-    // Tomo datos
-    $usu_nom    = $_POST['usu_nom']    ?? '';
-    $usu_ape    = $_POST['usu_ape']    ?? '';
-    $usu_correo = $_POST['usu_correo'] ?? '';
-    $usu_tel    = $_POST['usu_tel']    ?? '';
-    $sector_id  = $_POST['sector_id']  ?? 0;
-
-    // Chequeo mínimo (SIN ROMPERTE LOS HUEVOS)
-    if ($usu_nom === '' || $usu_correo === '') {
-        http_response_code(400);
-        echo json_encode(["error" => "Datos vacios"]);
-        exit;
-    }
-
-    // Insert
-    $usuarios->insert_usuario(
-        $_SESSION['usu_id'],
-        $usu_nom,
-        $usu_ape,
-        $usu_correo,
-        password_hash("111", PASSWORD_DEFAULT),
-        $usu_tel,
-        (int)$sector_id,
-        2
-    );
-
-    echo json_encode(["Success" => "OK"]);
-    break;
-
-
-
+        if ($usu_nom === '' || $usu_correo === '') {
+            http_response_code(400);
+            echo json_encode(["error" => "Datos vacios"]);
+            exit;
+        }
+        $usuarios->insert_usuario(
+            $_SESSION['usu_id'],
+            $usu_nom,
+            $usu_ape,
+            $usu_correo,
+            password_hash("111", PASSWORD_DEFAULT),
+            $usu_tel,
+            (int)$sector_id,
+            2
+        );
+        echo json_encode(["Success" => "OK"]);
+        break;
 
     default:
         break;

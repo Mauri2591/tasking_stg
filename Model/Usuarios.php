@@ -93,7 +93,6 @@ class Usuarios extends Conexion
         $stmt->bindValue(':usu_tel', $usu_tel, PDO::PARAM_STR);
         $stmt->bindValue(':sector_id', (int)$sector_id, PDO::PARAM_INT);
         $stmt->bindValue(':rol_id', $rol_id, PDO::PARAM_INT);
-
         return $stmt->execute();
     }
 }
