@@ -103,6 +103,18 @@ if (isset($_SESSION['usu_id'])) {
         var calendarEl = document.getElementById('calendar');
         var calendar = new FullCalendar.Calendar(calendarEl, {
             initialView: 'dayGridMonth',
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,timeGridWeek,timeGridDay'
+            },
+
+            buttonText: {
+                today: 'Hoy',
+                month: 'Mes',
+                week: 'Semana',
+                day: 'Día'
+            },
             locale: 'es',
             events: URL + 'Controller/ctrTimesummary.php?accion=get_tareas',
             selectable: true,
@@ -319,7 +331,7 @@ if (isset($_SESSION['usu_id'])) {
 
                             Swal.fire({
                                 icon: "success",
-                                title:"Bien",
+                                title: "Bien",
                                 text: "Tarea eliminada correctamente",
                                 showConfirmButton: false,
                                 timer: 1000
