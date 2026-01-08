@@ -33,7 +33,7 @@ if (isset($_SESSION['usu_id'])) {
                     <span class="badge bg-success">Alta Usuario</span>
 
                     <br>
-                    <form method="post">
+                    <form id="form_insert_usuario" method="post">
 
                         <!-- NOMBRE -->
                         <div class="input-group input-group-sm mt-1">
