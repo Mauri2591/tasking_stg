@@ -794,148 +794,102 @@ return function (App $app) {
 
 
     // ******************   INICIO TIMASUMMARY ***********************
- $app->get('/cargasTimesummary', function (Request $request, Response $response) use ($app) {
+    $app->get('/cargasTimesummary', function (Request $request, Response $response) use ($app) {
 
-    // =============================
-    // 1️⃣ API KEY
-    // =============================
-    $apiKeyPlana = $request->getHeaderLine('X-API-KEY');
-
-    if (!$apiKeyPlana) {
-        $response->getBody()->write(json_encode(["error" => "API Key requerida"]));
-        return $response
-            ->withHeader('Content-Type', 'application/json')
-            ->withStatus(401);
-    }
-
-    $pdo = $app->getContainer()->get(PDO::class);
-
-    // =============================
-    // 2️⃣ VALIDAR API KEY
-    // =============================
-    $stmt = $pdo->query("SELECT api_key, sector_id FROM api_keys WHERE est = 1");
-    $keys = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-    $sector_id = null;
-
-    foreach ($keys as $row) {
-        $key_plana_db = Openssl::get_ssl_decrypt($row['api_key']);
-
-        if (hash_equals($key_plana_db, $apiKeyPlana)) {
-            $sector_id = (int)$row['sector_id'];
-            break;
+        $apiKeyPlana = $request->getHeaderLine('X-API-KEY');
+        if (!$apiKeyPlana) {
+            $response->getBody()->write(json_encode(["error" => "API Key requerida"]));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(401);
         }
-    }
 
-    if (!$sector_id) {
-        $response->getBody()->write(json_encode(["error" => "API Key inválida"]));
-        return $response
-            ->withHeader('Content-Type', 'application/json')
-            ->withStatus(403);
-    }
+        $pdo = $app->getContainer()->get(PDO::class);
 
-    // =============================
-    // 3️⃣ DEFINICIÓN DE ALCANCE
-    // sector_id = 4 → VE TODO
-    // =============================
-    $verTodo = ($sector_id === 4);
+        $keys = $pdo->query("SELECT api_key, sector_id FROM api_keys WHERE est = 1")
+            ->fetchAll(PDO::FETCH_ASSOC);
 
-    // =============================
-    // 4️⃣ QUERY ÚNICA
-    // =============================
-    $sql = "
-    SELECT
+        $sector_id = null;
+        foreach ($keys as $row) {
+            if (hash_equals(Openssl::get_ssl_decrypt($row['api_key']), $apiKeyPlana)) {
+                $sector_id = (int)$row['sector_id'];
+                break;
+            }
+        }
+
+        if (!$sector_id) {
+            $response->getBody()->write(json_encode(["error" => "API Key inválida"]));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(403);
+        }
+        if ($sector_id === 4) {
+            $sql = "SELECT
+            CONCAT(u.usu_nom, ' ', u.usu_ape) AS colaborador,
+            COALESCE(sp.sector_nombre, su.sector_nombre) AS area,
+            c.cat_nom AS producto,
+            t.nombre AS tarea,
+            ts.fecha,
+            ts.hora_desde AS hora_inicio,
+            ts.hora_hasta AS hora_fin,
+            ts.horas_consumidas AS HT,
+            IF(ts.horas_consumidas < 0, ts.horas_consumidas, NULL) AS HN,
+            CASE WHEN ts.es_telecom = 'Telecom' THEN 'TELECOM' ELSE cli.client_rs END AS cliente,
+            CASE WHEN ts.es_telecom = 'Telecom' THEN 'ARGENTINA' ELSE p.pais_nombre END AS pais
+        FROM timesummary_carga ts
+        LEFT JOIN tm_usuario u ON u.usu_id = ts.usu_id
+        LEFT JOIN tm_categoria c ON c.cat_id = ts.id_producto
+        LEFT JOIN tareas t ON t.id = ts.id_tarea
+        LEFT JOIN proyecto_gestionado pg ON pg.id = ts.id_proyecto_gestionado
+        LEFT JOIN sectores sp ON sp.sector_id = pg.sector_id
+        LEFT JOIN sectores su ON su.sector_id = u.sector_id
+        LEFT JOIN proyecto_cantidad_servicios pcs ON pcs.id = pg.id_proyecto_cantidad_servicios
+        LEFT JOIN proyectos pr ON pr.proy_id = pcs.proy_id
+        LEFT JOIN clientes cli ON cli.client_id = pr.client_id
+        LEFT JOIN tm_pais p ON p.pais_id = cli.pais_id
+        WHERE ts.est = 1
+        ORDER BY ts.fecha DESC";
+            $stmt = $pdo->prepare($sql);
+        } else {
+            $sql = "SELECT
         CONCAT(u.usu_nom, ' ', u.usu_ape) AS colaborador,
-
         COALESCE(sp.sector_nombre, su.sector_nombre) AS area,
-
         c.cat_nom AS producto,
-        t.nombre  AS tarea,
-
+        t.nombre AS tarea,
         ts.fecha,
         ts.hora_desde AS hora_inicio,
         ts.hora_hasta AS hora_fin,
-
         ts.horas_consumidas AS HT,
         IF(ts.horas_consumidas < 0, ts.horas_consumidas, NULL) AS HN,
-
         CASE
             WHEN ts.es_telecom = 'Telecom' THEN 'TELECOM'
             ELSE cli.client_rs
         END AS cliente,
-
         CASE
             WHEN ts.es_telecom = 'Telecom' THEN 'ARGENTINA'
             ELSE p.pais_nombre
         END AS pais
+        FROM timesummary_carga ts
+        LEFT JOIN tm_usuario u ON u.usu_id = ts.usu_id
+        LEFT JOIN tm_categoria c ON c.cat_id = ts.id_producto
+        LEFT JOIN tareas t ON t.id = ts.id_tarea
+        LEFT JOIN proyecto_gestionado pg ON pg.id = ts.id_proyecto_gestionado
+        LEFT JOIN sectores sp ON sp.sector_id = pg.sector_id
+        LEFT JOIN sectores su ON su.sector_id = u.sector_id
+        LEFT JOIN proyecto_cantidad_servicios pcs ON pcs.id = pg.id_proyecto_cantidad_servicios
+        LEFT JOIN proyectos pr ON pr.proy_id = pcs.proy_id
+        LEFT JOIN clientes cli ON cli.client_id = pr.client_id
+        LEFT JOIN tm_pais p ON p.pais_id = cli.pais_id
+        WHERE ts.est = 1
+        AND COALESCE(sp.sector_id, su.sector_id) IN (:sector_id, 5)
+        ORDER BY ts.fecha DESC";
+            $stmt = $pdo->prepare($sql);
+            $stmt->bindValue(':sector_id', $sector_id, PDO::PARAM_INT);
+        }
 
-    FROM timesummary_carga ts
+        $stmt->execute();
+        $response->getBody()->write(
+            json_encode($stmt->fetchAll(PDO::FETCH_ASSOC), JSON_UNESCAPED_UNICODE)
+        );
 
-    LEFT JOIN tm_usuario u
-        ON u.usu_id = ts.usu_id
-
-    LEFT JOIN tm_categoria c
-        ON c.cat_id = ts.id_producto
-
-    LEFT JOIN tareas t
-        ON t.id = ts.id_tarea
-
-    LEFT JOIN proyecto_gestionado pg
-        ON pg.id = ts.id_proyecto_gestionado
-        AND ts.id_proyecto_gestionado <> 0
-
-    LEFT JOIN sectores sp
-        ON sp.sector_id = pg.sector_id
-
-    LEFT JOIN sectores su
-        ON su.sector_id = u.sector_id
-
-    LEFT JOIN proyecto_cantidad_servicios pcs
-        ON pcs.id = pg.id_proyecto_cantidad_servicios
-
-    LEFT JOIN proyectos pr
-        ON pr.proy_id = pcs.proy_id
-
-    LEFT JOIN clientes cli
-        ON cli.client_id = pr.client_id
-
-    LEFT JOIN tm_pais p
-        ON p.pais_id = cli.pais_id
-
-    WHERE ts.est = 1
-    ";
-
-    // =============================
-    // 5️⃣ FILTRO POR SECTOR (SI NO ES ADMIN)
-    // =============================
-    if (!$verTodo) {
-        $sql .= " AND COALESCE(sp.sector_id, su.sector_id) = :sector_id";
-    }
-
-    $sql .= " ORDER BY ts.fecha DESC";
-
-    // =============================
-    // 6️⃣ EJECUCIÓN
-    // =============================
-    $stmt = $pdo->prepare($sql);
-
-    if (!$verTodo) {
-        $stmt->bindValue(':sector_id', $sector_id, PDO::PARAM_INT);
-    }
-
-    $stmt->execute();
-    $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-    // =============================
-    // 7️⃣ RESPUESTA
-    // =============================
-    $response->getBody()->write(json_encode($rows, JSON_UNESCAPED_UNICODE));
-
-    return $response
-        ->withHeader('Content-Type', 'application/json')
-        ->withStatus(200);
-});
-
+        return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+    });
     // ******************   FIN TIMASUMMARY ***********************
 
 

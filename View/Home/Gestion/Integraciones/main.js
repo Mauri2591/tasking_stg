@@ -35,7 +35,7 @@ document.addEventListener("DOMContentLoaded", () => {
             "sProcessing": "Procesando..",
             "sLengthMenu": "Mostrar _MENU_ registros",
             "sZeroRecords": "No se encontraron resultados..",
-            "sEmptyTable": "Ninguna tarea disponible en esta tabla",
+            "sEmptyTable": "Ningun registro disponible en esta tabla",
             "sInfo": "Mostrando un total de _TOTAL_ registros",
             "sInfoEmpty": "Mostrando un total de 0 registros",
             "sInfoFiltered": "(Filtrado de un total de _MAX_ registros)",
