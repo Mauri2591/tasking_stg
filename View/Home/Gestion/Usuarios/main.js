@@ -97,7 +97,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 document.getElementById("form_insert_usuario").reset();
             },
             error: function (xhr) {
-                Swal.fire("Error", xhr.responseText, "error");
+                Swal.fire("Error", "Datos vacios", "error");
             }
         });
     });

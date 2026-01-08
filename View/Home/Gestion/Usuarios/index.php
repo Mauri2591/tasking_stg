@@ -51,7 +51,7 @@ if (isset($_SESSION['usu_id'])) {
                         <!-- Apellido -->
                         <div class="input-group input-group-sm mt-1">
                             <span class="input-group-text">
-                                APELLIDO <span class="text-danger">*</span>
+                                APELLIDO
                             </span>
                             <input
                                 type="text"
