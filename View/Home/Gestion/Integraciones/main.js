@@ -115,7 +115,7 @@ function inactivarApiKey(id) {
     Swal.fire({
         icon: "warning",
         title: "Atencion",
-        text: "Desea inactivar esta Key?",
+        text: "Desea eliminar esta Api Key?",
         showConfirmButton: true,
         showCancelButton: true
     }).then((result) => {
