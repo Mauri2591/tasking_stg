@@ -30,7 +30,7 @@ return function (App $app) {
         $response->getBody()->write('<strong>Bienvenido a la API de Tasking.</strong> Si necesita ayuda, póngase en contacto con el equipo de Ethickal Hacking. Gracias');
         return $response;
     });
-
+    
 
     // ******************   INICIO TASKING ***********************
     $app->post('/login', function (Request $request, Response $response) use ($app) {
@@ -82,8 +82,7 @@ return function (App $app) {
         return $response->withHeader('Content-Type', 'application/json')->withStatus(401);
     });
 
-
-    /** REFRESH: Genera nuevo Access Token usando Refresh Token*/
+    /** Genero nuevo Access Token usando Refresh Token*/
     $app->post('/refresh', function (Request $request, Response $response) use ($app) {
         $data = $request->getParsedBody();
         $refreshToken = $data['refresh_token'] ?? '';
@@ -116,7 +115,7 @@ return function (App $app) {
         return $response->withHeader('Content-Type', 'application/json')->withStatus(401);
     });
 
-    /** LOGOUT: Revoca el Refresh Token */
+    /** Elimino el Refresh Token */
     $app->post('/logout', function (Request $request, Response $response) use ($app) {
         $data = $request->getParsedBody();
         $refreshToken = $data['refresh_token'] ?? '';
@@ -471,7 +470,6 @@ return function (App $app) {
         return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
     });
 
-
     $app->get('/proyectosTaskingEhPorEstado/{estados_id}', function (Request $request, Response $response, array $args) use ($app) {
         // 1. Validar token JWT
         $authHeader = $request->getHeaderLine('Authorization');
@@ -625,7 +623,6 @@ return function (App $app) {
         return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
     });
 
-
     $app->get('/proyectosTaskingEhPorId/{id}', function (Request $request, Response $response, array $args) use ($app) {
         // 1. Validar token JWT
         $authHeader = $request->getHeaderLine('Authorization');
@@ -778,19 +775,16 @@ return function (App $app) {
         return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
     });
 
-    // Grupo protegido /users
     $app->group('/users', function (Group $group) {
         $group->get('', ListUsersAction::class);
         $group->get('/{id}', ViewUserAction::class);
     })->add(JwtMiddleware::class);
 
-    // Grupo protegido /projects
     $app->group('/projects', function (Group $group) {
         $group->get('', ListProjectsAction::class);
         $group->get('/{id}', ViewProjectAction::class);
     })->add(JwtMiddleware::class);
     // ******************   FIN TASKING ***********************
-
 
 
     // ******************   INICIO TIMASUMMARY ***********************
