@@ -9,7 +9,7 @@ switch ($_GET['usuarios']) {
         $data = array();
         foreach ($datos as $row) {
             $sub_array = array();
-            $sub_array[] = strtolower($row['usu_nom']);
+            $sub_array[] = strtoupper($row['usu_nom']);
             $sub_array[] = strtolower($row['usu_correo']);
             $sub_array[] = strtolower($row['usu_tel']);
             $sub_array[] = '<span class="badge badge-soft-primary ms-auto">' . strtoupper($row['sector']) . '</span>';
