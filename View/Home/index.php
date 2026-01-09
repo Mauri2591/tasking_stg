@@ -80,10 +80,11 @@ if (isset($_SESSION['usu_id'])) {
             <!-- container-fluid -->
             <div class="col-lg-12">
                 <div class="row">
-                    <div class="col-lg-12">
+                    <div class="col-lg-12 mt-2">
                         <div class="card">
-                            <p class="text-center"> <span class="badge bg-light text-primary mt-1">Total de proyectos cerrados</span>
-                            </p> <canvas id="barra_servicios" width="400" height="110"></canvas>
+                            <!-- <p class="text-center"> <span class="badge bg-light text-primary mt-1">Total de proyectos cerrados</span>
+                            </p>  -->
+                            <canvas id="barra_servicios" width="400" height="110"></canvas>
                         </div>
                     </div>
                 </div>
@@ -91,9 +92,9 @@ if (isset($_SESSION['usu_id'])) {
         <?php else: ?>
             <div class="col-lg-12">
                 <div class="card">
-                    <div class="row">
-                        <p class="text-center"> <span class="badge bg-light text-primary mt-1">Total de proyectos cerrados</span>
-                        </p>
+                    <div class="row mt-2">
+                        <!-- <p class="text-center"> <span class="badge bg-light text-primary mt-1">Total de proyectos cerrados</span>
+                        </p> -->
                         <div class="col-lg-8">
                             <div class="card">
                                 <canvas id="barra_servicios" width="400" height="210"></canvas>
@@ -154,7 +155,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             data: {
                                 labels: labels,
                                 datasets: [{
-                                    label: 'Total servicios finalizados',
+                                    label: 'Total proyectos cerrados por Calidad',
                                     data: values,
                                     borderWidth: 1,
                                     borderColor: 'rgb(0, 225, 255)',
@@ -276,7 +277,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             data: {
                                 labels: labels,
                                 datasets: [{
-                                    label: 'Total servicios finalizados',
+                                    label: 'Total proyectos cerrados por Calidad',
                                     data: values,
                                     borderWidth: 1,
                                     borderColor: 'rgb(0, 225, 255)',
@@ -310,7 +311,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             data: {
                                 labels: labels,
                                 datasets: [{
-                                    label: 'Total servicios finalizados',
+                                    label: 'Total proyectos cerrados por Calidad',
                                     data: values,
                                     borderWidth: 1
                                 }]
