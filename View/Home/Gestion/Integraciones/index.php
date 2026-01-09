@@ -35,9 +35,7 @@ if (isset($_SESSION['usu_id'])) {
                         <div class="col-lg-12 mt-1">
 
                             <div class="input-group input-group-sm">
-                                <span class="input-group-text" id="inputGroup-sizing-sm">HERRAMIENTA <span
-                                        class="text-danger fs-14"> *</span>
-                                </span>
+                                <span class="input-group-text" id="inputGroup-sizing-sm">HERRAMIENTA</span>
 
                                 <select id="combo_herramienta" class="form-select form-select-sm"
                                     aria-label=".form-select-sm example">
@@ -46,9 +44,7 @@ if (isset($_SESSION['usu_id'])) {
                             </div>
 
                             <div class="input-group input-group-sm mt-1">
-                                <span class="input-group-text" id="inputGroup-sizing-sm">SECTOR <span
-                                        class="text-danger fs-14"> *</span>
-                                </span>
+                                <span class="input-group-text" id="inputGroup-sizing-sm">SECTOR </span>
 
                                 <select id="combo_sector" class="form-select form-select-sm"
                                     aria-label=".form-select-sm example">
