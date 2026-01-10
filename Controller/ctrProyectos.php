@@ -1717,12 +1717,12 @@ switch ($_GET['proy']) {
                 if ($estado != "FIN SIN IMPLEM" && $estado != "ELIMINADO" && $estado != "CANCELADO" && $estado != "BORRADOR" && $rechequeo != "SI") {
                     $sub_array[] = '<span type="button" onclick="crearRechequeo(' . $id . ')" data-placement="top" title="Agregar rechequeo"><i class="ri-add-fill text-danger fs-18"></i></span>';
                 } else {
-                    $sub_array[] = '<span><i class="ri-subtract-line" style="color:gray"></i></span>';
+                    $sub_array[] = '<span><i class="ri-subtract-line" style="color:#CCC"></i></span>';
                 }
             }
 
-            if ($estado == "FIN SIN IMPLEM" || $estado == "ELIMINADO" || $estado == "CANCELADO") {
-                $sub_array[] = '<span><i class="ri-subtract-line" style="color:gray"></i></span>';
+            if ($estado == "FIN SIN IMPLEM" || $estado == "ELIMINADO" || $estado == "CANCELADO" || $estado == "NUEVO" || $estado == "ABIERTO" || $estado == "BORRADOR") {
+                $sub_array[] = '<span><i class="ri-subtract-line" style="color:#CCC"></i></span>';
             } else {
                 $sub_array[] = '<a href="' . URL . 'View/Home/Gestion/Sectores/GestionarProy/?p=' .
                     Openssl::set_ssl_encrypt($id_proyecto_cantidad_servicios) .
