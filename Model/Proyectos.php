@@ -14,36 +14,21 @@ class Proyectos extends Conexion
         $conn = parent::get_conexion();
         $sql = "INSERT INTO proyectos (usu_crea,client_id,pais_id,recurrencia,refPro,fechaVantive,est) VALUES (?,?,?,?,?,?,1)";
         $stmt = $conn->prepare($sql);
-        $stmt->bindValue(1, htmlspecialchars($usu_crea, ENT_QUOTES), PDO::PARAM_INT);
-        $stmt->bindValue(2, htmlspecialchars($client_id, ENT_QUOTES), PDO::PARAM_INT);
-        $stmt->bindValue(3, htmlspecialchars($pais_id, ENT_QUOTES), PDO::PARAM_INT);
-        $stmt->bindValue(4, htmlspecialchars($recurrencia, ENT_QUOTES), PDO::PARAM_INT);
-        $stmt->bindValue(5, htmlspecialchars($refPro, ENT_QUOTES), PDO::PARAM_STR);
-        $stmt->bindValue(6, htmlspecialchars($fechaVantive, ENT_QUOTES), PDO::PARAM_STR);
+        $stmt->bindValue(1, trim($usu_crea), PDO::PARAM_INT);
+        $stmt->bindValue(2, trim($client_id), PDO::PARAM_INT);
+        $stmt->bindValue(3, trim($pais_id), PDO::PARAM_INT);
+        $stmt->bindValue(4, trim($recurrencia), PDO::PARAM_INT);
+        $stmt->bindValue(5, trim($refPro), PDO::PARAM_STR);
+        $stmt->bindValue(6, trim($fechaVantive), PDO::PARAM_STR);
         $stmt->execute();
     }
 
     public function get_client_y_pais_para_proy_borrador($proy_id)
     {
         $conn = parent::get_conexion();
-        //         $sql = "SELECT 
-        //     c.client_rs, 
-        //     DATE_FORMAT(p.fech_crea, '%d-%m-%Y') AS fech_crea,
-        //     tp.pais_nombre,
-        //     pg.id AS id_proyecto_gestionado,
-        //     COUNT(pr.id) AS recurrencias_total,
-        //     COUNT(CASE WHEN pr.est = 0 THEN 1 END) AS recurrencias_inactivas
-        // FROM proyecto_gestionado pg
-        // JOIN proyecto_cantidad_servicios pcs ON pg.id_proyecto_cantidad_servicios = pcs.id
-        // JOIN proyectos p ON pcs.proy_id = p.proy_id
-        // JOIN clientes c ON p.client_id = c.client_id
-        // JOIN tm_pais tp ON c.pais_id = tp.pais_id
-        // LEFT JOIN proyecto_recurrencia pr ON pr.id_proyecto_gestionado = pg.id
-        // WHERE pg.id = ?
-        // GROUP BY c.client_rs, p.fech_crea, tp.pais_nombre, pg.id";
         $sql = "SELECT clientes.client_rs, tm_pais.pais_nombre, DATE_FORMAT(fech_crea,'%d-%m-%Y') AS fech_crea FROM proyectos LEFT JOIN clientes ON proyectos.client_id=clientes.client_id LEFT JOIN tm_pais ON clientes.pais_id=tm_pais.pais_id WHERE proy_id=?";
         $stmt = $conn->prepare($sql);
-        $stmt->bindValue(1, htmlspecialchars($proy_id, ENT_QUOTES), PDO::PARAM_INT);
+        $stmt->bindValue(1, $proy_id, PDO::PARAM_INT);
         $stmt->execute();
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
@@ -56,8 +41,8 @@ class Proyectos extends Conexion
         proyecto_gestionado.recurrencia, proyecto_gestionado.estados_id FROM proyecto_gestionado 
         WHERE proy_id=? AND proyecto_gestionado.id_proyecto_cantidad_servicios=?";
         $stmt = $conn->prepare($sql);
-        $stmt->bindValue(1, htmlspecialchars($proy_id, ENT_QUOTES), PDO::PARAM_INT);
-        $stmt->bindValue(2, htmlspecialchars($id_proyecto_cantidad_servicios, ENT_QUOTES), PDO::PARAM_INT);
+        $stmt->bindValue(1, $proy_id, PDO::PARAM_INT);
+        $stmt->bindValue(2, $id_proyecto_cantidad_servicios, PDO::PARAM_INT);
         $stmt->execute();
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
@@ -77,8 +62,8 @@ class Proyectos extends Conexion
         $conn = parent::get_conexion();
         $sql = "UPDATE proyecto_cantidad_servicios SET est=0 WHERE proy_id=? AND id=?";
         $stmt = $conn->prepare($sql);
-        $stmt->bindValue(1, htmlspecialchars($proy_id, ENT_QUOTES), PDO::PARAM_INT);
-        $stmt->bindValue(2, htmlspecialchars($id, ENT_QUOTES), PDO::PARAM_INT);
+        $stmt->bindValue(1, $proy_id, PDO::PARAM_INT);
+        $stmt->bindValue(2, $id, PDO::PARAM_INT);
         $stmt->execute();
     }
 
@@ -121,7 +106,7 @@ class Proyectos extends Conexion
         $conn = parent::get_conexion();
         $sql = "DELETE FROM proyecto_gestionado WHERE id=?";
         $stmt = $conn->prepare($sql);
-        $stmt->bindValue(1, htmlspecialchars($id, ENT_QUOTES), PDO::PARAM_INT);
+        $stmt->bindValue(1, $id, PDO::PARAM_INT);
         $stmt->execute();
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
@@ -341,15 +326,13 @@ ORDER BY pcs.proy_id ASC, pcs.numero_servicio ASC";
         AND (pg.estados_id IS NULL OR pg.estados_id IN (1))
         ORDER BY pcs.proy_id ASC, pcs.numero_servicio ASC";
         $stmt = $conn->prepare($sql);
-        $stmt->bindValue(1, htmlspecialchars($sector_id, ENT_QUOTES), PDO::PARAM_INT);
+        $stmt->bindValue(1, $sector_id, PDO::PARAM_INT);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-
     // Inician servicios ETHICAL HACKING
     //VAS
-
     public function get_proyectos_eh($sector_id, $cat_id, $estados_id)
     {
         $conn = parent::get_conexion();
@@ -448,9 +431,9 @@ GROUP BY
 ORDER BY 
     id_proyecto_cantidad_servicios ASC";
         $stmt = $conn->prepare($sql);
-        $stmt->bindValue(1, htmlspecialchars($sector_id, ENT_QUOTES), PDO::PARAM_INT);
-        $stmt->bindValue(2, htmlspecialchars($cat_id, ENT_QUOTES), PDO::PARAM_INT);
-        $stmt->bindValue(3, htmlspecialchars($estados_id, ENT_QUOTES), PDO::PARAM_INT);
+        $stmt->bindValue(1, $sector_id, PDO::PARAM_INT);
+        $stmt->bindValue(2, $cat_id, PDO::PARAM_INT);
+        $stmt->bindValue(3, $estados_id, PDO::PARAM_INT);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -656,9 +639,9 @@ GROUP BY
     pg.id_proyecto_recurrencia
 ORDER BY id_proyecto_cantidad_servicios ASC";
         $stmt = $conn->prepare($sql);
-        $stmt->bindValue(1, htmlspecialchars($sector_id, ENT_QUOTES), PDO::PARAM_INT);
-        $stmt->bindValue(2, htmlspecialchars($cat_id, ENT_QUOTES), PDO::PARAM_INT);
-        $stmt->bindValue(3, htmlspecialchars($estados_id, ENT_QUOTES), PDO::PARAM_INT);
+        $stmt->bindValue(1, $sector_id, PDO::PARAM_INT);
+        $stmt->bindValue(2, $cat_id, PDO::PARAM_INT);
+        $stmt->bindValue(3, $estados_id, PDO::PARAM_INT);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -756,9 +739,9 @@ GROUP BY
     pg.id_proyecto_recurrencia
 ORDER BY id_proyecto_cantidad_servicios ASC";
         $stmt = $conn->prepare($sql);
-        $stmt->bindValue(1, htmlspecialchars($sector_id, ENT_QUOTES), PDO::PARAM_INT);
-        $stmt->bindValue(2, htmlspecialchars($cat_id, ENT_QUOTES), PDO::PARAM_INT);
-        $stmt->bindValue(3, htmlspecialchars($estados_id, ENT_QUOTES), PDO::PARAM_INT);
+        $stmt->bindValue(1, $sector_id, PDO::PARAM_INT);
+        $stmt->bindValue(2, $cat_id, PDO::PARAM_INT);
+        $stmt->bindValue(3, $estados_id, PDO::PARAM_INT);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -967,8 +950,8 @@ GROUP BY
     tmc.cat_nom
 ORDER BY id_proyecto_cantidad_servicios ASC";
         $stmt = $conn->prepare($sql);
-        $stmt->bindValue(1, htmlspecialchars($sector_id, ENT_QUOTES), PDO::PARAM_INT);
-        $stmt->bindValue(2, htmlspecialchars($estados_id, ENT_QUOTES), PDO::PARAM_INT);
+        $stmt->bindValue(1, $sector_id, PDO::PARAM_INT);
+        $stmt->bindValue(2, $estados_id, PDO::PARAM_INT);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -1141,11 +1124,10 @@ GROUP BY
 ORDER BY 
     id_proyecto_cantidad_servicios ASC";
         $stmt = $conn->prepare($sql);
-        $stmt->bindValue(1, htmlspecialchars($estados_id, ENT_QUOTES), PDO::PARAM_INT);
+        $stmt->bindValue(1, $estados_id, PDO::PARAM_INT);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
-
 
     public function get_proyectos_realizados_vista_calidad($estados_id)
     {
@@ -1253,23 +1235,20 @@ ORDER BY id_proyecto_cantidad_servicios ASC";
         ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
         $stmt = $conn->prepare($sql);
-        $stmt->bindValue(1, htmlspecialchars($id_proyecto_cantidad_servicios, ENT_QUOTES), PDO::PARAM_INT);
-        $stmt->bindValue(2, htmlspecialchars($cat_id, ENT_QUOTES), PDO::PARAM_INT);
-        $stmt->bindValue(3, htmlspecialchars($cats_id, ENT_QUOTES), PDO::PARAM_INT);
-        $stmt->bindValue(4, htmlspecialchars($sector_id, ENT_QUOTES), PDO::PARAM_INT);
-        // $stmt->bindValue(5, htmlspecialchars($usu_id, ENT_QUOTES), PDO::PARAM_INT);
-        $stmt->bindValue(5, htmlspecialchars($usu_crea, ENT_QUOTES), PDO::PARAM_INT);
-        $stmt->bindValue(6, htmlspecialchars($prioridad_id, ENT_QUOTES), PDO::PARAM_INT);
-        $stmt->bindValue(7, htmlspecialchars($estados_id, ENT_QUOTES), PDO::PARAM_INT);
-        $stmt->bindValue(8, htmlspecialchars($titulo, ENT_QUOTES), PDO::PARAM_STR);
-        $stmt->bindValue(9, htmlspecialchars($descripcion, ENT_QUOTES), PDO::PARAM_STR);
-        $stmt->bindValue(10, htmlspecialchars($refProy, ENT_QUOTES), PDO::PARAM_STR); // corregido
-        $stmt->bindValue(11, htmlspecialchars($recurrencia, ENT_QUOTES), PDO::PARAM_STR);
-
+        $stmt->bindValue(1, $id_proyecto_cantidad_servicios, PDO::PARAM_INT);
+        $stmt->bindValue(2, $cat_id, PDO::PARAM_INT);
+        $stmt->bindValue(3, $cats_id, PDO::PARAM_INT);
+        $stmt->bindValue(4, $sector_id, PDO::PARAM_INT);
+        $stmt->bindValue(5, $usu_crea, PDO::PARAM_INT);
+        $stmt->bindValue(6, $prioridad_id, PDO::PARAM_INT);
+        $stmt->bindValue(7, $estados_id, PDO::PARAM_INT);
+        $stmt->bindValue(8, trim($titulo), PDO::PARAM_STR);
+        $stmt->bindValue(9, trim($descripcion), PDO::PARAM_STR);
+        $stmt->bindValue(10, trim($refProy), PDO::PARAM_STR);
+        $stmt->bindValue(11, $recurrencia, PDO::PARAM_STR);
         $stmt->bindValue(12, $fech_inicio, is_null($fech_inicio) ? PDO::PARAM_NULL : PDO::PARAM_STR);
         $stmt->bindValue(13, $fech_fin, is_null($fech_fin) ? PDO::PARAM_NULL : PDO::PARAM_STR);
         $stmt->bindValue(14, $fech_vantive, is_null($fech_vantive) ? PDO::PARAM_NULL : PDO::PARAM_STR);
-
         $stmt->bindValue(15, $archivo, PDO::PARAM_STR);
         $stmt->bindValue(16, $captura_imagen, PDO::PARAM_STR);
         $stmt->bindValue(17, 1, PDO::PARAM_INT); // est activo por defecto
@@ -1329,15 +1308,14 @@ ORDER BY id_proyecto_cantidad_servicios ASC";
         $stmt->execute();
     }
 
-
     public function insert_dimensionamiento(int $id_proyecto_gestionado, string $hs_dimensionadas, int $usu_crea)
     {
         $conn = parent::get_conexion();
         $sql = "INSERT INTO dimensionamiento (id_proyecto_gestionado, hs_dimensionadas, usu_crea) VALUES (?, ?, ?)";
         $stmt = $conn->prepare($sql);
-        $stmt->bindValue(1, htmlspecialchars($id_proyecto_gestionado, ENT_QUOTES), PDO::PARAM_INT);
-        $stmt->bindValue(2, htmlspecialchars($hs_dimensionadas, ENT_QUOTES), PDO::PARAM_STR);
-        $stmt->bindValue(3, htmlspecialchars($usu_crea, ENT_QUOTES), PDO::PARAM_INT);
+        $stmt->bindValue(1, $id_proyecto_gestionado, PDO::PARAM_INT);
+        $stmt->bindValue(2, trim($hs_dimensionadas), PDO::PARAM_STR);
+        $stmt->bindValue(3, $usu_crea, PDO::PARAM_INT);
         $stmt->execute();
     }
 
@@ -1360,7 +1338,7 @@ WHERE
     pg.id = ?
     AND pg.est = 1";
         $stmt = $conn->prepare($sql);
-        $stmt->bindValue(1, htmlspecialchars($id, ENT_QUOTES), PDO::PARAM_INT);
+        $stmt->bindValue(1, $id, PDO::PARAM_INT);
         $stmt->execute();
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
@@ -1370,8 +1348,8 @@ WHERE
         $conn = parent::get_conexion();
         $sql = "UPDATE proyecto_gestionado SET estados_id=?, est=0 WHERE id_proyecto_gestionado=? AND est=1";
         $stmt = $conn->prepare($sql);
-        $stmt->bindValue(1, htmlspecialchars($estados_id, ENT_QUOTES), PDO::PARAM_INT);
-        $stmt->bindValue(2, htmlspecialchars($id_proyecto_gestionado, ENT_QUOTES), PDO::PARAM_INT);
+        $stmt->bindValue(1, $estados_id, PDO::PARAM_INT);
+        $stmt->bindValue(2, $id_proyecto_gestionado, PDO::PARAM_INT);
         $stmt->execute();
     }
 
@@ -1416,20 +1394,19 @@ WHERE
             $stmt->bindValue(':sector_id', $sector_id, PDO::PARAM_INT);
             $stmt->bindValue(':usu_crea', $usu_crea, PDO::PARAM_INT);
             $stmt->bindValue(':prioridad_id', $prioridad_id, PDO::PARAM_INT);
-            $stmt->bindValue(':titulo', htmlspecialchars($titulo, ENT_QUOTES, 'UTF-8'), PDO::PARAM_STR);
-            $stmt->bindValue(':descripcion', htmlspecialchars($descripcion, ENT_QUOTES, 'UTF-8'), PDO::PARAM_STR);
-            $stmt->bindValue(':refProy', htmlspecialchars($refProy, ENT_QUOTES, 'UTF-8'), PDO::PARAM_STR);
-            $stmt->bindValue(':recurrencia', htmlspecialchars($recurrencia, ENT_QUOTES, 'UTF-8'), PDO::PARAM_STR);
+            $stmt->bindValue(':titulo', trim($titulo), PDO::PARAM_STR);
+            $stmt->bindValue(':descripcion', trim($descripcion), PDO::PARAM_STR);
+            $stmt->bindValue(':refProy', trim($refProy),PDO::PARAM_STR);
+            $stmt->bindValue(':recurrencia', $recurrencia, PDO::PARAM_STR);
             $stmt->bindValue(':fech_inicio', $fech_inicio, is_null($fech_inicio) ? PDO::PARAM_NULL : PDO::PARAM_STR);
             $stmt->bindValue(':fech_fin', $fech_fin, is_null($fech_fin) ? PDO::PARAM_NULL : PDO::PARAM_STR);
             $stmt->bindValue(':fech_vantive', $fech_vantive, is_null($fech_vantive) ? PDO::PARAM_NULL : PDO::PARAM_STR);
             $stmt->bindValue(':id', $id, PDO::PARAM_INT);
             $stmt->execute();
-            return $stmt->rowCount(); // cantidad de filas actualizadas
+            return $stmt->rowCount();
         } catch (PDOException $e) {
-            // Loguear el error si querés (por ejemplo usando error_log())
             error_log("Error en update_proyecto: " . $e->getMessage());
-            return false; // podés devolver false si algo falla
+            return false;
         }
     }
 
@@ -1476,7 +1453,7 @@ WHERE
                     SET hs_dimensionadas = :hs_dimensionadas, usu_crea = :usu_crea 
                     WHERE id_proyecto_gestionado = :id_proyecto_gestionado";
             $stmt = $conn->prepare($sql);
-            $stmt->bindValue(':hs_dimensionadas', htmlspecialchars($hs_dimensionadas, ENT_QUOTES, 'UTF-8'), PDO::PARAM_STR);
+            $stmt->bindValue(':hs_dimensionadas', trim($hs_dimensionadas),PDO::PARAM_STR);
             $stmt->bindValue(':usu_crea', $usu_crea, PDO::PARAM_INT);
             $stmt->bindValue(':id_proyecto_gestionado', $id_proyecto_gestionado, PDO::PARAM_INT);
             $stmt->execute();
@@ -1504,7 +1481,7 @@ WHERE
         $conn = parent::get_conexion();
         $sql = "SELECT cat_id, cat_nom FROM tm_categoria WHERE sector_id = ? AND est = 1";
         $stmt = $conn->prepare($sql);
-        $stmt->bindValue(1, htmlspecialchars($sector_id, ENT_QUOTES), PDO::PARAM_INT);
+        $stmt->bindValue(1, $sector_id, PDO::PARAM_INT);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -1550,8 +1527,8 @@ WHERE
         WHERE proyectos.proy_id=? 
         AND proyectos_contador_recurrencia.id=?";
         $stmt = $conn->prepare($sql);
-        $stmt->bindValue(1, htmlspecialchars($proy_id, ENT_QUOTES), PDO::PARAM_INT);
-        $stmt->bindValue(2, htmlspecialchars($id, ENT_QUOTES), PDO::PARAM_INT);
+        $stmt->bindValue(1, $proy_id, PDO::PARAM_INT);
+        $stmt->bindValue(2, $id, PDO::PARAM_INT);
         $stmt->execute();
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
@@ -1560,7 +1537,7 @@ WHERE
         $conn = parent::get_conexion();
         $sql = "SELECT recurrencia FROM proyectos_contador_recurrencia WHERE proy_id=? ORDER BY id ASC LIMIT 1";
         $stmt = $conn->prepare($sql);
-        $stmt->bindValue(1, htmlspecialchars($proy_id, ENT_QUOTES), PDO::PARAM_INT);
+        $stmt->bindValue(1, $proy_id, PDO::PARAM_INT);
         $stmt->execute();
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
@@ -1570,31 +1547,19 @@ WHERE
         $conn = parent::get_conexion();
         $sql = "SELECT * FROM proyecto_cantidad_servicios WHERE id=? AND est=1";
         $stmt = $conn->prepare($sql);
-        $stmt->bindValue(1, htmlspecialchars($id, ENT_QUOTES), PDO::PARAM_INT);
+        $stmt->bindValue(1, $id, PDO::PARAM_INT);
         $stmt->execute();
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
-
-    // public function get_nom_sector_x_id_recurrente($id)
-    // {
-    //     $conn = parent::get_conexion();
-    //     $sql = "SELECT sectores.sector_nombre FROM proyectos_contador_recurrencia 
-    //     INNER JOIN sectores ON proyectos_contador_recurrencia.sector_id=sectores.sector_id 
-    //     WHERE id=?";
-    //     $stmt = $conn->prepare($sql);
-    //     $stmt->bindValue(1, htmlspecialchars($id, ENT_QUOTES), PDO::PARAM_INT);
-    //     $stmt->execute();
-    //     return $stmt->fetch(PDO::FETCH_ASSOC);
-    // }
 
     public function inactivar_host_x_id($usu_crea, $id_proyecto_gestionado, $host_id)
     {
         $conn = parent::get_conexion();
         $sql = "UPDATE hosts SET est=0, usu_crea=? WHERE id_proyecto_gestionado=? AND host_id=? AND est=1";
         $stmt = $conn->prepare($sql);
-        $stmt->bindValue(1, htmlspecialchars($usu_crea, ENT_QUOTES), PDO::PARAM_INT);
-        $stmt->bindValue(2, htmlspecialchars($id_proyecto_gestionado, ENT_QUOTES), PDO::PARAM_INT);
-        $stmt->bindValue(3, htmlspecialchars($host_id, ENT_QUOTES), PDO::PARAM_INT);
+        $stmt->bindValue(1, $usu_crea, PDO::PARAM_INT);
+        $stmt->bindValue(2, $id_proyecto_gestionado, PDO::PARAM_INT);
+        $stmt->bindValue(3, $host_id, PDO::PARAM_INT);
         $stmt->execute();
     }
 
@@ -1603,8 +1568,8 @@ WHERE
         $conn = parent::get_conexion();
         $sql = "UPDATE hosts SET est=0, usu_crea=? WHERE id_proyecto_gestionado=?";
         $stmt = $conn->prepare($sql);
-        $stmt->bindValue(1, htmlspecialchars($usu_crea, ENT_QUOTES), PDO::PARAM_INT);
-        $stmt->bindValue(2, htmlspecialchars($id_proyecto_gestionado, ENT_QUOTES), PDO::PARAM_INT);
+        $stmt->bindValue(1, $usu_crea, PDO::PARAM_INT);
+        $stmt->bindValue(2, $id_proyecto_gestionado, PDO::PARAM_INT);
         $stmt->execute();
     }
 
@@ -1613,9 +1578,9 @@ WHERE
         $conn = parent::get_conexion();
         $sql = "UPDATE hosts SET est=1, usu_crea=? WHERE id_proyecto_gestionado=? AND host_id=? AND est=0";
         $stmt = $conn->prepare($sql);
-        $stmt->bindValue(1, htmlspecialchars($usu_crea, ENT_QUOTES), PDO::PARAM_INT);
-        $stmt->bindValue(2, htmlspecialchars($id_proyecto_gestionado, ENT_QUOTES), PDO::PARAM_INT);
-        $stmt->bindValue(3, htmlspecialchars($host_id, ENT_QUOTES), PDO::PARAM_INT);
+        $stmt->bindValue(1, $usu_crea, PDO::PARAM_INT);
+        $stmt->bindValue(2, $id_proyecto_gestionado, PDO::PARAM_INT);
+        $stmt->bindValue(3, $host_id, PDO::PARAM_INT);
         $stmt->execute();
     }
 
@@ -1625,7 +1590,7 @@ WHERE
         $conn = parent::get_conexion();
         $sql = "SELECT * FROM hosts WHERE id_proyecto_gestionado=?";
         $stmt = $conn->prepare($sql);
-        $stmt->bindValue(1, htmlspecialchars($id_proyecto_gestionado, ENT_QUOTES), PDO::PARAM_INT);
+        $stmt->bindValue(1, $id_proyecto_gestionado, PDO::PARAM_INT);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -1711,7 +1676,7 @@ WHERE
         } else {
             $sql = "SELECT tm_usuario.usu_id, tm_usuario.usu_correo, tm_usuario.usu_nom, sectores.sector_nombre FROM tm_usuario LEFT JOIN sectores ON tm_usuario.sector_id=sectores.sector_id WHERE tm_usuario.sector_id=? AND sectores.sector_nombre IS NOT NULL AND tm_usuario.usu_id != 82 AND tm_usuario.est=1 AND tm_usuario.est=1";
             $stmt = $conn->prepare($sql);
-            $stmt->bindValue(1, htmlspecialchars($sector_id, ENT_QUOTES), PDO::PARAM_INT);
+            $stmt->bindValue(1, $sector_id, PDO::PARAM_INT);
             $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         }
@@ -1722,7 +1687,7 @@ WHERE
         $conn = parent::get_conexion();
         $sql = "DELETE FROM proyectos WHERE proy_id=?";
         $stmt = $conn->prepare($sql);
-        $stmt->bindValue(1, htmlspecialchars($proy_id, ENT_QUOTES), PDO::PARAM_INT);
+        $stmt->bindValue(1, $proy_id, PDO::PARAM_INT);
         $stmt->execute();
     }
 
@@ -1731,7 +1696,7 @@ WHERE
         $conn = parent::get_conexion();
         $sql = "DELETE FROM proyectos_contador_recurrencia WHERE proy_id=?";
         $stmt = $conn->prepare($sql);
-        $stmt->bindValue(1, htmlspecialchars($proy_id, ENT_QUOTES), PDO::PARAM_INT);
+        $stmt->bindValue(1, $proy_id, PDO::PARAM_INT);
         $stmt->execute();
     }
 
@@ -1770,16 +1735,6 @@ WHERE
     {
         $conn = parent::get_conexion();
         if ($sector_id == 4) {
-            // $sql = "SELECT cat_nom, COUNT(*) AS total FROM ( 
-            // -- Proyectos actuales 
-            // SELECT tc.cat_nom FROM proyecto_gestionado pg LEFT JOIN tm_categoria tc ON pg.cat_id = tc.cat_id WHERE pg.estados_id = 4 AND tc.est = 1 UNION ALL 
-            // -- Proyectos antiguos 
-            // SELECT tc.cat_nom FROM tm_ticket t LEFT JOIN tm_categoria tc ON t.cat_id = tc.cat_id WHERE t.estados_id = 4 AND tc.est = 1 ) AS sub GROUP BY cat_nom;";
-
-            // $sql = "SELECT COUNT(proyecto_gestionado.id) AS total, tm_categoria.cat_nom 
-            // FROM proyecto_gestionado INNER JOIN tm_categoria ON proyecto_gestionado.cat_id=tm_categoria.cat_id 
-            // WHERE proyecto_gestionado.estados_id=4 
-            // GROUP BY proyecto_gestionado.cat_id";
             $sql = "SELECT 
                 tm_categoria.cat_nom,
                 COUNT(proyecto_gestionado.id) AS total
@@ -1790,27 +1745,6 @@ WHERE
             ORDER BY total DESC";
             $stmt = $conn->prepare($sql);
         } else {
-            //             $sql = "SELECT 
-            //     cat_nom,
-            //     COUNT(*) AS total
-            // FROM (
-            //     -- Proyectos actuales
-            //     SELECT 
-            //         tc.cat_nom
-            //     FROM proyecto_gestionado pg
-            //     LEFT JOIN tm_categoria tc ON pg.cat_id = tc.cat_id
-            //     WHERE pg.estados_id = 4 
-            //       AND (tc.sector_id = :sector_id OR tc.cat_id = 26)
-            //     UNION ALL
-            //     -- Proyectos antiguos
-            //     SELECT 
-            //         tc.cat_nom
-            //     FROM tm_ticket t
-            //     LEFT JOIN tm_categoria tc ON t.cat_id = tc.cat_id
-            //     WHERE t.estados_id = 4 
-            //       AND (tc.sector_id = :sector_id OR tc.cat_id = 26)
-            // ) AS sub
-            // GROUP BY cat_nom";
             $sql = "SELECT COUNT(proyecto_gestionado.id) AS total, tm_categoria.cat_nom 
             FROM proyecto_gestionado 
             INNER JOIN tm_categoria ON proyecto_gestionado.cat_id=tm_categoria.cat_id 
@@ -1896,8 +1830,6 @@ ORDER BY cantidad_proyectos DESC";
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
-
-
 
     public function get_proyectos_total_excel($fecha_desde = null, $fecha_hasta = null)
     {
@@ -2004,7 +1936,6 @@ ORDER BY cantidad_proyectos DESC";
     {
         $conn = parent::get_conexion();
 
-        // 🔹 Si no es sector 4, filtra por sector y categoría 26 (permiso especial)
         $join_pg_sector = $sector_id != 4
             ? "AND (pg.sector_id = :sector_id_pg OR tc.cat_id = 26)"
             : "";
@@ -2013,7 +1944,6 @@ ORDER BY cantidad_proyectos DESC";
             ? "AND (tc.sector_id = :sector_id OR tc.cat_id = 26)"
             : "";
 
-        // 🔹 Incluimos los estados 1 y 2 en la condición del JOIN
         $sql = "SELECT 
                 tc.cat_id,
                 tc.cat_nom,
@@ -2025,7 +1955,7 @@ ORDER BY cantidad_proyectos DESC";
                 ON tc.sector_id = s.sector_id
             LEFT JOIN proyecto_gestionado pg 
                 ON pg.cat_id = tc.cat_id 
-                AND pg.estados_id IN (1, 2)  -- ✅ Ahora incluye estado 1 o 2
+                AND pg.estados_id IN (1, 2)
                 $join_pg_sector
             WHERE tc.est = 1 
                 $where_tc_sector
@@ -2034,14 +1964,11 @@ ORDER BY cantidad_proyectos DESC";
             ORDER BY 
                 CASE WHEN COUNT(pg.id) > 0 THEN 0 ELSE 1 END,
                 COUNT(pg.id) DESC";
-
         $stmt = $conn->prepare($sql);
-
         if ($sector_id != 4) {
             $stmt->bindValue(':sector_id', $sector_id, PDO::PARAM_INT);
             $stmt->bindValue(':sector_id_pg', $sector_id, PDO::PARAM_INT);
         }
-
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -2062,10 +1989,9 @@ ORDER BY cantidad_proyectos DESC";
         $sql = "UPDATE proyecto_gestionado SET fech_fin=:fech_fin WHERE id=:id";
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(':id', $id, PDO::PARAM_INT);
-        $stmt->bindValue(':fech_fin', htmlspecialchars($fech_fin, ENT_QUOTES), PDO::PARAM_STR);
+        $stmt->bindValue(':fech_fin', trim($fech_fin), PDO::PARAM_STR);
         $stmt->execute();
 
-        // Agregamos respuesta
         echo json_encode([
             "Status" => $stmt->rowCount() > 0 ? "OK" : "ERROR",
             "rowsAffected" => $stmt->rowCount()

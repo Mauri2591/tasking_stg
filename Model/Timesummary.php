@@ -92,10 +92,10 @@ class timesummary extends Conexion
         $stmt->bindValue(":id_tarea", $id_tarea, PDO::PARAM_INT);
         $stmt->bindValue(":es_telecom", $es_telecom, PDO::PARAM_STR);
         $stmt->bindValue(":id_pm_calidad", $id_pm_calidad, PDO::PARAM_INT);
-        $stmt->bindValue(":fecha", htmlentities($fecha, ENT_QUOTES), PDO::PARAM_STR);
-        $stmt->bindValue(":hora_desde", htmlentities($hora_desde, ENT_QUOTES), PDO::PARAM_STR);
-        $stmt->bindValue(":hora_hasta", htmlentities($hora_hasta, ENT_QUOTES), PDO::PARAM_STR);
-        $stmt->bindValue(":descripcion", htmlentities($descripcion, ENT_QUOTES), PDO::PARAM_STR);
+        $stmt->bindValue(":fecha", trim($fecha), PDO::PARAM_STR);
+        $stmt->bindValue(":hora_desde", trim($hora_desde), PDO::PARAM_STR);
+        $stmt->bindValue(":hora_hasta", trim($hora_hasta), PDO::PARAM_STR);
+        $stmt->bindValue(":descripcion", trim($descripcion), PDO::PARAM_STR);
         $stmt->bindValue(":horas_consumidas", $horas_consumidas, PDO::PARAM_STR);
         $stmt->execute();
     }
@@ -293,7 +293,6 @@ ORDER BY pg.titulo";
         $stmt->execute();
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
-
 
     public function get_titulos_proyectos_like($usu_asignado, $titulo)
     {
