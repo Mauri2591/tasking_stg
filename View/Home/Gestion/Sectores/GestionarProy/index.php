@@ -216,7 +216,7 @@ if (isset($_SESSION['usu_id'])) {
                                                 <i id="boton_agregar_usuarios_proy"
                                                     onclick="agregarUsuario(<?php echo Openssl::get_ssl_decrypt($_GET['p']) ?>)"
                                                     type="button" class="ri-user-add-line text-danger fs-5"
-                                                    title="Agregar usuarios" style="cursor: pointer;"></i>
+                                                    title="Agregar usuarios" style="cursor: pointer; display: none;"></i>
                                             </span>
 
                                             <ul class="bg-light border border-light"
