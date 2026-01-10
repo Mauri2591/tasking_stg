@@ -1721,7 +1721,7 @@ switch ($_GET['proy']) {
                 }
             }
 
-            if ($estado == "FIN SIN IMPLEM" || $estado == "ELIMINADO" || $estado == "CANCELADO" || $estado == "NUEVO" || $estado == "ABIERTO" || $estado == "BORRADOR") {
+            if ($estado == "FIN SIN IMPLEM" || $estado == "ELIMINADO" || $estado == "CANCELADO" || $estado == "NUEVO" || $estado == "BORRADOR") {
                 $sub_array[] = '<span><i class="ri-subtract-line" style="color:#CCC"></i></span>';
             } else {
                 $sub_array[] = '<a href="' . URL . 'View/Home/Gestion/Sectores/GestionarProy/?p=' .
