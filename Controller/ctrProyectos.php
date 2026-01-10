@@ -1654,9 +1654,6 @@ switch ($_GET['proy']) {
         echo json_encode($results);
         break;
 
-
-
-
     case 'get_proyectos_total_x_client_id':
         $datos = $proyecto->get_proyectos_total_x_client_id($_POST['client_id'], $_SESSION['sector_id']);
 
@@ -1714,7 +1711,7 @@ switch ($_GET['proy']) {
 
             $sub_array[] = '<span class="badge bg-light border border-dark text-dark">' . htmlspecialchars($producto) . '</span>';
             $sub_array[] = '<p class="text-center p-0 m-0"><span class="badge bg-light border border-dark text-dark">' . $dimensionamiento . '</span></p>';
-            $sub_array[] = '<p class="p-0 m-0 text-center">' . htmlspecialchars($estado) . '</p>';
+            $sub_array[] = $estado == "FIN SIN IMPLEM" || $estado == "ELIMINADO" || $estado == "CANCELADO" || $estado == "BORRADOR" ? '<p class="p-0 m-0 text-center" style="color:#CCC">' . htmlspecialchars($estado) . '</p>' : '<p class="p-0 m-0 text-center text-secondary fw-bold">' . htmlspecialchars($estado) . '</p>';
 
             if ($_SESSION['sector_id'] == "4") {
                 if ($estado != "FIN SIN IMPLEM" && $estado != "ELIMINADO" && $estado != "CANCELADO" && $estado != "BORRADOR" && $rechequeo != "SI") {
