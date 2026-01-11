@@ -664,7 +664,7 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
 
         let nuevoTitulo = client_rs;
         if (ref) nuevoTitulo += `_Ref ${ref}`;
-        if (recurrencia && recurrencia !== "NO" && recurrencia !== "0") nuevoTitulo += `_Recurrencia SI`;
+        if (recurrencia && recurrencia !== "NO" && recurrencia !== "0") nuevoTitulo += `_Recurrente SI`;
         if (fechaFormateada) nuevoTitulo += `_Fecha Inicio ${fechaFormateada}`;
 
         $("#titulo_client_rs_alta_proy").val(nuevoTitulo);
