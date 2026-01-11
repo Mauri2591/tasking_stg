@@ -125,7 +125,7 @@ if (isset($_SESSION['usu_id'])) {
                                                                     role="region" aria-label="scrollable content">
                                                                     <div class="simplebar-content bg-light"
                                                                         style="padding: 10px; border-radius: 5px;">
-                                                                        <p style="font-size: .8rem; max-height: 160px;  min-height: 160px; overflow: hidden scroll; font-weight: 500;"
+                                                                        <p style="font-size: .75rem; font-weight: 500; max-height: 160px;  min-height: 160px; overflow: hidden scroll;"
                                                                             class="text-dark mb-2"
                                                                             id="parrafo_descripcion_proy">
                                                                         </p>
@@ -210,17 +210,16 @@ if (isset($_SESSION['usu_id'])) {
                                     </div>
                                     <div class="col-xl-2 bg-success" style="max-height: 500px;border-radius: 5px;">
                                         <div style="min-height: 250px;">
-                                            <span
+                                            <span onclick="agregarUsuario(<?php echo Openssl::get_ssl_decrypt($_GET['p']) ?>)" type="button" style="font-size: .75rem; font-weight: 500;"
                                                 class="badge bg-light border border-dark text-dark mx-2 mt-2 mb-3 d-inline-flex align-items-center gap-1">
                                                 Usuarios Asignados:
                                                 <i id="boton_agregar_usuarios_proy"
-                                                    onclick="agregarUsuario(<?php echo Openssl::get_ssl_decrypt($_GET['p']) ?>)"
-                                                    type="button" class="ri-user-add-line text-danger fs-5"
-                                                    title="Agregar usuarios" style="cursor: pointer; display: none;"></i>
+                                                    class="ri-user-add-line text-danger fw-bold fs-5"
+                                                    style="cursor: pointer; display: none;"></i>
                                             </span>
 
                                             <ul class="bg-light border border-light"
-                                                style="max-height: 12rem; border-radius: 5px; overflow-y: scroll;"
+                                                style="max-height: 12rem; border-radius: 5px; overflow-y: scroll; font-size: .8rem; font-weight: 500;"
                                                 id="ul_proy_eh">
                                             </ul>
                                         </div>
