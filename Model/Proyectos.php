@@ -211,7 +211,7 @@ class Proyectos extends Conexion
     DATE_FORMAT(pg.fech_inicio, '%d-%m-%Y') AS fech_inicio, 
     p.cantidad_servicios, 
     c.client_rs, 
-    u.usu_nom AS creador_proy,           -- ahora viene del proyecto_gestionado
+    u.usu_nom AS creador_proy,
     s.sector_nombre,
     tc.cat_nom,
     tp.pais_nombre,
@@ -223,7 +223,13 @@ class Proyectos extends Conexion
         WHEN pg.id_proyecto_recurrencia IS NULL THEN 0 
         ELSE pg.id_proyecto_recurrencia 
     END AS id_proyecto_recurrencia,
-    GROUP_CONCAT(tmu.usu_nom SEPARATOR ',<br>') AS usu_nom_asignado
+GROUP_CONCAT(
+  CONCAT(
+    UPPER(LEFT(tmu.usu_nom, 1)),
+    SUBSTRING(tmu.usu_nom, 2)
+  )
+  SEPARATOR ',<br>'
+) AS usu_nom_asignado
 FROM proyecto_cantidad_servicios pcs
 JOIN proyectos p 
     ON pcs.proy_id = p.proy_id
