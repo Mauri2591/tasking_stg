@@ -806,6 +806,9 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
                         if ($.fn.DataTable.isDataTable('#table_proyectos_recurrencia')) {
                             $('#table_proyectos_recurrencia').DataTable().ajax.reload(null, false);
                         }
+                        if ($.fn.DataTable.isDataTable('#table_proyectos_total_calidad')) {
+                            $('#table_proyectos_total_calidad').DataTable().ajax.reload(null, false);
+                        }
                     }, 500);
 
                     Swal.fire({
