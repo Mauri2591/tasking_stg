@@ -17,7 +17,7 @@ if (isset($_SESSION['usu_id'])) {
                 <div class="col-12">
                     <div class="page-title-box d-sm-flex align-items-center justify-content-between">
                         <h4 class="mb-sm-0">
-                            <span class="badge bg-danger text-light">SASE</span>
+                            <span class="badge bg-info text-light">SASE</span>
                         </h4>
                     </div>
                 </div>
