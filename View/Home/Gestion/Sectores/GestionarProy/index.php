@@ -125,7 +125,7 @@ if (isset($_SESSION['usu_id'])) {
                                                                     role="region" aria-label="scrollable content">
                                                                     <div class="simplebar-content bg-light"
                                                                         style="padding: 10px; border-radius: 5px;">
-                                                                        <p style="font-size: 11.5px; max-height: 160px;  min-height: 160px; overflow: hidden scroll;"
+                                                                        <p style="font-size: .8rem; max-height: 160px;  min-height: 160px; overflow: hidden scroll;"
                                                                             class="text-dark mb-2"
                                                                             id="parrafo_descripcion_proy">
                                                                         </p>
