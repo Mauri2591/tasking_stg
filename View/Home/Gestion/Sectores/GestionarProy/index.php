@@ -211,7 +211,7 @@ if (isset($_SESSION['usu_id'])) {
                                     <div class="col-xl-2 bg-success" style="max-height: 500px;border-radius: 5px;">
                                         <div style="min-height: 250px;">
                                             <span style="font-size: .75rem; font-weight: 500;"
-                                                class="badge bg-light border border-dark text-dark mx-2 mt-2 mb-3 d-inline-flex align-items-center gap-1">
+                                                class="badge bg-light text-dark mx-2 mt-2 mb-3 d-inline-flex align-items-center gap-1">
                                                 Usuarios Asignados
                                                 <i onclick="agregarUsuario(<?php echo Openssl::get_ssl_decrypt($_GET['p']) ?>)" title="Agregar nuevo usuario al proyecto" type="button"  id="boton_agregar_usuarios_proy"
                                                     class="ri-user-add-line text-danger fw-bold fs-5"
