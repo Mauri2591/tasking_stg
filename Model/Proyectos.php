@@ -1675,12 +1675,39 @@ WHERE
     {
         $conn = parent::get_conexion();
         if ($sector_id == 5) {
-            $sql = "SELECT tm_usuario.usu_id, tm_usuario.usu_correo, tm_usuario.usu_nom, sectores.sector_nombre FROM tm_usuario LEFT JOIN sectores ON tm_usuario.sector_id=sectores.sector_id WHERE sectores.sector_nombre IS NOT NULL AND tm_usuario.usu_id != 82 AND tm_usuario.est=1";
+            $sql = "SELECT 
+    tm_usuario.usu_id,
+    tm_usuario.usu_correo,
+    CONCAT(
+        UPPER(LEFT(tm_usuario.usu_nom, 1)),
+        LOWER(SUBSTRING(tm_usuario.usu_nom, 2))
+    ) AS usu_nom,
+    sectores.sector_nombre
+FROM tm_usuario
+LEFT JOIN sectores 
+    ON tm_usuario.sector_id = sectores.sector_id
+WHERE sectores.sector_nombre IS NOT NULL
+  AND tm_usuario.usu_id != 82
+  AND tm_usuario.est = 1";
             $stmt = $conn->prepare($sql);
             $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } else {
-            $sql = "SELECT tm_usuario.usu_id, tm_usuario.usu_correo, tm_usuario.usu_nom, sectores.sector_nombre FROM tm_usuario LEFT JOIN sectores ON tm_usuario.sector_id=sectores.sector_id WHERE tm_usuario.sector_id=? AND sectores.sector_nombre IS NOT NULL AND tm_usuario.usu_id != 82 AND tm_usuario.est=1 AND tm_usuario.est=1";
+            $sql = "SELECT 
+    tm_usuario.usu_id,
+    tm_usuario.usu_correo,
+    CONCAT(
+        UPPER(LEFT(tm_usuario.usu_nom, 1)),
+        LOWER(SUBSTRING(tm_usuario.usu_nom, 2))
+    ) AS usu_nom,
+    sectores.sector_nombre
+FROM tm_usuario
+LEFT JOIN sectores 
+    ON tm_usuario.sector_id = sectores.sector_id
+WHERE tm_usuario.sector_id = ?
+  AND sectores.sector_nombre IS NOT NULL
+  AND tm_usuario.usu_id != 82
+  AND tm_usuario.est = 1";
             $stmt = $conn->prepare($sql);
             $stmt->bindValue(1, $sector_id, PDO::PARAM_INT);
             $stmt->execute();
