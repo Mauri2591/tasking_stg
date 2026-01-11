@@ -226,7 +226,7 @@ class Proyectos extends Conexion
 GROUP_CONCAT(
   CONCAT(
     UPPER(LEFT(tmu.usu_nom, 1)),
-    SUBSTRING(tmu.usu_nom, 2)
+    LOWER(SUBSTRING(tmu.usu_nom, 2))
   )
   SEPARATOR ',<br>'
 ) AS usu_nom_asignado
