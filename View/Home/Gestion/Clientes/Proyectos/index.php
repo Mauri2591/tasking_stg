@@ -4,8 +4,8 @@ require_once __DIR__ . "/../../../../../Config/Config.php";
 if (isset($_SESSION['usu_id'])) {
     require_once __DIR__ . "/../../../../../Model/Clases/Headers.php";
     require_once __DIR__ . "/../../../../../Model/Clases/Openssl.php";
-    require_once __DIR__."/../../../../../Model/Proyectos.php";
-    $proyectos=new Proyectos();
+    require_once __DIR__ . "/../../../../../Model/Proyectos.php";
+    $proyectos = new Proyectos();
 
     Headers::get_cors();
 ?>
@@ -120,6 +120,7 @@ if (isset($_SESSION['usu_id'])) {
                                         <thead style="text-align: center;">
                                             <tr style="text-align: center;">
                                                 <th style="width: 400px;text-align: center;">CLIENTE</th>
+                                                <th style="width: 20px;text-align: center;">SECTOR</th>
                                                 <th style="width: 20px;text-align: center;">PRODUCTO</th>
                                                 <th style="width: 20px;text-align: center;">TOTAL</th>
                                                 <th style="width: 20px;text-align: center;">UTILIZADAS</th>
@@ -129,6 +130,7 @@ if (isset($_SESSION['usu_id'])) {
                                         </thead>
                                         <tbody style="text-align: center;">
                                             <tr style="text-align: center;">
+                                                <td style="width: 30px;"></td>
                                                 <td style="width: 30px;"></td>
                                                 <td style="width: 30px;"></td>
                                                 <td style="width: 30px;"></td>

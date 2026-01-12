@@ -2056,6 +2056,7 @@ ORDER BY cantidad_proyectos DESC";
     MAX(pg.titulo) AS titulo,
     tc.cat_nom, 
     c.client_rs, 
+    sectores.sector_nombre AS sector,
     MAX(pg.id) AS id_proyecto_gestionado,  
     pcs.id AS id_proyecto_cantidad_servicios,
 
@@ -2111,6 +2112,8 @@ LEFT JOIN proyecto_gestionado pg
     ON pg.id_proyecto_cantidad_servicios = pcs.id
 JOIN tm_categoria tc 
     ON pg.cat_id = tc.cat_id
+    
+    JOIN sectores ON pg.sector_id=sectores.sector_id
 
 -- 🔹 Solo proyectos y servicios activos
 WHERE pcs.est = 1 

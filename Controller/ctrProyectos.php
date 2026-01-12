@@ -323,7 +323,7 @@ switch ($_GET['proy']) {
         );
         echo json_encode($results);
         break;
-        
+
     case 'get_proyectos_nuevos_x_sector':
         $datos = $proyecto->get_proyectos_nuevos_x_sector($_POST['sector_id']);
         $data = array();
@@ -469,11 +469,17 @@ switch ($_GET['proy']) {
         break;
 
     case 'get_proyectos_recurrentes':
+        $colores = array("ETHICAL HACKING" => "bg-warning text-dark", "SOC" => "bg-dark text-light", "SASE" => "bg-info text-light", "CALIDAD Y PROCESOS" => "bg-light text-dark", "INCIDENT RESPONSE" => "bg-danger text-light");
         $datos = $proyecto->get_proyectos_recurrentes();
         $data = array();
         foreach ($datos as $row) {
             $sub_array = array();
             $sub_array[] = $row['client_rs'];
+
+            $sector = $row['sector'];
+            $claseSector = $colores[$sector] ?? 'bg-secondary text-light';
+            $sub_array[] = '<span class="badge ' . $claseSector . '">' . $sector . '</span>';
+
             $sub_array[] = '<span class="badge bg-light text-dark">' . $row['cat_nom'] . '</span>';
             $sub_array[] = '<p class="text-center py-0"><span class="badge border border-dark bg-primary fw-bold fs-10 text-light">' . $row['recurrencias_total'] . '</span></p>';
             $sub_array[] = '<p class="text-center py-0"><span class="badge border border-dark bg-success fw-bold fs-10 text-light">' . $row['recurrencias_utilizadas'] . '</span></p>';
@@ -664,7 +670,7 @@ switch ($_GET['proy']) {
                 . ')">
             <i class="text-secondary fs-18 ri-global-line" title="Ver hosts"></i>
         </span>';
-        
+
             if ($row['estados_id'] == 4) {
                 $sub_array[] = '<a href="' . URL . 'View/Home/Gestion/Sectores/GestionarProy/?p='
                     . Openssl::set_ssl_encrypt($row['id_proyecto_cantidad_servicios'])
