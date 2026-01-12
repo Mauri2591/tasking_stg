@@ -1402,7 +1402,7 @@ WHERE
             $stmt->bindValue(':prioridad_id', $prioridad_id, PDO::PARAM_INT);
             $stmt->bindValue(':titulo', trim($titulo), PDO::PARAM_STR);
             $stmt->bindValue(':descripcion', trim($descripcion), PDO::PARAM_STR);
-            $stmt->bindValue(':refProy', trim($refProy),PDO::PARAM_STR);
+            $stmt->bindValue(':refProy', trim($refProy), PDO::PARAM_STR);
             $stmt->bindValue(':recurrencia', $recurrencia, PDO::PARAM_STR);
             $stmt->bindValue(':fech_inicio', $fech_inicio, is_null($fech_inicio) ? PDO::PARAM_NULL : PDO::PARAM_STR);
             $stmt->bindValue(':fech_fin', $fech_fin, is_null($fech_fin) ? PDO::PARAM_NULL : PDO::PARAM_STR);
@@ -1459,7 +1459,7 @@ WHERE
                     SET hs_dimensionadas = :hs_dimensionadas, usu_crea = :usu_crea 
                     WHERE id_proyecto_gestionado = :id_proyecto_gestionado";
             $stmt = $conn->prepare($sql);
-            $stmt->bindValue(':hs_dimensionadas', trim($hs_dimensionadas),PDO::PARAM_STR);
+            $stmt->bindValue(':hs_dimensionadas', trim($hs_dimensionadas), PDO::PARAM_STR);
             $stmt->bindValue(':usu_crea', $usu_crea, PDO::PARAM_INT);
             $stmt->bindValue(':id_proyecto_gestionado', $id_proyecto_gestionado, PDO::PARAM_INT);
             $stmt->execute();
@@ -1610,6 +1610,24 @@ WHERE
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    public function get_total_hosts_proy($id_proyecto_gestionado) //Proximo a configurar para ver total de hosts
+    {
+        $conn = parent::get_conexion();
+        $sql = "    SELECT
+            SUM(CASE WHEN tipo = 'IP'   THEN 1 ELSE 0 END) AS total_ip,
+            SUM(CASE WHEN tipo = 'URL'  THEN 1 ELSE 0 END) AS total_url,
+            SUM(CASE WHEN tipo = 'OTRO' THEN 1 ELSE 0 END) AS total_otro
+            FROM hosts
+            WHERE id_proyecto_gestionado = :id_proyecto_gestionado
+            AND est = 1";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue(":id_proyecto_gestionado", $id_proyecto_gestionado, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_OBJ);
+    }
+
+
 
     public function create_proyecto_a_nuevo(int $proy_id, int $sector_id, int $usu_crea, int $contador_id, int $prioridad_id, $documento, string $fecha_ini, string $fecha_fin)
     {

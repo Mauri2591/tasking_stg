@@ -4,6 +4,8 @@ require_once __DIR__ . "/../../../../../Config/Config.php";
 if (isset($_SESSION['usu_id'])) {
     require_once __DIR__ . "/../../../../../Model/Clases/Headers.php";
     require_once __DIR__ . "/../../../../../Model/Clases/Openssl.php";
+    require_once __DIR__."/../../../../../Model/Proyectos.php";
+    $proyectos=new Proyectos();
 
     Headers::get_cors();
 ?>

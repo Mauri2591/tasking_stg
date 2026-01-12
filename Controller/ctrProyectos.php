@@ -1416,6 +1416,10 @@ switch ($_GET['proy']) {
         $proyecto->finalizar_proyecto($_POST['estados_id'], $_POST['id_proyecto_gestionado']);
         break;
 
+    case 'get_total_hosts_proy': //Proximo a configurar para ver total de hosts
+        echo json_encode($proyecto->get_total_hosts_proy($_POST['id_proyecto_gestionado']));
+        break;
+
     case 'finalizar_proyecto_tabla_estados_proyecto':
         $proyecto->finalizar_proyecto_tabla_estados_proyecto($_POST['id_proyecto_gestionado'], $_SESSION['usu_id'], $_POST['estados_id']);
         break;
