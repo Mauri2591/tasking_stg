@@ -691,7 +691,7 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
 
         if (data.recurrencia != '' || data.recurrencia != null) {
             $("#combo_categoria_proy_nuevo").prop("disabled", true);
-            $("#combo_subcategoria_proy_nuevo").prop("disabled", true);
+            // $("#combo_subcategoria_proy_nuevo").prop("disabled", true);
             $("#combo_sector_proy_nuevo").prop("disabled", true);
             $("#client_refPro_proy_nuevo").prop("disabled", true);
         } else {
