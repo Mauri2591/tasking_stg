@@ -75,9 +75,23 @@ switch ($_GET['proy']) {
         $proyecto->update_workshop($_POST['id_proyecto_gestionado'], $_POST['est']);
         break;
 
-    case 'insert_nuevos_host':
-        $proyecto->insert_nuevos_host($_POST['id_proyecto_gestionado'], $_POST['id_proyecto_cantidad_servicios'], $_SESSION['usu_id'], $_POST['tipo'], $_POST['host']);
-        break;
+case 'insert_nuevos_host':
+    if (!isset($_POST['hosts']) || !is_array($_POST['hosts'])) {
+        echo json_encode(['error' => 'Hosts inválidos']);
+        return;
+    }
+    foreach ($_POST['hosts'] as $host) {
+        $proyecto->insert_nuevos_host(
+            (int)$_POST['id_proyecto_gestionado'],
+            (int)$_POST['id_proyecto_cantidad_servicios'],
+            (int)$_SESSION['usu_id'],
+            $_POST['tipo'],
+            trim($host)
+        );
+    }
+    echo json_encode(['ok' => true]);
+    break;
+
 
     case 'get_hosts_proy_ip':
         $data = $proyecto->get_hosts_proy($_POST['id_proyecto_gestionado']);

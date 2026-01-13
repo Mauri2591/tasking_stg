@@ -1,19 +1,20 @@
 <!-- Modal -->
-<div class="modal fade" id="ModalAgregarActivos" data-bs-keyboard="false" tabindex="-1"
+<div class="modal fade mt-2" id="ModalAgregarActivos" data-bs-keyboard="false" tabindex="-1"
     aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog modal-sm">
-        <div class="modal-content bg-light">
+        <div class="modal-content bg-light" style="border: .1rem solid #B5B5B5;">
             <div class="card-body">
                 <div class="row mt-2 p-6">
                     <div class="col-sm-12">
                         <form id="agregar_activos_borrador" method="post">
-                            <select id="combo_select_activo" class="form-select form-select-sm"
+                            <select id="combo_select_activo" class="text-center fw-bold form-select form-select-sm"
                                 aria-label=".form-select-sm example">
-                                <option value="IP">IP</option>
-                                <option value="URL">URL</option>
-                                <option value="OTRO">OTRO</option>
+                                <option value="IP">IP's</option>
+                                <option value="URL">URL's</option>
+                                <option value="OTRO">OTROS</option>
                             </select>
-                            <input id="agregar_nuevo_host" class="form-control form-control-sm mt-2" type="text">
+                            <textarea id="agregar_nuevo_host" rows="15" class="form-control form-control-sm mt-2"></textarea>
+                            <!-- <input id="agregar_nuevo_host" class="form-control form-control-sm mt-2" type="text"> -->
                         </form>
                         <div id="mje_host_agregar">
                         </div>

@@ -1066,7 +1066,6 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
             },
             "html"
         );
-
         $.post("../../../../../Controller/ctrProyectos.php?proy=get_usuarios_x_sector", {
                 sector_id: this.value
             },
@@ -1077,12 +1076,52 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
         );
     });
 
+    function validarHost(tipo, host) {
+        host = host.trim();
+        if (tipo === 'IP') {
+            // Regex IP v4 estricta
+            const ipRegex = /^(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}$/;
+            return ipRegex.test(host);
+        }
+        if (tipo === 'URL') {
+            // Debe empezar con http:// o https://
+            const urlRegex = /^https?:\/\/.+/i;
+            return urlRegex.test(host);
+        }
+        // OTRO
+        return true;
+    }
+
     function data_hosts_nuevos() {
         let formData = new FormData();
+        const tipo = document.getElementById('combo_select_activo').value;
+        const hostsRaw = document.getElementById('agregar_nuevo_host').value;
+
+        const hosts = hostsRaw
+            .split('\n')
+            .map(h => h.trim())
+            .filter(h => h !== '');
+
+        if (hosts.length === 0) {
+            Swal.fire({
+                icon: "warning",
+                title: "Debe ingresar al menos un activo"
+            });
+            return null;
+        }
+        const invalidos = hosts.filter(h => !validarHost(tipo, h));
+        if (invalidos.length > 0) {
+            Swal.fire({
+                icon: "error",
+                title: "Formato inválido",
+                html: `Los siguientes valores no son válidos:<br><b>${invalidos.join('<br>')}</b>`
+            });
+            return null;
+        }
         formData.append('id_proyecto_gestionado', id);
         formData.append('id_proyecto_cantidad_servicios', id_proyecto_cantidad_servicios);
-        formData.append('tipo', document.getElementById('combo_select_activo').value);
-        formData.append('host', document.getElementById('agregar_nuevo_host').value);
+        formData.append('tipo', tipo);
+        hosts.forEach(h => formData.append('hosts[]', h));
         return formData;
     }
 
@@ -1094,40 +1133,28 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
             dataType: "json",
             contentType: false,
             processData: false,
-            success: function (response) {
-
+            success: function () {
+                Swal.fire({
+                    icon: "success",
+                    title: "Activos agregados correctamente",
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+                if ($.fn.DataTable.isDataTable('#table_container_activos_proy_creado')) {
+                    $('#table_container_activos_proy_creado').DataTable().ajax.reload(null, false);
+                }
+                $("#ModalAgregarActivos").modal("hide");
             }
         });
-        Swal.fire({
-            icon: "success",
-            title: "Activo agregado correctamente",
-            showConfirmButton: false,
-            timer: 1500
-        });
-
-        setTimeout(() => {
-            if ($.fn.DataTable.isDataTable('#table_container_activos_proy_creado')) {
-                $('#table_container_activos_proy_creado').DataTable().ajax.reload(null, false);
-            }
-        }, 500);
-
-        $("#ModalAgregarActivos").modal("hide");
     }
 
     $("#btn_agregar_nuevos_hosts_borrador").off().on("click", function () {
         let data = data_hosts_nuevos();
-        const campos = Array.from(data.entries());
-        const hayVacios = campos.some(([key, val]) => val === '');
-        if (hayVacios) {
-            Swal.fire({
-                icon: "warning",
-                title: "Campos vacios!",
-                showConfirmButton: true
-            });
-            return;
-        }
+        if (!data) return;
+
         ajax_insert_host_nuevos(data);
     });
+
 
     //quede acá
     function get_datos_insert_proyecto_gestionado() {
