@@ -1600,7 +1600,7 @@ WHERE
     public function get_host_proy_borrador($id_proyecto_gestionado)
     {
         $conn = parent::get_conexion();
-        $sql = "SELECT * FROM hosts WHERE id_proyecto_gestionado=?";
+        $sql = "SELECT * FROM hosts WHERE id_proyecto_gestionado=? AND est=1";
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(1, $id_proyecto_gestionado, PDO::PARAM_INT);
         $stmt->execute();

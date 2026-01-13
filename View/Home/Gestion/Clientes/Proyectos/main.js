@@ -1631,6 +1631,14 @@ function inactivar_host_borrador(id_proyecto_gestionado, host_id) {
                 },
                 "json"
             );
+
+            Swal.fire({
+                title: 'Host eliminado',
+                icon: 'success',
+                showCancelButton: false,
+                showConfirmButton: false,
+                timer: 1000
+            });
             setTimeout(() => {
                 if ($.fn.DataTable.isDataTable('#table_container_activos_proy_creado')) {
                     $('#table_container_activos_proy_creado').DataTable().ajax.reload(null, false);
