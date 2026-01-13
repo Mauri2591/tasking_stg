@@ -990,7 +990,13 @@ ORDER BY id_proyecto_cantidad_servicios ASC";
         WHEN proyecto_rechequeo.id_proyecto_gestionado IS NOT NULL THEN 'SI'
         ELSE 'NO'
     END AS rechequeo,
-    GROUP_CONCAT(uas.usu_nom SEPARATOR ',<br>') AS usu_nom_asignado,
+    GROUP_CONCAT(
+    CONCAT(
+        UPPER(LEFT(uas.usu_nom, 1)),
+        LOWER(SUBSTRING(uas.usu_nom, 2))
+    )
+    SEPARATOR ',<br>'
+) AS usu_nom_asignado,
     (
         SELECT SUM(d.hs_dimensionadas)
         FROM dimensionamiento d
