@@ -416,7 +416,7 @@ ORDER BY pg.titulo";
         $conn = parent::get_conexion();
         $sql = "SELECT usu_id, usu_nom, usu_ape, usu_correo 
             FROM tm_usuario 
-            WHERE est=1 AND sector_id = ? AND usu_id != 104 || usu_id != 84"; //que no traiga al usuario dev
+            WHERE est=1 AND sector_id = ? AND usu_id != 104 AND usu_id != 84"; //que no traiga al usuario dev
         $stmt = $conn->prepare($sql);
         $stmt->execute([$sector_id]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
