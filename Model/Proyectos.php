@@ -1596,7 +1596,6 @@ WHERE
         $stmt->execute();
     }
 
-
     public function get_host_proy_borrador($id_proyecto_gestionado)
     {
         $conn = parent::get_conexion();
@@ -1605,6 +1604,23 @@ WHERE
         $stmt->bindValue(1, $id_proyecto_gestionado, PDO::PARAM_INT);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+    public function hostExiste(
+        int $idProyecto,
+        string $tipo,
+        string $host
+    ): bool {
+        $conn = parent::get_conexion();
+
+        $sql = "SELECT 1
+            FROM hosts
+            WHERE id_proyecto_gestionado = ?
+              AND tipo = ?
+              AND host = ?
+            LIMIT 1";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute([$idProyecto, $tipo, $host]);
+        return (bool) $stmt->fetchColumn();
     }
 
     public function get_hosts_proy($id_proyecto_gestionado)

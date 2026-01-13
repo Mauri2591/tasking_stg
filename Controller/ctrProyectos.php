@@ -75,23 +75,51 @@ switch ($_GET['proy']) {
         $proyecto->update_workshop($_POST['id_proyecto_gestionado'], $_POST['est']);
         break;
 
-case 'insert_nuevos_host':
-    if (!isset($_POST['hosts']) || !is_array($_POST['hosts'])) {
-        echo json_encode(['error' => 'Hosts inválidos']);
-        return;
-    }
-    foreach ($_POST['hosts'] as $host) {
-        $proyecto->insert_nuevos_host(
-            (int)$_POST['id_proyecto_gestionado'],
-            (int)$_POST['id_proyecto_cantidad_servicios'],
-            (int)$_SESSION['usu_id'],
-            $_POST['tipo'],
-            trim($host)
-        );
-    }
-    echo json_encode(['ok' => true]);
-    break;
-
+    case 'insert_nuevos_host':
+        header('Content-Type: application/json');
+        $idProyecto = (int) $_POST['id_proyecto_gestionado'];
+        $idPCS      = (int) ($_POST['id_proyecto_cantidad_servicios'] ?? 0);
+        $tipo       = trim($_POST['tipo']);
+        $usuId      = (int) $_SESSION['usu_id'];
+        $insertados = [];
+        $duplicados = [];
+        $invalidos  = [];
+        foreach ($_POST['hosts'] as $hostRaw) {
+            // Normalización
+            $host = trim(strtolower($hostRaw));
+            $host = rtrim($host, '/');
+            if ($host === '') continue;
+            // Validación server-side
+            if ($tipo === 'IP' && !filter_var($host, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
+                $invalidos[] = $hostRaw;
+                continue;
+            }
+            if ($tipo === 'URL' && !preg_match('/^https?:\/\//i', $host)) {
+                $invalidos[] = $hostRaw;
+                continue;
+            }
+            // ✅ VALIDACIÓN DE DUPLICADO (vía modelo)
+            if ($proyecto->hostExiste($idProyecto, $tipo, $host)) {
+                $duplicados[] = $host;
+                continue;
+            }
+            // Insertar
+            $proyecto->insert_nuevos_host(
+                $idProyecto,
+                $idPCS,
+                $usuId,
+                $tipo,
+                $host
+            );
+            $insertados[] = $host;
+        }
+        echo json_encode([
+            'ok'         => true,
+            'insertados' => $insertados,
+            'duplicados' => $duplicados,
+            'invalidos'  => $invalidos
+        ]);
+        exit;
 
     case 'get_hosts_proy_ip':
         $data = $proyecto->get_hosts_proy($_POST['id_proyecto_gestionado']);
