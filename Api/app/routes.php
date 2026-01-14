@@ -30,7 +30,7 @@ return function (App $app) {
         $response->getBody()->write('<strong>Bienvenido a la API de Tasking.</strong> Si necesita ayuda, póngase en contacto con el equipo de Ethickal Hacking. Gracias');
         return $response;
     });
-    
+
 
     // ******************   INICIO TASKING ***********************
     $app->post('/login', function (Request $request, Response $response) use ($app) {
@@ -205,6 +205,7 @@ return function (App $app) {
         pg.fech_vantive,
         GROUP_CONCAT(DISTINCT up.usu_asignado) AS ids_usuarios_asignados,
         GROUP_CONCAT(DISTINCT tu.usu_nom) AS nombres_usuarios_asignados,
+        GROUP_CONCAT(DISTINCT tu.usu_correo SEPARATOR ',') AS correo_usuario,
         pg.estados_id AS id_estado_proyecto,
         te.estados_nombre AS nombre_estado_proyecto,
         tc.cat_id AS producto_id,
@@ -273,7 +274,8 @@ return function (App $app) {
             // Usuarios
             $row['usuarios'] = [
                 'ids' => $row['ids_usuarios_asignados'] ? explode(',', $row['ids_usuarios_asignados']) : [],
-                'nombres' => $row['nombres_usuarios_asignados'] ? explode(',', $row['nombres_usuarios_asignados']) : []
+                'nombres' => $row['nombres_usuarios_asignados'] ? explode(',', $row['nombres_usuarios_asignados']) : [],
+                'correos' => $row['correo_usuario'] ? explode(',', $row['correo_usuario']) : []
             ];
 
             // Producto
@@ -313,7 +315,8 @@ return function (App $app) {
                 $row['nombre_estado_proyecto'],
                 $row['id_prioridad'],
                 $row['id_pais'],
-                $row['pais_nombre']
+                $row['pais_nombre'],
+                $row['correo_usuario']
             );
         }
 
@@ -358,6 +361,7 @@ return function (App $app) {
             pg.fech_vantive,
             GROUP_CONCAT(DISTINCT up.usu_asignado) AS ids_usuarios_asignados,
             GROUP_CONCAT(DISTINCT tu.usu_nom) AS nombres_usuarios_asignados,
+            GROUP_CONCAT(DISTINCT tu.usu_correo SEPARATOR ',') AS correo_usuario,
             pg.estados_id AS id_estado_proyecto,
             te.estados_nombre AS nombre_estado_proyecto,
             tc.cat_id AS producto_id,
@@ -423,7 +427,8 @@ return function (App $app) {
             // Usuarios
             $row['usuarios'] = [
                 'ids' => $row['ids_usuarios_asignados'] ? explode(',', $row['ids_usuarios_asignados']) : [],
-                'nombres' => $row['nombres_usuarios_asignados'] ? explode(',', $row['nombres_usuarios_asignados']) : []
+                'nombres' => $row['nombres_usuarios_asignados'] ? explode(',', $row['nombres_usuarios_asignados']) : [],
+                'correos' => $row['correo_usuario'] ? explode(',', $row['correo_usuario']) : []
             ];
 
             // Producto
@@ -463,7 +468,8 @@ return function (App $app) {
                 $row['nombre_estado_proyecto'],
                 $row['id_prioridad'],
                 $row['pais_id'],
-                $row['pais_nombre']
+                $row['pais_nombre'],
+                $row['correo_usuario']
             );
         }
         $response->getBody()->write(json_encode($rows, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
@@ -509,6 +515,7 @@ return function (App $app) {
             pg.fech_vantive,
             GROUP_CONCAT(DISTINCT up.usu_asignado) AS ids_usuarios_asignados,
             GROUP_CONCAT(DISTINCT tu.usu_nom) AS nombres_usuarios_asignados,
+            GROUP_CONCAT(DISTINCT tu.usu_correo SEPARATOR ',') AS correo_usuario,
             pg.estados_id AS id_estado_proyecto,
             te.estados_nombre AS nombre_estado_proyecto,
             tc.cat_id AS producto_id,
@@ -545,7 +552,7 @@ return function (App $app) {
         WHERE pg.estados_id = :estados_id AND sectores.sector_id=1   AND sectores.sector_id = 1
         AND tc.cat_id <> 78
         AND tm_subcategoria.cats_id NOT IN (79,80,82)
-        GROUP BY pg.id;";
+        GROUP BY pg.id";
         $stmt = $pdo->prepare($sql);
         $stmt->bindValue(":estados_id", $estados_id, PDO::PARAM_INT);
         $stmt->execute();
@@ -575,7 +582,8 @@ return function (App $app) {
             // Usuarios
             $row['usuarios'] = [
                 'ids' => $row['ids_usuarios_asignados'] ? explode(',', $row['ids_usuarios_asignados']) : [],
-                'nombres' => $row['nombres_usuarios_asignados'] ? explode(',', $row['nombres_usuarios_asignados']) : []
+                'nombres' => $row['nombres_usuarios_asignados'] ? explode(',', $row['nombres_usuarios_asignados']) : [],
+                'correos' => $row['correo_usuario'] ? explode(',', $row['correo_usuario']) : []
             ];
 
             // Producto
@@ -615,8 +623,8 @@ return function (App $app) {
                 $row['nombre_estado_proyecto'],
                 $row['id_prioridad'],
                 $row['pais_id'],
-                $row['pais_nombre']
-
+                $row['pais_nombre'],
+                $row['correo_usuario']
             );
         }
         $response->getBody()->write(json_encode($rows, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
@@ -663,6 +671,7 @@ return function (App $app) {
             pg.fech_vantive,
             GROUP_CONCAT(DISTINCT up.usu_asignado) AS ids_usuarios_asignados,
             GROUP_CONCAT(DISTINCT tu.usu_nom) AS nombres_usuarios_asignados,
+            GROUP_CONCAT(DISTINCT tu.usu_correo SEPARATOR ',') AS correo_usuario,
             pg.estados_id AS id_estado_proyecto,
             te.estados_nombre AS nombre_estado_proyecto,
             tc.cat_id AS producto_id,
@@ -728,8 +737,9 @@ return function (App $app) {
             // Usuarios
             $row['usuarios'] = [
                 'ids' => $row['ids_usuarios_asignados'] ? explode(',', $row['ids_usuarios_asignados']) : [],
-                'nombres' => $row['nombres_usuarios_asignados'] ? explode(',', $row['nombres_usuarios_asignados']) : []
-            ];
+                'nombres' => $row['nombres_usuarios_asignados'] ? explode(',', $row['nombres_usuarios_asignados']) : [],
+                'correos' => $row['correo_usuario'] ? explode(',', $row['correo_usuario']) : []
+                ];
 
             // Producto
             $row['producto'] = [
@@ -769,6 +779,7 @@ return function (App $app) {
                 $row['id_prioridad'],
                 $row['pais_id'],
                 $row['pais_nombre'],
+                $row['correo_usuario'],
             );
         }
         $response->getBody()->write(json_encode($rows, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
