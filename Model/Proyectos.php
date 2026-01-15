@@ -2184,29 +2184,12 @@ ORDER BY pcs.id DESC";
         ELSE 'NO POSEE' 
     END AS CAPTURA_IMAGEN
 FROM proyecto_gestionado pg
-LEFT JOIN tm_categoria 
-    ON pg.cat_id = tm_categoria.cat_id
-LEFT JOIN tm_subcategoria 
-    ON pg.cats_id = tm_subcategoria.cats_id
-LEFT JOIN sectores 
-    ON pg.sector_id = sectores.sector_id
+LEFT JOIN tm_categoria ON pg.cat_id = tm_categoria.cat_id
+LEFT JOIN tm_subcategoria ON pg.cats_id = tm_subcategoria.cats_id
+LEFT JOIN sectores ON pg.sector_id = sectores.sector_id
+LEFT JOIN tm_usuario AS creador ON pg.usu_crea = creador.usu_id
+LEFT JOIN prioridad ON pg.prioridad_id = prioridad.id
 
--- Join a usuario creador
-LEFT JOIN tm_usuario AS creador 
-    ON pg.usu_crea = creador.usu_id
-
--- Join a tabla de asignaciones
-LEFT JOIN usuario_proyecto 
-    ON usuario_proyecto.id_proyecto_gestionado = pg.id
-
--- Join a usuarios asignados
-LEFT JOIN tm_usuario AS asignado 
-    ON usuario_proyecto.usu_asignado = asignado.usu_id
-
-LEFT JOIN prioridad 
-    ON pg.prioridad_id = prioridad.id
-
--- Subquery para el primer id de recurrencia
 LEFT JOIN (
     SELECT 
         pr.id_proyecto_cantidad_servicios,
@@ -2216,30 +2199,10 @@ LEFT JOIN (
 ) pr_first
     ON pr_first.id_proyecto_cantidad_servicios = pg.id_proyecto_cantidad_servicios
 
--- Dimensionamiento ligado al primer id de recurrencia
 LEFT JOIN dimensionamiento d
     ON d.id_proyecto_gestionado = pr_first.primer_recurrencia_id
 
-LEFT JOIN hosts 
-    ON pg.id = hosts.id_proyecto_gestionado
-
-WHERE pg.id_proyecto_cantidad_servicios = :id_proyecto_cantidad_servicios
-
-GROUP BY 
-    pg.id, 
-    tm_categoria.cat_nom, 
-    tm_subcategoria.cats_nom, 
-    sectores.sector_nombre, 
-    creador.usu_correo, 
-    prioridad.prioridad, 
-    d.hs_dimensionadas, 
-    pg.titulo, 
-    pg.descripcion, 
-    pg.refProy, 
-    pg.fech_vantive, 
-    pg.archivo, 
-    pg.captura_imagen, 
-    pg.fech_crea";
+WHERE pg.id_proyecto_cantidad_servicios = :id_proyecto_cantidad_servicios";
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(":id_proyecto_cantidad_servicios", $id_proyecto_cantidad_servicios, PDO::PARAM_INT);
         $stmt->execute();
