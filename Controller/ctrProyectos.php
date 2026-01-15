@@ -2009,17 +2009,22 @@ TXT;
         echo json_encode($proyecto->get_datos_recurrente_para_insert($_POST['id_proyecto_cantidad_servicios']));
         break;
 
+
     case 'get_datos_ver_recurrente':
         $datos = $proyecto->get_datos_ver_recurrente($_POST['id_proyecto_cantidad_servicios']);
-        $htmlList = '';
-        foreach ($datos as $key => $val) {
-            $htmlList .= '
-                <ul class="list-unstyled">
-                <li class="badge border border-primary py-1 bg-light fs-11 text-primary">' . $key . ' : ' . $val . '</li>
-                </ul>
-            ';
+        if (!$datos) {
+            echo "<span class='text-muted'>No hay datos</span>";
+            exit;
         }
-        echo $htmlList;
+        $html = "<ul class='list-unstyled'>";
+        foreach ($datos as $key => $val) {
+            $html .= "
+            <li class='badge border border-primary py-1 bg-light fs-11 text-primary mb-1'>
+                $key : $val
+            </li><br>";
+        }
+        $html .= "</ul>";
+        echo $html;
         break;
 
     case 'insert_recurrente_proy_gestionado':
