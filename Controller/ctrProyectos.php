@@ -491,7 +491,7 @@ switch ($_GET['proy']) {
 
         // 5. Verifica todos los resultados
         if ($updated_proyecto !== false && $updated_horas !== false && $updated_usuarios !== false) {
-            echo json_encode(["status" => "success"]);
+            echo json_encode(["status" => "success", "Filas actaulizadas" => $updated_proyecto]);
         } else {
             echo json_encode(["status" => "error", "message" => "Hubo un problema actualizando el proyecto, horas o usuarios"]);
         }
