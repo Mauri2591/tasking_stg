@@ -499,8 +499,8 @@ switch ($_GET['proy']) {
                 $_POST['fech_vantive'] ?? null
             );
 
-            // ⚠️ SOLO PARA TEST - BORRAR DESPUÉS
-            $updated_proyecto = 2;
+            // SOLO PARA TEST el valor en 2 - BORRAR DESPUÉS
+            // $updated_proyecto = 2;
 
             if ($updated_proyecto === false) {
                 throw new Exception("Error actualizando el proyecto");
