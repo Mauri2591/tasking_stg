@@ -207,7 +207,7 @@ if (isset($_SESSION['usu_id'])) {
                                             <td style="width: 10px;"></td>
                                             <td style="width: 10px;"></td>
                                             <td style="width: 10px;"></td>
-                                            <td style="width: 5px;"></td>
+                                            <td style="width: 10px;"></td>
                                             <td style="width: 10px;"></td>
                                         </tr>
                                     </tbody>
