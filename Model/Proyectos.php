@@ -2158,7 +2158,6 @@ ORDER BY pcs.id DESC";
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-
     public function get_datos_ver_recurrente($id_proyecto_cantidad_servicios)
     {
         $conn = parent::get_conexion();
