@@ -2182,26 +2182,25 @@ ORDER BY pcs.id DESC";
         THEN 'POSEE' 
         ELSE 'NO POSEE' 
     END AS CAPTURA_IMAGEN
-FROM proyecto_gestionado pg
-LEFT JOIN tm_categoria ON pg.cat_id = tm_categoria.cat_id
-LEFT JOIN tm_subcategoria ON pg.cats_id = tm_subcategoria.cats_id
-LEFT JOIN sectores ON pg.sector_id = sectores.sector_id
-LEFT JOIN tm_usuario AS creador ON pg.usu_crea = creador.usu_id
-LEFT JOIN prioridad ON pg.prioridad_id = prioridad.id
+            FROM proyecto_gestionado pg
+            LEFT JOIN tm_categoria ON pg.cat_id = tm_categoria.cat_id
+            LEFT JOIN tm_subcategoria ON pg.cats_id = tm_subcategoria.cats_id
+            LEFT JOIN sectores ON pg.sector_id = sectores.sector_id
+            LEFT JOIN tm_usuario AS creador ON pg.usu_crea = creador.usu_id
+            LEFT JOIN prioridad ON pg.prioridad_id = prioridad.id
 
-LEFT JOIN (
-    SELECT 
-        pr.id_proyecto_cantidad_servicios,
-        MIN(pr.id) AS primer_recurrencia_id
-    FROM proyecto_recurrencia pr
-    GROUP BY pr.id_proyecto_cantidad_servicios
-) pr_first
-    ON pr_first.id_proyecto_cantidad_servicios = pg.id_proyecto_cantidad_servicios
+            LEFT JOIN (
+                SELECT 
+                    pr.id_proyecto_cantidad_servicios,
+                    MIN(pr.id) AS primer_recurrencia_id
+                FROM proyecto_recurrencia pr
+                GROUP BY pr.id_proyecto_cantidad_servicios
+            ) pr_first
+                ON pr_first.id_proyecto_cantidad_servicios = pg.id_proyecto_cantidad_servicios
 
-LEFT JOIN dimensionamiento d
-    ON d.id_proyecto_gestionado = pr_first.primer_recurrencia_id
-
-WHERE pg.id_proyecto_cantidad_servicios = :id_proyecto_cantidad_servicios";
+            LEFT JOIN dimensionamiento d
+                ON d.id_proyecto_gestionado = pr_first.primer_recurrencia_id
+            WHERE pg.id_proyecto_cantidad_servicios = :id_proyecto_cantidad_servicios";
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(":id_proyecto_cantidad_servicios", $id_proyecto_cantidad_servicios, PDO::PARAM_INT);
         $stmt->execute();

@@ -2077,7 +2077,6 @@ function gestionar_proy_recurrente(id_proyecto_cantidad_servicios, conteo_id_rec
             id_proyecto_cantidad_servicios: id_proyecto_cantidad_servicios
         },
         function (data, textStatus, jqXHR) {
-            console.log(data);
             $("#contenido_proyecto_gestionado_para_insert_recurrente").html(data)
         },
         "html"
