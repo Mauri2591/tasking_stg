@@ -500,7 +500,7 @@ switch ($_GET['proy']) {
             );
 
             // ⚠️ SOLO PARA TEST - BORRAR DESPUÉS
-            // $updated_proyecto = 2;
+            $updated_proyecto = 2;
 
             if ($updated_proyecto === false) {
                 throw new Exception("Error actualizando el proyecto");
