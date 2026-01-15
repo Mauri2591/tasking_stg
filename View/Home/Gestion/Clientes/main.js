@@ -195,7 +195,7 @@ function cargarPaises(paisSeleccionado = null) {
         let select = $("#client_pais_update");
         select.empty();
 
-        select.append(`<option value="">Seleccione un país</option>`);
+        select.append(`<option disabled value="">Seleccione un país</option>`);
 
         data.forEach(pais => {
             let selected = (pais.pais_id == paisSeleccionado) ? 'selected' : '';
