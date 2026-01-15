@@ -2022,6 +2022,7 @@ TXT;
         echo $htmlList;
         break;
 
+        
     case 'insert_recurrente_proy_gestionado':
         $id_proyecto_gestionado = $proyecto->insert_recurrente_proy_gestionado(
             $_POST['id_proyecto_cantidad_servicios'],
