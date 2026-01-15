@@ -12,6 +12,9 @@ switch ($_GET['cliente']) {
             $sub_array[] = strlen($row['client_rs']) > 40
                 ? '<span class="badge bg-light text-primary border border-primary" data-placement="top" title="' . $row['client_rs'] . '">' . substr($row['client_rs'], 0, 38) . '...</span>'
                 : '<span class="badge bg-light text-primary border border-primary" data-placement="top" title="' . $row['client_rs'] . '">' . $row['client_rs'] . '</span>';
+                            $sub_array[] = strlen($row['client_rs']) > 40
+                ? '<span class="badge bg-light text-primary border border-primary" data-placement="top" title="' . $row['pais'] . '">' . substr($row['pais'], 0, 38) . '...</span>'
+                : '<span class="badge bg-light text-primary border border-primary" data-placement="top" title="' . $row['pais'] . '">' . $row['pais'] . '</span>';
             $sub_array[] = strlen($row['client_cuit']) > 10
                 ? '<span class="badge bg-light text-dark" data-placement="top" title="' . $row['client_cuit'] . '">' . substr($row['client_cuit'], 0, 38) . '...</span>'
                 : '<span class="badge bg-light text-dark" data-placement="top" title="' . $row['client_cuit'] . '">' . $row['client_cuit'] . '</span>';
@@ -54,13 +57,17 @@ switch ($_GET['cliente']) {
         echo json_encode($clientes->get_datos_cliente($_POST['client_id']));
         break;
 
+        case 'get_paises':
+    echo json_encode($clientes->get_paises());
+    break;
+
     case 'update_datos_cliente':
         if (empty($_POST['client_rs'])) {
             http_response_code(400);
             echo json_encode(["messaje" => "Campo vacio"]);
             exit();
         } else {
-            $clientes->update_datos_cliente($_POST['client_id'], $_POST['client_rs'], $_POST['client_cuit'], $_POST['client_correo'], $_POST['client_tel']);
+            $clientes->update_datos_cliente($_POST['client_id'], $_POST['client_rs'], $_POST['pais_id'], $_POST['client_cuit'], $_POST['client_correo'], $_POST['client_tel']);
             http_response_code(200);
         }
         break;

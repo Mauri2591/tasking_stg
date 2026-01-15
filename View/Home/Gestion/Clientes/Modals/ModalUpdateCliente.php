@@ -14,6 +14,14 @@
                         <input id="client_rs_update" type="text" class="form-control" aria-label="Sizing example input"
                             aria-describedby="inputGroup-sizing-sm">
                     </div>
+
+                     <div class="input-group input-group-sm mt-1">
+                        <span class="input-group-text" id="inputGroup-sizing-sm">PAIS</span>
+                        <select class="form-control form-control-sm" id="client_pais_update">
+                            <option value="">Argentina</option>
+                        </select>
+                    </div>
+
                     <div class="input-group input-group-sm mt-1">
                         <span class="input-group-text" id="inputGroup-sizing-sm">C U I T</span>
                         <input id="client_cuit_update" type="text" class="form-control"

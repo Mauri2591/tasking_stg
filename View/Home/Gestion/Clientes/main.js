@@ -20,10 +20,11 @@ $(document).ready(function () {
             data: {
                 usu_sector: 1
             },
-            error: function (e) {
-            }
+            error: function (e) {}
         },
-        "order": [[0, "desc"]], //Ordenar descendentemente
+        "order": [
+            [0, "desc"]
+        ], //Ordenar descendentemente
         "bDestroy": true,
         "responsive": true,
         "bInfo": true,
@@ -147,14 +148,18 @@ $(document).ready(function () {
         "html"
     );
 
-    $.post("../../../../Controller/ctrProyectos.php?proy=get_combo_categorias_x_sector", { sector_id: 1 },
+    $.post("../../../../Controller/ctrProyectos.php?proy=get_combo_categorias_x_sector", {
+            sector_id: 1
+        },
         function (data, textStatus, jqXHR) {
             $("#combo_categoria_proy_nuevo").html(data)
         },
         "html"
     );
     document.getElementById("combo_sector_proy_nuevo").addEventListener("change", function () {
-        $.post("../../../../Controller/ctrProyectos.php?proy=get_combo_categorias_x_sector", { sector_id: this.value },
+        $.post("../../../../Controller/ctrProyectos.php?proy=get_combo_categorias_x_sector", {
+                sector_id: this.value
+            },
             function (data, textStatus, jqXHR) {
                 $("#combo_categoria_proy_nuevo").html(data)
             },
@@ -163,7 +168,9 @@ $(document).ready(function () {
     });
 
 
-    $.post("../../../../Controller/ctrProyectos.php?proy=get_combo_subcategorias_x_sector", { sector_id: 1 },
+    $.post("../../../../Controller/ctrProyectos.php?proy=get_combo_subcategorias_x_sector", {
+            sector_id: 1
+        },
         function (data, textStatus, jqXHR) {
             $("#combo_subcategoria_proy_nuevo").html(data)
         },
@@ -171,7 +178,9 @@ $(document).ready(function () {
     );
 
     document.getElementById("combo_sector_proy_nuevo").addEventListener("change", function () {
-        $.post("../../../../Controller/ctrProyectos.php?proy=get_combo_subcategorias_x_sector", { sector_id: this.value },
+        $.post("../../../../Controller/ctrProyectos.php?proy=get_combo_subcategorias_x_sector", {
+                sector_id: this.value
+            },
             function (data, textStatus, jqXHR) {
                 $("#combo_subcategoria_proy_nuevo").html(data)
             },
@@ -180,27 +189,50 @@ $(document).ready(function () {
     });
 });
 
+function cargarPaises(paisSeleccionado = null) {
+    $.post("../../../../Controller/ctrClientes.php?cliente=get_paises", function (data) {
+
+        let select = $("#client_pais_update");
+        select.empty();
+
+        select.append(`<option value="">Seleccione un país</option>`);
+
+        data.forEach(pais => {
+            let selected = (pais.pais_id == paisSeleccionado) ? 'selected' : '';
+            select.append(`<option value="${pais.pais_id}" ${selected}>
+                ${pais.pais_nombre}
+            </option>`);
+        });
+
+    }, "json");
+}
 
 function editCliente(client_id) {
     document.getElementById("client_id_update").value = client_id;
-    $.post("../../../../Controller/ctrClientes.php?cliente=get_datos_cliente", { client_id: client_id },
-        function (data, textStatus, jqXHR) {
-            document.getElementById("client_rs_title_update").innerText = data.client_rs
-            document.getElementById("client_rs_update").value = data.client_rs
-            document.getElementById("client_cuit_update").value = data.client_cuit
-            document.getElementById("client_correo_update").value = data.client_correo
-            document.getElementById("client_tel_update").value = data.client_tel
 
-        },
-        "json"
-    );
-    $("#ModalUpdateCliente").modal("show");
+    $.post("../../../../Controller/ctrClientes.php?cliente=get_datos_cliente", {
+        client_id: client_id
+    }, function (data) {
+
+        document.getElementById("client_rs_title_update").innerText = data.client_rs;
+        document.getElementById("client_rs_update").value = data.client_rs;
+        document.getElementById("client_cuit_update").value = data.client_cuit;
+        document.getElementById("client_correo_update").value = data.client_correo;
+        document.getElementById("client_tel_update").value = data.client_tel;
+
+        // 👉 carga países y deja seleccionado el del cliente
+        cargarPaises(data.pais_id);
+
+        $("#ModalUpdateCliente").modal("show");
+
+    }, "json");
 }
 
 function data_update_cliente() {
     let formData = new FormData();
     formData.append('client_id', document.getElementById("client_id_update").value);
     formData.append('client_rs', document.getElementById("client_rs_update").value);
+    formData.append('pais_id', document.getElementById("client_pais_update").value);
     formData.append('client_cuit', document.getElementById("client_cuit_update").value);
     formData.append('client_correo', document.getElementById("client_correo_update").value);
     formData.append('client_tel', document.getElementById("client_tel_update").value);
@@ -250,6 +282,7 @@ document.getElementById("btnUpdateCliente").addEventListener("click", function (
     let data = data_update_cliente();
     ajax_update_cliente(data);
 })
+
 function altaProject(client_id) {
     document.getElementById("form_crear_proyecto").reset();
     $("#combo_prioridad_proy_nuevo").removeClass("border-danger");
@@ -257,7 +290,9 @@ function altaProject(client_id) {
     $("#combo_prioridad_proy_nuevo").addClass("border-bg");
     $("#ModalCrearProject").modal("show");
 
-    $.post("../../../../Controller/ctrClientes.php?cliente=get_datos_cliente", { client_id: client_id },
+    $.post("../../../../Controller/ctrClientes.php?cliente=get_datos_cliente", {
+            client_id: client_id
+        },
         function (data, textStatus, jqXHR) {
             document.getElementById("client_rs_alta_proy").value = data.client_rs
             document.getElementById("pais_id_carga_proy_hidden").value = data.pais_id
@@ -265,7 +300,9 @@ function altaProject(client_id) {
         "json"
     );
 
-    $.post("../../../../Controller/ctrClientes.php?cliente=get_paise_x_id", { client_id: client_id },
+    $.post("../../../../Controller/ctrClientes.php?cliente=get_paise_x_id", {
+            client_id: client_id
+        },
         function (data, textStatus, jqXHR) {
             document.getElementById("pais_id_carga_proy").value = data.pais_nombre;
         },
@@ -314,5 +351,3 @@ $("#btn_crear_proyecto").off().click(function () {
     let data = data_insert_proyecto();
     ajax_inserta_proyecto(data);
 });
-
-

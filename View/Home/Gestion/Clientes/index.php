@@ -82,6 +82,7 @@ if (isset($_SESSION['usu_id'])) {
                             <thead style="text-align: center;">
                                 <tr style="text-align: center;">
                                     <th style="width: 30%;text-align: center;">CLIENTE</th>
+                                    <th style="width: 10%;text-align: center;">PAIS</th>
                                     <th style="width: 10%;text-align: center;">CUIT</th>
                                     <th style="width: 10%;text-align: center;">CORREO</th>
                                     <th style="width: 10%;text-align: center;">TEL</th>
@@ -94,6 +95,7 @@ if (isset($_SESSION['usu_id'])) {
                             <tbody style="text-align: center;">
                                 <tr style="text-align: center;">
                                     <td style="width: 30%px;"></td>
+                                    <td style="width: 10%;"></td>
                                     <td style="width: 10%;"></td>
                                     <td style="width: 10%;"></td>
                                     <td style="width: 10%;"></td>
