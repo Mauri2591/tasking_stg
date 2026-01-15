@@ -188,7 +188,7 @@ if (isset($_SESSION['usu_id'])) {
                                             <th style="width: 10px;text-align: center;">ASIGNADO</th>
                                             <th style="width: 10px; text-align: center;">ESTADO</th>
                                             <th style="width: 10px;text-align: center;">SECTOR</th>
-                                            <th style="width: 5px;text-align: center;"></th>
+                                            <th style="width: 10px;text-align: center;">HOSTS</th>
                                             <th style="width: 10px;text-align: center;"></th>
                                         </tr>
                                     </thead>
