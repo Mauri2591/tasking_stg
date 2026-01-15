@@ -1,0 +1,3 @@
+[2026-01-15 15:59:36] FILAS DUPLICADAS UPDATE PROYECTO | proyecto_id=5 | filas=2 | usuario=31 | IP=127.0.0.1
+[2026-01-15 16:51:58] UPDATE MULTIPLE BLOQUEADO | proyecto_id=3 | filas=2 | usuario=31 | IP=127.0.0.1
+[2026-01-15 16:52:13] UPDATE MULTIPLE BLOQUEADO | proyecto_id=3 | filas=2 | usuario=31 | IP=127.0.0.1

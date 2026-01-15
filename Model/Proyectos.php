@@ -1366,6 +1366,7 @@ WHERE
     }
 
     public function update_proyecto(
+        PDO $conn,              // ← conexión compartida
         int $id,
         int $cat_id,
         int $cats_id,
@@ -1382,22 +1383,21 @@ WHERE
         string $fech_vantive
     ) {
         try {
-            $conn = parent::get_conexion();
             $sql = "UPDATE proyecto_gestionado 
-                    SET cat_id = :cat_id,
-                        cats_id = :cats_id,
-                        sector_id = :sector_id,
-                        usu_crea = :usu_crea,
-                        prioridad_id = :prioridad_id,
-                        titulo = :titulo,
-                        descripcion = :descripcion,
-                        refProy = :refProy,
-                        recurrencia = :recurrencia,
-                        fech_inicio = :fech_inicio,
-                        fech_fin = :fech_fin,
-                        fech_vantive = :fech_vantive
-                    WHERE id = :id
-                      AND est = 1";
+                SET cat_id = :cat_id,
+                    cats_id = :cats_id,
+                    sector_id = :sector_id,
+                    usu_crea = :usu_crea,
+                    prioridad_id = :prioridad_id,
+                    titulo = :titulo,
+                    descripcion = :descripcion,
+                    refProy = :refProy,
+                    recurrencia = :recurrencia,
+                    fech_inicio = :fech_inicio,
+                    fech_fin = :fech_fin,
+                    fech_vantive = :fech_vantive
+                WHERE id = :id
+                  AND est = 1";
 
             $stmt = $conn->prepare($sql);
 
@@ -1410,10 +1410,11 @@ WHERE
             $stmt->bindValue(':descripcion', trim($descripcion), PDO::PARAM_STR);
             $stmt->bindValue(':refProy', trim($refProy), PDO::PARAM_STR);
             $stmt->bindValue(':recurrencia', $recurrencia, PDO::PARAM_STR);
-            $stmt->bindValue(':fech_inicio', $fech_inicio, is_null($fech_inicio) ? PDO::PARAM_NULL : PDO::PARAM_STR);
-            $stmt->bindValue(':fech_fin', $fech_fin, is_null($fech_fin) ? PDO::PARAM_NULL : PDO::PARAM_STR);
-            $stmt->bindValue(':fech_vantive', $fech_vantive, is_null($fech_vantive) ? PDO::PARAM_NULL : PDO::PARAM_STR);
+            $stmt->bindValue(':fech_inicio', $fech_inicio ?: null, PDO::PARAM_STR);
+            $stmt->bindValue(':fech_fin', $fech_fin ?: null, PDO::PARAM_STR);
+            $stmt->bindValue(':fech_vantive', $fech_vantive ?: null, PDO::PARAM_STR);
             $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+
             $stmt->execute();
             return $stmt->rowCount();
         } catch (PDOException $e) {
@@ -1422,11 +1423,13 @@ WHERE
         }
     }
 
-    public function update_usuarios_asignados(int $id_proyecto_gestionado, array $usuarios_ids)
-    {
-        try {
-            $conn = parent::get_conexion();
 
+    public function update_usuarios_asignados(
+        PDO $conn,
+        int $id_proyecto_gestionado,
+        array $usuarios_ids
+    ) {
+        try {
             // Eliminar todos los usuarios asignados actualmente
             $sqlDelete = "DELETE FROM usuario_proyecto WHERE id_proyecto_gestionado = :id";
             $stmtDelete = $conn->prepare($sqlDelete);
@@ -1435,11 +1438,13 @@ WHERE
 
             // Insertar los nuevos usuarios asignados (si hay)
             if (!empty($usuarios_ids)) {
-                $sqlInsert = "INSERT INTO usuario_proyecto (id_proyecto_gestionado, usu_asignado) VALUES (:id, :usu_id)";
+                $sqlInsert = "INSERT INTO usuario_proyecto (id_proyecto_gestionado, usu_asignado)
+                          VALUES (:id, :usu_id)";
                 $stmtInsert = $conn->prepare($sqlInsert);
+
                 foreach ($usuarios_ids as $usu_id) {
                     $stmtInsert->bindValue(':id', $id_proyecto_gestionado, PDO::PARAM_INT);
-                    $stmtInsert->bindValue(':usu_id', $usu_id, PDO::PARAM_INT);
+                    $stmtInsert->bindValue(':usu_id', (int) $usu_id, PDO::PARAM_INT);
                     $stmtInsert->execute();
                 }
             }
@@ -1451,31 +1456,26 @@ WHERE
         }
     }
 
-
-
-    public function update_hs_dimensionadas(int $id_proyecto_gestionado, string $hs_dimensionadas, int $usu_crea)
-    {
+    public function update_hs_dimensionadas(
+        PDO $conn,
+        int $id_proyecto_gestionado,
+        string $hs_dimensionadas,
+        int $usu_crea
+    ) {
         try {
-            $conn = parent::get_conexion();
-
-            error_log("Entrando a update_hs_dimensionadas()");
-            error_log("ID: $id_proyecto_gestionado, HS: $hs_dimensionadas, USU: $usu_crea");
-
             $sql = "UPDATE dimensionamiento 
-                    SET hs_dimensionadas = :hs_dimensionadas, usu_crea = :usu_crea 
-                    WHERE id_proyecto_gestionado = :id_proyecto_gestionado";
+                SET hs_dimensionadas = :hs_dimensionadas,
+                    usu_crea = :usu_crea
+                WHERE id_proyecto_gestionado = :id";
+
             $stmt = $conn->prepare($sql);
             $stmt->bindValue(':hs_dimensionadas', trim($hs_dimensionadas), PDO::PARAM_STR);
             $stmt->bindValue(':usu_crea', $usu_crea, PDO::PARAM_INT);
-            $stmt->bindValue(':id_proyecto_gestionado', $id_proyecto_gestionado, PDO::PARAM_INT);
+            $stmt->bindValue(':id', $id_proyecto_gestionado, PDO::PARAM_INT);
             $stmt->execute();
-
-            $rows = $stmt->rowCount();
-            error_log("✅ Filas afectadas por update_hs_dimensionadas: $rows");
-
-            return $rows;
+            return $stmt->rowCount();
         } catch (PDOException $e) {
-            error_log("ERROR en update_hs_dimensionadas: " . $e->getMessage());
+            error_log("ERROR update_hs_dimensionadas: " . $e->getMessage());
             return false;
         }
     }

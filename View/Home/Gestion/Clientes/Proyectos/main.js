@@ -553,7 +553,10 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
     $("#id_proyecto_cantidad_servicios").val(id_proyecto_cantidad_servicios);
     $("#proy_id").val(proy_id);
 
+
+    
     function get_data_editar_proyecto() {
+    
         let formData = new FormData();
 
         let checkboxes = document.querySelectorAll('#combo_usuario_x_sector input[name="usu_asignado[]"]:checked');

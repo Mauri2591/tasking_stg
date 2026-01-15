@@ -8,6 +8,8 @@ require_once __DIR__ . "/../Model/Clases/Validaciones.php";
 require_once __DIR__ . "/../Model/Clases/Headers.php";
 require_once __DIR__ . "/../Model/Clases/Openssl.php";
 
+$conexion = new Conexion();
+
 $proyecto = new Proyectos();
 $validacion = new Validaciones();
 Headers::get_csp();
@@ -449,66 +451,146 @@ switch ($_GET['proy']) {
         break;
 
     case 'update_proyecto':
-        // 1. Actualiza los datos del proyecto
-        $updated_proyecto = $proyecto->update_proyecto(
-            (int) $_POST['id'],
-            (int) $_POST['cat_id'],
-            (int) $_POST['cats_id'],
-            (int) $_POST['sector_id'],
-            (int) $_POST['usu_id'],
-            (int) $_SESSION['usu_id'],
-            (int) $_POST['prioridad_id'],
-            $_POST['titulo'],
-            $_POST['descripcion'],
-            $_POST['refProy'],
-            ($_POST['recurrencia'] === '' ? null : (int) $_POST['recurrencia']),
-            $_POST['fech_inicio'],
-            $_POST['fech_fin'],
-            $_POST['fech_vantive']
-        );
+        /* =====================================================
+            * 0. VALIDACIÓN DEL ID IRREFUTABLE
+            * ===================================================== */
+        $idProyecto = (
+            isset($_POST['id_proyecto_gestionado']) &&
+            !is_array($_POST['id_proyecto_gestionado'])
+        )
+            ? (int) $_POST['id_proyecto_gestionado']
+            : 0;
 
-        // 2. Valida que vengan los datos requeridos para hs y gestión
-        if (!isset($_POST['id_proyecto_gestionado']) || !isset($_POST['hs_dimensionadas'])) {
-            echo json_encode(["status" => "error", "message" => "Faltan datos de horas dimensionadas o ID de proyecto"]);
+
+        if ($idProyecto <= 0) {
+            echo json_encode([
+                "status" => "error",
+                "message" => "ID de proyecto inválido"
+            ]);
             exit;
         }
+        /* =====================================================
+            * 1. CREAR CONEXIÓN Y ABRIR TRANSACCIÓN
+            * ===================================================== */
+        $conexion = new Conexion();
+        $conn = $conexion->get_conexion();
 
-        // 3. Actualiza las horas dimensionadas
-        error_log("Ejecutando update_hs_dimensionadas con ID: " . $_POST['id_proyecto_gestionado']);
-        error_log("Valor hs_dimensionadas: " . $_POST['hs_dimensionadas']);
-        $updated_horas = $proyecto->update_hs_dimensionadas(
-            (int) $_POST['id_proyecto_gestionado'],
-            $_POST['hs_dimensionadas'],
-            (int) $_SESSION['usu_id']
-        );
+        try {
+            $conn->beginTransaction();
 
-        // 4. Actualiza usuarios asignados
-        $usuarios_ids = isset($_POST['usu_asignado']) ? $_POST['usu_asignado'] : [];
-        $updated_usuarios = $proyecto->update_usuarios_asignados(
-            (int) $_POST['id_proyecto_gestionado'],
-            $usuarios_ids
-        );
+            /* =====================================================
+                * 2. UPDATE PROYECTO
+                * ===================================================== */
+            $updated_proyecto = $proyecto->update_proyecto(
+                $conn,
+                $idProyecto,
+                (int) ($_POST['cat_id'] ?? 0),
+                (int) ($_POST['cats_id'] ?? 0),
+                (int) ($_POST['sector_id'] ?? 0),
+                (int) ($_POST['usu_id'] ?? 0),
+                (int) $_SESSION['usu_id'],
+                (int) ($_POST['prioridad_id'] ?? 0),
+                trim($_POST['titulo'] ?? ''),
+                trim($_POST['descripcion'] ?? ''),
+                trim($_POST['refProy'] ?? ''),
+                ($_POST['recurrencia'] === '' ? null : (int) $_POST['recurrencia']),
+                $_POST['fech_inicio'] ?? null,
+                $_POST['fech_fin'] ?? null,
+                $_POST['fech_vantive'] ?? null
+            );
 
-        // 5. Verifica todos los resultados
-        if ($updated_proyecto !== false && $updated_horas !== false && $updated_usuarios !== false) {
-            echo json_encode(["status" => "success", "Filas actaulizadas" => $updated_proyecto]);
-        } else {
-            echo json_encode(["status" => "error", "message" => "Hubo un problema actualizando el proyecto, horas o usuarios"]);
+            // ⚠️ SOLO PARA TEST - BORRAR DESPUÉS
+            // $updated_proyecto = 2;
+
+            if ($updated_proyecto === false) {
+                throw new Exception("Error actualizando el proyecto");
+            }
+
+            /* =====================================================
+                * 🚨 BLOQUEO CRÍTICO: MÁS DE 1 FILA
+                * ===================================================== */
+            if ($updated_proyecto > 1) {
+
+                $log = sprintf(
+                    "[%s] UPDATE MULTIPLE BLOQUEADO | proyecto_id=%d | filas=%d | usuario=%d | IP=%s\n",
+                    date('Y-m-d H:i:s'),
+                    $idProyecto,
+                    $updated_proyecto,
+                    (int) $_SESSION['usu_id'],
+                    $_SERVER['REMOTE_ADDR'] ?? 'CLI'
+                );
+
+                error_log(
+                    $log,
+                    3,
+                    __DIR__ . '/Logs/ctrProyectos/filasDuplicadasUpdateProyecto.log'
+                );
+
+                throw new Exception(
+                    "No se actualizó el proyecto por inconsistencia de datos"
+                );
+            }
+
+            /* =====================================================
+                * 3. VALIDAR Y UPDATE HORAS DIMENSIONADAS
+                * ===================================================== */
+            if (!isset($_POST['hs_dimensionadas']) || !is_numeric($_POST['hs_dimensionadas'])) {
+                throw new Exception("Horas dimensionadas inválidas");
+            }
+
+            $updated_horas = $proyecto->update_hs_dimensionadas(
+                $conn,
+                $idProyecto,
+                $_POST['hs_dimensionadas'],
+                (int) $_SESSION['usu_id']
+            );
+
+            if ($updated_horas === false) {
+                throw new Exception("Error actualizando horas dimensionadas");
+            }
+
+            /* =====================================================
+                * 4. UPDATE USUARIOS ASIGNADOS
+                * ===================================================== */
+            $usuarios_ids = isset($_POST['usu_asignado']) && is_array($_POST['usu_asignado'])
+                ? $_POST['usu_asignado']
+                : [];
+
+            $updated_usuarios = $proyecto->update_usuarios_asignados(
+                $conn,
+                $idProyecto,
+                $usuarios_ids
+            );
+
+            if ($updated_usuarios === false) {
+                throw new Exception("Error actualizando usuarios asignados");
+            }
+
+            /* =====================================================
+                * 5. TODO OK → COMMIT
+                * ===================================================== */
+            $conn->commit();
+
+            echo json_encode([
+                "status" => "success",
+                "message" => "Proyecto actualizado correctamente"
+            ]);
+        } catch (Exception $e) {
+
+            /* =====================================================
+                * 🔄 ROLLBACK GENERAL
+                * ===================================================== */
+            if ($conn->inTransaction()) {
+                $conn->rollBack();
+            }
+
+            echo json_encode([
+                "status" => "error",
+                "message" => $e->getMessage()
+            ]);
         }
         break;
 
-    case 'get_datos_ver_recurrente':
-        $datos = $proyecto->get_datos_ver_recurrente($_POST['id_proyecto_cantidad_servicios']);
-        $htmlList = '';
-        foreach ($datos as $key => $val) {
-            $htmlList .= '
-                <ul class="list-unstyled">
-                <li class="badge border border-primary py-1 bg-light fs-11 text-primary">' . $key . ' : ' . $val . '</li>
-                </ul>
-            ';
-        }
-        echo $htmlList;
-        break;
 
     case 'get_proyectos_recurrentes':
         $colores = array("ETHICAL HACKING" => "bg-warning text-dark", "SOC" => "bg-dark text-light", "SASE" => "bg-info text-light", "CALIDAD Y PROCESOS" => "bg-light text-dark", "INCIDENT RESPONSE" => "bg-danger text-light");
