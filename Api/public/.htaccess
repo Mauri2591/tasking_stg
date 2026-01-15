@@ -1,0 +1,30 @@
+
+Options -Indexes
+
+<Files .htaccess>
+  Order allow,deny
+  Deny from all
+</Files>
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /tasking_stg/Api/
+
+  # Bloquear acceso directo a /public/
+  RewriteRule ^public/ - [F,L]
+
+  # Bloquear archivos sensibles
+  <FilesMatch "\.(env|log|sql|json|lock)$">
+    Order allow,deny
+    Deny from all
+  </FilesMatch>
+
+  # Reescribir todo hacia index.php si no es archivo o carpeta
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteRule ^ index.php [QSA,L]
+
+  # Opcional: Forzar HTTPS
+  # RewriteCond %{HTTPS} off
+  # RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+</IfModule>
