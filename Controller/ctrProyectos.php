@@ -1680,7 +1680,7 @@ switch ($_GET['proy']) {
             $colores = array("ETHICAL HACKING" => "bg-warning text-dark", "SOC" => "bg-dark text-light", "SASE" => "bg-info text-light", "CALIDAD Y PROCESOS" => "bg-light text-dark", "INCIDENT RESPONSE" => "bg-danger text-light");
             foreach ($datos as $row) {
                 $sub_array = array();
-                $sub_array[] = $row['client_rs'];
+                $sub_array[] = strtoupper($row['client_rs']);
                 $sub_array[] = '<p class="text-center m-0 p-0"><span class="badge bg-info border border-dark text-light">' . $row['cantidad_proyectos'] . '</span></p>';
                 $sub_array[] = '<span type="button" onclick="verProyPorIdCliente(' . $row['client_id'] . ')" data-placement="top" title="Ver proyectos"><i class="ri-send-plane-fill text-primary fs-16"></i></span>';
                 $data[] = $sub_array;
