@@ -617,7 +617,7 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
         // --- 🔁 Lógica dinámica para REF, FECHA y RECURRENCIA ---
         function actualizarTitulo() {
             const ref = $("#client_refPro_proy_nuevo").val().trim();
-            const fechaInput = $("#fech_ini_proy_nuevo").val().trim();
+            // const fechaInput = $("#fech_ini_proy_nuevo").val().trim();
             let recurrencia = $("#combo_recurrente_proy_nuevo").val();
 
             // 🧹 Normalizar el valor del combo
@@ -644,7 +644,7 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
 
         // Registrar eventos
         $("#client_refPro_proy_nuevo").off("input").on("input", actualizarTitulo);
-        $("#fech_ini_proy_nuevo").off("change").on("change", actualizarTitulo);
+        // $("#fech_ini_proy_nuevo").off("change").on("change", actualizarTitulo);
         $("#combo_recurrente_proy_nuevo").off("change").on("change", actualizarTitulo);
     }, "json");
 
@@ -653,19 +653,19 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
     function actualizarTitulo() {
         const client_rs = $("#client_rs_alta_proy").val() || "";
         const ref = $("#client_refPro_proy_nuevo").val()?.trim() || "";
-        const fechaInput = $("#fech_ini_proy_nuevo").val()?.trim() || "";
+        // const fechaInput = $("#fech_ini_proy_nuevo").val()?.trim() || "";
         const recurrencia = $("#combo_recurrente_proy_nuevo").val()?.trim().toUpperCase() || "";
 
-        let fechaFormateada = "";
-        if (fechaInput && fechaInput.includes("-")) {
-            const [year, month, day] = fechaInput.split("-");
-            fechaFormateada = `${day}/${month}/${year}`;
-        }
+        // let fechaFormateada = "";
+        // if (fechaInput && fechaInput.includes("-")) {
+        //     const [year, month, day] = fechaInput.split("-");
+        //     fechaFormateada = `${day}/${month}/${year}`;
+        // }
 
         let nuevoTitulo = client_rs;
         if (ref) nuevoTitulo += `_Ref ${ref}`;
         if (recurrencia && recurrencia !== "NO" && recurrencia !== "0") nuevoTitulo += `_Recurrente SI`;
-        if (fechaFormateada) nuevoTitulo += `_Fecha Inicio ${fechaFormateada}`;
+        // if (fechaFormateada) nuevoTitulo += `_Fecha Inicio ${fechaFormateada}`;
 
         $("#titulo_client_rs_alta_proy").val(nuevoTitulo);
     }
