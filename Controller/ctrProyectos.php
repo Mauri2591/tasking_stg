@@ -2019,7 +2019,6 @@ TXT;
                 </ul>
             ';
         }
-        echo json_encode($datos);
         echo $htmlList;
         break;
 
