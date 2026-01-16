@@ -188,7 +188,6 @@ if (isset($_SESSION['usu_id'])) {
                                             <th style="width: 10px;text-align: center;">ASIGNADO</th>
                                             <th style="width: 10px; text-align: center;">ESTADO</th>
                                             <th style="width: 10px;text-align: center;">SECTOR</th>
-                                            <th style="width: 10px;text-align: center;">HOSTS</th>
                                             <th style="width: 10px;text-align: center;"></th>
                                         </tr>
                                     </thead>
@@ -197,7 +196,6 @@ if (isset($_SESSION['usu_id'])) {
                                             <td style="width: 10px;"></td>
                                             <td style="width: 10px;"></td>
                                             <td style="width: 300px;"></td>
-                                            <td style="width: 10px;"></td>
                                             <td style="width: 10px;"></td>
                                             <td style="width: 10px;"></td>
                                             <td style="width: 10px;"></td>
