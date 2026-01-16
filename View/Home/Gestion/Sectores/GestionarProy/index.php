@@ -88,17 +88,17 @@ if (isset($_SESSION['usu_id'])) {
                                         <div class="col-xl-5 bg-success" style="margin-right: 5px; border-radius: 5px;">
                                             <div class="d-flex align-items-center">
                                                 <div class="d-flex align-items-center mt-1">
-                                                    <span id="prioridad" class="badge mx-1" style="width: 3rem;"></span>
-                                                    <span id="titulo_categoria"
+                                                    <span style="width: 3.5rem;" id="prioridad" class="badge mx-1" style="width: 3rem;"></span>
+                                                    <span style="width: 5rem;" id="titulo_categoria"
                                                         class="badge bg-light text-dark border border-primary mx-2"></span>
-                                                    <span id="titulo_subCategoria"
+                                                    <span style="width: 10rem;" id="titulo_subCategoria"
                                                         class="badge bg-light text-dark border border-primary mx-2"></span>
                                                     <span
                                                         class="me-2 badge bg-light text-primary border border-primary">Desde:
                                                         <span id="fech_inicio" class="text-dark"></span>
                                                     </span>
                                                     <span
-                                                        class="me-2 badge bg-light text-primary border border-primary">Hasta:
+                                                        class="me-2 badge bg-light text-primary border border-primary">Hasta: 25/12/1991
                                                         <span id="fech_fin" class="text-dark"></span>
                                                     </span>
                                                 </div>
