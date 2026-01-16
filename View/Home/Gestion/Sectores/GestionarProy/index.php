@@ -98,7 +98,7 @@ if (isset($_SESSION['usu_id'])) {
                                                         <span id="fech_inicio" class="text-dark"></span>
                                                     </span>
                                                     <span
-                                                        class="me-2 badge bg-light text-primary border border-primary">Hasta: 25/12/1991
+                                                        class="me-2 badge bg-light text-primary border border-primary">Hasta:
                                                         <span id="fech_fin" class="text-dark"></span>
                                                     </span>
                                                 </div>
