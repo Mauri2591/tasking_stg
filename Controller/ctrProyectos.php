@@ -709,27 +709,31 @@ switch ($_GET['proy']) {
         break;
 
     case 'validar_boton_mostrar_agregar_usuario_proy':
-        $datos = $proyecto->get_usuarios_x_proy_y_sector($_POST['id_proyecto_gestionado']);
-        if ($datos[0]['estados_id'] != '2') {
-            echo json_encode("error");
-        } else {
-            $usu_asignado = [];
-            foreach ($datos as $val) {
-                $usu_asignado[] = $val['usu_asignado'];
-            }
-            if (
-                isset($_SESSION['sector_id'], $_SESSION['usu_id']) &&
-                (
-                    $_SESSION['sector_id'] == "4" ||
-                    in_array($_SESSION['usu_id'], $usu_asignado)
-                )
-            ) {
-                echo json_encode("ok");
-            } else {
-                echo json_encode("error");
-            }
-        }
+
+    $datos = $proyecto->get_usuarios_x_proy_y_sector($_POST['id_proyecto_gestionado']);
+
+    $estado = (int) $datos[0]['estados_id'];
+
+    // 1) El estado manda primero
+    $estadoPermitido = in_array($estado, [1, 2]);
+
+    if (!$estadoPermitido) {
+        echo json_encode("error");
         break;
+    }
+
+    // 2) Permisos
+    $esCalidad = ($_SESSION['sector_id'] == 4);
+
+    // usuarios asignados al proyecto
+    $usuariosAsignados = array_column($datos, 'usu_asignado');
+    $estaAsignado = in_array($_SESSION['usu_id'], $usuariosAsignados);
+
+    $tienePermiso = $esCalidad || $estaAsignado;
+
+    echo json_encode($tienePermiso ? "ok" : "error");
+    break;
+
 
     case 'get_proyectos_eh':
         $datos = $proyecto->get_proyectos_eh($_POST['sector_id'], $_POST['cat_id'], $_POST['estados_id']);
@@ -1577,11 +1581,27 @@ switch ($_GET['proy']) {
                                 <?php echo $val['usu_nom'] ?> <span class="text-muted">(<span id="fecha_descripcion"
                                         class="text-muted fs-12"><?php echo $val['fech_crea'] ?></span>)</span></a>
                         </h6>
-                        <?php if (isset($_SESSION) && $_SESSION['usu_id'] == $val['usu_crea'] && $val['estados_id'] != 3 && $val['estados_id'] != 1) : ?>
-                            <br><i id="btn_eliminar_descripcion" data-placement="top" title="Eliminar" type="button"
-                                onclick="eliminar_descripcion(<?php echo $val['id'] ?>)"
-                                class=" ri-delete-bin-2-fill ms-3 fs-14 text-danger"></i>
-                        <?php endif; ?>
+                       <?php
+// Estados donde NUNCA se borra
+$estadoNoEditable = in_array($val['estados_id'], [3, 4]);
+
+// El usuario que escribió la descripción
+$esAutor = ($_SESSION['usu_id'] == $val['usu_crea']);
+
+$tienePermiso = !$estadoNoEditable && $esAutor;
+
+if ($tienePermiso):
+?>
+    <br>
+    <i id="btn_eliminar_descripcion"
+       title="Eliminar"
+       type="button"
+       onclick="eliminar_descripcion(<?php echo $val['id']; ?>)"
+       class="ri-delete-bin-2-fill ms-3 fs-14 text-danger">
+    </i>
+<?php endif; ?>
+
+
                     </div>
                     <p id="sector_descripcion" class="text-muted fs-11" style="margin-left: 1rem;">
                         <?php echo $val['sector_nombre'] ?></p>
