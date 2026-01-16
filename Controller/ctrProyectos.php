@@ -1604,7 +1604,7 @@ switch ($_GET['proy']) {
 
                     </div>
                     <p id="sector_descripcion" class="text-muted fs-11" style="margin-left: 1.5rem;">
-                        <?php echo $val['sector_nombre'] ?></p>
+                        <span class="badge bg-light text-primary"><?php echo $val['sector_nombre'] ?></span></p>
                 </div>
             </div>
             <div>
