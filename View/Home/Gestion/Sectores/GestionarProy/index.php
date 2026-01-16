@@ -96,7 +96,7 @@ if (isset($_SESSION['usu_id'])) {
                                                         class="me-2 badge bg-light text-primary border border-primary">Desde:
                                                         <span id="fech_inicio" class="text-dark"></span>
                                                     </span>
-                                                    <span
+                                                    <span style="width: 7rem;"
                                                         class="me-2 badge bg-light text-primary border border-primary">Hasta:
                                                         <span id="fech_fin" class="text-dark"></span>
                                                     </span>
