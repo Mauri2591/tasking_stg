@@ -107,7 +107,7 @@ if (isset($_SESSION['usu_id'])) {
                                             <div style="display: flex; margin-top: .2rem; margin-bottom: .2rem;">
                                                 <span id="rechequeo" style="display: none; color:orangered" class="badge ml-1 border border-dark bg-light"></span>
                                                 <span id="proy_recurrencia" style="display: none; color:orangered" class="badge ml-1 border border-dark bg-light"></span>
-                                                <span id="cont_dimensionamiento" class="badge mx-1 text-primary border border-dark bg-light fs-10">Horas: <span id="dimensionamiento"></span></span>
+                                                <span id="cont_dimensionamiento" class="badge mx-1 text-primary border border-dark bg-light fs-10">Horas: <span class="fw-bold" id="dimensionamiento"></span></span>
                                                 <span id="workshop" style="display: none;" class="badge mx-1 text-light border border-dark bg-info">workshop</span>
                                                 <span class="badge bg-light border border-dark text-dark mx-2 mb-1">Ref: <span id="referencia_proy"></span></span>
                                                 <span class="badge bg-light border border-dark text-dark mx-2 mb-1">Detalle:</span>
