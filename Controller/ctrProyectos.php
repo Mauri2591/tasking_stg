@@ -710,29 +710,29 @@ switch ($_GET['proy']) {
 
     case 'validar_boton_mostrar_agregar_usuario_proy':
 
-    $datos = $proyecto->get_usuarios_x_proy_y_sector($_POST['id_proyecto_gestionado']);
+        $datos = $proyecto->get_usuarios_x_proy_y_sector($_POST['id_proyecto_gestionado']);
 
-    $estado = (int) $datos[0]['estados_id'];
+        $estado = (int) $datos[0]['estados_id'];
 
-    // 1) El estado manda primero
-    $estadoPermitido = in_array($estado, [1, 2]);
+        // 1) El estado manda primero
+        $estadoPermitido = in_array($estado, [1, 2]);
 
-    if (!$estadoPermitido) {
-        echo json_encode("error");
+        if (!$estadoPermitido) {
+            echo json_encode("error");
+            break;
+        }
+
+        // 2) Permisos
+        $esCalidad = ($_SESSION['sector_id'] == 4);
+
+        // usuarios asignados al proyecto
+        $usuariosAsignados = array_column($datos, 'usu_asignado');
+        $estaAsignado = in_array($_SESSION['usu_id'], $usuariosAsignados);
+
+        $tienePermiso = $esCalidad || $estaAsignado;
+
+        echo json_encode($tienePermiso ? "ok" : "error");
         break;
-    }
-
-    // 2) Permisos
-    $esCalidad = ($_SESSION['sector_id'] == 4);
-
-    // usuarios asignados al proyecto
-    $usuariosAsignados = array_column($datos, 'usu_asignado');
-    $estaAsignado = in_array($_SESSION['usu_id'], $usuariosAsignados);
-
-    $tienePermiso = $esCalidad || $estaAsignado;
-
-    echo json_encode($tienePermiso ? "ok" : "error");
-    break;
 
 
     case 'get_proyectos_eh':
@@ -1581,37 +1581,51 @@ switch ($_GET['proy']) {
                                 <?php echo $val['usu_nom'] ?> <span class="text-muted">(<span id="fecha_descripcion"
                                         class="text-muted fs-12"><?php echo $val['fech_crea'] ?></span>)</span></a>
                         </h6>
-                       <?php
-// Estados donde NUNCA se borra
-$estadoNoEditable = in_array($val['estados_id'], [3, 4]);
+                        <?php
+                        // Estados donde NUNCA se borra
+                        $estadoNoEditable = in_array($val['estados_id'], [3, 4]);
 
-// El usuario que escribió la descripción
-$esAutor = ($_SESSION['usu_id'] == $val['usu_crea']);
+                        // El usuario que escribió la descripción
+                        $esAutor = ($_SESSION['usu_id'] == $val['usu_crea']);
 
-$tienePermiso = !$estadoNoEditable && $esAutor;
+                        $tienePermiso = !$estadoNoEditable && $esAutor;
 
-if ($tienePermiso):
-?>
-    <br>
-    <i id="btn_eliminar_descripcion"
-       title="Eliminar"
-       type="button"
-       onclick="eliminar_descripcion(<?php echo $val['id']; ?>)"
-       class="ri-delete-bin-2-fill ms-3 fs-14 text-danger">
-    </i>
-<?php endif; ?>
+                        if ($tienePermiso):
+                        ?>
+                            <br>
+                            <i id="btn_eliminar_descripcion"
+                                title="Eliminar"
+                                type="button"
+                                onclick="eliminar_descripcion(<?php echo $val['id']; ?>)"
+                                class="ri-delete-bin-2-fill ms-3 fs-14 text-danger">
+                            </i>
+                        <?php endif; ?>
 
 
                     </div>
-                    <p id="sector_descripcion" class="text-muted fs-11" style="margin-left: 1rem;">
+                    <p id="sector_descripcion" class="text-muted fs-11" style="margin-left: 1.5rem;">
                         <?php echo $val['sector_nombre'] ?></p>
                 </div>
             </div>
-            <div class="d-flex">
-                <div class="ms-5" style="display:flex"><strong style="margin-right: 10px;">Nota:</strong>
-                    <p class="fs-20"><?php echo $val['descripcion_proyecto'] ?>
-                </div>
+            <div>
+                <strong style="margin-left:2rem; white-space:nowrap; color:#495057; font-weight: 500;">Nota:</strong><br>
+                <span
+                    style="
+            display:inline-block;
+            max-width:100%;
+            white-space:pre-wrap;
+            word-break:break-word;
+            overflow-wrap:anywhere;
+            vertical-align:top;
+            margin-left:2rem;
+            font-family: monospace;
+        "
+                    class="fs-14 fw-bold"><?php echo $val['descripcion_proyecto']; ?></span>
             </div>
+
+
+
+
 
             <?php if (isset($val['captura_imagen']) && !empty($val['captura_imagen'])) {
             ?>
