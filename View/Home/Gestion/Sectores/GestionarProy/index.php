@@ -85,32 +85,33 @@ if (isset($_SESSION['usu_id'])) {
                                             </div>
                                         </div>
 
-                                        <div class="col-xl-5 bg-success" style="margin-right: 5px; border-radius: 5px;">
+                                        <div class="col-xl-5 bg-success" style="margin-right: 2px; border-radius: 5px;">
                                             <div class="d-flex align-items-center">
                                                 <div class="d-flex align-items-center mt-1">
-                                                    <span style="width: 3.5rem;" id="prioridad" class="badge mx-1" style="width: 3rem;"></span>
                                                     <span style="width: 5rem;" id="titulo_categoria"
-                                                        class="badge bg-light text-dark border border-primary mx-2"></span>
+                                                        class="badge bg-light text-dark border border-primary mx-1"></span>
                                                     <span style="width: 10rem;" id="titulo_subCategoria"
-                                                        class="badge bg-light text-dark border border-primary mx-2"></span>
-                                                    <span
+                                                        class="badge bg-light text-dark border border-primary mx-1"></span>
+                                                    <span style="width: 7rem;"
                                                         class="me-2 badge bg-light text-primary border border-primary">Desde:
                                                         <span id="fech_inicio" class="text-dark"></span>
                                                     </span>
                                                     <span
-                                                        class="me-2 badge bg-light text-primary border border-primary">Hasta:
+                                                        class="me-2 badge bg-light text-primary border border-primary">Hasta: 2025-12-12
                                                         <span id="fech_fin" class="text-dark"></span>
                                                     </span>
                                                 </div>
                                             </div>
 
                                             <div style="display: flex; margin-top: .2rem; margin-bottom: .2rem;">
+                                                <span style="width: 3.5rem;" id="prioridad" class="badge mx-1" style="width: 3rem;"></span>
+
+
                                                 <span id="rechequeo" style="display: none; color:orangered" class="badge ml-1 border border-dark bg-light"></span>
                                                 <span id="proy_recurrencia" style="display: none; color:orangered" class="badge ml-1 border border-dark bg-light"></span>
                                                 <span id="cont_dimensionamiento" class="badge mx-1 text-primary border border-dark bg-light fs-10">Horas: <span class="fw-bold" id="dimensionamiento"></span></span>
                                                 <span id="workshop" style="display: none;" class="badge mx-1 text-light border border-dark bg-info">workshop</span>
                                                 <span class="badge bg-light border border-dark text-dark mx-2 mb-1">Ref: <span id="referencia_proy"></span></span>
-                                                <span class="badge bg-light border border-dark text-dark mx-2 mb-1">Detalle:</span>
                                             </div>
 
                                             <div class="card-body p-0">
@@ -214,7 +215,7 @@ if (isset($_SESSION['usu_id'])) {
                                             <span style="font-size: .75rem; font-weight: 500;"
                                                 class="badge bg-light text-dark mx-2 mt-2 mb-3 d-inline-flex align-items-center gap-1">
                                                 Usuarios Asignados
-                                                <i onclick="agregarUsuario(<?php echo Openssl::get_ssl_decrypt($_GET['p']) ?>)" title="Agregar nuevo usuario al proyecto" type="button"  id="boton_agregar_usuarios_proy"
+                                                <i onclick="agregarUsuario(<?php echo Openssl::get_ssl_decrypt($_GET['p']) ?>)" title="Agregar nuevo usuario al proyecto" type="button" id="boton_agregar_usuarios_proy"
                                                     class="ri-user-add-line text-danger fw-bold fs-5"
                                                     style="cursor: pointer; display: none;"></i>
                                             </span>
