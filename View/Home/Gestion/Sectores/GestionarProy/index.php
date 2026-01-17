@@ -31,7 +31,7 @@ if (isset($_SESSION['usu_id'])) {
             <!-- start page title -->
             <div class="row">
                 <div class="col-12">
-                    <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                    <div class="page-title-box d-sm-flex align-items-center justify-content-between bg-light">
                         <h4 class="mb-sm-0"><span class="badge bg-warning text-dark border border-dark"></span></h4>
                     </div>
                 </div>
@@ -85,19 +85,19 @@ if (isset($_SESSION['usu_id'])) {
                                             </div>
                                         </div>
 
-                                        <div class="col-xl-5 bg-success" style="margin-right: 2px; border-radius: 5px;">
+                                        <div class="col-xl-5 bg-success" style="border:.1rem solid gray;margin-right: 2px; border-radius: 5px;">
                                             <div class="d-flex align-items-center">
                                                 <div class="d-flex align-items-center mt-1">
                                                     <span style="width: 5rem;" id="titulo_categoria"
-                                                        class="badge bg-light text-dark border border-primary mx-1"></span>
+                                                        class="badge bg-light text-dark mx-1"></span>
                                                     <span style="width: 10rem;" id="titulo_subCategoria"
-                                                        class="badge bg-light text-dark border border-primary mx-1"></span>
+                                                        class="badge bg-light text-dark mx-1"></span>
                                                     <span style="width: 7rem;"
-                                                        class="me-2 badge bg-light text-primary border border-primary">Desde:
+                                                        class="me-2 badge bg-light text-primary ">Desde:
                                                         <span id="fech_inicio" class="text-dark"></span>
                                                     </span>
                                                     <span style="width: 7rem;"
-                                                        class="me-2 badge bg-light text-primary border border-primary">Hasta:
+                                                        class="me-2 badge bg-light text-primary ">Hasta:
                                                         <span id="fech_fin" class="text-dark"></span>
                                                     </span>
                                                 </div>
@@ -105,13 +105,11 @@ if (isset($_SESSION['usu_id'])) {
 
                                             <div style="display: flex; margin-top: .2rem; margin-bottom: .2rem;">
                                                 <span style="width: 3.5rem;" id="prioridad" class="badge mx-1" style="width: 3rem;"></span>
-
-
-                                                <span id="rechequeo" style="display: none; color:orangered" class="badge ml-1 border border-dark bg-light"></span>
-                                                <span id="proy_recurrencia" style="display: none; color:orangered" class="badge ml-1 border border-dark bg-light"></span>
-                                                <span id="cont_dimensionamiento" class="badge mx-1 text-primary border border-dark bg-light fs-10">Horas: <span class="fw-bold" id="dimensionamiento"></span></span>
-                                                <span id="workshop" style="display: none;" class="badge mx-1 text-light border border-dark bg-info">workshop</span>
-                                                <span class="badge bg-light border border-dark text-dark mx-2 mb-1">Ref: <span id="referencia_proy"></span></span>
+                                                <span id="rechequeo" style="display: none; color:orangered" class="badge ml-1 bg-light"></span>
+                                                <span id="proy_recurrencia" style="display: none; color:orangered" class="badge ml-1 bg-light"></span>
+                                                <span id="cont_dimensionamiento" class="badge mx-1 text-primary bg-light fs-10">Horas: <span class="fw-bold" id="dimensionamiento"></span></span>
+                                                <span id="workshop" style="display: none;" class="badge mx-1 text-light bg-info">workshop</span>
+                                                <span class="badge bg-light text-dark mx-2 mb-1">Ref: <span id="referencia_proy"></span></span>
                                             </div>
 
                                             <div class="card-body p-0">
@@ -125,10 +123,10 @@ if (isset($_SESSION['usu_id'])) {
                                                             <div class="simplebar-offset" style="right: 0px; bottom: 0px;">
                                                                 <div class="simplebar-content-wrapper" tabindex="0"
                                                                     role="region" aria-label="scrollable content">
-                                                                    <div class="simplebar-content bg-light"
+                                                                    <div class="simplebar-content bg-dark"
                                                                         style="padding: 10px; border-radius: 5px;">
-                                                                        <p style="font-size: .8rem; font-weight: 500; max-height: 160px;  min-height: 160px; overflow: hidden scroll;"
-                                                                            class="text-dark mb-2"
+                                                                        <p style="font-size: .8rem; font-family:monospace; max-height: 160px;  min-height: 160px; overflow: hidden scroll;"
+                                                                            class="text-light mb-2 px-1"
                                                                             id="parrafo_descripcion_proy">
                                                                         </p>
                                                                     </div>
@@ -210,7 +208,7 @@ if (isset($_SESSION['usu_id'])) {
                                         </div>
 
                                     </div>
-                                    <div class="col-xl-2 bg-success" style="max-height: 500px;border-radius: 5px;">
+                                    <div class="col-xl-2 bg-success" style="border:.1rem solid gray;max-height: 500px;border-radius: 5px;">
                                         <div style="min-height: 250px;">
                                             <span style="font-size: .75rem; font-weight: 500;"
                                                 class="badge bg-light text-dark mx-2 mt-2 mb-3 d-inline-flex align-items-center gap-1">
@@ -425,7 +423,7 @@ if (isset($_SESSION['usu_id'])) {
                         .text("");
                     switch (data.prioridad_id) {
                         case 1:
-                            $("#prioridad").addClass("border border-dark bg-light text-success").text(
+                            $("#prioridad").addClass("bg-light   text-success").text(
                                 "Baja");
                             break;
                         case 2:

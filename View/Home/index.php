@@ -47,8 +47,8 @@ if (isset($_SESSION['usu_id'])) {
             <!-- start page title -->
             <div class="row">
                 <div class="col-12">
-                    <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                        <h4 class="mb-sm-0">Inicio</h4>
+                    <div class="page-title-box d-sm-flex align-items-center justify-content-between bg-light bg-light">
+                        <span class="fs-12 badge bg-primary text-light">Inicio</span>
                         <?php if (isset($_SESSION['bienvenido'])): ?>
                             <div id="text_bienvenido" class="alert alert-success text-center justify-content-center"
                                 role="alert">
@@ -67,7 +67,7 @@ if (isset($_SESSION['usu_id'])) {
                 <div class="card-body p-0">
                     <p class="text-center"> <span class="badge bg-light text-primary mt-1">Proyectos para trabajar</span>
                     </p>
-                    <div class="d-flex flex-row flex-nowrap scroll-fina" style="gap: 1rem;"
+                    <div class="d-flex flex-row flex-nowrap scroll-fina border" style="gap: 1rem;"
                         id="cont_get_categorias_x_sector">
 
                         <!-- Las tarjetas se inyectan aquí por AJAX -->

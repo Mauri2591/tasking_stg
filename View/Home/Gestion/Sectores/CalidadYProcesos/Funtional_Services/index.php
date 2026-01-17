@@ -19,7 +19,7 @@ if (isset($_SESSION['usu_id'])) {
             <!-- start page title -->
             <div class="row">
                 <div class="col-12">
-                    <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                    <div class="page-title-box d-sm-flex align-items-center justify-content-between bg-light">
                         <h4 class="mb-sm-0"><span class="badge bg-light text-dark border border-dark">CALIDAD Y PROCESOS</span><span class="badge bg-light border border-dark text-dark mx-1">Funtional Services</span>
                         </h4>
                     </div>

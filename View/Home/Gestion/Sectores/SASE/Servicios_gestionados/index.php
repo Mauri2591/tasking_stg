@@ -19,7 +19,7 @@ if (isset($_SESSION['usu_id'])) {
             <!-- start page title -->
             <div class="row">
                 <div class="col-12">
-                    <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                    <div class="page-title-box d-sm-flex align-items-center justify-content-between bg-light">
                         <h4 class="mb-sm-0"><span class="badge bg-danger text-light">SASE</span><span
                                 class="badge bg-dark text-light border mx-1 border-dark">Servicios Gestionados</span>
                         </h4>

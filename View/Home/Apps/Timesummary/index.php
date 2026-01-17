@@ -15,11 +15,11 @@ if (isset($_SESSION['usu_id'])) {
             <!-- Título -->
             <div class="row">
                 <div class="col-12">
-                    <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                        <h4 class="mb-sm-0">
+                    <div class="page-title-box d-sm-flex align-items-center justify-content-between bg-light">
+                        <span class="fs-12 badge bg-primary text-light">
                             Calendario
                             <span class="badge bg-dark text-light" id="client_id_consultar_proyectos"></span>
-                        </h4>
+                        </span>
                     </div>
                 </div>
             </div>
@@ -34,7 +34,7 @@ if (isset($_SESSION['usu_id'])) {
                 </div>
 
                 <!-- Tabla lateral -->
-                <div class="col-lg-5 border border-light"
+                <div class="col-lg-5"
                     style="
                     background: #fff; 
                     border: 1px solid gainsboro; 

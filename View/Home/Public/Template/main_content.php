@@ -3,7 +3,7 @@
     <div id="layout-wrapper">
         <header id="page-topbar">
             <div class="layout-width">
-                <div class="navbar-header">
+                <div class="navbar-header bg-light">
                     <div class="d-flex">
                         <!-- LOGO -->
                         <div class="navbar-brand-box horizontal-logo mb-4 mt-2">

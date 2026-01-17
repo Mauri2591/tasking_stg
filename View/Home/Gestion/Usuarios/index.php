@@ -19,8 +19,8 @@ if (isset($_SESSION['usu_id'])) {
             <!-- start page title -->
             <div class="row">
                 <div class="col-12">
-                    <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                        <h4 class="mb-sm-0">Gestion - Usuarios</h4>
+                    <div class="page-title-box d-sm-flex align-items-center justify-content-between bg-light">
+                        <span class="fs-12 badge bg-primary text-light">Gestion - Usuarios</span>
                     </div>
                 </div>
             </div>

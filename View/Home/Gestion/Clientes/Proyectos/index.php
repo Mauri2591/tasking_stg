@@ -17,14 +17,19 @@ if (isset($_SESSION['usu_id'])) {
     ?>
     <div class="page-content">
         <div class="container-fluid">
-
             <!-- start page title -->
             <div class="row">
                 <div class="col-12">
-                    <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                        <h4 class="mb-sm-0">Gestion - Proyectos<span class="badge bg-dark text-light"
-                                id="client_id_consultar_proyectos"></span>
-                        </h4>
+                    <div class="page-title-box d-sm-flex align-items-center justify-content-between bg-light">
+                        <?php if ($_SESSION['sector_id'] == "4"): ?>
+                            <span class="fs-12 badge bg-primary text-light">Gestion de Proyectos<span class="badge bg-dark text-light"
+                                    id="client_id_consultar_proyectos"></span>
+                            </span>
+                        <?php else: ?>
+                            <span class="fs-12 badge bg-primary text-light">Proyectos<span class="badge bg-dark text-light"
+                                    id="client_id_consultar_proyectos"></span>
+                            </span>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>

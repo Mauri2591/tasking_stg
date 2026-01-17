@@ -17,8 +17,8 @@ if (isset($_SESSION['usu_id'])) {
             <!-- start page title -->
             <div class="row">
                 <div class="col-12">
-                    <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                        <h4 class="mb-sm-0">Gestion - Integraciones</h4>
+                    <div class="page-title-box d-sm-flex align-items-center justify-content-between bg-light">
+                        <span class="fs-12 badge bg-primary text-light">Gestion - Integraciones</span>
                     </div>
                 </div>
             </div>
@@ -27,7 +27,7 @@ if (isset($_SESSION['usu_id'])) {
         <!-- container-fluid -->
         <div class="col-lg-12">
             <div class="card-body d-flex bg-light">
-                <div class="border-light">
+                <div>
                     <span class="badge bg-warning text-dark">Alta Keys</span>
                     <br>
                     <form style="width: 15rem; margin: 0; padding: 0;" action="" id="form_insert_cliente" method="post">

@@ -15,7 +15,7 @@ if (isset($_SESSION['usu_id'])) {
             <!-- Título -->
             <div class="row">
                 <div class="col-12">
-                    <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                    <div class="page-title-box d-sm-flex align-items-center justify-content-between bg-light">
                         <h4 class="mb-sm-0">
                             <span class="badge bg-warning text-dark border border-dark">ETHICAL HACKING</span>
                         </h4>
