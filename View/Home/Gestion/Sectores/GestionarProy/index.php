@@ -484,7 +484,7 @@ if (isset($_SESSION['usu_id'])) {
                         .attr("title", CatNom);
 
                     $("#titulo_servicio").text(data.titulo);
-                    $("#parrafo_descripcion_proy").text("Nota: "+data.descripcion);
+                    $("#parrafo_descripcion_proy").text("NOTA: "+data.descripcion);
                 }, "json");
 
             $.post("../../../../../Controller/ctrProyectos.php?proy=get_usuarios_x_proy_y_sector", {

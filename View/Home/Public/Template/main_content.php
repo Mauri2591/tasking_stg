@@ -47,7 +47,7 @@
                     </div>
 
                     <div class="dropdown ms-sm-3 header-item topbar-user">
-                            <button style="border:.1rem solid #ccc;" type="button" class="btn px-2 py-0" id="page-header-user-dropdown" data-bs-toggle="dropdown"
+                            <button style="background-color: #eaeaea; border: .1rem solid #e0e0e0;" type="button" class="btn px-2 py-0" id="page-header-user-dropdown" data-bs-toggle="dropdown"
                                 aria-haspopup="true" aria-expanded="false">
                                 <span class="d-flex align-items-center">
                                     <i class=" ri-user-2-fill fs-20 text-info"></i>
