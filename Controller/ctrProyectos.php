@@ -172,18 +172,13 @@ switch ($_GET['proy']) {
         echo $sectionOtro;
         break;
 
-
     case 'get_usuarios_x_sector':
         $usuarios = $proyecto->get_usuarios_x_sector($_POST['sector_id']);
         $asignados = [];
-
         if (!empty($_POST['id_proyecto_gestionado'])) {
             $asignados = $proyecto->get_usuarios_x_proy_y_sector((int) $_POST['id_proyecto_gestionado']);
         }
-
-
         $asignados_ids = array_column($asignados, 'usu_asignado');
-
         $htmlCheckbox = '';
         foreach ($usuarios as $val) {
             $checked = in_array($val['usu_id'], $asignados_ids) ? 'checked' : '';
@@ -192,7 +187,6 @@ switch ($_GET['proy']) {
                 . htmlspecialchars($val['usu_nom'])
                 . '</label>';
         }
-
         echo $htmlCheckbox;
         break;
 

@@ -47,16 +47,17 @@
                     </div>
 
                     <div class="dropdown ms-sm-3 header-item topbar-user">
-                        <button type="button" class="btn" id="page-header-user-dropdown" data-bs-toggle="dropdown"
-                            aria-haspopup="true" aria-expanded="false">
-                            <span class="d-flex align-items-center">
-                                <i class=" ri-user-2-fill fs-20 text-info"></i>
-                                <span class="text-start ms-xl-2">
-                                    <span
-                                        class="d-none d-xl-inline-block ms-1 fw-medium user-name-text"><?php echo $_SESSION['usu_nom'] ?></span>
+                            <button style="border:.1rem solid #ccc;" type="button" class="btn px-2 py-0" id="page-header-user-dropdown" data-bs-toggle="dropdown"
+                                aria-haspopup="true" aria-expanded="false">
+                                <span class="d-flex align-items-center">
+                                    <i class=" ri-user-2-fill fs-20 text-info"></i>
+                                    <span class="text-start ms-xl-2">
+                                        <span
+                                            class="d-none d-xl-inline-block ms-1 fw-medium user-name-text"><?php echo $_SESSION['usu_nom'] ?></span>
+                                    </span>
                                 </span>
-                            </span>
-                        </button>
+                            </button>
+
                         <div class="dropdown-menu dropdown-menu-end">
                             <!-- item-->
                             <a class="dropdown-item" onclick="btnEditPerfil()" href="#"><i
@@ -138,7 +139,7 @@
                                             <a href="<?php echo URL . "View/Home/Gestion/Clientes/" ?>" class="nav-link"
                                                 data-key="t-chat">Clientes</a>
                                         </li>
-                                         <li class="nav-item">
+                                        <li class="nav-item">
                                             <a href="<?php echo URL . "View/Home/Gestion/Integraciones/" ?>"
                                                 class="nav-link" data-key="t-chat">Integraciones</a>
                                         </li>
@@ -146,7 +147,7 @@
                                             <a href="<?php echo URL . "View/Home/Gestion/Clientes/Proyectos/" ?>"
                                                 class="nav-link" data-key="t-chat">Proyectos</a>
                                         </li>
-                                       
+
                                     </ul>
                                 </div>
                             </li>

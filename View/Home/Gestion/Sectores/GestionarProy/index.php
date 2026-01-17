@@ -88,28 +88,28 @@ if (isset($_SESSION['usu_id'])) {
                                         <div class="col-xl-5 bg-success" style="border:.1rem solid gray;margin-right: 2px; border-radius: 5px;">
                                             <div class="d-flex align-items-center">
                                                 <div class="d-flex align-items-center mt-1">
-                                                    <span style="width: 5rem;" id="titulo_categoria"
+                                                    <span style="width: 3.5rem;" id="prioridad" class="badge mx-1" style="width: 3rem;"></span>
+                                                    <span class="badge bg-light text-dark mx-1">Ref: <span id="referencia_proy"></span></span>
+                                                    <span style="width: 10rem;" id="titulo_categoria"
                                                         class="badge bg-light text-dark mx-1"></span>
                                                     <span style="width: 10rem;" id="titulo_subCategoria"
                                                         class="badge bg-light text-dark mx-1"></span>
-                                                    <span style="width: 7rem;"
-                                                        class="me-2 badge bg-light text-primary ">Desde:
-                                                        <span id="fech_inicio" class="text-dark"></span>
-                                                    </span>
-                                                    <span style="width: 7rem;"
-                                                        class="me-2 badge bg-light text-primary ">Hasta:
-                                                        <span id="fech_fin" class="text-dark"></span>
-                                                    </span>
                                                 </div>
                                             </div>
 
                                             <div style="display: flex; margin-top: .2rem; margin-bottom: .2rem;">
-                                                <span style="width: 3.5rem;" id="prioridad" class="badge mx-1" style="width: 3rem;"></span>
+                                                <span style="width: 7rem;"
+                                                    class="me-2 badge bg-light text-primary ">Desde:
+                                                    <span id="fech_inicio" class="text-dark"></span>
+                                                </span>
+                                                <span style="width: 7rem;"
+                                                    class="me-2 badge bg-light text-primary ">Hasta:
+                                                    <span id="fech_fin" class="text-dark"></span>
+                                                </span>
                                                 <span id="rechequeo" style="display: none; color:orangered" class="badge ml-1 bg-light"></span>
                                                 <span id="proy_recurrencia" style="display: none; color:orangered" class="badge ml-1 bg-light"></span>
                                                 <span id="cont_dimensionamiento" class="badge mx-1 text-primary bg-light fs-10">Horas: <span class="fw-bold" id="dimensionamiento"></span></span>
-                                                <span id="workshop" style="display: none;" class="badge mx-1 text-light bg-info">workshop</span>
-                                                <span class="badge bg-light text-dark mx-2 mb-1">Ref: <span id="referencia_proy"></span></span>
+                                                <span id="workshop" style="display: none;" class="badge mx-1 text-light bg-info border border-light">workshop</span>
                                             </div>
 
                                             <div class="card-body p-0">
@@ -218,7 +218,7 @@ if (isset($_SESSION['usu_id'])) {
                                                     style="cursor: pointer; display: none;"></i>
                                             </span>
 
-                                            <ul class="bg-light border border-light"
+                                            <ul class="bg-light"
                                                 style="max-height: 12rem; border-radius: 5px; overflow-y: scroll; font-size: .8rem; font-weight: 500;"
                                                 id="ul_proy_eh">
                                             </ul>
