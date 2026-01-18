@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . "/Config/Config.php";
 ?>
+
 <!doctype html>
 <html lang="en" data-layout="vertical" data-topbar="light" data-sidebar="dark" data-sidebar-size="lg"
     data-sidebar-image="none">
@@ -62,7 +63,7 @@ require_once __DIR__ . "/Config/Config.php";
                     </div>
                 </div> -->
                 <!-- end row -->
-                <div class="row justify-content-center" style="margin-top: 13.5rem;">
+                <div class="row justify-content-center" style="margin-top: 14rem;">
                     <div class="col-md-8 col-lg-6 col-xl-5">
                         <div class="card" style="margin-top: 5rem;">
 
@@ -74,30 +75,30 @@ require_once __DIR__ . "/Config/Config.php";
                                                 style="font-family: monospace; color:#3f0d66; font-weight: bold;"
                                                 class="fs-22">Bienvenido a
                                                 TASKING <i
-                                                    class="  ri-git-repository-line text-success fw-normal fs-20 p-0 m-0"></i></span>
+                                                    class="ri-git-repository-line text-success fw-normal fs-20 p-0 m-0"></i></span>
                                         </marquee>
                                     </div>
-
                                 </div>
+
                                 <div>
                                     <form method="POST" action="Controller/ctrLogin.php">
-
-                                        <div class="mb-3 mt-2">
+                                        <div>
                                             <label for="username" class="form-label fw-bold mb-0"
                                                 style="color:#3f0d66">Correo</label>
                                             <input type="text" class="form-control" name="usu_correo"
                                                 placeholder="Ingrese su email">
                                         </div>
 
-                                        <div class="mb-3">
-                                            <label class="form-label fw-bold mb-0" style="color:#3f0d66"
+                                        <div class="mb-2">
+                                            <label class="form-label fw-bold" style="color:#3f0d66"
                                                 for="password-input">Password</label>
-                                            <div class="position-relative auth-pass-inputgroup mb-3">
+                                            <div class="position-relative auth-pass-inputgroup mb-1">
                                                 <input type="password" class="form-control pe-5"
                                                     placeholder="Ingrese su password" name="usu_pass">
                                             </div>
                                         </div>
-                                        <div class="mt-4">
+
+                                        <div class="mt-1">
                                             <button class="btn btn-success w-100" name="btnLogin" value="ingresar"
                                                 type="submit">Ingresar</button>
                                         </div>
@@ -113,6 +114,7 @@ require_once __DIR__ . "/Config/Config.php";
                                                 <strong> Error </strong><br> Datos no validos!
                                             </div>
                                         <?php endif; ?>
+                                        
                                     </form>
                                 </div>
                             </div>

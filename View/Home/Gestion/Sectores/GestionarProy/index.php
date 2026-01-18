@@ -439,7 +439,7 @@ if (isset($_SESSION['usu_id'])) {
 
                     let subCatNom = data.cats_nom || "";
                     let subCatTruncado = subCatNom.length > 30 ?
-                        subCatNom.substring(0, 27) + "..." :
+                        subCatNom.substring(0, 30) + "..." :
                         subCatNom;
                     $("#titulo_subCategoria")
                         .text(subCatTruncado)
@@ -476,8 +476,8 @@ if (isset($_SESSION['usu_id'])) {
                         }
                     }
                     let CatNom = data.cat_nom || "";
-                    let CatTruncado = CatNom.length > 14 ?
-                        CatNom.substring(0, 12) + ".." :
+                    let CatTruncado = CatNom.length > 30 ?
+                        CatNom.substring(0, 30) + ".." :
                         CatNom;
                     $("#titulo_categoria")
                         .text(CatTruncado)

@@ -30,7 +30,6 @@ class Conexion
         }
     }
 
-    // 🔴 ACÁ EL CAMBIO
     public function get_conexion()
     {
         return $this->conexion;

@@ -1,6 +1,5 @@
 <?php
 require_once __DIR__ . "/../Config/Config.php";
-
 class Login extends Conexion
 {
     public function set_login($usu_correo, $usu_pass)
