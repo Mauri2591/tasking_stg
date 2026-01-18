@@ -206,7 +206,7 @@ switch ($_GET['accion']) {
             $htmlTable .= '
             <br>
             <tr>
-            <td class="px-1 text-center">' . htmlspecialchars($telecom['client_rs']) . '</td>
+            <td class="px-1 text-center">' . htmlspecialchars(strtoupper($telecom['client_rs'])) . '</td>
             <td class="px-1 text-center">TELECOM</td>
             <td class="px-1 text-center bg-light" style="border:.1rem solid gainsboro">-</td>
             <td class="px-1 text-center bg-light" style="border:.1rem solid gainsboro">-</td>
