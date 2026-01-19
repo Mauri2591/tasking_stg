@@ -1598,7 +1598,8 @@ switch ($_GET['proy']) {
 
                     </div>
                     <p id="sector_descripcion" class="text-muted fs-11" style="margin-left: 1.5rem;">
-                        <span class="badge bg-light text-primary"><?php echo $val['sector_nombre'] ?></span></p>
+                        <span class="badge bg-light text-primary"><?php echo $val['sector_nombre'] ?></span>
+                    </p>
                 </div>
             </div>
             <div>
@@ -1883,7 +1884,9 @@ switch ($_GET['proy']) {
                 }
             }
 
-            if ($estado == "FIN SIN IMPLEM" || $estado == "ELIMINADO" || $estado == "CANCELADO" || $estado == "NUEVO" || $estado == "BORRADOR") {
+            if ($_SESSION['sector_id'] == "4" && $estado == "BORRADOR") {
+                $sub_array[] = '<span><i class="ri-subtract-line" style="color:#CCC"></i></span>';
+            } elseif ($_SESSION['sector_id'] != "4" && $estado == "BORRADOR") {
                 $sub_array[] = '<span><i class="ri-subtract-line" style="color:#CCC"></i></span>';
             } else {
                 $sub_array[] = '<a href="' . URL . 'View/Home/Gestion/Sectores/GestionarProy/?p=' .
