@@ -757,7 +757,7 @@ ORDER BY id_proyecto_cantidad_servicios ASC";
     public function get_usuarios_x_proy_y_sector(int $id_proyecto_gestionado)
     {
         $conn = parent::get_conexion();
-        $sql = "SELECT 
+        $sql = "SELECT DISTINCT
     tm_usuario.usu_nom,
     usuario_proyecto.usu_asignado,
     sectores.sector_nombre,
@@ -770,7 +770,8 @@ LEFT JOIN tm_usuario
     ON usuario_proyecto.usu_asignado = tm_usuario.usu_id
 LEFT JOIN sectores 
     ON tm_usuario.sector_id = sectores.sector_id
-WHERE proyecto_gestionado.id = :id_proyecto_gestionado";
+WHERE proyecto_gestionado.id = :id_proyecto_gestionado
+";
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(':id_proyecto_gestionado', $id_proyecto_gestionado, PDO::PARAM_INT);
         $stmt->execute();
@@ -1290,25 +1291,26 @@ ORDER BY id_proyecto_cantidad_servicios ASC";
         $stmt->execute();
     }
 
-    public function insert_usuarios_proyecto(int $id_proyecto_gestionado, $usu_asignado)
-    {
-        $conn = parent::get_conexion();
-        $sql = "INSERT INTO usuario_proyecto (id_proyecto_gestionado, usu_asignado)
-            VALUES (:id_proyecto_gestionado, :usu_asignado)";
-        $stmt = $conn->prepare($sql);
-
-        $stmt->bindValue(':id_proyecto_gestionado', $id_proyecto_gestionado, PDO::PARAM_INT);
-
-        // 👇 Bloque nuevo
-        if (is_null($usu_asignado) || $usu_asignado === '') {
-            $stmt->bindValue(':usu_asignado', null, PDO::PARAM_NULL);
-        } else {
-            $stmt->bindValue(':usu_asignado', $usu_asignado, PDO::PARAM_INT);
-        }
-
-        $stmt->execute();
+   public function insert_usuarios_proyecto(int $id_proyecto_gestionado, $usu_asignado)
+{
+    if (empty($usu_asignado)) {
+        return;
     }
-
+    $conn = parent::get_conexion();
+    $sql = "INSERT INTO usuario_proyecto (id_proyecto_gestionado, usu_asignado)
+        SELECT :id_proyecto_gestionado, :usu_asignado
+        WHERE NOT EXISTS (
+            SELECT 1
+            FROM usuario_proyecto
+            WHERE id_proyecto_gestionado = :id_proyecto_gestionado
+              AND usu_asignado = :usu_asignado
+        )
+    ";
+    $stmt = $conn->prepare($sql);
+    $stmt->bindValue(':id_proyecto_gestionado', $id_proyecto_gestionado, PDO::PARAM_INT);
+    $stmt->bindValue(':usu_asignado', (int)$usu_asignado, PDO::PARAM_INT);
+    $stmt->execute();
+}
     public function insertar_usuarios_a_recurrente(int $id_proyecto_gestionado, $usu_asignado)
     {
         $conn = parent::get_conexion();
@@ -2205,11 +2207,11 @@ ORDER BY pcs.id DESC";
             WHERE id_proyecto_cantidad_servicios = :id_proyecto_cantidad_servicios
         )
         LIMIT 1";
-                $stmt = $conn->prepare($sql);
-                $stmt->bindValue(":id_proyecto_cantidad_servicios", $id_proyecto_cantidad_servicios, PDO::PARAM_INT);
-                $stmt->execute();
-                return $stmt->fetch(PDO::FETCH_ASSOC);
-            }
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue(":id_proyecto_cantidad_servicios", $id_proyecto_cantidad_servicios, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
 
     //Con esto traigo el primer id de proyecto_recurrente para actualizar activo='SI' de proyecto_recurrente
     public function get_primer_id_proyecto_recurrencia($id_proyecto_cantidad_servicios)
