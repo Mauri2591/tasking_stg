@@ -1572,7 +1572,7 @@ switch ($_GET['proy']) {
                     <div style="display:flex">
                         <h6 id="colaborador_descripcion" class="mb-1"><a>
                                 <i class="ri-add-circle-fill fs-14 text-secondary"></i>
-                                <?php echo $val['usu_nom'] ?> <span class="text-muted">(<span id="fecha_descripcion"
+                                <span style="font-weight: 600;"><?php echo $val['usu_nom'] ?></span> <span class="text-muted">(<span id="fecha_descripcion"
                                         class="text-muted fs-12"><?php echo $val['fech_crea'] ?></span>)</span></a>
                         </h6>
                         <?php
