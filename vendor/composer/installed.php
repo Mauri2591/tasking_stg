@@ -5,7 +5,7 @@
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => 'a5673bcb3946857ed107f179b9c4c50e8f14ed38',
+        'reference' => '62bc405a33aa13e01c21662e1777bacc0ff0756c',
         'name' => '__root__',
         'dev' => true,
     ),
@@ -16,7 +16,7 @@
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => 'a5673bcb3946857ed107f179b9c4c50e8f14ed38',
+            'reference' => '62bc405a33aa13e01c21662e1777bacc0ff0756c',
             'dev_requirement' => false,
         ),
         'composer/pcre' => array(
@@ -80,6 +80,15 @@
             'install_path' => __DIR__ . '/../markbaker/matrix',
             'aliases' => array(),
             'reference' => '728434227fe21be27ff6d86621a1b13107a2562c',
+            'dev_requirement' => false,
+        ),
+        'phpmailer/phpmailer' => array(
+            'pretty_version' => 'v7.0.2',
+            'version' => '7.0.2.0',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../phpmailer/phpmailer',
+            'aliases' => array(),
+            'reference' => 'ebf1655bd5b99b3f97e1a3ec0a69e5f4cd7ea088',
             'dev_requirement' => false,
         ),
         'phpoffice/math' => array(

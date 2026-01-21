@@ -4,6 +4,7 @@
         "vlucas/phpdotenv": "^5.6",
         "ezyang/htmlpurifier": "^4.18",
         "phpoffice/phpspreadsheet": "^5.2",
-        "phpoffice/phpword": "^1.4"
+        "phpoffice/phpword": "^1.4",
+        "phpmailer/phpmailer": "^7.0"
     }
 }

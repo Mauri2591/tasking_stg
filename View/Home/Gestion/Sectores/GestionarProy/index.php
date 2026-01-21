@@ -233,7 +233,9 @@ if (isset($_SESSION['usu_id'])) {
 
                                             </li>
                                         </ul>
-                                        <section class="p-2 mt-2" id="sect_descrip">
+
+
+                                        <section class="p-2 mt-2" style="display: none;" id="sect_descrip">
                                             <textarea name="descripcion_proyecto" id="descripcion_proyecto"
                                                 class="d-none"></textarea>
 
@@ -268,8 +270,8 @@ if (isset($_SESSION['usu_id'])) {
                                                 <button id="btn_finalizar_proyecto"
                                                     class="btn btn-sm btn-success text-light">Finalizar</button>
                                             </section>
-
                                         </section>
+                                        
                                         <section id="cont_usuario_finalizador" style="font-size: 11px; display: none;"
                                             class="ms-2 badge bg-dark text-success border border-success">
 
@@ -308,6 +310,9 @@ if (isset($_SESSION['usu_id'])) {
         var session_usu_id =
             "<?php echo isset($_SESSION['usu_id']) ? $_SESSION['usu_id'] : "" ?>";
 
+        var habilitar_envio_correo = false; // ACA HABILITO CUANDO ME DEN LA CUENTA PARA ENVÍO DE EMAIL
+
+
         document.addEventListener("DOMContentLoaded", function() {
             let btn_guardar_descripcion = document.getElementById("btn_guardar_descripcion");
 
@@ -322,8 +327,6 @@ if (isset($_SESSION['usu_id'])) {
                 },
                 "html"
             );
-
-
 
             $.post("../../../../../Controller/ctrProyectos.php?proy=validar_boton_mostrar_agregar_usuario_proy", {
                 id_proyecto_gestionado: id_proyecto_gestionado
@@ -374,10 +377,7 @@ if (isset($_SESSION['usu_id'])) {
                     }
                 }, "json");
             }
-
             validar_boton_usuario_asignado_y_calidad()
-
-
 
             $.post("../../../../../Controller/ctrProyectos.php?proy=get_datos_proyecto_gestionado", {
                     id: id_proyecto_gestionado
@@ -484,7 +484,7 @@ if (isset($_SESSION['usu_id'])) {
                         .attr("title", CatNom);
 
                     $("#titulo_servicio").text(data.titulo);
-                    $("#parrafo_descripcion_proy").text("NOTA: "+data.descripcion);
+                    $("#parrafo_descripcion_proy").text("NOTA: " + data.descripcion);
                 }, "json");
 
             $.post("../../../../../Controller/ctrProyectos.php?proy=get_usuarios_x_proy_y_sector", {
@@ -759,6 +759,52 @@ if (isset($_SESSION['usu_id'])) {
                 });
             });
 
+            function enviarCorreoFinalizacion(id_proyecto_gestionado) {
+                if (habilitar_envio_correo == true) {
+                    return $.post(
+                        URL + "/Controller/ctrCorreo.php?correo=enviar", {
+                            id: id_proyecto_gestionado
+                        }
+                    );
+                } else {
+                    return false;
+                }
+
+            }
+
+            function swalEnviandoCorreo() {
+                if (habilitar_envio_correo == true) {
+                    Swal.fire({
+                        title: 'Finalizando proyecto',
+                        html: 'Enviando correo de notificación a Calidad...',
+                        allowOutsideClick: false,
+                        allowEscapeKey: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+                } else {
+                    return false;
+                }
+
+            }
+
+            function finalizarProyectoAjax(id) {
+                $.post(
+                    "../../../../../Controller/ctrProyectos.php?proy=finalizar_proyecto", {
+                        id_proyecto_gestionado: id,
+                        estados_id: 3
+                    }
+                );
+
+                $.post(
+                    "../../../../../Controller/ctrProyectos.php?proy=finalizar_proyecto_tabla_estados_proyecto", {
+                        id_proyecto_gestionado: id,
+                        estados_id: 3
+                    }
+                );
+            }
+
 
             function finalizar_proyecto(id_proyecto_gestionado) {
                 btn_finalizar_proyecto.addEventListener("click", function() {
@@ -767,111 +813,98 @@ if (isset($_SESSION['usu_id'])) {
                         title: "¿Desea finalizar este Proyecto?",
                         text: 'Presione OK para continuar',
                         showCancelButton: true,
-                        showConfirmButton: true
+                        confirmButtonText: 'OK'
                     }).then((result) => {
-                        if (result.isConfirmed) {
 
-                            $.post("../../../../../Controller/ctrProyectos.php?proy=update_proyecto_DesarrolloTasking", {
-                                    id_proyecto_gestionado: id_proyecto_gestionado
-                                },
-                                function(data, textStatus, jqXHR) {
+                        if (!result.isConfirmed) return;
 
-                                },
-                                "json"
-                            );
+                        $.post("../../../../../Controller/ctrProyectos.php?proy=update_proyecto_DesarrolloTasking", {
+                            id_proyecto_gestionado
+                        });
 
-                            $.post("../../../../../Controller/ctrProyectos.php?proy=get_datos_proyecto_gestionado", {
-                                id: id_proyecto_gestionado
-                            }, function(data) {
+                        $.post("../../../../../Controller/ctrProyectos.php?proy=get_datos_proyecto_gestionado", {
+                            id: id_proyecto_gestionado
+                        }, function(data) {
+                            const continuar = () => {
+                                finalizarProyectoAjax(id_proyecto_gestionado);
+                                if (habilitar_envio_correo == true) {
+                                    swalEnviandoCorreo();
+                                    enviarCorreoFinalizacion(id_proyecto_gestionado)
+                                        .done(function(resp) {
+                                            if (typeof resp === 'string') {
+                                                resp = JSON.parse(resp);
+                                            }
+                                            if (resp.status === 'OK') {
+                                                Swal.fire({
+                                                    icon: 'success',
+                                                    title: 'Proyecto finalizado',
+                                                    text: 'Proyecto cerrado y correo enviado correctamente',
+                                                    timer: 1600,
+                                                    showConfirmButton: false
+                                                });
+                                                setTimeout(() => location.reload(), 1600);
+                                            } else {
+                                                Swal.fire({
+                                                    icon: 'error',
+                                                    title: 'Correo no enviado',
+                                                    html: `<p>El proyecto fue finalizado correctamente, pero no se pudo enviar el correo.</p>`,
+                                                    confirmButtonText: 'Ok'
+                                                }).then(() => location.reload());
+                                                console.log(resp.error);
 
-                                if (data.fech_fin == null || data.fech_fin == '') {
-                                    Swal.fire({
-                                        icon: 'info',
-                                        title: "El proyecto no posee FECHA DE FINALIZACION",
-                                        text: 'Presiona OK y se le asignará la de hoy',
-                                        showCancelButton: true,
-                                        showConfirmButton: true
-                                    }).then((resultFecha) => {
-                                        if (resultFecha.isConfirmed) {
-                                            const today = new Date();
-                                            const fechaHoy = today.getFullYear() +
-                                                "-" +
-                                                String(today.getMonth() + 1)
-                                                .padStart(2, '0') + "-" +
-                                                String(today.getDate()).padStart(2,
-                                                    '0');
-
-                                            $.post("../../../../../Controller/ctrProyectos.php?proy=asignar_fecha_proyecto_finalizado_sin_fecha_fin", {
-                                                id: data.id,
-                                                fech_fin: fechaHoy
-                                            }, function(resp) {
-                                                if (resp.Status === "OK") {
-                                                    finalizarProyectoAjax(
-                                                        id_proyecto_gestionado
-                                                    );
-                                                    $.post("../../../../../../Controller/ctrProyectos.php?proy=finalizar_proyecto", {
-                                                            estados_id: 3,
-                                                            id_proyecto_gestionado: id_proyecto_gestionado
-                                                        },
-                                                        function(data,
-                                                            textStatus,
-                                                            jqXHR) {},
-                                                        "json"
-                                                    );
-                                                } else {
-                                                    Swal.fire({
-                                                        icon: 'error',
-                                                        title: "Error",
-                                                        text: "No se pudo guardar la fecha. Intente nuevamente.",
-                                                    });
-                                                }
-                                            }, "json").fail(function(err) {
-                                                console.log(err);
-
+                                            }
+                                        })
+                                        .fail(function() {
+                                            Swal.fire({
+                                                icon: 'error',
+                                                title: 'Error inesperado',
+                                                text: 'No se pudo contactar al servidor de correo'
                                             });
-                                        }
-                                    });
+                                        });
                                 } else {
-                                    finalizarProyectoAjax(id_proyecto_gestionado);
+                                    Swal.fire({
+                                        icon: 'success',
+                                        title: 'Bien',
+                                        text: 'Proyecto finalizado correctamente',
+                                        timer: 1600,
+                                        showConfirmButton: false
+                                    });
+                                    setTimeout(() => location.reload(), 1600);
                                 }
-                            }, "json").fail(function(err) {
-                                console.error(err);
-                            });
-                        }
+
+                            };
+                            if (!data.fech_fin) {
+                                Swal.fire({
+                                    icon: 'info',
+                                    title: 'No posee fecha fin',
+                                    text: '¿Asignar fecha de hoy?',
+                                    showCancelButton: true
+                                }).then(res => {
+                                    if (!res.isConfirmed) return;
+                                    const today = new Date();
+                                    const fechaHoy =
+                                        today.getFullYear() + '-' +
+                                        String(today.getMonth() + 1).padStart(2, '0') + '-' +
+                                        String(today.getDate()).padStart(2, '0');
+                                    $.post(
+                                        "../../../../../Controller/ctrProyectos.php?proy=asignar_fecha_proyecto_finalizado_sin_fecha_fin", {
+                                            id: data.id,
+                                            fech_fin: fechaHoy
+                                        },
+                                        (resp) => resp.Status === "OK" && continuar(),
+                                        "json"
+                                    );
+                                });
+                            } else {
+                                continuar();
+                            }
+
+                        }, "json");
+
                     });
                 });
-
-                function finalizarProyectoAjax(id) {
-                    console.log("Finalizando proyecto con ID:", id);
-
-                    $.post("../../../../../Controller/ctrProyectos.php?proy=finalizar_proyecto", {
-                        estados_id: 3,
-                        id_proyecto_gestionado: id
-                    });
-
-                    $.post("../../../../../Controller/ctrProyectos.php?proy=finalizar_proyecto_tabla_estados_proyecto", {
-                        id_proyecto_gestionado: id,
-                        estados_id: 3
-                    });
-
-                    Swal.fire({
-                        icon: 'success',
-                        title: "Bien",
-                        text: 'Proyecto finalizado correctamente!',
-                        showCancelButton: false,
-                        showConfirmButton: false,
-                        timer: 1100
-                    });
-
-                    $('#table_proyectos_abiertos_eh_pentest').DataTable().ajax.reload(null, false);
-                    $('#table_proyectos_realizados_eh_pentest').DataTable().ajax.reload(null, false);
-
-                    setTimeout(() => {
-                        window.location.reload();
-                    }, 1100);
-                }
             }
-            finalizar_proyecto(id_proyecto_gestionado)
+            finalizar_proyecto(id_proyecto_gestionado);
         });
 
         function descargarPipeline(id) {
@@ -891,23 +924,19 @@ if (isset($_SESSION['usu_id'])) {
 
         function agregarUsuario() {
             $("#ModalAgregarUsuarioProy").modal("show");
-
             $.post("../../../../../Controller/ctrProyectos.php?proy=get_sector_x_proy", {
                     id: id_proyecto_gestionado
                 },
                 function(data, textStatus, jqXHR) {
-
                     let SECTOR_ID = data.sector_id;
                     $.post("../../../../../Controller/ctrProyectos.php?proy=get_usuarios_x_sector_agregar_a_proy", {
                             sector_id: SECTOR_ID
                         },
                         function(data, textStatus, jqXHR) {
                             $("#combo_usuarios_agregar_proy").html(data)
-
                         },
                         "html"
                     );
-
                 },
                 "json"
             );
@@ -926,9 +955,7 @@ if (isset($_SESSION['usu_id'])) {
 
             setTimeout(() => {
                 $("#ModalAgregarUsuarioProy").modal("hide");
-
             }, 1000);
-
             Swal.fire({
                 icon: "success",
                 title: "Bien",
