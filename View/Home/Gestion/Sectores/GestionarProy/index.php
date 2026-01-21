@@ -310,7 +310,7 @@ if (isset($_SESSION['usu_id'])) {
         var session_usu_id =
             "<?php echo isset($_SESSION['usu_id']) ? $_SESSION['usu_id'] : "" ?>";
 
-        var habilitar_envio_correo = true; // ACA HABILITO CUANDO ME DEN LA CUENTA PARA ENVÍO DE EMAIL
+        var habilitar_envio_correo = false; // ACA HABILITO CUANDO ME DEN LA CUENTA PARA ENVÍO DE EMAIL
 
 
         document.addEventListener("DOMContentLoaded", function() {
