@@ -2042,7 +2042,6 @@ TXT;
 
 
     case 'get_datos_ver_recurrente':
-        echo "entrando al case";
         $datos = $proyecto->get_datos_ver_recurrente($_POST['id_proyecto_cantidad_servicios']);
         if (!$datos) {
             echo "<span class='text-muted'>No hay datos</span>";
