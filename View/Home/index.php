@@ -155,7 +155,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             data: {
                                 labels: labels,
                                 datasets: [{
-                                    label: 'Proyectos finalizados',
+                                    label: 'Proyectos cerrados',
                                     data: values,
                                     borderWidth: 1,
                                     borderColor: 'rgb(0, 225, 255)',
@@ -277,7 +277,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             data: {
                                 labels: labels,
                                 datasets: [{
-                                    label: 'Proyectos finalizados',
+                                    label: 'Proyectos cerrados',
                                     data: values,
                                     borderWidth: 1,
                                     borderColor: 'rgb(0, 225, 255)',
@@ -311,7 +311,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             data: {
                                 labels: labels,
                                 datasets: [{
-                                    label: 'Total proyectos finalizados',
+                                    label: 'Total proyectos cerrados',
                                     data: values,
                                     borderWidth: 1
                                 }]
