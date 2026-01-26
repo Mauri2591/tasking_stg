@@ -1808,30 +1808,38 @@ WHERE tm_usuario.sector_id = ?
 
 
     public function grafico_get_total_servicios($sector_id)
-    {
-        $conn = parent::get_conexion();
-        if ($sector_id == 4) {
-            $sql = "SELECT 
+{
+    $conn = parent::get_conexion();
+
+    $sql = "SELECT 
                 tm_categoria.cat_nom,
-                COUNT(proyecto_gestionado.id) AS total
-            FROM proyecto_gestionado
-            INNER JOIN tm_categoria ON proyecto_gestionado.cat_id = tm_categoria.cat_id
-            WHERE proyecto_gestionado.estados_id = 4
-            GROUP BY tm_categoria.cat_nom
-            ORDER BY total DESC";
-            $stmt = $conn->prepare($sql);
-        } else {
-            $sql = "SELECT COUNT(proyecto_gestionado.id) AS total, tm_categoria.cat_nom 
-            FROM proyecto_gestionado 
-            INNER JOIN tm_categoria ON proyecto_gestionado.cat_id=tm_categoria.cat_id 
-            WHERE proyecto_gestionado.sector_id=:sector_id AND proyecto_gestionado.estados_id=4 
-            GROUP BY proyecto_gestionado.cat_id";
-            $stmt = $conn->prepare($sql);
-            $stmt->bindValue(':sector_id', $sector_id, PDO::PARAM_INT);
-        }
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+                sectores.sector_nombre,
+                COUNT(pg.id) AS total
+            FROM proyecto_gestionado pg
+            INNER JOIN tm_categoria 
+                ON pg.cat_id = tm_categoria.cat_id
+            INNER JOIN sectores 
+                ON pg.sector_id = sectores.sector_id
+            WHERE pg.estados_id = 4";
+
+    // 👉 Si NO es Calidad (4), filtro por sector
+    if ($sector_id != 4) {
+        $sql .= " AND pg.sector_id = :sector_id";
     }
+
+    $sql .= " GROUP BY pg.cat_id, pg.sector_id
+              ORDER BY total DESC";
+
+    $stmt = $conn->prepare($sql);
+
+    if ($sector_id != 4) {
+        $stmt->bindValue(':sector_id', $sector_id, PDO::PARAM_INT);
+    }
+
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
 
 
     public function grafico_get_total_servicios_por_sector()
