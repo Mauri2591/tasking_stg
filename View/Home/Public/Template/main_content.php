@@ -313,6 +313,11 @@
                                             </li>
 
                                             <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/EthicalHacking/Consultoria/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Consultoria</a>
+                                            </li>
+
+                                            <li class="nav-item">
                                                 <a href="<?php echo URL . "View/Home/Gestion/Sectores/EthicalHacking/DesarrolloTasking/"; ?>"
                                                     class="nav-link" data-key="t-mailbox">Desarrollo Tasking</a>
                                             </li>
