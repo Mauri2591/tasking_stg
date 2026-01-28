@@ -1821,26 +1821,19 @@ WHERE tm_usuario.sector_id = ?
             INNER JOIN sectores 
                 ON pg.sector_id = sectores.sector_id
             WHERE pg.estados_id = 4";
-
-    // 👉 Si NO es Calidad (4), filtro por sector
+    //Si NO es Calidad (4), filtro por sector
     if ($sector_id != 4) {
         $sql .= " AND pg.sector_id = :sector_id";
     }
-
     $sql .= " GROUP BY pg.cat_id, pg.sector_id
               ORDER BY total DESC";
-
     $stmt = $conn->prepare($sql);
-
     if ($sector_id != 4) {
         $stmt->bindValue(':sector_id', $sector_id, PDO::PARAM_INT);
     }
-
     $stmt->execute();
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
-
-
 
     public function grafico_get_total_servicios_por_sector()
     {
