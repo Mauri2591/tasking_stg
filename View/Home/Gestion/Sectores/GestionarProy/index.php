@@ -40,14 +40,13 @@ if (isset($_SESSION['usu_id'])) {
         </div>
 
         <?php
-        foreach ($_SESSION as $key => $val) {
-            echo '<pre>'.$key.':'.$val.'</pre>';
-        }
-
-        if ($_SESSION['usu_id'] == "104") {
+        if ($_SESSION['usu_id'] == "104") { //Usuario testing mio
+            foreach ($_SESSION as $key => $val) {
+                echo '<pre>' . $key . ':' . $val . '</pre>';
+            }
             $param_p = Openssl::get_ssl_decrypt($_GET['p']);
             echo '<pre>id_proyecto_cantidad_servicios: <strong style="font-size:1rem">' . $param_p . '</strong></pre>';
-              $param_pg = Openssl::get_ssl_decrypt($_GET['pg']);
+            $param_pg = Openssl::get_ssl_decrypt($_GET['pg']);
             echo '<pre>id_proyecto_gestionado: <strong style="font-size:1rem">' . $param_pg . '</strong></pre>';
         }
 
