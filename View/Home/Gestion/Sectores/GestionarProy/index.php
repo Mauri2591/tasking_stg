@@ -38,6 +38,21 @@ if (isset($_SESSION['usu_id'])) {
             </div>
             <!-- end page title -->
         </div>
+
+        <?php
+        foreach ($_SESSION as $key => $val) {
+            echo '<pre>'.$key.':'.$val.'</pre>';
+        }
+
+        if ($_SESSION['usu_id'] == "104") {
+            $param_p = Openssl::get_ssl_decrypt($_GET['p']);
+            echo '<pre>id_proyecto_cantidad_servicios: <strong style="font-size:1rem">' . $param_p . '</strong></pre>';
+              $param_pg = Openssl::get_ssl_decrypt($_GET['pg']);
+            echo '<pre>id_proyecto_gestionado: <strong style="font-size:1rem">' . $param_pg . '</strong></pre>';
+        }
+
+        ?>
+
         <!-- container-fluid -->
         <div class="col-lg-12">
             <div class="card-body d-flex bg-light p-0">
@@ -62,6 +77,7 @@ if (isset($_SESSION['usu_id'])) {
                                                 <div class="text-center" id="cont_ip"></div>
                                             </div>
                                         </div>
+
 
                                         <div class="col-ms-4 col text-center">
                                             <span type="button"
@@ -271,7 +287,7 @@ if (isset($_SESSION['usu_id'])) {
                                                     class="btn btn-sm btn-success text-light">Finalizar</button>
                                             </section>
                                         </section>
-                                        
+
                                         <section id="cont_usuario_finalizador" style="font-size: 11px; display: none;"
                                             class="ms-2 badge bg-dark text-success border border-success">
 
