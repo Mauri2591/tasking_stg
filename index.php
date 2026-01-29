@@ -100,7 +100,7 @@ require_once __DIR__ . "/Config/Config.php";
                                         </div>
 
                                         <div class="mb-2">
-                                            <input type="text" class="form-control pe-5"
+                                            <input type="hidden" hidden class="form-control pe-5"
                                                 name="token_csrf" 
                                                 <?php $_SESSION['token_csrf']= bin2hex(random_bytes(32));?>
                                                 value="<?php echo $_SESSION['token_csrf'] ?? '' ?>">
