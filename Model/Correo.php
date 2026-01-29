@@ -58,39 +58,49 @@ class Correo extends Conexion
     }
 
     public function enviarCorreoProyectoFinalizado($id)
-    {
-        $datos = $this->getDatosParaCorreo($id);
-        if (!$datos) {
-            return 'No se encontraron datos del proyecto';
-        }
-        $mail = new PHPMailer(true);
-        try {
-            $mail->isSMTP();
-            $mail->Host       = $_ENV['SMTP_HOST'];
-            $mail->SMTPAuth   = true;
-            $mail->Username   = $_ENV['SMTP_USER'];
-            $mail->Password   = $_ENV['SMTP_PASS'];
-            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-            $mail->Port       = (int) $_ENV['SMTP_PORT'];
-            $mail->CharSet = 'UTF-8';
-            $mail->setFrom($_ENV['SMTP_USER'], 'Tasking');
-            $mail->addAddress('mrgonzalez@personal.com.ar');
-            $mail->isHTML(true);
-            $mail->Subject = 'Proyecto finalizado - [CLIENTE] ' . $datos->cliente;
-            $mail->Body = "
-                <p>Estimados: <br><br>El presente proyecto se encuentra finalizado correctamente</p>
-                <p><b>Título: </b> {$datos->titulo}</p>
-                <p><b>Ref: </b> {$datos->refProy}</p>
-                <p><b>Sector: </b> {$datos->sector}</p>
-                <p><b>Producto: </b>{$datos->producto}</p>
-                <p><b>Tipo: </b>{$datos->tipo}</p>
-                <p><b>Usuarios: </b><br>{$datos->usuarios}</p>
-                <p>Los informes se encuentran cargados en <strong>Tasking_stg</strong>.<br>Saludos.</p>
-                ";   
-            $mail->send();
-            return true;
-        } catch (Exception $e) {
-            return $mail->ErrorInfo; // 👈 MOSTRAR ERROR REAL
-        }
+{
+    $datos = $this->getDatosParaCorreo($id);
+    if (!$datos) {
+        return 'No se encontraron datos del proyecto';
     }
+    $mail = new PHPMailer(true);
+    try {
+        $mail->isSMTP();
+        $mail->Host       = $_ENV['SMTP_HOST'];
+        $mail->SMTPAuth   = true;
+        $mail->Username   = $_ENV['SMTP_USER'];      // usuario de red
+        $mail->Password   = $_ENV['SMTP_PASS'];      // clave de red
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+        $mail->Port       = (int)$_ENV['SMTP_PORT'];
+        $mail->SMTPOptions = [
+            'ssl' => [
+                'verify_peer'       => false,
+                'verify_peer_name'  => false,
+                'allow_self_signed' => true,
+            ],
+        ];
+        $mail->CharSet = 'UTF-8';
+        // FROM correcto
+        $mail->setFrom('vulma-mssp@teco.com.ar', 'Tasking MSSP');
+        $mail->addAddress('mssp-calidad@personal.com.ar');
+        $mail->isHTML(true);
+        $mail->Subject = 'Proyecto finalizado - [CLIENTE] ' . $datos->cliente;
+        $mail->Body = "<p>Estimados,<br><br>
+            El presente proyecto se encuentra finalizado correctamente.</p>
+            <p><b>Título:</b> {$datos->titulo}</p>
+            <p><b>Ref:</b> {$datos->refProy}</p>
+            <p><b>Sector:</b> {$datos->sector}</p>
+            <p><b>Producto:</b> {$datos->producto}</p>
+            <p><b>Tipo:</b> {$datos->tipo}</p>
+            <p><b>Usuarios:</b><br>{$datos->usuarios}</p>
+            <p>Los informes se encuentran cargados en <strong>Tasking_stg</strong>.</p>
+            <br>
+            <p>Saludos.</p>";
+        $mail->send();
+        return true;
+
+    } catch (Exception $e) {
+        return 'ERROR SMTP: ' . $mail->ErrorInfo;
+    }
+}
 }
