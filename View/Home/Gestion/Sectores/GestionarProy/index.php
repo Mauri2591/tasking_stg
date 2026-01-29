@@ -49,7 +49,6 @@ if (isset($_SESSION['usu_id'])) {
             $param_pg = Openssl::get_ssl_decrypt($_GET['pg']);
             echo '<pre>id_proyecto_gestionado: <strong style="font-size:1rem">' . $param_pg . '</strong></pre>';
         }
-
         ?>
 
         <!-- container-fluid -->

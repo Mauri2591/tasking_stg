@@ -31,8 +31,8 @@ document.addEventListener("DOMContentLoaded", function () {
             ocultarError('err_pass', 'err');
             break;
 
-        case 'csrf':
-            ocultarError('token_csrf', 'err');
+        case 'err_csrf':
+            ocultarError('err_csrf', 'err');
             break;
     }
 });

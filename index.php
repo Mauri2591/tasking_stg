@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__."/Config/Conexion.php";
 require_once __DIR__ . "/Config/Config.php";
 ?>
 
@@ -98,6 +99,13 @@ require_once __DIR__ . "/Config/Config.php";
                                             </div>
                                         </div>
 
+                                        <div class="mb-2">
+                                            <input type="text" class="form-control pe-5"
+                                                name="token_csrf" 
+                                                <?php $_SESSION['token_csrf']= bin2hex(random_bytes(32));?>
+                                                value="<?php echo $_SESSION['token_csrf'] ?? '' ?>">
+                                        </div>
+
                                         <div class="mt-1">
                                             <button class="btn btn-success w-100" name="btnLogin" value="ingresar"
                                                 type="submit">Ingresar</button>
@@ -114,7 +122,14 @@ require_once __DIR__ . "/Config/Config.php";
                                                 <strong> Error </strong><br> Datos no validos!
                                             </div>
                                         <?php endif; ?>
-                                        
+
+                                        <?php if (isset($_GET['err']) && $_GET['err'] === "err_csrf"): ?>
+                                            <div id="err_csrf" class="alert text-center mt-2 alert-warning alert-borderless"
+                                                role="alert">
+                                                <strong> Error </strong><br> Token csrf invalido!
+                                            </div>
+                                        <?php endif; ?>
+
                                     </form>
                                 </div>
                             </div>

@@ -20,15 +20,25 @@ class Login extends Conexion
             header("Location:" . URL . "?err=err_pass");
             exit();
         } else {
-            session_regenerate_id();
-            $_SESSION['usu_id'] = $resul['usu_id'];
-            $_SESSION['usu_nom'] = $resul['usu_nom'];
-            $_SESSION['rol_id'] = $resul['rol_id'];
-            $_SESSION['sector_id'] = $resul['sector_id'];
-            $_SESSION['sector_nombre'] = $resul['sector_nombre'];
-            $_SESSION['bienvenido'] = "Bienvenido " . $resul['usu_nom'];
-            header("Location:" . URL . "View/Home/");
-            exit;
+            if (!empty($_SESSION['token_csrf'])) {
+                if (hash_equals($_SESSION['token_csrf'], $_POST['token_csrf'])) {
+                    session_regenerate_id();
+                    $_SESSION['usu_id'] = $resul['usu_id'];
+                    $_SESSION['usu_nom'] = $resul['usu_nom'];
+                    $_SESSION['rol_id'] = $resul['rol_id'];
+                    $_SESSION['sector_id'] = $resul['sector_id'];
+                    $_SESSION['sector_nombre'] = $resul['sector_nombre'];
+                    $_SESSION['bienvenido'] = "Bienvenido " . $resul['usu_nom'];
+                    header("Location:" . URL . "View/Home/");
+                    exit;
+                } else {
+                    header("Location:" . URL . "?err=err_csrf");
+                    exit;
+                }
+            } else {
+                header("Location:" . URL . "?err=err_csrf");
+                exit;
+            }
         }
     }
 }
