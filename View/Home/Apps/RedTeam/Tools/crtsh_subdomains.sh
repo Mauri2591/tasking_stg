@@ -1,15 +1,11 @@
-#!/bin/bash
+response=$(curl -s "https://crt.sh/?q=%25.${DOMAIN}&output=json")
 
-DOMAIN="$1"
-
-if [ -z "$DOMAIN" ]; then
-  echo "ERROR: Dominio no recibido"
-  exit 1
+if echo "$response" | jq empty >/dev/null 2>&1; then
+  echo "$response" | jq -r '.[].name_value' \
+  | sed 's/\*\.//g' \
+  | tr '\n' ',' \
+  | tr ',' '\n' \
+  | sort -u
+else
+  echo "[!] crt.sh no devolvió JSON válido para $DOMAIN"
 fi
-
-curl -s "https://crt.sh/?q=%25.${DOMAIN}&output=json" \
-| jq -r '.[].name_value' \
-| sed 's/\*\.//g' \
-| tr '\n' ',' \
-| tr ',' '\n' \
-| sort -u
