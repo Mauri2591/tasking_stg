@@ -72,6 +72,8 @@ class ToolsHerramientas extends Conexion
         $conn = parent::get_conexion();
         $activos = $this->get_datos_proyecto($idProyecto);
 
+        $algunoOk = false;
+
         foreach ($activos as $activo) {
 
             if (!in_array($activo['tipo'], ['OTRO', 'ACTIVO'])) {
@@ -92,7 +94,7 @@ class ToolsHerramientas extends Conexion
             exec($cmd . ' 2>&1', $out, $exitCode);
             $output = trim(implode("\n", $out));
 
-            // ❌ criterio de error real
+            // si este dominio falló, seguimos con el siguiente
             if ($exitCode !== 0) {
                 continue;
             }
@@ -108,13 +110,18 @@ class ToolsHerramientas extends Conexion
                     'exit_code' => $exitCode,
                     'usuario' => $_SESSION['usu_id'] ?? null
                 ]);
+
                 $conn->commit();
-                return true;
-                
+                $algunoOk = true;
             } catch (Throwable $e) {
-                $conn->rollBack();
+                if ($conn->inTransaction()) {
+                    $conn->rollBack();
+                }
+                // seguimos con el próximo dominio
+                continue;
             }
-            return false;
         }
+
+        return $algunoOk;
     }
 }
