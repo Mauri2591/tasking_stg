@@ -40,7 +40,7 @@ class ToolsHerramientas extends Conexion
         $sql = "INSERT INTO tools_ejecuciones
             (tool_id,
              id_proyecto_gestionado,
-             dominio,
+             activo,
              output,
              exit_code,
              ejecutado_por,
@@ -49,7 +49,7 @@ class ToolsHerramientas extends Conexion
             VALUES
             (:tool_id,
              :id_proyecto,
-             :dominio,
+             :activo,
              :output,
              :exit_code,
              :ejecutado_por,
@@ -60,7 +60,7 @@ class ToolsHerramientas extends Conexion
 
         $stmt->bindValue(':tool_id', $data['tool_id'], PDO::PARAM_INT);
         $stmt->bindValue(':id_proyecto', $data['id_proyecto_gestionado'], PDO::PARAM_INT);
-        $stmt->bindValue(':dominio', $data['dominio'], PDO::PARAM_STR);
+        $stmt->bindValue(':activo', $data['activo'], PDO::PARAM_STR);
         $stmt->bindValue(':output', $data['output'], PDO::PARAM_STR);
         $stmt->bindValue(':exit_code', $data['exit_code'], PDO::PARAM_INT);
         $stmt->bindValue(':ejecutado_por', $data['usuario'], PDO::PARAM_INT);
@@ -73,7 +73,7 @@ class ToolsHerramientas extends Conexion
 
     foreach ($activos as $activo) {
 
-        if (!in_array($activo['tipo'], ['OTRO', 'DOMINIO'])) {
+        if (!in_array($activo['tipo'], ['OTRO', 'ACTIVO'])) {
             continue;
         }
 
@@ -96,7 +96,7 @@ class ToolsHerramientas extends Conexion
         $this->insert_ejecucion([
             'tool_id' => $tool['id'],
             'id_proyecto_gestionado' => $idProyecto,
-            'dominio' => $host,
+            'activo' => $host,
             'output' => $output,
             'exit_code' => $exitCode,
             'usuario' => $_SESSION['usu_id'] ?? null
