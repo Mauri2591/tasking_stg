@@ -61,7 +61,7 @@ switch ($_GET['tools']) {
                                 <span class="texto-boton">Ejecutar</span>
                             </button>
                         </td>
-                        <th><i class=" ri-file-list-fill text-secondary"></i></th>
+                        <th><i type="button" text="Ver resultados" onclick="verResultadosOsint(<?php echo $val['id'].','.Openssl::get_ssl_decrypt($_GET['pg']) ?>)" class=" ri-file-list-fill text-secondary"></i></th>
 
                     </tr>
                 <?php endforeach; ?>
