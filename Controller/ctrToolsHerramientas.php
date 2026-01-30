@@ -20,7 +20,7 @@ switch ($_GET['tools']) {
     case 'get_tools':
 
         $datos = $tools->get_tools($_POST['cats_id']);
-        ?>
+?>
         <table class="table-osint">
             <thead>
                 <tr>
@@ -37,18 +37,35 @@ switch ($_GET['tools']) {
                         <td title="<?= htmlspecialchars($val['nombre']); ?>">
                             <?= htmlspecialchars($val['nombre']); ?>
                         </td>
-                        <td><?= htmlspecialchars($val['tipo_ejecucion']); ?></td>
-                        <td><?= htmlspecialchars($val['handler']); ?></td>
-                        <td><?= htmlspecialchars($val['descripcion']); ?></td>
-                        <td class="text-center">
-                            <i class="ri-play-mini-fill fs-22 text-primary"
-                               onclick="ejecutarHerramienta(<?= (int)$val['id']; ?>)"></i>
+
+                        <td>
+                            <?= htmlspecialchars($val['tipo_ejecucion']); ?>
                         </td>
+
+                        <td>
+                            <?= htmlspecialchars($val['handler']); ?>
+                        </td>
+
+                        <td title="<?= htmlspecialchars($val['descripcion']); ?>">
+                            <?= htmlspecialchars($val['descripcion']); ?>
+                        </td>
+
+                        <td class="text-center">
+                            <button
+                                type="button"
+                                class="btn btn-sm btn-primary d-inline-flex align-items-center gap-1"
+                                onclick="ejecutarHerramienta(<?= (int)$val['id']; ?>)"
+                                title="Ejecutar herramienta">
+                                <i class="ri-play-mini-fill"></i>
+                                Ejecutar
+                            </button>
+                        </td>
+
                     </tr>
                 <?php endforeach; ?>
             </tbody>
         </table>
-        <?php
+<?php
         exit;
 
 
@@ -90,7 +107,6 @@ switch ($_GET['tools']) {
                 'estado' => 'ok',
                 'mensaje' => 'Herramienta ejecutada'
             ]);
-
         } catch (Throwable $e) {
 
             http_response_code(500);
