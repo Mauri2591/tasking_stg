@@ -108,11 +108,13 @@ class ToolsHerramientas extends Conexion
                     'exit_code' => $exitCode,
                     'usuario' => $_SESSION['usu_id'] ?? null
                 ]);
-
                 $conn->commit();
+                return true;
+                
             } catch (Throwable $e) {
                 $conn->rollBack();
             }
+            return false;
         }
     }
 }
