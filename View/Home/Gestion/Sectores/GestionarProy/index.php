@@ -87,6 +87,16 @@ if (isset($_SESSION['usu_id'])) {
                 background-color: #f0f0f0;
                 transition: background 0.15s ease-in-out;
             }
+
+            .spin {
+                animation: spin 1s linear infinite;
+            }
+
+            @keyframes spin {
+                100% {
+                    transform: rotate(360deg);
+                }
+            }
         </style>
 
         <!-- container-fluid -->
