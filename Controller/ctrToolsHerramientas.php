@@ -56,7 +56,7 @@ switch ($_GET['tools']) {
                                 class="btn btn-sm btn-primary d-inline-flex align-items-center gap-1"
                                 onclick="ejecutarHerramienta(<?= (int)$val['id']; ?>)"
                                 title="Ejecutar herramienta">
-                                <i class="ri-play-mini-fill"></i>
+                                <i class="ri-play-mini-fill" id="iconoEjecutar<?php echo $val['id'] ?>"></i>
                                 Ejecutar
                             </button>
                         </td>

@@ -1110,7 +1110,6 @@ if (isset($_SESSION['usu_id'])) {
 
         function mdlHerramientasOsint(cats_id) {
             $("#mdlRedTeamOsint").modal("show");
-            // 1️⃣ Traer activos del proyecto ACTUAL
             $.post(
                 "../../../../../Controller/ctrToolsHerramientas.php?tools=get_datos_proyecto", {
                     id_proyecto_gestionado: proyectoActual
@@ -1122,7 +1121,6 @@ if (isset($_SESSION['usu_id'])) {
                 "json"
             );
 
-            // 2️⃣ Traer tools por categoría (OSINT Avanzado)
             $.post(
                 "../../../../../Controller/ctrToolsHerramientas.php?tools=get_tools", {
                     cats_id: cats_id
@@ -1134,18 +1132,43 @@ if (isset($_SESSION['usu_id'])) {
         }
 
         function ejecutarHerramienta(id) {
+
+            const btn = $("#btnEjecutar" + id);
+            const icono = $("#iconoEjecutar" + id);
+
+            // Guardamos icono original
+            const iconoOriginal = icono.attr("class");
+
+            // Spinner
+            icono
+                .removeClass()
+                .addClass("ri-loader-4-line spin");
+
+            btn.prop("disabled", true);
+
             $.post(
-                "../../../../../Controller/ctrToolsHerramientas.php?tools=ejecutar_herramienta", {
-                    id: id,
-                id_proyecto_gestionado: proyectoActual
-                },
-                function(data) {
-                    console.log(data);
-                    alert(data.mensaje);
-                },
-                "json"
-            );
+                    "../../../../../Controller/ctrToolsHerramientas.php?tools=ejecutar_herramienta", {
+                        id: id,
+                        id_proyecto_gestionado: proyectoActual
+                    },
+                    function(data) {
+                        alert(data.mensaje);
+                    },
+                    "json"
+                )
+                .fail(function(xhr) {
+                    alert("Error al ejecutar herramienta");
+                })
+                .always(function() {
+                    // Volver a estado normal
+                    icono
+                        .removeClass()
+                        .addClass(iconoOriginal);
+
+                    btn.prop("disabled", false);
+                });
         }
+
 
 
 
