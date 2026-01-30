@@ -6,9 +6,6 @@ if [ "$#" -lt 1 ]; then
 fi
 
 for ACTIVO in "$@"; do
-
-  echo "===== $ACTIVO ====="
-
   if [[ "$ACTIVO" != *.* ]]; then
     echo "[WARN] Activo sin TLD válido"
     continue
