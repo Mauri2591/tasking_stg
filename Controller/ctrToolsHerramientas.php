@@ -61,7 +61,18 @@ switch ($_GET['tools']) {
                                 <span class="texto-boton">Ejecutar</span>
                             </button>
                         </td>
-                        <th><i type="button" text="Ver resultados" onclick="verResultadosOsint(<?php echo $val['id'].','.Openssl::get_ssl_decrypt($_GET['pg']) ?>)" class=" ri-file-list-fill text-secondary"></i></th>
+                        <td class="text-center">
+                            <button
+                                type="button"
+                                class="btn btn-sm btn-light d-inline-flex align-items-center gap-1"
+                                title="Ver resultados"
+                                onclick="verResultadosOsint(
+            <?= (int)$val['id']; ?>,
+            <?= (int)Openssl::get_ssl_decrypt($_GET['pg']); ?>)">
+                                <i class="ri-file-list-fill text-secondary"></i>
+                                Resultados
+                            </button>
+                        </td>
 
                     </tr>
                 <?php endforeach; ?>
