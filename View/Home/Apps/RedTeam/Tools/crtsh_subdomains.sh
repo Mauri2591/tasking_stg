@@ -1,8 +1,4 @@
 #!/bin/bash
-# ------------------------------------------------------------
-# OSINT PASIVO - Enumeración de subdominios vía crt.sh
-# Soporta múltiples dominios
-# ------------------------------------------------------------
 
 if [ "$#" -lt 1 ]; then
   echo "[ERROR] No se recibieron dominios"
@@ -13,12 +9,30 @@ for ACTIVO in "$@"; do
 
   echo "===== $ACTIVO ====="
 
-  URL="https://crt.sh/?q=%25.${ACTIVO}&output=json"
+  if [[ "$ACTIVO" != *.* ]]; then
+    echo "[WARN] Activo sin TLD válido"
+    continue
+  fi
 
-  response=$(curl -s --max-time 30 -A "Mozilla/5.0" "$URL")
+  URL="https://crt.sh/?q=%25.${ACTIVO}&output=json"
+  response=""
+
+  for i in {1..3}; do
+    response=$(curl -s \
+      --http1.1 \
+      --max-time 40 \
+      -A "Mozilla/5.0" \
+      "$URL")
+
+    if [ -n "$response" ]; then
+      break
+    fi
+
+    sleep 3
+  done
 
   if [ -z "$response" ]; then
-    echo "[WARN] crt.sh no devolvió contenido para: $ACTIVO"
+    echo "[WARN] crt.sh no devolvió contenido tras reintentos"
     continue
   fi
 
@@ -28,11 +42,9 @@ for ACTIVO in "$@"; do
     | sort -u)
 
   if [ -z "$results" ]; then
-    echo "[INFO] Sin subdominios parseables desde crt.sh"
+    echo "[INFO] Sin subdominios parseables"
     continue
   fi
 
   echo "$results"
 done
-
-exit 0
