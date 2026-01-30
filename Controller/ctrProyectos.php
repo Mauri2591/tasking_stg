@@ -1919,7 +1919,7 @@ switch ($_GET['proy']) {
 
     case "validarContenedorBtnDockerfile":
         $datos = $proyecto->get_datos_proyecto_gestionado($_POST['id']);
-        if ($datos->cat_id == 12) {
+        if ($datos->cat_id == 12) {//SAST CI/CD
             ?>
             <span
                 class="badge bg-dark py-1 px-2 mx-2 mb-3 d-inline-flex align-items-center gap-2 w-auto"
@@ -1927,7 +1927,24 @@ switch ($_GET['proy']) {
                 Descargar pipeline <i onclick="descargarPipeline(<?php echo $datos->id ?>)"
                     type="button" title="Descargar pipeline del cliente" class="ri-code-s-slash-fill fs-16" style="color: palevioletred;"></i>
             </span>
-<?php
+            <?php
+        } else if ($datos->cat_id == 43) { //RED TEAM
+            switch ($datos->cats_id) {
+                case 88: //OSINT AVANZADO
+            ?>
+                    <span
+                        class="badge bg-dark py-1 px-2 mx-2 mb-3 d-inline-flex align-items-center gap-2 w-auto text-info"
+                        style="display: none;">
+                        Ejecutar herramientas de OSINT <i onclick="mdlHerramientasOsint(88)"
+                            type="button" title="Descargar pipeline del cliente" class="ri-code-s-slash-fill fs-16 text-info"></i>
+                    </span>
+            <?php
+                    break;
+
+                default:
+                    # code...
+                    break;
+            }
         }
         break;
 

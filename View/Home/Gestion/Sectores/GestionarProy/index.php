@@ -24,8 +24,10 @@ if (isset($_SESSION['usu_id'])) {
     <div class="page-content">
         <div class="container-fluid">
 
-            <?php include_once __DIR__ . "/../Modales/mdlAgregarUsuarioProy.php";
+            <?php
+            include_once __DIR__ . "/../Modales/mdlAgregarUsuarioProy.php";
             include_once __DIR__ . "/../Modales/mdlPipeline.php";
+            include_once __DIR__ . "/../Modales/mdlRedTeam.php";
             ?>
 
             <!-- start page title -->
@@ -50,6 +52,42 @@ if (isset($_SESSION['usu_id'])) {
             echo '<pre>id_proyecto_gestionado: <strong style="font-size:1rem">' . $param_pg . '</strong></pre>';
         }
         ?>
+
+        <style>
+            .table-osint {
+                width: 100%;
+                border-collapse: collapse;
+                font-size: 14px;
+            }
+
+            .table-osint thead th {
+                background: #f5f5f5;
+                padding: 10px;
+                border-bottom: 2px solid #ddd;
+                text-align: center;
+            }
+
+            .table-osint tbody td {
+                padding: 8px 10px;
+                border-bottom: 1px solid #eee;
+                max-width: 250px;
+                /* controla el ancho */
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            /* filas intercaladas */
+            .table-osint tbody tr:nth-child(even) {
+                background-color: #fafafa;
+            }
+
+            /* hover */
+            .table-osint tbody tr:hover {
+                background-color: #f0f0f0;
+                transition: background 0.15s ease-in-out;
+            }
+        </style>
 
         <!-- container-fluid -->
         <div class="col-lg-12">
@@ -217,7 +255,7 @@ if (isset($_SESSION['usu_id'])) {
                                         </span>
                                         <br>
 
-                                        <div id="contDescargarPipeline">
+                                        <div id="contHerramientas">
 
                                         </div>
 
@@ -407,7 +445,7 @@ if (isset($_SESSION['usu_id'])) {
                             pg: pg
                         },
                         function(data, textStatus, jqXHR) {
-                            $("#contDescargarPipeline").html(data);
+                            $("#contHerramientas").html(data);
                         },
                     );
 
@@ -935,7 +973,6 @@ if (isset($_SESSION['usu_id'])) {
             );
         }
 
-
         function agregarUsuario() {
             $("#ModalAgregarUsuarioProy").modal("show");
             $.post("../../../../../Controller/ctrProyectos.php?proy=get_sector_x_proy", {
@@ -1066,4 +1103,51 @@ if (isset($_SESSION['usu_id'])) {
                 console.error("Error al copiar: ", error);
             });
         }
+
+        //INICIO RED TEAM
+        const proyectoActual = <?php echo (int) Openssl::get_ssl_decrypt($_GET['pg']); ?>;
+        let activosProyecto = [];
+
+        function mdlHerramientasOsint(cats_id) {
+            $("#mdlRedTeamOsint").modal("show");
+            // 1️⃣ Traer activos del proyecto ACTUAL
+            $.post(
+                "../../../../../Controller/ctrToolsHerramientas.php?tools=get_datos_proyecto", {
+                    id_proyecto_gestionado: proyectoActual
+                },
+                function(data) {
+                    activosProyecto = data;
+                    console.log("Activos OSINT:", activosProyecto);
+                },
+                "json"
+            );
+
+            // 2️⃣ Traer tools por categoría (OSINT Avanzado)
+            $.post(
+                "../../../../../Controller/ctrToolsHerramientas.php?tools=get_tools", {
+                    cats_id: cats_id
+                },
+                function(html) {
+                    $("#contenedorTools").html(html);
+                }
+            );
+        }
+
+        function ejecutarHerramienta(id) {
+            $.post(
+                "../../../../../Controller/ctrToolsHerramientas.php?tools=ejecutar_herramienta", {
+                    id: id,
+                id_proyecto_gestionado: proyectoActual
+                },
+                function(data) {
+                    console.log(data);
+                    alert(data.mensaje);
+                },
+                "json"
+            );
+        }
+
+
+
+        //FIN RED TEAM
     </script>
