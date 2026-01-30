@@ -1,23 +1,39 @@
 #!/bin/bash
+# ------------------------------------------------------------
+# OSINT PASIVO - Enumeración de subdominios vía crt.sh
+# Robusto contra JSON inválido / rate-limit / dominios grandes
+# ------------------------------------------------------------
 
 DOMAIN="$1"
 
 if [ -z "$DOMAIN" ]; then
   echo "[ERROR] Dominio no recibido"
-  exit 1
+  exit 2
 fi
 
-response=$(curl -s --max-time 20 "https://crt.sh/?q=%25.${DOMAIN}&output=json")
+URL="https://crt.sh/?q=%25.${DOMAIN}&output=json"
 
-# Validar que sea JSON
-if ! echo "$response" | jq empty >/dev/null 2>&1; then
-  echo "[WARN] crt.sh no devolvió JSON válido para $DOMAIN"
+# Pedimos con User-Agent real (CLAVE)
+response=$(curl -s --max-time 30 -A "Mozilla/5.0" "$URL")
+
+# Si no hubo respuesta
+if [ -z "$response" ]; then
+  echo "[WARN] crt.sh no devolvió contenido para: $DOMAIN"
+  exit 3
+fi
+
+# Extraer subdominios SIN confiar en JSON
+results=$(echo "$response" \
+  | sed 's/\\n/\n/g' \
+  | grep -oE "([a-zA-Z0-9_-]+\.)+${DOMAIN//./\\.}" \
+  | sort -u)
+
+# Si no hay resultados parseables
+if [ -z "$results" ]; then
+  echo "[INFO] Sin subdominios parseables desde crt.sh para: $DOMAIN"
   exit 0
 fi
 
-echo "$response" \
-| jq -r '.[].name_value' \
-| sed 's/\*\.//g' \
-| tr '\n' ',' \
-| tr ',' '\n' \
-| sort -u
+# Imprimir resultados
+echo "$results"
+exit 0
