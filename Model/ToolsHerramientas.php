@@ -34,10 +34,10 @@ class ToolsHerramientas extends Conexion
     }
 
     public function insert_ejecucion(array $data)
-{
-    $conn = parent::get_conexion();
+    {
+        $conn = parent::get_conexion();
 
-    $sql = "INSERT INTO tools_ejecuciones
+        $sql = "INSERT INTO tools_ejecuciones
             (tool_id,
              id_proyecto_gestionado,
              dominio,
@@ -56,24 +56,27 @@ class ToolsHerramientas extends Conexion
              NOW(),
              1)";
 
-    $stmt = $conn->prepare($sql);
+        $stmt = $conn->prepare($sql);
 
-    $stmt->bindValue(':tool_id', $data['tool_id'], PDO::PARAM_INT);
-    $stmt->bindValue(':id_proyecto', $data['id_proyecto_gestionado'], PDO::PARAM_INT);
-    $stmt->bindValue(':dominio', $data['dominio'], PDO::PARAM_STR);
-    $stmt->bindValue(':output', $data['output'], PDO::PARAM_STR);
-    $stmt->bindValue(':exit_code', $data['exit_code'], PDO::PARAM_INT);
-    $stmt->bindValue(':ejecutado_por', $data['usuario'], PDO::PARAM_INT);
-    return $stmt->execute();
-}
+        $stmt->bindValue(':tool_id', $data['tool_id'], PDO::PARAM_INT);
+        $stmt->bindValue(':id_proyecto', $data['id_proyecto_gestionado'], PDO::PARAM_INT);
+        $stmt->bindValue(':dominio', $data['dominio'], PDO::PARAM_STR);
+        $stmt->bindValue(':output', $data['output'], PDO::PARAM_STR);
+        $stmt->bindValue(':exit_code', $data['exit_code'], PDO::PARAM_INT);
+        $stmt->bindValue(':ejecutado_por', $data['usuario'], PDO::PARAM_INT);
+        return $stmt->execute();
+    }
 
-    public function ejecutarCrtsh(array $tool, int $idProyecto)
+   public function ejecutarCrtsh(array $tool, int $idProyecto)
 {
     $activos = $this->get_datos_proyecto($idProyecto);
+
     foreach ($activos as $activo) {
+
         if (!in_array($activo['tipo'], ['OTRO', 'DOMINIO'])) {
             continue;
         }
+
         $host = $activo['host'];
 
         $scriptPath = realpath(__DIR__ . '/../' . $tool['path']);
@@ -81,15 +84,14 @@ class ToolsHerramientas extends Conexion
             throw new Exception('Script path inválido');
         }
 
-        if (!$scriptPath) {
-            continue;
-        }
-        $cmd = escapeshellcmd($scriptPath) . ' ' . escapeshellarg($host);
+        $cmd = 'bash ' . escapeshellarg($scriptPath) . ' ' . escapeshellarg($host);
+
         $out = [];
         $exitCode = null;
-exec("bash $scriptPath $host 2>&1", $out, $exitCode);
 
-        $output = implode("\n", $out);
+        exec($cmd . ' 2>&1', $out, $exitCode);
+
+        $output = trim(implode("\n", $out));
 
         $this->insert_ejecucion([
             'tool_id' => $tool['id'],
