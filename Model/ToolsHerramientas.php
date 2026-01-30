@@ -67,41 +67,52 @@ class ToolsHerramientas extends Conexion
         return $stmt->execute();
     }
 
-   public function ejecutarCrtsh(array $tool, int $idProyecto)
-{
-    $activos = $this->get_datos_proyecto($idProyecto);
+    public function ejecutarCrtsh(array $tool, int $idProyecto)
+    {
+        $conn = parent::get_conexion();
+        $activos = $this->get_datos_proyecto($idProyecto);
 
-    foreach ($activos as $activo) {
+        foreach ($activos as $activo) {
 
-        if (!in_array($activo['tipo'], ['OTRO', 'ACTIVO'])) {
-            continue;
+            if (!in_array($activo['tipo'], ['OTRO', 'ACTIVO'])) {
+                continue;
+            }
+
+            $host = $activo['host'];
+            $scriptPath = realpath(__DIR__ . '/../' . $tool['path']);
+            if (!$scriptPath) {
+                continue;
+            }
+
+            $cmd = 'bash ' . escapeshellarg($scriptPath) . ' ' . escapeshellarg($host);
+
+            $out = [];
+            $exitCode = null;
+
+            exec($cmd . ' 2>&1', $out, $exitCode);
+            $output = trim(implode("\n", $out));
+
+            // ❌ criterio de error real
+            if ($exitCode !== 0) {
+                continue;
+            }
+
+            try {
+                $conn->beginTransaction();
+
+                $this->insert_ejecucion([
+                    'tool_id' => $tool['id'],
+                    'id_proyecto_gestionado' => $idProyecto,
+                    'activo' => $host,
+                    'output' => $output,
+                    'exit_code' => $exitCode,
+                    'usuario' => $_SESSION['usu_id'] ?? null
+                ]);
+
+                $conn->commit();
+            } catch (Throwable $e) {
+                $conn->rollBack();
+            }
         }
-
-        $host = $activo['host'];
-
-        $scriptPath = realpath(__DIR__ . '/../' . $tool['path']);
-        if (!$scriptPath) {
-            throw new Exception('Script path inválido');
-        }
-
-        $cmd = 'bash ' . escapeshellarg($scriptPath) . ' ' . escapeshellarg($host);
-
-        $out = [];
-        $exitCode = null;
-
-        exec($cmd . ' 2>&1', $out, $exitCode);
-
-        $output = trim(implode("\n", $out));
-
-        $this->insert_ejecucion([
-            'tool_id' => $tool['id'],
-            'id_proyecto_gestionado' => $idProyecto,
-            'activo' => $host,
-            'output' => $output,
-            'exit_code' => $exitCode,
-            'usuario' => $_SESSION['usu_id'] ?? null
-        ]);
     }
-}
-
 }
