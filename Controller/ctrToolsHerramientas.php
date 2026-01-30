@@ -50,17 +50,15 @@ switch ($_GET['tools']) {
                             <?= htmlspecialchars($val['descripcion']); ?>
                         </td>
 
-                        <td class="text-center">
-                            <button
-                                type="button"
-                                class="btn btn-sm btn-primary d-inline-flex align-items-center gap-1"
-                                onclick="ejecutarHerramienta(<?= (int)$val['id']; ?>)"
-                                title="Ejecutar herramienta">
-                                <i class="ri-play-mini-fill" id="iconoEjecutar<?php echo $val['id'] ?>"></i>
-                                Ejecutar
-                            </button>
-                        </td>
-
+                        <button
+                            type="button"
+                            class="btn btn-sm btn-primary d-inline-flex align-items-center gap-1"
+                            onclick="ejecutarHerramienta(<?= (int)$val['id']; ?>)"
+                            title="Ejecutar herramienta"
+                            id="btnEjecutar<?= (int)$val['id']; ?>">
+                            <i class="ri-play-mini-fill" id="iconoEjecutar<?= (int)$val['id']; ?>"></i>
+                            <span class="texto-boton">Ejecutar</span>
+                        </button>
                     </tr>
                 <?php endforeach; ?>
             </tbody>

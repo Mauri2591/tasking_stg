@@ -1145,15 +1145,18 @@ if (isset($_SESSION['usu_id'])) {
 
             const btn = $("#btnEjecutar" + id);
             const icono = $("#iconoEjecutar" + id);
+            const texto = btn.find(".texto-boton");
 
-            // Guardamos icono original
+            // Guardar estado original
             const iconoOriginal = icono.attr("class");
+            const textoOriginal = texto.text();
 
-            // Spinner
+            // Cambiar a estado "ejecutando"
             icono
                 .removeClass()
                 .addClass("ri-loader-4-line spin");
 
+            texto.text("Ejecutando...");
             btn.prop("disabled", true);
 
             $.post(
@@ -1166,21 +1169,19 @@ if (isset($_SESSION['usu_id'])) {
                     },
                     "json"
                 )
-                .fail(function(xhr) {
+                .fail(function() {
                     alert("Error al ejecutar herramienta");
                 })
                 .always(function() {
-                    // Volver a estado normal
+                    // Restaurar estado original
                     icono
                         .removeClass()
                         .addClass(iconoOriginal);
 
+                    texto.text(textoOriginal);
                     btn.prop("disabled", false);
                 });
         }
-
-
-
 
         //FIN RED TEAM
     </script>
