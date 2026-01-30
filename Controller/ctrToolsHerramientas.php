@@ -28,8 +28,7 @@ switch ($_GET['tools']) {
                     <th>Ejecución</th>
                     <th>Handler</th>
                     <th>Descripción</th>
-                    <th>Ejecutar</th>
-                    <th>Resultados</th>
+                    <th>Accion</th>
                 </tr>
             </thead>
             <tbody>
@@ -59,18 +58,6 @@ switch ($_GET['tools']) {
                                 id="btnEjecutar<?= (int)$val['id']; ?>">
                                 <i class="ri-play-mini-fill" id="iconoEjecutar<?= (int)$val['id']; ?>"></i>
                                 <span class="texto-boton">Ejecutar</span>
-                            </button>
-                        </td>
-                        <td class="text-center">
-                            <button
-                                type="button"
-                                class="btn btn-sm btn-light d-inline-flex align-items-center gap-1"
-                                title="Ver resultados"
-                                onclick="verResultadosOsint(
-            <?= (int)$val['id']; ?>,
-            <?= (int)Openssl::get_ssl_decrypt($_GET['pg']); ?>)">
-                                <i class="ri-file-list-fill text-secondary"></i>
-                                Resultados
                             </button>
                         </td>
 
