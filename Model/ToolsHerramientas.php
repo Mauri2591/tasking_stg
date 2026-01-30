@@ -75,14 +75,19 @@ class ToolsHerramientas extends Conexion
             continue;
         }
         $host = $activo['host'];
+
         $scriptPath = realpath(__DIR__ . '/../' . $tool['path']);
+        if (!$scriptPath) {
+            throw new Exception('Script path inválido');
+        }
+
         if (!$scriptPath) {
             continue;
         }
         $cmd = escapeshellcmd($scriptPath) . ' ' . escapeshellarg($host);
         $out = [];
         $exitCode = null;
-        exec($cmd . ' 2>&1', $out, $exitCode);
+exec("bash $scriptPath $host 2>&1", $out, $exitCode);
 
         $output = implode("\n", $out);
 

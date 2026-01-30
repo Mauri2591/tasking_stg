@@ -14,11 +14,13 @@ $tools = new ToolsHerramientas();
 $validacion = new Validaciones();
 Headers::get_csp();
 
+
 switch ($_GET['tools']) {
+
     case 'get_tools':
-        $htmlOption = '';
+
         $datos = $tools->get_tools($_POST['cats_id']);
-?>
+        ?>
         <table class="table-osint">
             <thead>
                 <tr>
@@ -32,86 +34,77 @@ switch ($_GET['tools']) {
             <tbody>
                 <?php foreach ($datos as $val): ?>
                     <tr>
-                        <td title="<?php echo htmlspecialchars($val['nombre']); ?>">
-                            <?php echo htmlspecialchars($val['nombre']); ?>
+                        <td title="<?= htmlspecialchars($val['nombre']); ?>">
+                            <?= htmlspecialchars($val['nombre']); ?>
                         </td>
-
-                        <td title="<?php echo htmlspecialchars($val['tipo_ejecucion']); ?>">
-                            <?php echo htmlspecialchars($val['tipo_ejecucion']); ?>
-                        </td>
-
-                        <td title="<?php echo htmlspecialchars($val['handler']); ?>">
-                            <?php echo htmlspecialchars($val['handler']); ?>
-                        </td>
-
-                        <td title="<?php echo htmlspecialchars($val['descripcion']); ?>">
-                            <?php echo htmlspecialchars($val['descripcion']); ?>
-                        </td>
-
+                        <td><?= htmlspecialchars($val['tipo_ejecucion']); ?></td>
+                        <td><?= htmlspecialchars($val['handler']); ?></td>
+                        <td><?= htmlspecialchars($val['descripcion']); ?></td>
                         <td class="text-center">
-                            <i type="button" title="Ejecutar" class="ri-play-mini-fill fs-22 text-primary" onclick="ejecutarHerramienta('<?php echo htmlspecialchars($val['id'], ENT_QUOTES); ?>')"></i>
+                            <i class="ri-play-mini-fill fs-22 text-primary"
+                               onclick="ejecutarHerramienta(<?= (int)$val['id']; ?>)"></i>
                         </td>
                     </tr>
                 <?php endforeach; ?>
             </tbody>
         </table>
+        <?php
+        exit;
 
-<?php
-        break;
 
     case 'get_datos_proyecto':
-        echo json_encode($tools->get_datos_proyecto($_POST['id_proyecto_gestionado']));
-        break;
 
-   case 'ejecutar_herramienta':
-
-    // 1️⃣ Validaciones
-    if (empty($_POST['id']) || empty($_POST['id_proyecto_gestionado'])) {
-        echo json_encode([
-            'estado' => 'error',
-            'mensaje' => 'Parámetros incompletos'
-        ]);
+        echo json_encode(
+            $tools->get_datos_proyecto((int)$_POST['id_proyecto_gestionado'])
+        );
         exit;
-    }
 
-    $toolId = (int) $_POST['id'];
-    $idProyecto = (int) $_POST['id_proyecto_gestionado'];
 
-    // 2️⃣ Traer herramienta
-    $tool = $tools->get_tool_by_id($toolId);
+    case 'ejecutar_herramienta':
 
-    if (!$tool) {
-        echo json_encode([
-            'estado' => 'error',
-            'mensaje' => 'Herramienta no encontrada'
-        ]);
-        exit;
-    }
+        try {
 
-    // 3️⃣ Enrutador por engine
-    switch ($tool['engine']) {
+            if (empty($_POST['id']) || empty($_POST['id_proyecto_gestionado'])) {
+                throw new Exception('Parámetros incompletos');
+            }
 
-        case 'crtsh':
-            $tools->ejecutarCrtsh($tool, $idProyecto);
-            break;
+            $toolId = (int)$_POST['id'];
+            $idProyecto = (int)$_POST['id_proyecto_gestionado'];
 
-        default:
+            $tool = $tools->get_tool_by_id($toolId);
+
+            if (!$tool) {
+                throw new Exception('Herramienta no encontrada');
+            }
+
+            switch ($tool['engine']) {
+                case 'crtsh':
+                    $tools->ejecutarCrtsh($tool, $idProyecto);
+                    break;
+
+                default:
+                    throw new Exception('Engine OSINT no soportado');
+            }
+
+            echo json_encode([
+                'estado' => 'ok',
+                'mensaje' => 'Herramienta ejecutada'
+            ]);
+
+        } catch (Throwable $e) {
+
+            http_response_code(500);
             echo json_encode([
                 'estado' => 'error',
-                'mensaje' => 'Engine OSINT no soportado'
+                'mensaje' => $e->getMessage()
             ]);
-            exit;
-    }
+        }
 
-    echo json_encode([
-        'estado' => 'ok',
-        'mensaje' => 'Herramienta ejecutada'
-    ]);
-    exit;
-
-break;
+        exit;
 
 
     default:
-        break;
+        http_response_code(400);
+        echo json_encode(['estado' => 'error', 'mensaje' => 'Acción inválida']);
+        exit;
 }
