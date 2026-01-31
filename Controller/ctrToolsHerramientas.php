@@ -53,7 +53,7 @@ switch ($_GET['tools']) {
                         <td>
                             <button
                                 type="button"
-                                class="btn btn-sm btn-primary d-inline-flex align-items-center gap-1"
+                                class="btn btn-sm btn-primary p-0 d-inline-flex align-items-center gap-1"
                                 onclick="ejecutarHerramienta(<?= (int)$val['id']; ?>)"
                                 title="Ejecutar herramienta"
                                 id="btnEjecutar<?= (int)$val['id']; ?>">
