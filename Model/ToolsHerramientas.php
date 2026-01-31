@@ -171,4 +171,34 @@ class ToolsHerramientas extends Conexion
 
         return ['estado' => 'ok', 'mensaje' => 'Google Dorks lanzado en background'];
     }
+
+    public function get_ejecuciones_running(): array
+    {
+        $conn = parent::get_conexion();
+        $sql = "SELECT * FROM tools_ejecuciones
+            WHERE estado = 'RUNNING'
+              AND est = 1";
+        return $conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function finalizar_ejecucion(
+        int $id,
+        string $output,
+        int $exitCode = 0,
+        string $estado = 'DONE'
+    ): bool {
+        $conn = parent::get_conexion();
+        $sql = "UPDATE tools_ejecuciones
+            SET output = :output,
+                exit_code = :exit_code,
+                estado = :estado
+            WHERE id = :id";
+        $stmt = $conn->prepare($sql);
+        return $stmt->execute([
+            ':output'    => $output,
+            ':exit_code' => $exitCode,
+            ':estado'   => $estado,
+            ':id'       => $id
+        ]);
+    }
 }
