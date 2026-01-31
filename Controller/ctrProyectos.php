@@ -1936,7 +1936,7 @@ switch ($_GET['proy']) {
                         class="badge bg-dark py-1 px-2 mx-2 mb-3 d-inline-flex align-items-center gap-2 w-auto text-info"
                         style="display: none;">
                         Ejecutar herramientas de OSINT <i onclick="mdlHerramientasOsint(88)"
-                            type="button" title="Descargar pipeline del cliente" class="ri-code-s-slash-fill fs-16 text-info"></i>
+                            type="button" class="ri-code-s-slash-fill fs-16 text-info"></i>
                     </span>
             <?php
                     break;

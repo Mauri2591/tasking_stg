@@ -95,10 +95,11 @@ switch ($_GET['tools']) {
                 throw new Exception('Herramienta no encontrada');
             }
 
-            $engine = strtolower(trim($tool['engine']));
+            error_log('ENGINE RAW >>>[' . $tool['engine'] . ']<<<');
+
+            $engine = $tool['engine'];
 
             switch ($engine) {
-
                 case 'crtsh':
                     $resultado = $tools->ejecutarCrtsh($tool, $idProyecto);
                     break;
@@ -112,6 +113,7 @@ switch ($_GET['tools']) {
                         'Engine OSINT no soportado: [' . $engine . ']'
                     );
             }
+
 
 
             if ($resultado['estado'] === 'error') {
