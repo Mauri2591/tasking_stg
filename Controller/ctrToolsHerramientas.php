@@ -107,10 +107,7 @@ switch ($_GET['tools']) {
                     break;
 
                 case 'google_dorks':
-
                     $resultado = $tools->ejecutarGoogleDorks($tool, $idProyecto);
-                    var_dump($resultado);
-                    exit;
                     break;
 
                 default:
@@ -122,7 +119,7 @@ switch ($_GET['tools']) {
 
 
             if ($resultado['estado'] === 'error') {
-                http_response_code(500);
+                http_response_code(400);
             } else {
                 http_response_code(200);
             }
