@@ -1,104 +1,91 @@
 <?php
+
 class ToolsHerramientas extends Conexion
 {
+    /* =========================
+       CONSULTAS BASE
+       ========================= */
+
     public function get_tools($cats_id)
     {
         $conn = parent::get_conexion();
-        $sql = "SELECT tools_productos.id,tools_productos.nombre,tools_productos.tipo_ejecucion,tools_productos.handler,tools_productos.descripcion FROM tools_productos WHERE tools_productos.cats_id=:cats_id AND est=1";
+        $sql = "SELECT id,nombre,tipo_ejecucion,handler,engine,path,descripcion
+                FROM tools_productos
+                WHERE cats_id = :cats_id AND est = 1";
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(":cats_id", $cats_id, PDO::PARAM_INT);
         $stmt->execute();
-        $resul = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        return $resul;
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function get_datos_proyecto($id)
     {
         $conn = parent::get_conexion();
-        $sql = "SELECT tipo,host FROM hosts WHERE id_proyecto_gestionado=:id";
+        $sql = "SELECT tipo, host
+                FROM hosts
+                WHERE id_proyecto_gestionado = :id";
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(":id", $id, PDO::PARAM_INT);
         $stmt->execute();
-        $resul = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        return $resul;
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function get_tool_by_id(int $id)
     {
         $conn = parent::get_conexion();
-        $sql = "SELECT * FROM tools_productos WHERE id = :id AND est = 1";
+        $sql = "SELECT *
+                FROM tools_productos
+                WHERE id = :id AND est = 1";
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(":id", $id, PDO::PARAM_INT);
         $stmt->execute();
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function insert_ejecucion(array $data)
+    /* =========================
+       EJECUCIÓN ASÍNCRONA REAL
+       ========================= */
+
+    private function ejecutarScriptAsync(string $path, string $host): bool
     {
-        $conn = parent::get_conexion();
-        $sql = "INSERT INTO tools_ejecuciones
-            (tool_id,
-             id_proyecto_gestionado,
-             activo,
-             output,
-             exit_code,
-             ejecutado_por,
-             fecha_ejecucion,
-             est)
-            VALUES
-            (:tool_id,
-             :id_proyecto,
-             :activo,
-             :output,
-             :exit_code,
-             :ejecutado_por,
-             NOW(),
-             1)";
-        $stmt = $conn->prepare($sql);
-        $stmt->bindValue(':tool_id', $data['tool_id'], PDO::PARAM_INT);
-        $stmt->bindValue(':id_proyecto', $data['id_proyecto_gestionado'], PDO::PARAM_INT);
-        $stmt->bindValue(':activo', $data['activo'], PDO::PARAM_STR);
-        $stmt->bindValue(':output', $data['output'], PDO::PARAM_STR);
-        $stmt->bindValue(':exit_code', $data['exit_code'], PDO::PARAM_INT);
-        $stmt->bindValue(':ejecutado_por', $data['usuario'], PDO::PARAM_INT);
-        return $stmt->execute();
+        // No ejecutar OSINT en Windows
+        if (stripos(PHP_OS, 'WIN') === 0) {
+            return false;
+        }
+
+        $scriptPath = realpath(OSINT_BASE_PATH . '/' . $path);
+
+        if (!$scriptPath || !is_file($scriptPath)) {
+            error_log('[OSINT] Script no encontrado: ' . OSINT_BASE_PATH . '/' . $path);
+            return false;
+        }
+
+        // Log independiente por ejecución
+        $logFile = '/tmp/osint_' . time() . '_' . rand(1000,9999) . '.log';
+
+        // 👇 CLAVE: nohup + &
+        $cmd = sprintf(
+            'nohup bash %s %s > %s 2>&1 &',
+            escapeshellarg($scriptPath),
+            escapeshellarg($host),
+            escapeshellarg($logFile)
+        );
+
+        error_log('[OSINT] ASYNC CMD: ' . $cmd);
+
+        exec($cmd);
+
+        return true;
     }
 
-    private function ejecutarScript(string $path, string $host): ?string
-{
-    if (stripos(PHP_OS, 'WIN') === 0) {
-        return "[ERROR] Ejecución OSINT no soportada en Windows";
-    }
-
-    $scriptPath = realpath(OSINT_BASE_PATH . '/' . $path);
-
-    if (!$scriptPath || !is_file($scriptPath)) {
-        error_log('[OSINT] Script no encontrado: ' . OSINT_BASE_PATH . '/' . $path);
-        return null;
-    }
-
-    $cmd = 'bash ' . escapeshellarg($scriptPath) . ' ' . escapeshellarg($host);
-    $out = [];
-    $exitCode = null;
-
-    error_log('[OSINT] Ejecutando: ' . $cmd);
-
-    exec($cmd . ' 2>&1', $out, $exitCode);
-
-    // 👇 NO matar por empty($out)
-    $output = trim(implode("\n", $out));
-
-    return $output !== '' ? $output : null;
-}
-
-
-
+    /* =========================
+       CRT.SH
+       ========================= */
 
     public function ejecutarCrtsh(array $tool, int $idProyecto): array
     {
         $activos = $this->get_datos_proyecto($idProyecto);
-        $huboOk = false;
-        $huboWarn = false;
+        $lanzado = false;
 
         foreach ($activos as $activo) {
 
@@ -106,103 +93,50 @@ class ToolsHerramientas extends Conexion
                 continue;
             }
 
-            $host = $activo['host'];
+            if ($this->ejecutarScriptAsync($tool['path'], $activo['host'])) {
+                $lanzado = true;
+            }
+        }
 
-            $rawOutput = $this->ejecutarScript($tool['path'], $host);
+        return $lanzado
+            ? [
+                'estado'  => 'ok',
+                'mensaje' => 'crt.sh lanzado en background'
+              ]
+            : [
+                'estado'  => 'error',
+                'mensaje' => 'No se pudo lanzar crt.sh'
+              ];
+    }
 
-            if ($rawOutput === null) {
+    /* =========================
+       GOOGLE DORKS
+       ========================= */
+
+    public function ejecutarGoogleDorks(array $tool, int $idProyecto): array
+    {
+        $activos = $this->get_datos_proyecto($idProyecto);
+        $lanzado = false;
+
+        foreach ($activos as $activo) {
+
+            if (!in_array($activo['tipo'], ['OTRO', 'ACTIVO'])) {
                 continue;
             }
 
-            if (str_contains($rawOutput, '<TITLE>crt.sh | ERROR!')) {
-                $huboWarn = true;
-
-                $this->insert_ejecucion([
-                    'tool_id' => $tool['id'],
-                    'id_proyecto_gestionado' => $idProyecto,
-                    'activo' => $host,
-                    'output' => $rawOutput,
-                    'exit_code' => 0,
-                    'usuario' => $_SESSION['usu_id'] ?? null
-                ]);
-
-                continue;
+            if ($this->ejecutarScriptAsync($tool['path'], $activo['host'])) {
+                $lanzado = true;
             }
+        }
 
-            $huboOk = true;
-
-            $this->insert_ejecucion([
-                'tool_id' => $tool['id'],
-                'id_proyecto_gestionado' => $idProyecto,
-                'activo' => $host,
-                'output' => $rawOutput,
-                'exit_code' => 0,
-                'usuario' => $_SESSION['usu_id'] ?? null
-            ]);
-        }
-        if ($huboOk) {
-            return [
-                'estado' => $huboWarn ? 'warn' : 'ok',
-                'mensaje' => $huboWarn
-                    ? 'Ejecución completada con advertencias (crt.sh inestable)'
-                    : 'Ejecución OSINT completada correctamente'
-            ];
-        }
-        if ($huboWarn) {
-            return [
-                'estado' => 'warn',
-                'mensaje' => 'crt.sh no pudo procesar los activos (fuente inestable)'
-            ];
-        }
-        return [
-            'estado' => 'error',
-            'mensaje' => 'Error interno al ejecutar la herramienta OSINT'
-        ];
+        return $lanzado
+            ? [
+                'estado'  => 'ok',
+                'mensaje' => 'Google Dorks lanzado en background'
+              ]
+            : [
+                'estado'  => 'error',
+                'mensaje' => 'No se pudo lanzar Google Dorks'
+              ];
     }
-
-
-   public function ejecutarGoogleDorks(array $tool, int $idProyecto): array
-{
-    $activos = $this->get_datos_proyecto($idProyecto);
-    $huboOk = false;
-
-    foreach ($activos as $activo) {
-
-        if (!in_array($activo['tipo'], ['OTRO', 'ACTIVO'])) {
-            continue;
-        }
-
-        $host = $activo['host'];
-
-        $rawOutput = $this->ejecutarScript($tool['path'], $host);
-
-        if ($rawOutput === null) {
-            continue;
-        }
-
-        $huboOk = true;
-
-        $this->insert_ejecucion([
-            'tool_id' => $tool['id'],
-            'id_proyecto_gestionado' => $idProyecto,
-            'activo' => $host,
-            'output' => $rawOutput,
-            'exit_code' => 0,
-            'usuario' => $_SESSION['usu_id'] ?? null
-        ]);
-    }
-
-    if ($huboOk) {
-        return [
-            'estado'  => 'ok',
-            'mensaje' => 'Google Dorks generados correctamente'
-        ];
-    }
-
-    return [
-        'estado'  => 'warn',
-        'mensaje' => 'No se pudieron generar Google Dorks para los activos'
-    ];
-}
-
 }
