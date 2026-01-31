@@ -20,7 +20,7 @@ switch ($_GET['tools']) {
     case 'get_tools':
 
         $datos = $tools->get_tools($_POST['cats_id']);
-?>
+        ?>
         <table class="table-osint">
             <thead>
                 <tr>
@@ -29,6 +29,7 @@ switch ($_GET['tools']) {
                     <th>Handler</th>
                     <th>Descripción</th>
                     <th>Accion</th>
+                    <th>Resultados</th>
                 </tr>
             </thead>
             <tbody>
@@ -60,14 +61,14 @@ switch ($_GET['tools']) {
                                 <span class="texto-boton">Ejecutar</span>
                             </button>
                         </td>
+                        <td> <i class="ri-file-list-fill text-info fw-bold"></i> </td>
 
                     </tr>
                 <?php endforeach; ?>
             </tbody>
-        </table>
-<?php
+         </table>
+            <?php
         exit;
-
 
     case 'get_datos_proyecto':
 
@@ -76,10 +77,8 @@ switch ($_GET['tools']) {
         );
         exit;
 
-
     case 'ejecutar_herramienta':
         try {
-
             if (empty($_POST['id']) || empty($_POST['id_proyecto_gestionado'])) {
                 throw new Exception('Parámetros incompletos');
             }
@@ -96,11 +95,12 @@ switch ($_GET['tools']) {
                 case 'crtsh':
                     $resultado = $tools->ejecutarCrtsh($tool, $idProyecto);
                     break;
+
+              
                 default:
                     throw new Exception('Engine OSINT no soportado');
             }
 
-            // 🔑 manejo semántico
             if ($resultado['estado'] === 'error') {
                 http_response_code(500);
             } else {

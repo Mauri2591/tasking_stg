@@ -36,7 +36,6 @@ class ToolsHerramientas extends Conexion
     public function insert_ejecucion(array $data)
     {
         $conn = parent::get_conexion();
-
         $sql = "INSERT INTO tools_ejecuciones
             (tool_id,
              id_proyecto_gestionado,
@@ -55,9 +54,7 @@ class ToolsHerramientas extends Conexion
              :ejecutado_por,
              NOW(),
              1)";
-
         $stmt = $conn->prepare($sql);
-
         $stmt->bindValue(':tool_id', $data['tool_id'], PDO::PARAM_INT);
         $stmt->bindValue(':id_proyecto', $data['id_proyecto_gestionado'], PDO::PARAM_INT);
         $stmt->bindValue(':activo', $data['activo'], PDO::PARAM_STR);
@@ -73,18 +70,13 @@ class ToolsHerramientas extends Conexion
         if (!$scriptPath) {
             return null;
         }
-
         $cmd = 'bash ' . escapeshellarg($scriptPath) . ' ' . escapeshellarg($host);
-
         $out = [];
         $exitCode = null;
-
         exec($cmd . ' 2>&1', $out, $exitCode);
-
         if ($exitCode !== 0) {
             return null;
         }
-
         $output = trim(implode("\n", $out));
         return $output !== '' ? $output : null;
     }
@@ -136,7 +128,6 @@ class ToolsHerramientas extends Conexion
                 'usuario' => $_SESSION['usu_id'] ?? null
             ]);
         }
-
         if ($huboOk) {
             return [
                 'estado' => $huboWarn ? 'warn' : 'ok',
@@ -145,17 +136,17 @@ class ToolsHerramientas extends Conexion
                     : 'Ejecución OSINT completada correctamente'
             ];
         }
-
         if ($huboWarn) {
             return [
                 'estado' => 'warn',
                 'mensaje' => 'crt.sh no pudo procesar los activos (fuente inestable)'
             ];
         }
-
         return [
             'estado' => 'error',
             'mensaje' => 'Error interno al ejecutar la herramienta OSINT'
         ];
     }
+
+
 }
