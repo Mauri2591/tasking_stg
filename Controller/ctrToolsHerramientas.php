@@ -83,7 +83,7 @@ switch ($_GET['tools']) {
 
     case 'ejecutar_herramienta':
         try {
-            if (!isset($_POST['id'],$_POST['id_proyecto_gestionado'])) {
+            if (!isset($_POST['id'], $_POST['id_proyecto_gestionado'])) {
                 throw new Exception('Parámetros incompletos');
             }
 
@@ -95,7 +95,10 @@ switch ($_GET['tools']) {
                 throw new Exception('Herramienta no encontrada');
             }
 
-            switch ($tool['engine']) {
+            $engine = strtolower(trim($tool['engine']));
+
+            switch ($engine) {
+
                 case 'crtsh':
                     $resultado = $tools->ejecutarCrtsh($tool, $idProyecto);
                     break;
@@ -105,8 +108,11 @@ switch ($_GET['tools']) {
                     break;
 
                 default:
-                    throw new Exception('Engine OSINT no soportado');
+                    throw new Exception(
+                        'Engine OSINT no soportado: [' . $engine . ']'
+                    );
             }
+
 
             if ($resultado['estado'] === 'error') {
                 http_response_code(500);
