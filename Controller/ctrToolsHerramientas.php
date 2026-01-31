@@ -33,6 +33,11 @@ switch ($_GET['tools']) {
                 </tr>
             </thead>
             <tbody>
+                <?php
+                $pg_id = isset($_POST['id_proyecto_gestionado'])
+    ? (int)$_POST['id_proyecto_gestionado']
+    : 0;
+                ?>
                 <?php foreach ($datos as $val): ?>
                     <tr>
                         <td title="<?= htmlspecialchars($val['nombre']); ?>">
@@ -54,7 +59,7 @@ switch ($_GET['tools']) {
                             <button
                                 type="button"
                                 class="btn btn-sm btn-primary py-0 px-1 d-inline-flex align-items-center gap-1"
-                                onclick="ejecutarHerramienta(<?= (int)$val['id']; ?>,proyectoActual)"
+                                onclick="ejecutarHerramienta(<?= (int)$val['id']; ?>,<?= $pg_id; ?>)"
                                 title="Ejecutar herramienta"
                                 id="btnEjecutar<?= (int)$val['id']; ?>">
                                 <i class="ri-play-mini-fill" id="iconoEjecutar<?= (int)$val['id']; ?>"></i>
