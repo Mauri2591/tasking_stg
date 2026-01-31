@@ -54,10 +54,7 @@ switch ($_GET['tools']) {
                             <button
                                 type="button"
                                 class="btn btn-sm btn-primary py-0 px-1 d-inline-flex align-items-center gap-1"
-                                onclick="ejecutarHerramienta(
-        <?= (int)$val['id']; ?>,
-        <?= (int)Openssl::get_ssl_decrypt($_GET['pg']); ?>
-    )"
+                                onclick="ejecutarHerramienta(<?= (int)$val['id']; ?>,proyectoActual)"
                                 title="Ejecutar herramienta"
                                 id="btnEjecutar<?= (int)$val['id']; ?>">
                                 <i class="ri-play-mini-fill" id="iconoEjecutar<?= (int)$val['id']; ?>"></i>
