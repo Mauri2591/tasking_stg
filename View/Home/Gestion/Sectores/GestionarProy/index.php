@@ -27,7 +27,6 @@ if (isset($_SESSION['usu_id'])) {
             <?php
             include_once __DIR__ . "/../Modales/mdlAgregarUsuarioProy.php";
             include_once __DIR__ . "/../Modales/mdlPipeline.php";
-            include_once __DIR__ . "/../Modales/mdlRedTeam.php";
             ?>
 
             <!-- start page title -->
@@ -1113,68 +1112,4 @@ if (isset($_SESSION['usu_id'])) {
                 console.error("Error al copiar: ", error);
             });
         }
-
-        //INICIO RED TEAM
-        const proyectoActual = <?php echo (int) Openssl::get_ssl_decrypt($_GET['pg']); ?>;
-        let activosProyecto = [];
-
-        function mdlHerramientasOsint(cats_id) {
-            $("#mdlRedTeamOsint").modal("show");
-            $.post(
-                "../../../../../Controller/ctrToolsHerramientas.php?tools=get_datos_proyecto", {
-                    id_proyecto_gestionado: proyectoActual
-                },
-                function(data) {
-                    activosProyecto = data;
-                    console.log("Activos OSINT:", activosProyecto);
-                },
-                "json"
-            );
-
-            $.post(
-                "../../../../../Controller/ctrToolsHerramientas.php?tools=get_tools", {
-                    cats_id: cats_id,
-                    id_proyecto_gestionado: proyectoActual 
-                },
-                function(html) {
-                    $("#contenedorTools").html(html);
-                }
-            );
-
-        }
-
-        function ejecutarHerramienta(id, idProyecto) {
-            const btn = $("#btnEjecutar" + id);
-            const icono = $("#iconoEjecutar" + id);
-            const texto = btn.find(".texto-boton");
-
-            const iconoOriginal = icono.attr("class");
-            const textoOriginal = texto.text();
-
-            icono.removeClass().addClass("ri-loader-4-line spin");
-            texto.text("Ejecutando...");
-            btn.prop("disabled", true);
-
-            $.post(
-                    "../../../../../Controller/ctrToolsHerramientas.php?tools=ejecutar_herramienta", {
-                        id: id,
-                        id_proyecto_gestionado: idProyecto
-                    },
-                    function(data) {
-                        alert(data.mensaje);
-                    },
-                    "json"
-                )
-                .fail(function() {
-                    alert("Error al ejecutar herramienta");
-                })
-                .always(function() {
-                    icono.removeClass().addClass(iconoOriginal);
-                    texto.text(textoOriginal);
-                    btn.prop("disabled", false);
-                });
-        }
-
-
-        //FIN RED TEAM
     </script>
