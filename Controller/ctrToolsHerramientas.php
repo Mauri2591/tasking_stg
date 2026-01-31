@@ -119,7 +119,7 @@ switch ($_GET['tools']) {
 
 
             if ($resultado['estado'] === 'error') {
-                http_response_code(400);
+                http_response_code(500);
             } else {
                 http_response_code(200);
             }

@@ -1133,12 +1133,14 @@ if (isset($_SESSION['usu_id'])) {
 
             $.post(
                 "../../../../../Controller/ctrToolsHerramientas.php?tools=get_tools", {
-                    cats_id: cats_id
+                    cats_id: cats_id,
+                    id_proyecto_gestionado: proyectoActual 
                 },
                 function(html) {
                     $("#contenedorTools").html(html);
                 }
             );
+
         }
 
         function ejecutarHerramienta(id, idProyecto) {
