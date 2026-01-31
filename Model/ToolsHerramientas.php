@@ -66,7 +66,7 @@ class ToolsHerramientas extends Conexion
 
     private function ejecutarScript(string $path, string $host): ?string
     {
-        $scriptPath = realpath(__DIR__ . '/../' . $path);
+        $scriptPath = realpath(OSINT_BASE_PATH . '/' . $path);
         if (!$scriptPath) {
             return null;
         }

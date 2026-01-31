@@ -12,3 +12,4 @@ define("URL", $_ENV['URL']);
 define("KEY", $_ENV['KEY']);
 define("BASE_URL", getenv('URL'));
 define("BASE_PATH", $_SERVER['DOCUMENT_ROOT'] . "/tasking_stg/");
+define('OSINT_BASE_PATH', '/var/www/html/tasking_stg');
