@@ -66,21 +66,31 @@ class ToolsHerramientas extends Conexion
 
     private function ejecutarScript(string $path, string $host): ?string
     {
+        if (stripos(PHP_OS, 'WIN') === 0) {
+            return "[ERROR] Ejecución OSINT no soportada en Windows";
+        }
+
         $scriptPath = realpath(OSINT_BASE_PATH . '/' . $path);
-        if (!$scriptPath) {
+        if (!$scriptPath || !is_file($scriptPath)) {
+            error_log('[OSINT] Script no encontrado: ' . OSINT_BASE_PATH . '/' . $path);
             return null;
         }
+
         $cmd = 'bash ' . escapeshellarg($scriptPath) . ' ' . escapeshellarg($host);
         $out = [];
         $exitCode = null;
-        error_log('OSINT SCRIPT: ' . OSINT_BASE_PATH . '/' . $path);
+
+        error_log('[OSINT] Ejecutando: ' . $cmd);
+
         exec($cmd . ' 2>&1', $out, $exitCode);
-        if ($exitCode !== 0) {
+
+        if (empty($out)) {
             return null;
         }
-        $output = trim(implode("\n", $out));
-        return $output !== '' ? $output : null;
+
+        return trim(implode("\n", $out));
     }
+
 
 
     public function ejecutarCrtsh(array $tool, int $idProyecto): array
@@ -148,6 +158,4 @@ class ToolsHerramientas extends Conexion
             'mensaje' => 'Error interno al ejecutar la herramienta OSINT'
         ];
     }
-
-
 }
