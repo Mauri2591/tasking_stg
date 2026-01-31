@@ -107,7 +107,10 @@ switch ($_GET['tools']) {
                     break;
 
                 case 'google_dorks':
+
                     $resultado = $tools->ejecutarGoogleDorks($tool, $idProyecto);
+                    var_dump($resultado);
+                    exit;
                     break;
 
                 default:
