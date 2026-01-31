@@ -14,5 +14,5 @@ define("BASE_URL", getenv('URL'));
 define("BASE_PATH", $_SERVER['DOCUMENT_ROOT'] . "/tasking_stg/");
 define(
     'OSINT_BASE_PATH',
-    rtrim($_SERVER['DOCUMENT_ROOT'], '/') . '/tasking_stg/View/Home/Apps/RedTeam/Tools/Osint'
+    rtrim($_SERVER['DOCUMENT_ROOT'], '/') . '/tasking_stg'
 );
