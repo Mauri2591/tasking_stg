@@ -160,69 +160,48 @@ class ToolsHerramientas extends Conexion
     }
 
 
-    public function ejecutarGoogleDorks(array $tool, int $idProyecto): array
-    {
-        $activos = $this->get_datos_proyecto($idProyecto);
-        $huboOk = false;
-        $huboWarn = false;
+   public function ejecutarGoogleDorks(array $tool, int $idProyecto): array
+{
+    $activos = $this->get_datos_proyecto($idProyecto);
+    $huboOk = false;
 
-        foreach ($activos as $activo) {
+    foreach ($activos as $activo) {
 
-            if (!in_array($activo['tipo'], ['OTRO', 'ACTIVO'])) {
-                continue;
-            }
-
-            $host = $activo['host'];
-
-            $rawOutput = $this->ejecutarScript($tool['path'], $host);
-
-            if ($rawOutput === null) {
-                continue;
-            }
-
-            if (str_contains($rawOutput, '<TITLE>crt.sh | ERROR!')) {
-                $huboWarn = true;
-
-                $this->insert_ejecucion([
-                    'tool_id' => $tool['id'],
-                    'id_proyecto_gestionado' => $idProyecto,
-                    'activo' => $host,
-                    'output' => $rawOutput,
-                    'exit_code' => 0,
-                    'usuario' => $_SESSION['usu_id'] ?? null
-                ]);
-
-                continue;
-            }
-
-            $huboOk = true;
-
-            $this->insert_ejecucion([
-                'tool_id' => $tool['id'],
-                'id_proyecto_gestionado' => $idProyecto,
-                'activo' => $host,
-                'output' => $rawOutput,
-                'exit_code' => 0,
-                'usuario' => $_SESSION['usu_id'] ?? null
-            ]);
+        if (!in_array($activo['tipo'], ['OTRO', 'ACTIVO'])) {
+            continue;
         }
-        if ($huboOk) {
-            return [
-                'estado' => $huboWarn ? 'warn' : 'ok',
-                'mensaje' => $huboWarn
-                    ? 'Ejecución completada con advertencias (crt.sh inestable)'
-                    : 'Ejecución OSINT completada correctamente'
-            ];
+
+        $host = $activo['host'];
+
+        $rawOutput = $this->ejecutarScript($tool['path'], $host);
+
+        if ($rawOutput === null) {
+            continue;
         }
-        if ($huboWarn) {
-            return [
-                'estado' => 'warn',
-                'mensaje' => 'crt.sh no pudo procesar los activos (fuente inestable)'
-            ];
-        }
+
+        $huboOk = true;
+
+        $this->insert_ejecucion([
+            'tool_id' => $tool['id'],
+            'id_proyecto_gestionado' => $idProyecto,
+            'activo' => $host,
+            'output' => $rawOutput,
+            'exit_code' => 0,
+            'usuario' => $_SESSION['usu_id'] ?? null
+        ]);
+    }
+
+    if ($huboOk) {
         return [
-            'estado' => 'error',
-            'mensaje' => 'Error interno al ejecutar la herramienta OSINT'
+            'estado'  => 'ok',
+            'mensaje' => 'Google Dorks generados correctamente'
         ];
     }
+
+    return [
+        'estado'  => 'warn',
+        'mensaje' => 'No se pudieron generar Google Dorks para los activos'
+    ];
+}
+
 }
