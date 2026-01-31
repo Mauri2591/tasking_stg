@@ -73,6 +73,7 @@ class ToolsHerramientas extends Conexion
         $cmd = 'bash ' . escapeshellarg($scriptPath) . ' ' . escapeshellarg($host);
         $out = [];
         $exitCode = null;
+        error_log('OSINT SCRIPT: ' . OSINT_BASE_PATH . '/' . $path);
         exec($cmd . ' 2>&1', $out, $exitCode);
         if ($exitCode !== 0) {
             return null;
