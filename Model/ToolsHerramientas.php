@@ -67,12 +67,34 @@ class ToolsHerramientas extends Conexion
         return $stmt->execute();
     }
 
-    public function ejecutarCrtsh(array $tool, int $idProyecto)
+    private function ejecutarScript(string $path, string $host): ?string
     {
-        $conn = parent::get_conexion();
-        $activos = $this->get_datos_proyecto($idProyecto);
+        $scriptPath = realpath(__DIR__ . '/../' . $path);
+        if (!$scriptPath) {
+            return null;
+        }
 
-        $algunoOk = false;
+        $cmd = 'bash ' . escapeshellarg($scriptPath) . ' ' . escapeshellarg($host);
+
+        $out = [];
+        $exitCode = null;
+
+        exec($cmd . ' 2>&1', $out, $exitCode);
+
+        if ($exitCode !== 0) {
+            return null;
+        }
+
+        $output = trim(implode("\n", $out));
+        return $output !== '' ? $output : null;
+    }
+
+
+    public function ejecutarCrtsh(array $tool, int $idProyecto): array
+    {
+        $activos = $this->get_datos_proyecto($idProyecto);
+        $huboOk = false;
+        $huboWarn = false;
 
         foreach ($activos as $activo) {
 
@@ -81,47 +103,59 @@ class ToolsHerramientas extends Conexion
             }
 
             $host = $activo['host'];
-            $scriptPath = realpath(__DIR__ . '/../' . $tool['path']);
-            if (!$scriptPath) {
+
+            $rawOutput = $this->ejecutarScript($tool['path'], $host);
+
+            if ($rawOutput === null) {
                 continue;
             }
 
-            $cmd = 'bash ' . escapeshellarg($scriptPath) . ' ' . escapeshellarg($host);
-
-            $out = [];
-            $exitCode = null;
-
-            exec($cmd . ' 2>&1', $out, $exitCode);
-            $output = trim(implode("\n", $out));
-
-            // si este dominio falló, seguimos con el siguiente
-            if ($exitCode !== 0) {
-                continue;
-            }
-
-            try {
-                $conn->beginTransaction();
+            if (str_contains($rawOutput, '<TITLE>crt.sh | ERROR!')) {
+                $huboWarn = true;
 
                 $this->insert_ejecucion([
                     'tool_id' => $tool['id'],
                     'id_proyecto_gestionado' => $idProyecto,
                     'activo' => $host,
-                    'output' => $output,
-                    'exit_code' => $exitCode,
+                    'output' => $rawOutput,
+                    'exit_code' => 0,
                     'usuario' => $_SESSION['usu_id'] ?? null
                 ]);
 
-                $conn->commit();
-                $algunoOk = true;
-            } catch (Throwable $e) {
-                if ($conn->inTransaction()) {
-                    $conn->rollBack();
-                }
-                // seguimos con el próximo dominio
                 continue;
             }
+
+            $huboOk = true;
+
+            $this->insert_ejecucion([
+                'tool_id' => $tool['id'],
+                'id_proyecto_gestionado' => $idProyecto,
+                'activo' => $host,
+                'output' => $rawOutput,
+                'exit_code' => 0,
+                'usuario' => $_SESSION['usu_id'] ?? null
+            ]);
         }
 
-        return $algunoOk;
+        if ($huboOk) {
+            return [
+                'estado' => $huboWarn ? 'warn' : 'ok',
+                'mensaje' => $huboWarn
+                    ? 'Ejecución completada con advertencias (crt.sh inestable)'
+                    : 'Ejecución OSINT completada correctamente'
+            ];
+        }
+
+        if ($huboWarn) {
+            return [
+                'estado' => 'warn',
+                'mensaje' => 'crt.sh no pudo procesar los activos (fuente inestable)'
+            ];
+        }
+
+        return [
+            'estado' => 'error',
+            'mensaje' => 'Error interno al ejecutar la herramienta OSINT'
+        ];
     }
 }

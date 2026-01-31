@@ -88,40 +88,35 @@ switch ($_GET['tools']) {
             $idProyecto = (int)$_POST['id_proyecto_gestionado'];
 
             $tool = $tools->get_tool_by_id($toolId);
-
             if (!$tool) {
                 throw new Exception('Herramienta no encontrada');
             }
 
             switch ($tool['engine']) {
                 case 'crtsh':
-                    $ok = $tools->ejecutarCrtsh($tool, $idProyecto);
+                    $resultado = $tools->ejecutarCrtsh($tool, $idProyecto);
                     break;
-
                 default:
                     throw new Exception('Engine OSINT no soportado');
             }
 
-            if (!$ok) {
-                throw new Exception('Ejecución OSINT con errores');
+            // 🔑 manejo semántico
+            if ($resultado['estado'] === 'error') {
+                http_response_code(500);
+            } else {
+                http_response_code(200);
             }
 
-            http_response_code(200);
-            echo json_encode([
-                'status' => 'success',
-                'mensaje' => 'Herramienta ejecutada correctamente'
-            ]);
+            echo json_encode($resultado);
         } catch (Throwable $e) {
 
             http_response_code(500);
             echo json_encode([
-                'status' => 'error',
+                'estado' => 'error',
                 'mensaje' => $e->getMessage()
             ]);
         }
-
         exit;
-
         http_response_code(400);
         echo json_encode(['estado' => 'error', 'mensaje' => 'Acción inválida']);
         exit;
