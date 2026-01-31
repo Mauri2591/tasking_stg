@@ -1142,7 +1142,7 @@ if (isset($_SESSION['usu_id'])) {
         }
 
         function ejecutarHerramienta(id, idProyecto) {
-
+                            alert(id,idProyecto)
             const btn = $("#btnEjecutar" + id);
             const icono = $("#iconoEjecutar" + id);
             const texto = btn.find(".texto-boton");
