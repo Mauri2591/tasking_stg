@@ -65,31 +65,32 @@ class ToolsHerramientas extends Conexion
     }
 
     private function ejecutarScript(string $path, string $host): ?string
-    {
-        if (stripos(PHP_OS, 'WIN') === 0) {
-            return "[ERROR] Ejecución OSINT no soportada en Windows";
-        }
-
-        $scriptPath = realpath(OSINT_BASE_PATH . '/' . $path);
-        if (!$scriptPath || !is_file($scriptPath)) {
-            error_log('[OSINT] Script no encontrado: ' . OSINT_BASE_PATH . '/' . $path);
-            return null;
-        }
-
-        $cmd = 'bash ' . escapeshellarg($scriptPath) . ' ' . escapeshellarg($host);
-        $out = [];
-        $exitCode = null;
-
-        error_log('[OSINT] Ejecutando: ' . $cmd);
-
-        exec($cmd . ' 2>&1', $out, $exitCode);
-
-        if (empty($out)) {
-            return null;
-        }
-
-        return trim(implode("\n", $out));
+{
+    if (stripos(PHP_OS, 'WIN') === 0) {
+        return "[ERROR] Ejecución OSINT no soportada en Windows";
     }
+
+    $scriptPath = realpath(OSINT_BASE_PATH . '/' . $path);
+
+    if (!$scriptPath || !is_file($scriptPath)) {
+        error_log('[OSINT] Script no encontrado: ' . OSINT_BASE_PATH . '/' . $path);
+        return null;
+    }
+
+    $cmd = 'bash ' . escapeshellarg($scriptPath) . ' ' . escapeshellarg($host);
+    $out = [];
+    $exitCode = null;
+
+    error_log('[OSINT] Ejecutando: ' . $cmd);
+
+    exec($cmd . ' 2>&1', $out, $exitCode);
+
+    // 👇 NO matar por empty($out)
+    $output = trim(implode("\n", $out));
+
+    return $output !== '' ? $output : null;
+}
+
 
 
 
