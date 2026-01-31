@@ -1141,28 +1141,23 @@ if (isset($_SESSION['usu_id'])) {
             );
         }
 
-        function ejecutarHerramienta(id) {
+        function ejecutarHerramienta(id, idProyecto) {
 
             const btn = $("#btnEjecutar" + id);
             const icono = $("#iconoEjecutar" + id);
             const texto = btn.find(".texto-boton");
 
-            // Guardar estado original
             const iconoOriginal = icono.attr("class");
             const textoOriginal = texto.text();
 
-            // Cambiar a estado "ejecutando"
-            icono
-                .removeClass()
-                .addClass("ri-loader-4-line spin");
-
+            icono.removeClass().addClass("ri-loader-4-line spin");
             texto.text("Ejecutando...");
             btn.prop("disabled", true);
 
             $.post(
                     "../../../../../Controller/ctrToolsHerramientas.php?tools=ejecutar_herramienta", {
                         id: id,
-                        id_proyecto_gestionado: proyectoActual
+                        id_proyecto_gestionado: idProyecto
                     },
                     function(data) {
                         alert(data.mensaje);
@@ -1173,15 +1168,12 @@ if (isset($_SESSION['usu_id'])) {
                     alert("Error al ejecutar herramienta");
                 })
                 .always(function() {
-                    // Restaurar estado original
-                    icono
-                        .removeClass()
-                        .addClass(iconoOriginal);
-
+                    icono.removeClass().addClass(iconoOriginal);
                     texto.text(textoOriginal);
                     btn.prop("disabled", false);
                 });
         }
+
 
         //FIN RED TEAM
     </script>

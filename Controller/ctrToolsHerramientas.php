@@ -20,7 +20,7 @@ switch ($_GET['tools']) {
     case 'get_tools':
 
         $datos = $tools->get_tools($_POST['cats_id']);
-        ?>
+?>
         <table class="table-osint">
             <thead>
                 <tr>
@@ -54,20 +54,24 @@ switch ($_GET['tools']) {
                             <button
                                 type="button"
                                 class="btn btn-sm btn-primary py-0 px-1 d-inline-flex align-items-center gap-1"
-                                onclick="ejecutarHerramienta(<?= (int)$val['id']; ?>)"
+                                onclick="ejecutarHerramienta(
+        <?= (int)$val['id']; ?>,
+        <?= (int)Openssl::get_ssl_decrypt($_GET['pg']); ?>
+    )"
                                 title="Ejecutar herramienta"
                                 id="btnEjecutar<?= (int)$val['id']; ?>">
                                 <i class="ri-play-mini-fill" id="iconoEjecutar<?= (int)$val['id']; ?>"></i>
                                 <span class="texto-boton">Ejecutar</span>
                             </button>
+
                         </td>
                         <td> <i class="ri-file-list-fill text-info fw-bold"></i> </td>
 
                     </tr>
                 <?php endforeach; ?>
             </tbody>
-         </table>
-            <?php
+        </table>
+<?php
         exit;
 
     case 'get_datos_proyecto':
@@ -96,7 +100,7 @@ switch ($_GET['tools']) {
                     $resultado = $tools->ejecutarCrtsh($tool, $idProyecto);
                     break;
 
-              
+
                 default:
                     throw new Exception('Engine OSINT no soportado');
             }
