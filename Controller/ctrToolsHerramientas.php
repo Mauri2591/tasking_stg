@@ -100,6 +100,9 @@ switch ($_GET['tools']) {
                     $resultado = $tools->ejecutarCrtsh($tool, $idProyecto);
                     break;
 
+                case 'google_dorks':
+                    $resultado = $tools->ejecutarGoogleDorks($tool, $idProyecto);
+                    break;
 
                 default:
                     throw new Exception('Engine OSINT no soportado');
