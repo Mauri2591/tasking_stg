@@ -1,7 +1,7 @@
 <?php
-require_once __DIR__ . "/../../../../../Config/Conexion.php";
-require_once __DIR__ . "/../../../../../Config/Config.php";
-require_once __DIR__ . "/../../../../../Model/ToolsHerramientas.php";
+require_once __DIR__ . "/../Config/Conexion.php";
+require_once __DIR__ . "/../Config/Config.php";
+require_once __DIR__ . "/../Model/ToolsHerramientas.php";
 
 $tools = new ToolsHerramientas();
 
