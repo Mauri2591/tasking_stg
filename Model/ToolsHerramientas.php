@@ -43,84 +43,132 @@ class ToolsHerramientas extends Conexion
     }
 
     /* =========================
-       EJECUCIÓN ASÍNCRONA REAL
+       INSERT EJECUCIÓN
        ========================= */
 
-   private function ejecutarScriptAsync(string $path, string $host): bool
-{
-    if (stripos(PHP_OS, 'WIN') === 0) {
-        return false;
+    public function insert_ejecucion(array $data): bool
+    {
+        $conn = parent::get_conexion();
+
+        $sql = "
+        INSERT INTO tools_ejecuciones (
+            tool_id,
+            id_proyecto_gestionado,
+            activo,
+            output,
+            exit_code,
+            ejecutado_por,
+            log_file,
+            fecha_ejecucion,
+            estado,
+            est
+        ) VALUES (
+            :tool_id,
+            :id_proyecto,
+            :activo,
+            :output,
+            :exit_code,
+            :ejecutado_por,
+            :log_file,
+            NOW(),
+            'RUNNING',
+            1
+        )";
+
+        $stmt = $conn->prepare($sql);
+
+        return $stmt->execute([
+            ':tool_id'       => $data['tool_id'],
+            ':id_proyecto'   => $data['id_proyecto_gestionado'],
+            ':activo'        => $data['activo'],
+            ':output'        => $data['output'],
+            ':exit_code'     => $data['exit_code'],
+            ':ejecutado_por' => $data['usuario'],
+            ':log_file'      => $data['log_file'],
+        ]);
     }
 
-    $scriptPath = realpath(OSINT_BASE_PATH . '/' . $path);
-    if (!$scriptPath || !is_file($scriptPath)) {
-        error_log('[OSINT] Script no encontrado: ' . $path);
-        return false;
+    /* =========================
+       EJECUCIÓN ASÍNCRONA
+       ========================= */
+
+    private function ejecutarScriptAsync(string $path, string $host, array $meta): void
+    {
+        $scriptPath = realpath(OSINT_BASE_PATH . '/' . $path);
+        if (!$scriptPath) {
+            throw new Exception("Script OSINT no encontrado");
+        }
+
+        $safeHost = preg_replace('/[^a-zA-Z0-9\.\-_]/', '_', $host);
+        $logFile  = "/tmp/osint_{$meta['tool_id']}_{$meta['proyecto']}_{$safeHost}.log";
+
+        // INSERTA EJECUCIÓN (RUNNING)
+        $this->insert_ejecucion([
+            'tool_id' => $meta['tool_id'],
+            'id_proyecto_gestionado' => $meta['proyecto'],
+            'activo' => $host,
+            'output' => '[OSINT] Ejecutando en background…',
+            'exit_code' => -1,
+            'usuario' => $_SESSION['usu_id'] ?? null,
+            'log_file' => $logFile,
+        ]);
+
+        // LANZA EN BACKGROUND (SIN BLOQUEAR APACHE)
+        $cmd = sprintf(
+            'nohup /bin/bash %s %s > %s 2>&1 &',
+            escapeshellarg($scriptPath),
+            escapeshellarg($host),
+            escapeshellarg($logFile)
+        );
+
+        exec($cmd);
     }
-
-    // log único por ejecución
-    $logFile = '/tmp/osint_' . time() . '_' . rand(1000,9999) . '.log';
-
-    $cmd = sprintf(
-        'cd %s && /bin/bash %s %s > %s 2>&1 &',
-        escapeshellarg(dirname($scriptPath)),
-        escapeshellarg($scriptPath),
-        escapeshellarg($host),
-        escapeshellarg($logFile)
-    );
-
-    error_log('[OSINT] ASYNC CMD: ' . $cmd);
-
-    // importante: NO capturar salida
-    exec($cmd);
-
-    return true;
-}
-
 
     /* =========================
        CRT.SH
        ========================= */
 
     public function ejecutarCrtsh(array $tool, int $idProyecto): array
-{
-    $activos = $this->get_datos_proyecto($idProyecto);
+    {
+        $activos = $this->get_datos_proyecto($idProyecto);
 
-    foreach ($activos as $activo) {
-        if (!in_array($activo['tipo'], ['OTRO', 'ACTIVO'])) {
-            continue;
+        foreach ($activos as $a) {
+            if (!in_array($a['tipo'], ['OTRO', 'ACTIVO'])) continue;
+
+            $this->ejecutarScriptAsync(
+                $tool['path'],
+                $a['host'],
+                [
+                    'tool_id'  => $tool['id'],
+                    'proyecto' => $idProyecto
+                ]
+            );
         }
 
-        $this->ejecutarScriptAsync($tool['path'], $activo['host']);
+        return ['estado' => 'ok', 'mensaje' => 'crt.sh lanzado en background'];
     }
-
-    return [
-        'estado'  => 'ok',
-        'mensaje' => 'crt.sh lanzado en background'
-    ];
-}
-
 
     /* =========================
        GOOGLE DORKS
        ========================= */
 
-   public function ejecutarGoogleDorks(array $tool, int $idProyecto): array
-{
-    $activos = $this->get_datos_proyecto($idProyecto);
+    public function ejecutarGoogleDorks(array $tool, int $idProyecto): array
+    {
+        $activos = $this->get_datos_proyecto($idProyecto);
 
-    foreach ($activos as $activo) {
-        if (!in_array($activo['tipo'], ['OTRO', 'ACTIVO'])) {
-            continue;
+        foreach ($activos as $a) {
+            if (!in_array($a['tipo'], ['OTRO', 'ACTIVO'])) continue;
+
+            $this->ejecutarScriptAsync(
+                $tool['path'],
+                $a['host'],
+                [
+                    'tool_id'  => $tool['id'],
+                    'proyecto' => $idProyecto
+                ]
+            );
         }
 
-        $this->ejecutarScriptAsync($tool['path'], $activo['host']);
+        return ['estado' => 'ok', 'mensaje' => 'Google Dorks lanzado en background'];
     }
-
-    return [
-        'estado'  => 'ok',
-        'mensaje' => 'Google Dorks lanzado en background'
-    ];
-}
-
 }
