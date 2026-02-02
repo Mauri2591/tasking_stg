@@ -755,9 +755,9 @@ switch ($_GET['proy']) {
                 $hoy = new DateTime('today');
                 $fechaRow = new DateTime($fecha);
                 if ($fechaRow == $hoy) {
-                    $sub_array[] = '<span class="badge bg-warning text-dark">' . $fecha . '</span>';
+                    $sub_array[] = '<span class="badge border border-warning text-dark">' . $fecha . '</span>';
                 } elseif ($fechaRow < $hoy) {
-                    $sub_array[] = '<span class="badge bg-danger text-white">' . $fecha . '</span>';
+                    $sub_array[] = '<span class="badge border border-danger text-dark">' . $fecha . '</span>';
                 } else {
                     $sub_array[] = '<span class="badge bg-light text-dark">' . $fecha . '</span>';
                 }
@@ -899,9 +899,9 @@ switch ($_GET['proy']) {
                 $hoy = new DateTime('today');
                 $fechaRow = new DateTime($fecha);
                 if ($fechaRow == $hoy) {
-                    $sub_array[] = '<span class="badge bg-warning text-dark">' . $fecha . '</span>';
+                    $sub_array[] = '<span class="badge border border-warning text-dark">' . $fecha . '</span>';
                 } elseif ($fechaRow < $hoy) {
-                    $sub_array[] = '<span class="badge bg-danger text-white">' . $fecha . '</span>';
+                    $sub_array[] = '<span class="badge border border-danger text-dark">' . $fecha . '</span>';
                 } else {
                     $sub_array[] = '<span class="badge bg-light text-dark">' . $fecha . '</span>';
                 }
@@ -1029,9 +1029,9 @@ switch ($_GET['proy']) {
                 $hoy = new DateTime('today');
                 $fechaRow = new DateTime($fecha);
                 if ($fechaRow == $hoy) {
-                    $sub_array[] = '<span class="badge bg-warning text-dark">' . $fecha . '</span>';
+                    $sub_array[] = '<span class="badge border border-warning text-dark">' . $fecha . '</span>';
                 } elseif ($fechaRow < $hoy) {
-                    $sub_array[] = '<span class="badge bg-danger text-white">' . $fecha . '</span>';
+                    $sub_array[] = '<span class="badge border border-danger text-dark">' . $fecha . '</span>';
                 } else {
                     $sub_array[] = '<span class="badge bg-light text-dark">' . $fecha . '</span>';
                 }
@@ -1175,9 +1175,9 @@ switch ($_GET['proy']) {
                 $hoy = new DateTime('today');
                 $fechaRow = new DateTime($fecha);
                 if ($fechaRow == $hoy) {
-                    $sub_array[] = '<span class="badge bg-warning text-dark">' . $fecha . '</span>';
+                    $sub_array[] = '<span class="badge border border-warning text-dark">' . $fecha . '</span>';
                 } elseif ($fechaRow < $hoy) {
-                    $sub_array[] = '<span class="badge bg-danger text-white">' . $fecha . '</span>';
+                    $sub_array[] = '<span class="badge border border-danger text-dark">' . $fecha . '</span>';
                 } else {
                     $sub_array[] = '<span class="badge bg-light text-dark">' . $fecha . '</span>';
                 }
@@ -1298,9 +1298,9 @@ switch ($_GET['proy']) {
                 $hoy = new DateTime('today');
                 $fechaRow = new DateTime($fecha);
                 if ($fechaRow == $hoy) {
-                    $sub_array[] = '<span class="badge bg-warning text-dark">' . $fecha . '</span>';
+                    $sub_array[] = '<span class="badge border border-warning text-dark">' . $fecha . '</span>';
                 } elseif ($fechaRow < $hoy) {
-                    $sub_array[] = '<span class="badge bg-danger text-white">' . $fecha . '</span>';
+                    $sub_array[] = '<span class="badge border border-danger text-dark">' . $fecha . '</span>';
                 } else {
                     $sub_array[] = '<span class="badge bg-light text-dark">' . $fecha . '</span>';
                 }
