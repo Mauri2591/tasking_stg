@@ -747,7 +747,7 @@ switch ($_GET['proy']) {
             $puede_cambiar_estado = in_array($session_usu_id, $ids_asignados) || $session_sector_id == "4";
 
             $sub_array[] = $row['titulo'];
-            
+
             $fecha = $row['fech_inicio'];
             if ($fecha == '') {
                 $sub_array[] = 'Sin fecha';
@@ -890,7 +890,7 @@ switch ($_GET['proy']) {
         foreach ($datos as $row) {
             $sub_array = array();
             $sub_array[] = $row['titulo'];
-            
+
 
              $fecha = $row['fech_inicio'];
             if ($fecha == '') {
@@ -899,13 +899,10 @@ switch ($_GET['proy']) {
                 $hoy = new DateTime('today');
                 $fechaRow = new DateTime($fecha);
                 if ($fechaRow == $hoy) {
-                    // 🟡 Hoy
                     $sub_array[] = '<span class="badge bg-warning text-dark">' . $fecha . '</span>';
                 } elseif ($fechaRow < $hoy) {
-                    // 🔴 Vencida
                     $sub_array[] = '<span class="badge bg-danger text-white">' . $fecha . '</span>';
                 } else {
-                    // ⚪ Futura
                     $sub_array[] = '<span class="badge bg-light text-dark">' . $fecha . '</span>';
                 }
             }
@@ -965,7 +962,7 @@ switch ($_GET['proy']) {
                 switch ($row['estados_id']) {
                     case '1':
                         $sub_array[] = '<div class="btn-group btn-group-sm p-0" role="group">
-                        <button id="btnGroupDrop1" type="button" class="btn btn-primary btn-sm dropdown-toggle py-0" 
+                        <button id="btnGroupDrop1" type="button" class="btn btn-primary btn-sm dropdown-toggle py-0"
                             data-bs-toggle="dropdown" aria-expanded="false">Estado</button>
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" onclick="cambiar_a_abierto(' . $row['id_proyecto_gestionado'] . ')">Abierto</a></li>
@@ -1025,20 +1022,17 @@ switch ($_GET['proy']) {
         foreach ($datos as $row) {
             $sub_array = array();
             $sub_array[] = $row['titulo'];
-             $fecha = $row['fech_inicio'];
+            $fecha = $row['fech_inicio'];
             if ($fecha == '') {
                 $sub_array[] = 'Sin fecha';
             } else {
                 $hoy = new DateTime('today');
                 $fechaRow = new DateTime($fecha);
                 if ($fechaRow == $hoy) {
-                    // 🟡 Hoy
                     $sub_array[] = '<span class="badge bg-warning text-dark">' . $fecha . '</span>';
                 } elseif ($fechaRow < $hoy) {
-                    // 🔴 Vencida
                     $sub_array[] = '<span class="badge bg-danger text-white">' . $fecha . '</span>';
                 } else {
-                    // ⚪ Futura
                     $sub_array[] = '<span class="badge bg-light text-dark">' . $fecha . '</span>';
                 }
             }
@@ -1173,9 +1167,21 @@ switch ($_GET['proy']) {
         foreach ($datos as $row) {
             $sub_array = array();
             $sub_array[] = $row['titulo'];
-            $sub_array[] = $row['fech_inicio'] == ''
-                ? 'Sin fecha'
-                : '<span class="badge bg-light text-dark">' . $row['fech_inicio'] . '</span>';
+            
+            $fecha = $row['fech_inicio'];
+            if ($fecha == '') {
+                $sub_array[] = 'Sin fecha';
+            } else {
+                $hoy = new DateTime('today');
+                $fechaRow = new DateTime($fecha);
+                if ($fechaRow == $hoy) {
+                    $sub_array[] = '<span class="badge bg-warning text-dark">' . $fecha . '</span>';
+                } elseif ($fechaRow < $hoy) {
+                    $sub_array[] = '<span class="badge bg-danger text-white">' . $fecha . '</span>';
+                } else {
+                    $sub_array[] = '<span class="badge bg-light text-dark">' . $fecha . '</span>';
+                }
+            }
             $sub_array[] = $row['fech_fin'] == ''
                 ? 'Sin fecha'
                 : '<span class="badge bg-light text-dark">' . $row['fech_fin'] . '</span>';
@@ -1232,7 +1238,7 @@ switch ($_GET['proy']) {
                 switch ($row['estados_id']) {
                     case '1':
                         $sub_array[] = '<div class="btn-group btn-group-sm p-0" role="group">
-                        <button id="btnGroupDrop1" type="button" class="btn btn-primary btn-sm dropdown-toggle py-0" 
+                        <button id="btnGroupDrop1" type="button" class="btn btn-primary btn-sm dropdown-toggle py-0"
                             data-bs-toggle="dropdown" aria-expanded="false">Estado</button>
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" onclick="cambiar_a_abierto(' . $row['id_proyecto_gestionado'] . ')">Abierto</a></li>
@@ -1285,7 +1291,6 @@ switch ($_GET['proy']) {
             $sub_array = array();
             $sub_array[] = $row['titulo'];
 
-
              $fecha = $row['fech_inicio'];
             if ($fecha == '') {
                 $sub_array[] = 'Sin fecha';
@@ -1293,18 +1298,15 @@ switch ($_GET['proy']) {
                 $hoy = new DateTime('today');
                 $fechaRow = new DateTime($fecha);
                 if ($fechaRow == $hoy) {
-                    // 🟡 Hoy
                     $sub_array[] = '<span class="badge bg-warning text-dark">' . $fecha . '</span>';
                 } elseif ($fechaRow < $hoy) {
-                    // 🔴 Vencida
                     $sub_array[] = '<span class="badge bg-danger text-white">' . $fecha . '</span>';
                 } else {
-                    // ⚪ Futura
                     $sub_array[] = '<span class="badge bg-light text-dark">' . $fecha . '</span>';
                 }
             }
 
-            
+
             $sub_array[] = $row['fech_fin'] == '' ? 'Sin fecha' : '<span class="badge bg-light text-dark">' . $row['fech_fin'] . '</span>';
             $sub_array[] = '<span class="badge bg-light text-dark">' . $row['creador_proy'] . '</span';
             $sub_array[] = strlen($row['cat_nom']) > 10

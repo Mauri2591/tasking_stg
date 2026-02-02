@@ -13,7 +13,7 @@ $(document).ready(function () {
             'pdfHtml5'
         ],
         "ajax": {
-            url: "../../../../../../Controller/ctrProyectos.php?proy=get_proyectos_eh",
+            url: "../../../../../../Controller/ctrProyectos.php?proy=get_proyectos_sase",
             type: "post",
             dataType: "json",
             data: {
@@ -71,7 +71,7 @@ $(document).ready(function () {
             'pdfHtml5'
         ],
         "ajax": {
-            url: "../../../../../../Controller/ctrProyectos.php?proy=get_proyectos_eh",
+            url: "../../../../../../Controller/ctrProyectos.php?proy=get_proyectos_sase",
             type: "post",
             dataType: "json",
             data: {
@@ -129,7 +129,7 @@ $(document).ready(function () {
             'pdfHtml5'
         ],
         "ajax": {
-            url: "../../../../../../Controller/ctrProyectos.php?proy=get_proyectos_eh",
+            url: "../../../../../../Controller/ctrProyectos.php?proy=get_proyectos_sase",
             type: "post",
             dataType: "json",
             data: {
@@ -187,7 +187,7 @@ $(document).ready(function () {
             'pdfHtml5'
         ],
         "ajax": {
-            url: "../../../../../../Controller/ctrProyectos.php?proy=get_proyectos_eh",
+            url: "../../../../../../Controller/ctrProyectos.php?proy=get_proyectos_sase",
             type: "post",
             dataType: "json",
             data: {
