@@ -13,74 +13,91 @@ $timesummary = new timesummary;
 switch ($_GET['accion']) {
 
     case 'insert_tarea':
-        $hora_desde = $_POST['hora_desde'] ?? null;
-        $hora_hasta = $_POST['hora_hasta'] ?? null;
+    $hora_desde = $_POST['hora_desde'] ?? null;
+    $hora_hasta = $_POST['hora_hasta'] ?? null;
 
-        $data = [
-            "proyecto" => $_POST['id_proyecto_gestionado'] ?? null,
-            "producto" => $_POST['id_producto'] ?? null,
-            "id_tarea" => $_POST['id_tarea'] ?? null,
-            "es_telecom" => $_POST['es_telecom'] ?? null,
-            "fecha" => $_POST['fecha'] ?? null,
-            "desde" => $hora_desde,
-            "hasta" => $hora_hasta
-        ];
+    // 🔒 NORMALIZACIÓN DE FECHA (FIX)
+    $fecha_raw = $_POST['fecha'] ?? null;
+    if (!$fecha_raw) {
+        http_response_code(400);
+        echo json_encode(["error" => "Fecha obligatoria"]);
+        exit;
+    }
 
-        // Validación de formato de hora
-        if (!timesummary::validarHora($hora_desde) || !timesummary::validarHora($hora_hasta)) {
-            http_response_code(400);
-            echo json_encode(["error" => "Formato de hora inválido. Use HH:MM"]);
-            exit;
-        }
-        // Validación de campos vacíos
-        if (!timesummary::validarDatosVacios($data)) {
-            http_response_code(400);
-            echo json_encode(["error" => "Hay campos obligatorios vacíos"]);
-            exit;
-        }
+    try {
+        // Acepta YYYY-MM-DD o ISO 8601 con timezone
+        $fecha_mysql = (new DateTime($fecha_raw))->format('Y-m-d');
+    } catch (Exception $e) {
+        http_response_code(400);
+        echo json_encode(["error" => "Formato de fecha inválido"]);
+        exit;
+    }
 
-        $validacion_horas = timesummary::validar_horas_minutos($hora_desde, $hora_hasta);
+    $data = [
+        "proyecto" => $_POST['id_proyecto_gestionado'] ?? null,
+        "producto" => $_POST['id_producto'] ?? null,
+        "id_tarea" => $_POST['id_tarea'] ?? null,
+        "es_telecom" => $_POST['es_telecom'] ?? null,
+        "fecha" => $fecha_mysql, // ✅ ya normalizada
+        "desde" => $hora_desde,
+        "hasta" => $hora_hasta
+    ];
 
-        if (!$validacion_horas['success']) {
-            http_response_code(400);
-            echo json_encode(["error" => $validacion_horas['error']]);
-            exit;
-        }
+    // Validación de formato de hora
+    if (!timesummary::validarHora($hora_desde) || !timesummary::validarHora($hora_hasta)) {
+        http_response_code(400);
+        echo json_encode(["error" => "Formato de hora inválido. Use HH:MM"]);
+        exit;
+    }
 
-        $horas_consumidas = $validacion_horas['duracion']; // Ejemplo: "01:30"
+    // Validación de campos vacíos
+    if (!timesummary::validarDatosVacios($data)) {
+        http_response_code(400);
+        echo json_encode(["error" => "Hay campos obligatorios vacíos"]);
+        exit;
+    }
 
-        try {
-            $timesummary->insert_tarea(
-                $_SESSION['usu_id'] ?? null,
-                $_POST['id_proyecto_gestionado'] ?? null,
-                $_POST['id_producto'] ?? null,
-                $_POST['id_tarea'] ?? null,
-                $_POST['es_telecom'] ?? null,
-                $_POST['id_pm_calidad'] ?? null,
-                $_POST['fecha'] ?? null,
-                $_POST['hora_desde'] ?? null,
-                $_POST['hora_hasta'] ?? null,
-                $_POST['descripcion'] ?? null,
-                $horas_consumidas
-            );
+    $validacion_horas = timesummary::validar_horas_minutos($hora_desde, $hora_hasta);
+    if (!$validacion_horas['success']) {
+        http_response_code(400);
+        echo json_encode(["error" => $validacion_horas['error']]);
+        exit;
+    }
 
-            http_response_code(200);
-            echo json_encode(["success" => "Tarea agregada correctamente"]);
-        } catch (PDOException $e) {
-            http_response_code(400);
-            echo json_encode([
-                "error" => "Error SQL",
-                "message" => $e->getMessage(),
-                "sqlstate" => $e->getCode()
-            ]);
-        } catch (Exception $e) {
-            http_response_code(500);
-            echo json_encode([
-                "error" => "Error general",
-                "message" => $e->getMessage()
-            ]);
-        }
-        break;
+    $horas_consumidas = $validacion_horas['duracion'];
+
+    try {
+        $timesummary->insert_tarea(
+            $_SESSION['usu_id'] ?? null,
+            $_POST['id_proyecto_gestionado'] ?? null,
+            $_POST['id_producto'] ?? null,
+            $_POST['id_tarea'] ?? null,
+            $_POST['es_telecom'] ?? null,
+            $_POST['id_pm_calidad'] ?? null,
+            $fecha_mysql,              // ✅ ACÁ
+            $hora_desde,
+            $hora_hasta,
+            $_POST['descripcion'] ?? null,
+            $horas_consumidas
+        );
+
+        http_response_code(200);
+        echo json_encode(["success" => "Tarea agregada correctamente"]);
+    } catch (PDOException $e) {
+        http_response_code(400);
+        echo json_encode([
+            "error" => "Error SQL",
+            "message" => $e->getMessage(),
+            "sqlstate" => $e->getCode()
+        ]);
+    } catch (Exception $e) {
+        http_response_code(500);
+        echo json_encode([
+            "error" => "Error general",
+            "message" => $e->getMessage()
+        ]);
+    }
+    break;
 
 
     // OBTENER TAREAS PARA FULLCALENDAR
