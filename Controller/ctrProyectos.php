@@ -747,9 +747,22 @@ switch ($_GET['proy']) {
             $puede_cambiar_estado = in_array($session_usu_id, $ids_asignados) || $session_sector_id == "4";
 
             $sub_array[] = $row['titulo'];
-            $sub_array[] = $row['fech_inicio'] == ''
-                ? 'Sin fecha'
-                : '<span class="badge bg-light text-dark">' . $row['fech_inicio'] . '</span>';
+            
+            $fecha = $row['fech_inicio'];
+            if ($fecha == '') {
+                $sub_array[] = 'Sin fecha';
+            } else {
+                $hoy = new DateTime('today');
+                $fechaRow = new DateTime($fecha);
+                if ($fechaRow == $hoy) {
+                    $sub_array[] = '<span class="badge bg-warning text-dark">' . $fecha . '</span>';
+                } elseif ($fechaRow < $hoy) {
+                    $sub_array[] = '<span class="badge bg-danger text-white">' . $fecha . '</span>';
+                } else {
+                    $sub_array[] = '<span class="badge bg-light text-dark">' . $fecha . '</span>';
+                }
+            }
+
             $sub_array[] = $row['fech_fin'] == ''
                 ? 'Sin fecha'
                 : '<span class="badge bg-light text-dark">' . $row['fech_fin'] . '</span>';
@@ -877,9 +890,26 @@ switch ($_GET['proy']) {
         foreach ($datos as $row) {
             $sub_array = array();
             $sub_array[] = $row['titulo'];
-            $sub_array[] = $row['fech_inicio'] == ''
-                ? 'Sin fecha'
-                : '<span class="badge bg-light text-dark">' . $row['fech_inicio'] . '</span>';
+            
+
+             $fecha = $row['fech_inicio'];
+            if ($fecha == '') {
+                $sub_array[] = 'Sin fecha';
+            } else {
+                $hoy = new DateTime('today');
+                $fechaRow = new DateTime($fecha);
+                if ($fechaRow == $hoy) {
+                    // 🟡 Hoy
+                    $sub_array[] = '<span class="badge bg-warning text-dark">' . $fecha . '</span>';
+                } elseif ($fechaRow < $hoy) {
+                    // 🔴 Vencida
+                    $sub_array[] = '<span class="badge bg-danger text-white">' . $fecha . '</span>';
+                } else {
+                    // ⚪ Futura
+                    $sub_array[] = '<span class="badge bg-light text-dark">' . $fecha . '</span>';
+                }
+            }
+
             $sub_array[] = $row['fech_fin'] == ''
                 ? 'Sin fecha'
                 : '<span class="badge bg-light text-dark">' . $row['fech_fin'] . '</span>';
@@ -995,9 +1025,24 @@ switch ($_GET['proy']) {
         foreach ($datos as $row) {
             $sub_array = array();
             $sub_array[] = $row['titulo'];
-            $sub_array[] = $row['fech_inicio'] == ''
-                ? 'Sin fecha'
-                : '<span class="badge bg-light text-dark">' . $row['fech_inicio'] . '</span>';
+             $fecha = $row['fech_inicio'];
+            if ($fecha == '') {
+                $sub_array[] = 'Sin fecha';
+            } else {
+                $hoy = new DateTime('today');
+                $fechaRow = new DateTime($fecha);
+                if ($fechaRow == $hoy) {
+                    // 🟡 Hoy
+                    $sub_array[] = '<span class="badge bg-warning text-dark">' . $fecha . '</span>';
+                } elseif ($fechaRow < $hoy) {
+                    // 🔴 Vencida
+                    $sub_array[] = '<span class="badge bg-danger text-white">' . $fecha . '</span>';
+                } else {
+                    // ⚪ Futura
+                    $sub_array[] = '<span class="badge bg-light text-dark">' . $fecha . '</span>';
+                }
+            }
+
             $sub_array[] = $row['fech_fin'] == ''
                 ? 'Sin fecha'
                 : '<span class="badge bg-light text-dark">' . $row['fech_fin'] . '</span>';
@@ -1239,7 +1284,27 @@ switch ($_GET['proy']) {
         foreach ($datos as $row) {
             $sub_array = array();
             $sub_array[] = $row['titulo'];
-            $sub_array[] = $row['fech_inicio'] == '' ? 'Sin fecha' : '<span class="badge bg-light text-dark">' . $row['fech_inicio'] . '</span>';
+
+
+             $fecha = $row['fech_inicio'];
+            if ($fecha == '') {
+                $sub_array[] = 'Sin fecha';
+            } else {
+                $hoy = new DateTime('today');
+                $fechaRow = new DateTime($fecha);
+                if ($fechaRow == $hoy) {
+                    // 🟡 Hoy
+                    $sub_array[] = '<span class="badge bg-warning text-dark">' . $fecha . '</span>';
+                } elseif ($fechaRow < $hoy) {
+                    // 🔴 Vencida
+                    $sub_array[] = '<span class="badge bg-danger text-white">' . $fecha . '</span>';
+                } else {
+                    // ⚪ Futura
+                    $sub_array[] = '<span class="badge bg-light text-dark">' . $fecha . '</span>';
+                }
+            }
+
+            
             $sub_array[] = $row['fech_fin'] == '' ? 'Sin fecha' : '<span class="badge bg-light text-dark">' . $row['fech_fin'] . '</span>';
             $sub_array[] = '<span class="badge bg-light text-dark">' . $row['creador_proy'] . '</span';
             $sub_array[] = strlen($row['cat_nom']) > 10
@@ -1927,7 +1992,7 @@ switch ($_GET['proy']) {
                 Descargar pipeline <i onclick="descargarPipeline(<?php echo $datos->id ?>)"
                     type="button" title="Descargar pipeline del cliente" class="ri-code-s-slash-fill fs-16" style="color: palevioletred;"></i>
             </span>
-        <?php
+<?php
         }
         break;
 
