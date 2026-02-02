@@ -755,9 +755,17 @@ switch ($_GET['proy']) {
                 $hoy = new DateTime('today');
                 $fechaRow = new DateTime($fecha);
                 if ($fechaRow == $hoy) {
-                    $sub_array[] = '<span class="badge border border-warning text-dark">' . $fecha . '</span>';
+                    if ($row['estados_id'] == 1 || $row['estados_id'] == 2) {
+                        $sub_array[] = '<span class="badge border border-warning text-dark">' . $fecha . '</span>';
+                    } else {
+                        $sub_array[] = '<span class="badge bg-light text-dark">' . $fecha . '</span>';
+                    }
                 } elseif ($fechaRow < $hoy) {
-                    $sub_array[] = '<span class="badge border border-danger text-dark">' . $fecha . '</span>';
+                    if ($row['estados_id'] == 1 || $row['estados_id'] == 2) {
+                        $sub_array[] = '<span class="badge text-dark" style="border:.13rem solid red">' . $fecha . '</span>';
+                    } else {
+                        $sub_array[] = '<span class="badge bg-light text-dark">' . $fecha . '</span>';
+                    }
                 } else {
                     $sub_array[] = '<span class="badge bg-light text-dark">' . $fecha . '</span>';
                 }
@@ -892,16 +900,24 @@ switch ($_GET['proy']) {
             $sub_array[] = $row['titulo'];
 
 
-             $fecha = $row['fech_inicio'];
+            $fecha = $row['fech_inicio'];
             if ($fecha == '') {
                 $sub_array[] = 'Sin fecha';
             } else {
                 $hoy = new DateTime('today');
                 $fechaRow = new DateTime($fecha);
                 if ($fechaRow == $hoy) {
-                    $sub_array[] = '<span class="badge border border-warning text-dark">' . $fecha . '</span>';
+                    if ($row['estados_id'] == 1 || $row['estados_id'] == 2) {
+                        $sub_array[] = '<span class="badge border border-warning text-dark">' . $fecha . '</span>';
+                    } else {
+                        $sub_array[] = '<span class="badge bg-light text-dark">' . $fecha . '</span>';
+                    }
                 } elseif ($fechaRow < $hoy) {
-                    $sub_array[] = '<span class="badge border border-danger text-dark">' . $fecha . '</span>';
+                    if ($row['estados_id'] == 1 || $row['estados_id'] == 2) {
+                        $sub_array[] = '<span class="badge text-dark" style="border:.13rem solid red">' . $fecha . '</span>';
+                    } else {
+                        $sub_array[] = '<span class="badge bg-light text-dark">' . $fecha . '</span>';
+                    }
                 } else {
                     $sub_array[] = '<span class="badge bg-light text-dark">' . $fecha . '</span>';
                 }
@@ -1022,6 +1038,7 @@ switch ($_GET['proy']) {
         foreach ($datos as $row) {
             $sub_array = array();
             $sub_array[] = $row['titulo'];
+
             $fecha = $row['fech_inicio'];
             if ($fecha == '') {
                 $sub_array[] = 'Sin fecha';
@@ -1029,9 +1046,17 @@ switch ($_GET['proy']) {
                 $hoy = new DateTime('today');
                 $fechaRow = new DateTime($fecha);
                 if ($fechaRow == $hoy) {
-                    $sub_array[] = '<span class="badge border border-warning text-dark">' . $fecha . '</span>';
+                    if ($row['estados_id'] == 1 || $row['estados_id'] == 2) {
+                        $sub_array[] = '<span class="badge border border-warning text-dark">' . $fecha . '</span>';
+                    } else {
+                        $sub_array[] = '<span class="badge bg-light text-dark">' . $fecha . '</span>';
+                    }
                 } elseif ($fechaRow < $hoy) {
-                    $sub_array[] = '<span class="badge border border-danger text-dark">' . $fecha . '</span>';
+                    if ($row['estados_id'] == 1 || $row['estados_id'] == 2) {
+                        $sub_array[] = '<span class="badge text-dark" style="border:.13rem solid red">' . $fecha . '</span>';
+                    } else {
+                        $sub_array[] = '<span class="badge bg-light text-dark">' . $fecha . '</span>';
+                    }
                 } else {
                     $sub_array[] = '<span class="badge bg-light text-dark">' . $fecha . '</span>';
                 }
@@ -1167,7 +1192,7 @@ switch ($_GET['proy']) {
         foreach ($datos as $row) {
             $sub_array = array();
             $sub_array[] = $row['titulo'];
-            
+
             $fecha = $row['fech_inicio'];
             if ($fecha == '') {
                 $sub_array[] = 'Sin fecha';
@@ -1175,13 +1200,22 @@ switch ($_GET['proy']) {
                 $hoy = new DateTime('today');
                 $fechaRow = new DateTime($fecha);
                 if ($fechaRow == $hoy) {
-                    $sub_array[] = '<span class="badge border border-warning text-dark">' . $fecha . '</span>';
+                    if ($row['estados_id'] == 1 || $row['estados_id'] == 2) {
+                        $sub_array[] = '<span class="badge border border-warning text-dark">' . $fecha . '</span>';
+                    } else {
+                        $sub_array[] = '<span class="badge bg-light text-dark">' . $fecha . '</span>';
+                    }
                 } elseif ($fechaRow < $hoy) {
-                    $sub_array[] = '<span class="badge border border-danger text-dark">' . $fecha . '</span>';
+                    if ($row['estados_id'] == 1 || $row['estados_id'] == 2) {
+                        $sub_array[] = '<span class="badge text-dark" style="border:.13rem solid red">' . $fecha . '</span>';
+                    } else {
+                        $sub_array[] = '<span class="badge bg-light text-dark">' . $fecha . '</span>';
+                    }
                 } else {
                     $sub_array[] = '<span class="badge bg-light text-dark">' . $fecha . '</span>';
                 }
             }
+
             $sub_array[] = $row['fech_fin'] == ''
                 ? 'Sin fecha'
                 : '<span class="badge bg-light text-dark">' . $row['fech_fin'] . '</span>';
@@ -1291,16 +1325,24 @@ switch ($_GET['proy']) {
             $sub_array = array();
             $sub_array[] = $row['titulo'];
 
-             $fecha = $row['fech_inicio'];
+            $fecha = $row['fech_inicio'];
             if ($fecha == '') {
                 $sub_array[] = 'Sin fecha';
             } else {
                 $hoy = new DateTime('today');
                 $fechaRow = new DateTime($fecha);
                 if ($fechaRow == $hoy) {
-                    $sub_array[] = '<span class="badge border border-warning text-dark">' . $fecha . '</span>';
+                    if ($row['estados_id'] == 1 || $row['estados_id'] == 2) {
+                        $sub_array[] = '<span class="badge border border-warning text-dark">' . $fecha . '</span>';
+                    } else {
+                        $sub_array[] = '<span class="badge bg-light text-dark">' . $fecha . '</span>';
+                    }
                 } elseif ($fechaRow < $hoy) {
-                    $sub_array[] = '<span class="badge border border-danger text-dark">' . $fecha . '</span>';
+                    if ($row['estados_id'] == 1 || $row['estados_id'] == 2) {
+                        $sub_array[] = '<span class="badge text-dark" style="border:.13rem solid red">' . $fecha . '</span>';
+                    } else {
+                        $sub_array[] = '<span class="badge bg-light text-dark">' . $fecha . '</span>';
+                    }
                 } else {
                     $sub_array[] = '<span class="badge bg-light text-dark">' . $fecha . '</span>';
                 }
@@ -1380,7 +1422,6 @@ switch ($_GET['proy']) {
         $colores_prioridad = array("BAJO" => "badge border border-success text-success", "MEDIO" => "badge border border-warning text-warning", "ALTO" => "badge border border-danger text-danger");
         foreach ($datos as $row) {
             $sub_array = array();
-            $sub_array[] = $row['fech_inicio'] == '' ? 'Sin fecha' : $row['fech_inicio'];
             $clase = isset($colores_prioridad[$row['prioridad']])
                 ? $colores_prioridad[$row['prioridad']]
                 : "badge bg-light text-dark";

@@ -180,7 +180,6 @@ if (isset($_SESSION['usu_id'])) {
                                 <table id="table_proyectos_en_proceso" style="text-align: center; width: 100%;">
                                     <thead style="text-align: center;">
                                         <tr style="text-align: center;">
-                                            <th style="width: 10px;text-align: center;">INICIO</th>
                                             <th style="width: 10px;text-align: center;">PRIO</th>
                                             <th style="width: 300px;text-align: center;">TITULO</th>
                                             <th style="width: 10px;text-align: center;">FIN</th>
@@ -198,7 +197,6 @@ if (isset($_SESSION['usu_id'])) {
                                     </thead>
                                     <tbody style="text-align: center;">
                                         <tr style="text-align: center;">
-                                            <td style="width: 10px;"></td>
                                             <td style="width: 10px;"></td>
                                             <td style="width: 300px;"></td>
                                             <td style="width: 10px;"></td>
