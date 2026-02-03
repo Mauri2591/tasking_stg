@@ -182,7 +182,6 @@ if (isset($_SESSION['usu_id'])) {
                                         <tr style="text-align: center;">
                                             <th style="width: 10px;text-align: center;">PRIO</th>
                                             <th style="width: 300px;text-align: center;">TITULO</th>
-                                            <th style="width: 10px;text-align: center;">FIN</th>
                                             <th style="width: 10px;text-align: center;">CREADOR</th>
                                             <th style="width: 10px;text-align: center;">REC</th>
                                             <th style="width: 10px;text-align: center;">RECH</th>
@@ -199,7 +198,6 @@ if (isset($_SESSION['usu_id'])) {
                                         <tr style="text-align: center;">
                                             <td style="width: 10px;"></td>
                                             <td style="width: 300px;"></td>
-                                            <td style="width: 10px;"></td>
                                             <td style="width: 10px;"></td>
                                             <td style="width: 10px;"></td>
                                             <td style="width: 10px;"></td>

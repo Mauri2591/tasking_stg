@@ -16,7 +16,7 @@ switch ($_GET['accion']) {
     $hora_desde = $_POST['hora_desde'] ?? null;
     $hora_hasta = $_POST['hora_hasta'] ?? null;
 
-    // 🔒 NORMALIZACIÓN DE FECHA (FIX)
+    // NORMALIZACIÓN DE FECHA
     $fecha_raw = $_POST['fecha'] ?? null;
     if (!$fecha_raw) {
         http_response_code(400);

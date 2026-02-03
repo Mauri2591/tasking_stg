@@ -1427,7 +1427,6 @@ switch ($_GET['proy']) {
                 : "badge bg-light text-dark";
             $sub_array[] = '<span class="' . $clase . '">' . $row['prioridad'] . '</span>';
             $sub_array[] = $row['client_rs'];
-            $sub_array[] = $row['fech_fin'] == '' ? 'Sin fecha' : $row['fech_fin'];
             $sub_array[] = $row['creador_proy'];
 
             $sub_array[] = $row['posicion_recurrencia'] == '' ? '-' : '<span class="badge bg-success">' . $row['posicion_recurrencia'] . '</span>';
