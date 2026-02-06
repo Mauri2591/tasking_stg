@@ -474,7 +474,7 @@ if (isset($_SESSION['usu_id'])) {
 
                     if (data.rechequeo == "SI") {
                         document.getElementById("rechequeo").style.display = "flex";
-                        $("#rechequeo").text("Rechequeo");
+                        $("#rechequeo").text("Retest");
                     } else {
                         document.getElementById("rechequeo").style.display = "none";
                     }
