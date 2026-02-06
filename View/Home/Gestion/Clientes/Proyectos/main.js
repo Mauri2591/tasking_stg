@@ -1976,7 +1976,7 @@ function crearRechequeo(id) {
 
             Swal.fire({
                 icon: "warning",
-                text: "Desea crear un rechequeo de este Proyecto?",
+                text: "Desea crear un Retest de este Proyecto?",
                 showCancelButton: true,
                 confirmButtonText: "Sí, crear",
                 cancelButtonText: "Cancelar"
@@ -2007,8 +2007,8 @@ function crearRechequeo(id) {
                             if (resp.status === "success") {
                                 Swal.fire({
                                     icon: "success",
-                                    title: "Rechequeo creado",
-                                    text: "Rechequeo agregado correctamente",
+                                    title: "Bien",
+                                    text: "Retest creado correctamente",
                                     timer: 1500,
                                     showConfirmButton: false
                                 });

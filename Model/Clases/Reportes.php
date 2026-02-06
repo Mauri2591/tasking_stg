@@ -58,7 +58,7 @@ class Reportes
             'TITULO',
             'REFERENCIA',
             'RECURRENTE',
-            'RECHEQUEO DE PROYECTO',
+            'RETEST DE PROYECTO',
             'FECHA VANTIVE',
             'FECHA INICIO',
             'FECHA FINALIZACION',

@@ -21,14 +21,14 @@
                                     <th style="width: 5%;text-align: center;">ID</th>
                                     <th style="width: 45%;text-align: center;">TITULO</th>
                                     <th style="width: 5%;text-align: center;">REC</th>
-                                    <th style="width: 5%;text-align: center;">RECH</th>
+                                    <th style="width: 5%;text-align: center;">RETEST</th>
                                     <th style="width: 5%;text-align: center;">REF</th>
                                     <th style="width: 5%px;text-align: center;">FECHA</th>
                                     <th style="width: 5%px;text-align: center;">SECTOR</th>
                                     <th style="width: 5px;text-align: center;">PROD</th>
                                     <th style="width: 5px;text-align: center;">HS</th>
                                     <th style="width: 5px;text-align: center;">EST</th>
-                                    <th style="width: 5px;text-align: center;">AGREGAR <br>RECHEQUEO</th>
+                                    <th style="width: 5px;text-align: center;">AGREGAR <br>RETEST</th>
                                     <th style="width: 5px;text-align: center;"></th>
                                 </tr>
                             </thead>
@@ -60,7 +60,7 @@
                                     <th style="width: 5%;text-align: center;">ID</th>
                                     <th style="width: 45%;text-align: center;">TITULO</th>
                                     <th style="width: 5%;text-align: center;">REC</th>
-                                    <th style="width: 5%;text-align: center;">RECH</th>
+                                    <th style="width: 5%;text-align: center;">RETEST</th>
                                     <th style="width: 5%;text-align: center;">REF</th>
                                     <th style="width: 5%px;text-align: center;">FECHA</th>
                                     <th style="width: 5%px;text-align: center;">SECTOR</th>

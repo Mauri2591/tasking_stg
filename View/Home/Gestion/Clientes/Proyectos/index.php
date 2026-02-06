@@ -91,7 +91,7 @@ if (isset($_SESSION['usu_id'])) {
                                             <th style="width: 400px;text-align: center;">CLIENTE</th>
                                             <th style="width: 20px;text-align: center;">CREADOR</th>
                                             <th style="width: 20px;text-align: center;">REC</th>
-                                            <th style="width: 20px;text-align: center;">RECH</th>
+                                            <th style="width: 20px;text-align: center;">RETEST</th>
                                             <th style="width: 20px;text-align: center;">SECTOR</th>
                                             <th style="width: 20px;text-align: center;">PRODUCTO</th>
                                             <th style="width: 20px;text-align: center;">ASIGNADO</th>
@@ -184,7 +184,7 @@ if (isset($_SESSION['usu_id'])) {
                                             <th style="width: 300px;text-align: center;">TITULO</th>
                                             <th style="width: 10px;text-align: center;">CREADOR</th>
                                             <th style="width: 10px;text-align: center;">REC</th>
-                                            <th style="width: 10px;text-align: center;">RECH</th>
+                                            <th style="width: 10px;text-align: center;">RETEST</th>
                                             <th style="width: 10px;text-align: center;">PROD</th>
                                             <th style="width: 10px;text-align: center;">TIPO</th>
                                             <th style="width: 10px;text-align: center;">HS</th>

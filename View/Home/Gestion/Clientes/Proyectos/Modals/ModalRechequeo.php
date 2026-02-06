@@ -4,7 +4,7 @@
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="card-body">
-                <h5 class="mb-2 pb-0">Crear Rechequeo</h5>
+                <h5 class="mb-2 pb-0">Crear Retest</h5>
                 <div class="card card-body">
                     <table id="table_para_rechequeo" style="text-align: center; width: 100%;">
                         <thead style="text-align: center;">

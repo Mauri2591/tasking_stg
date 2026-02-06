@@ -1985,7 +1985,7 @@ switch ($_GET['proy']) {
 
             if ($_SESSION['sector_id'] == "4") {
                 if ($estado != "FIN SIN IMPLEM" && $estado != "ELIMINADO" && $estado != "CANCELADO" && $estado != "BORRADOR" && $rechequeo != "SI") {
-                    $sub_array[] = '<span type="button" onclick="crearRechequeo(' . $id . ')" data-placement="top" title="Agregar rechequeo"><i class="ri-add-fill text-danger fs-18"></i></span>';
+                    $sub_array[] = '<span type="button" onclick="crearRechequeo(' . $id . ')" data-placement="top" title="Agregar retest"><i class="ri-add-fill text-danger fs-18"></i></span>';
                 } else {
                     $sub_array[] = '<span><i class="ri-subtract-line" style="color:#CCC"></i></span>';
                 }
@@ -2251,12 +2251,12 @@ TXT;
 
             echo json_encode([
                 'status' => 'success',
-                'msg' => 'Rechequeo insertado correctamente'
+                'msg' => 'Retest insertado correctamente'
             ]);
         } catch (Exception $e) {
             echo json_encode([
                 'status' => 'error',
-                'msg' => 'Error al insertar el rechequeo: ' . $e->getMessage()
+                'msg' => 'Error al insertar el retest: ' . $e->getMessage()
             ]);
         }
         break;
