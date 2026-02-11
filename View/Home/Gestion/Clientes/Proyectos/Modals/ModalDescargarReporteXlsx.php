@@ -5,11 +5,13 @@
         <form id="formDescargarReporteXlsx" action="<?php echo URL . "Controller/ctrReportes.php?case=total_excel" ?>" method="post">
             <div class="modal-content">
                 <div class="card-body">
-                    <h5 class="mb-0 pb-0">Descargar Archivo <i class="ri-file-excel-2-fill text-success fs-22" title="Descargar documento"></i>
+                    <h5 style="height: 2rem;" class="mb-2 pb-0">Descargar Archivo <i class="ri-file-excel-2-fill text-success fs-22" title="Descargar documento"></i>
                         <div class="mt-4 live-preview">
                             <div style="display: flex; justify-content: end;">
                     </h5>
-                    <section class="card-body border border-ligth p-2 mt-2 mb-4">
+                    <small class="text-danger mt-0 fs-12">
+Este reporte presenta el total de proyectos por cliente, excluyendo aquellos que se encuentran en estado Borrado, Finalizado sin implementar o Cancelado</small>
+                    <section class="card-body border border-ligth p-2 mt-4 mb-4">
                         <div style="display: flex; justify-content: space-evenly;">
                             <div class="mb-2 row">
                                 <label for="hora_desde" class="col-sm-3 col-form-label"> Desde</label>
