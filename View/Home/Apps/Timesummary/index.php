@@ -158,8 +158,8 @@ if (isset($_SESSION['usu_id'])) {
                                     function(resp) {
                                         if (resp.cat_id) {
                                             $("#id_producto").val(resp.cat_id);
-                                            $("#dimensionamiento").text(resp.dimensionamiento)
-                                            $("#referencia").text(resp.referencia)
+                                            $("#dimensionamiento").text(resp.dimensionamiento ? resp.dimensionamiento : '-');
+                                            $("#referencia").text(resp.referencia ? resp.referencia : '-');
                                         }else{
                                             $("#dimensionamiento").text('-')
                                             $("#referencia").text('-')
