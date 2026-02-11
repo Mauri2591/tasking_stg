@@ -887,12 +887,10 @@ return function (App $app) {
             $stmt = $pdo->prepare($sql);
             $stmt->bindValue(':sector_id', $sector_id, PDO::PARAM_INT);
         }
-
         $stmt->execute();
         $response->getBody()->write(
             json_encode($stmt->fetchAll(PDO::FETCH_ASSOC), JSON_UNESCAPED_UNICODE)
         );
-
         return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
     });
     // ******************   FIN TIMASUMMARY ***********************

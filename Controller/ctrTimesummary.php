@@ -309,16 +309,17 @@ switch ($_GET['accion']) {
         if ($_SESSION['sector_id'] == "4") {
             foreach ($datos as $row) {
                 $sub_array = array();
-                $sub_array[] = $row['titulo'];
+                $sub_array[] = $row['cliente'];
+                    $sub_array[] ='<p class="text-center">'. $row['referencia'].'</p>';
                 $sub_array[] = '<p class="text-center p-0 m-0"><span class="badge border border-dark bg-light text-dark">' . $row['hs_dimensionadas'] . '</span></p>';
                 $sub_array[] = '<span class="text-center badge border border-dark bg-light text-dark">' . $row['producto'] . '</span>';
                 $sub_array[] = $row['es_pm'] == "SI"
                     ? '<span class="badge text-center border border-dark fs-9 fw-bold text-dark">PM</span>'
                     : '<span class="text-center badge bg-danger text-light">Asignado</span>';
                 $sub_array[] = $row['est'] == 1
-                    ? '<span class="text-center badge border border-success text-success"> Activo </span>'
+                    ? '<span class="text-center badge bg-success text-light"> Activo </span>'
                     : '<span class="badge" style="background-color:gray;color:white"> Inactivo </span>';
-                $sub_array[] = '<a type="button" title="Desea inactivar esta tarea?" onclick="cambiarEstadoTareaHistorial(' . $row['id_timesummary_estados'] . ')" class="ri-edit-fill text-secondary fs-14"></a>';
+                $sub_array[] = '<a type="button" title="Desea inactivar esta tarea?" onclick="cambiarEstadoTareaHistorial(' . $row['id_timesummary_estados'] . ')" class="ri-edit-fill text-danger fs-14"></a>';
 
                 $data[] = $sub_array;
             }
@@ -330,7 +331,8 @@ switch ($_GET['accion']) {
                 // Evita duplicados por id_proyecto_gestionado
                 if (!in_array($row['id_proyecto_gestionado'], $proyectos_vistos)) {
                     $sub_array = array();
-                    $sub_array[] = $row['titulo'];
+                    $sub_array[] = $row['cliente'];
+                    $sub_array[] ='<p class="text-center">'. $row['referencia'].'</p>';
                     $sub_array[] = '<p class="text-center p-0 m-0"><span class="badge border border-dark bg-light text-dark">' . $row['hs_dimensionadas'] . '</span></p>';
                     $sub_array[] = '<span class="text-center badge border border-dark bg-light text-dark">' . $row['producto'] . '</span>';
                     $sub_array[] = $row['est'] == 1

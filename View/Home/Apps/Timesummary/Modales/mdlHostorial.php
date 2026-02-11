@@ -8,9 +8,10 @@
                 </div>
                 <div class="modal-body">
                     <table id="tableHistorialTimesummary">
-                        <thead>
+                        <thead class="text-center">
                             <tr class="text-center">
                                 <th class="text-center">Titulo</th>
+                                <th class="text-center">Referencia</th>
                                 <th class="text-center">Horas</th>
                                 <th class="text-center">Producto</th>
                                 <th class="text-center">Tipo</th>
@@ -40,6 +41,7 @@
                         <thead>
                             <tr class="text-center">
                                 <th class="text-center">Titulo</th>
+                                <th class="text-center">Referencia</th>
                                 <th class="text-center">Horas</th>
                                 <th class="text-center">Producto</th>
                                 <th class="text-center">Estado</th>
