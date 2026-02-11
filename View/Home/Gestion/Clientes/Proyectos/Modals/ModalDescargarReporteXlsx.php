@@ -9,7 +9,7 @@
                         <div class="mt-4 live-preview">
                             <div style="display: flex; justify-content: end;">
                     </h5>
-                    <small class="text-danger mt-0 fs-13">
+                    <small class="text-danger mt-0 fs-12">
 Este reporte contabiliza el total de proyectos por cliente, excluyendo aquellos que se encuentran en estado Borrado, Finalizado sin implementar o Cancelado</small>
                     <section class="card-body border border-ligth p-2 mt-4 mb-4">
                         <div style="display: flex; justify-content: space-evenly;">
