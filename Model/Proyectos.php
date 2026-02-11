@@ -1923,7 +1923,7 @@ ORDER BY cantidad_proyectos DESC";
             LEFT JOIN proyecto_cantidad_servicios pcs ON pcs.proy_id = p.proy_id
             LEFT JOIN proyecto_gestionado pg ON pg.id_proyecto_cantidad_servicios = pcs.id
             LEFT JOIN tm_categoria tc ON pg.cat_id = tc.cat_id
-            WHERE pcs.est = 1";
+            WHERE pcs.est = 1 AND pg.estados_id NOT IN(15,16,17)";
         if (!empty($fecha_desde) && !empty($fecha_hasta)) {
             $sql .= " AND pg.fech_inicio BETWEEN :fecha_desde AND :fecha_hasta";
         }
