@@ -159,8 +159,10 @@ if (isset($_SESSION['usu_id'])) {
                                         if (resp.cat_id) {
                                             $("#id_producto").val(resp.cat_id);
                                             $("#dimensionamiento").text(resp.dimensionamiento)
+                                            $("#referencia").text(resp.referencia)
                                         }else{
                                             $("#dimensionamiento").text('-')
+                                            $("#referencia").text('-')
                                         }
                                     },
                                     "json"
@@ -182,6 +184,23 @@ if (isset($_SESSION['usu_id'])) {
                                     $("#validar_si_tiene_id_pm_calidad_proy_asignado").show();
                                     $("#validar_si_tiene_id_pm_calidad_es_pm").hide();
                                 }
+
+                                $.post(
+                                    URL + "Controller/ctrTimesummary.php?accion=get_cat_id_by_proyecto_gestionado", {
+                                        id: idProyecto
+                                    },
+                                    function(resp) {
+                                        if (resp.cat_id) {
+                                            $("#id_producto").val(resp.cat_id);
+                                            $("#dimensionamiento").text(resp.dimensionamiento)
+                                            $("#referencia").text(resp.referencia)
+                                        }else{
+                                            $("#dimensionamiento").text('-')
+                                            $("#referencia").text('-')
+                                        }
+                                    },
+                                    "json"
+                                );
 
                             });
                         }

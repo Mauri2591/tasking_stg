@@ -358,7 +358,7 @@ ORDER BY id_proyecto_gestionado ASC";
     public function get_cat_id_by_proyecto_gestionado($id)
     {
         $conn = parent::get_conexion();
-        $sql = "SELECT proyecto_gestionado.cat_id, dimensionamiento.hs_dimensionadas AS dimensionamiento FROM proyecto_gestionado LEFT JOIN dimensionamiento ON dimensionamiento.id_proyecto_gestionado=proyecto_gestionado.id WHERE proyecto_gestionado.id = :id";
+        $sql = "SELECT proyecto_gestionado.cat_id,proyecto_gestionado.refProy AS referencia, dimensionamiento.hs_dimensionadas AS dimensionamiento FROM proyecto_gestionado LEFT JOIN dimensionamiento ON dimensionamiento.id_proyecto_gestionado=proyecto_gestionado.id WHERE proyecto_gestionado.id = :id";
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(":id", $id, PDO::PARAM_INT);
         $stmt->execute();
