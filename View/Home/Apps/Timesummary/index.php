@@ -159,6 +159,8 @@ if (isset($_SESSION['usu_id'])) {
                                         if (resp.cat_id) {
                                             $("#id_producto").val(resp.cat_id);
                                             $("#dimensionamiento").text(resp.dimensionamiento)
+                                        }else{
+                                            $("#dimensionamiento").text('')
                                         }
                                     },
                                     "json"
