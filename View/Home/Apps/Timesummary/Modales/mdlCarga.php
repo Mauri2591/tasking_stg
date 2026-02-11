@@ -7,12 +7,13 @@
       </div>
 
       <span class="badge bg-success text-light" style="display: none;width: 7%; margin-left: 1.3rem;" id="validar_si_tiene_id_pm_calidad_es_pm">PM</span>
-      <?php if($_SESSION['sector_id'] == '4'): ?>
-      <span class="badge bg-danger text-light mt-1" style="display: none;width: 25%; margin-left: 1.3rem;" id="validar_si_tiene_id_pm_calidad_proy_asignado">PROYECTO ASIGNADO</span>
+      <?php if ($_SESSION['sector_id'] == '4'): ?>
+        <span class="badge bg-danger text-light mt-1" style="display: none;width: 25%; margin-left: 1.3rem;" id="validar_si_tiene_id_pm_calidad_proy_asignado">PROYECTO ASIGNADO</span>
       <?php endif; ?>
-      <div class="modal-body">
-                <div style="display: flex; justify-content: end;"><span class="badge bg-light text-primary mt-1" style="width: 25%; margin-left: 1.3rem;">Ref <span class="fw-bold fs-11" id="referencia"></span> </span></div>
-        <div style="display: flex; justify-content: end;"><span class="badge bg-light text-primary mt-1" style="width: 25%; margin-left: 1.3rem;">HS <span class="fw-bold fs-11" id="dimensionamiento"></span> </span></div>
+      <span class="badge bg-light text-primary mt-2" style="width: 25%; margin-left: 1.3rem;">Ref <span class="fw-bold fs-11" id="referencia"></span> </span>
+      <span class="badge bg-light text-primary mt-1" style="width: 25%; margin-left: 1.3rem;">HS <span class="fw-bold fs-11" id="dimensionamiento"></span> </span>
+      <div class="modal-body pt-0">
+
         <input type="hidden" hidden id="id_pm_calidad">
         <section class="card-body border border-ligth p-2 mt-2">
           <div style="display: flex; justify-content: space-evenly;">
