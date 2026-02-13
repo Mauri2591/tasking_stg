@@ -42,7 +42,7 @@ if (isset($_SESSION['usu_id'])) {
         ?>
             <!-- container-fluid -->
             <div class="col-lg-12" style="margin-left: 5px;">
-                <div class="card-body">
+                <div class="card-body p-0">
                     <ul class="nav nav-pills arrow-navtabs nav-success bg-light mb-3" role="tablist">
                         <li class="nav-item">
                             <a class="nav-link active" data-bs-toggle="tab" href="#tab_borradores" role="tab"
