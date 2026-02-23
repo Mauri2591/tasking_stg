@@ -430,9 +430,9 @@ ORDER BY id_proyecto_gestionado ASC";
     public function get_usuarios_por_sector($sector_id)
     {
         $conn = parent::get_conexion();
-        $sql = "SELECT usu_id, usu_nom, usu_ape, usu_correo 
+        $sql = "SELECT usu_id, usu_nom, usu_ape, LOWER(usu_correo) 
             FROM tm_usuario 
-            WHERE est=1 AND sector_id = ? AND usu_id != 104 AND usu_id != 84 AND usu_id != 82"; //que no traiga al usuario dev ni testMauricio
+            WHERE est=1 AND sector_id = 1 AND usu_id NOT IN (82,104)"; //que no traiga al usuario dev ni testMauricio
         $stmt = $conn->prepare($sql);
         $stmt->execute([$sector_id]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
