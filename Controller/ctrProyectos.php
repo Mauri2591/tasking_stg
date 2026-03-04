@@ -1563,7 +1563,7 @@ switch ($_GET['proy']) {
                                     </button>
                                     <ul class="dropdown-menu" aria-labelledby="btnGroupDrop1">
                                         <li><a class="dropdown-item" type="button" onclick="cerrar_proyecto(' . $row['id_proyecto_gestionado'] . ')">Cerrar proyecto</a></li>
-                                        <li><a class="dropdown-item" type="button" onclick="cambiar_proy_a_abierto(' . $row['id_proyecto_gestionado'] . ')">Abierto</a></li>
+                                        <li><a class="dropdown-item" type="button" onclick="cambiar_proy_a_nuevo(' . $row['id_proyecto_gestionado'] . ')">Nuevo</a></li>
                                         <li><a class="dropdown-item" type="button" onclick="cambiar_proy_a_borrador(' . $row['id_proyecto_gestionado'] . ')">Borrador</a></li>
                                     </ul>
                                 </div>
@@ -2002,6 +2002,18 @@ switch ($_GET['proy']) {
                     '&pg=' . Openssl::set_ssl_encrypt($id) .
                     '" target="_blank" rel="noopener noreferrer" title="Ver proyecto"><i class="ri-send-plane-fill text-primary fs-18"></i></a>';
             }
+
+            $sub_array[] = '<div class="btn-group btn-group-sm p-0" role="group" aria-label="Button group with nested dropdown">
+                                <div class="btn-group p-0" role="group">
+                                    <button id="btnGroupDrop1" type="button" class="btn btn-primary btn-sm dropdown-toggle py-0" data-bs-toggle="dropdown" aria-expanded="false">
+                                        Estado
+                                    </button>
+                                    <ul class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+                                        <li><a class="dropdown-item" type="button" onclick="cambiar_proy_a_nuevo(' . $id . ')">Nuevo</a></li>
+                                        <li><a class="dropdown-item" type="button" onclick="cambiar_proy_a_borrador(' . $id . ')">Borrador</a></li>
+                                    </ul>
+                                </div>
+                            </div>';
 
             $data[] = $sub_array;
         }

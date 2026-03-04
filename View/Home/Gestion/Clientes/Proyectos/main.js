@@ -554,9 +554,9 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
     $("#proy_id").val(proy_id);
 
 
-    
+
     function get_data_editar_proyecto() {
-    
+
         let formData = new FormData();
 
         let checkboxes = document.querySelectorAll('#combo_usuario_x_sector input[name="usu_asignado[]"]:checked');
@@ -1714,6 +1714,7 @@ function cambiar_proy_a_borrador(id_proyecto_gestionado) {
                     $('#table_proyectos_borrador').DataTable().ajax.reload(null, false);
                     $('#table_proyectos_realizados').DataTable().ajax.reload(null, false);
                     $('#table_proyectos_total').DataTable().ajax.reload(null, false);
+                    $('#tablelHistorialProyectosCalidad').DataTable().ajax.reload(null, false);
                 }
 
             }, 500);
@@ -1722,17 +1723,17 @@ function cambiar_proy_a_borrador(id_proyecto_gestionado) {
     })
 }
 
-function cambiar_proy_a_abierto(id_proyecto_gestionado) {
+function cambiar_proy_a_nuevo(id_proyecto_gestionado) {
     Swal.fire({
         icon: "info",
-        title: "Desea pasar el proyecto a Abierto?",
+        title: "Desea pasar el proyecto a Nuevo?",
         showConfirmButton: true,
         showCancelButton: true
     }).then((result) => {
         if (result.isConfirmed) {
             $.post("../../../../../Controller/ctrProyectos.php?proy=update_estado_proy", {
                     id: id_proyecto_gestionado,
-                    estados_id: 2
+                    estados_id: 1
                 },
                 function (data, textStatus, jqXHR) {
 
@@ -1742,7 +1743,7 @@ function cambiar_proy_a_abierto(id_proyecto_gestionado) {
             Swal.fire({
                 icon: "success",
                 title: "Bien",
-                text: "Proyecto pasado a Borrador!",
+                text: "Proyecto pasado a Nuevo!",
                 timer: 1500,
                 showConfirmButton: false
             });
@@ -1752,6 +1753,7 @@ function cambiar_proy_a_abierto(id_proyecto_gestionado) {
                     $('#table_proyectos_borrador').DataTable().ajax.reload(null, false);
                     $('#table_proyectos_realizados').DataTable().ajax.reload(null, false);
                     $('#table_proyectos_total').DataTable().ajax.reload(null, false);
+                    $('#tablelHistorialProyectosCalidad').DataTable().ajax.reload(null, false);
                 }
 
             }, 500);

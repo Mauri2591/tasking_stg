@@ -30,12 +30,14 @@
                                     <th style="width: 5px;text-align: center;">EST</th>
                                     <th style="width: 5px;text-align: center;">AGREGAR <br>RETEST</th>
                                     <th style="width: 5px;text-align: center;"></th>
+                                    <th style="width: 5px;text-align: center;"></th>
                                 </tr>
                             </thead>
                             <tbody style="text-align: center;">
                                 <tr style="text-align: center;">
                                     <td style="width: 5%;"></td>
                                     <td style="width: 45%;"></td>
+                                    <td style="width: 5%;"></td>
                                     <td style="width: 5%;"></td>
                                     <td style="width: 5%;"></td>
                                     <td style="width: 5%;"></td>
