@@ -1722,6 +1722,44 @@ function cambiar_proy_a_borrador(id_proyecto_gestionado) {
     })
 }
 
+function cambiar_proy_a_abierto(id_proyecto_gestionado) {
+    Swal.fire({
+        icon: "info",
+        title: "Desea pasar el proyecto a Abierto?",
+        showConfirmButton: true,
+        showCancelButton: true
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.post("../../../../../Controller/ctrProyectos.php?proy=update_estado_proy", {
+                    id: id_proyecto_gestionado,
+                    estados_id: 2
+                },
+                function (data, textStatus, jqXHR) {
+
+                },
+                "json"
+            );
+            Swal.fire({
+                icon: "success",
+                title: "Bien",
+                text: "Proyecto pasado a Borrador!",
+                timer: 1500,
+                showConfirmButton: false
+            });
+
+            setTimeout(() => {
+                if ($.fn.DataTable.isDataTable('#table_proyectos_borrador')) {
+                    $('#table_proyectos_borrador').DataTable().ajax.reload(null, false);
+                    $('#table_proyectos_realizados').DataTable().ajax.reload(null, false);
+                    $('#table_proyectos_total').DataTable().ajax.reload(null, false);
+                }
+
+            }, 500);
+
+        }
+    })
+}
+
 function cerrar_proyecto(id_proyecto_gestionado) {
     Swal.fire({
         icon: "info",
