@@ -1562,9 +1562,9 @@ switch ($_GET['proy']) {
                                         Estado
                                     </button>
                                     <ul class="dropdown-menu" aria-labelledby="btnGroupDrop1">
-                                        <li><a class="dropdown-item" type="button" onclick="cerrar_proyecto(' . $row['id_proyecto_gestionado'] . ')">Cerrar proyecto</a></li>
                                         <li><a class="dropdown-item" type="button" onclick="cambiar_proy_a_nuevo(' . $row['id_proyecto_gestionado'] . ')">Nuevo</a></li>
                                         <li><a class="dropdown-item" type="button" onclick="cambiar_proy_a_borrador(' . $row['id_proyecto_gestionado'] . ')">Borrador</a></li>
+                                        <li><a class="dropdown-item" type="button" onclick="cerrar_proyecto(' . $row['id_proyecto_gestionado'] . ')">Cerrar proyecto</a></li>
                                     </ul>
                                 </div>
                             </div>';
