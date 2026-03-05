@@ -1749,6 +1749,10 @@ function cambiar_proy_a_nuevo(id_proyecto_gestionado) {
             });
 
             setTimeout(() => {
+                
+                if ($.fn.DataTable.isDataTable('#table_proyectos_en_proceso')) {
+                    $('#table_proyectos_en_proceso').DataTable().ajax.reload(null, false);
+                }
                 if ($.fn.DataTable.isDataTable('#table_proyectos_borrador')) {
                     $('#table_proyectos_borrador').DataTable().ajax.reload(null, false);
                     $('#table_proyectos_realizados').DataTable().ajax.reload(null, false);
