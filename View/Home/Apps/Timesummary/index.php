@@ -103,7 +103,7 @@ if (isset($_SESSION['usu_id'])) {
         var calendarEl = document.getElementById('calendar');
         var calendar = new FullCalendar.Calendar(calendarEl, {
             initialView: 'dayGridMonth',
-            
+
             headerToolbar: {
                 left: 'prev,next today',
                 center: 'title',
@@ -160,9 +160,11 @@ if (isset($_SESSION['usu_id'])) {
                                             $("#id_producto").val(resp.cat_id);
                                             $("#dimensionamiento").text(resp.dimensionamiento ? resp.dimensionamiento : '-');
                                             $("#referencia").text(resp.referencia ? resp.referencia : '-');
-                                        }else{
+                                            $("#periodo").text(resp.referencia ? resp.periodo : '-');
+                                        } else {
                                             $("#dimensionamiento").text('-')
                                             $("#referencia").text('-')
+                                            $("#periodo").text('-')
                                         }
                                     },
                                     "json"
@@ -194,9 +196,11 @@ if (isset($_SESSION['usu_id'])) {
                                             $("#id_producto").val(resp.cat_id);
                                             $("#dimensionamiento").text(resp.dimensionamiento ? resp.dimensionamiento : '-');
                                             $("#referencia").text(resp.referencia ? resp.referencia : '-');
-                                        }else{
+                                            $("#periodo").text(resp.referencia ? resp.periodo : '-');
+                                        } else {
                                             $("#dimensionamiento").text('-')
                                             $("#referencia").text('-')
+                                            $("#periodo").text('-')
                                         }
                                     },
                                     "json"

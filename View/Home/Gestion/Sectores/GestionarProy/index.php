@@ -445,7 +445,6 @@ if (isset($_SESSION['usu_id'])) {
                 },
                 function(data, textStatus, jqXHR) {
                     console.log(data);
-
                     $("#referencia_proy").text(data.refProy)
                     $("#dimensionamiento").text(data.dimensionamiento)
 
