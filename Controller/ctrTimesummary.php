@@ -304,7 +304,8 @@ switch ($_GET['accion']) {
         break;
 
     case 'get_titulos_proyectos_total':
-        $datos = $timesummary->get_titulos_proyectos_total($_SESSION['usu_id']);
+        $mostrar_historico = $_POST['mostrar_historico'] ?? 0;
+        $datos = $timesummary->get_titulos_proyectos_total($_SESSION['usu_id'],$mostrar_historico);
         $data=[];
         if ($_SESSION['sector_id'] == "4") {
             foreach ($datos as $row) {

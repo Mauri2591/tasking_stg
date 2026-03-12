@@ -245,59 +245,53 @@ ORDER BY pg.titulo";
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function get_titulos_proyectos_total($usu_asignado)
+    public function get_titulos_proyectos_total($usu_asignado, $mostrar_historico = 0)
     {
         $conexion = parent::get_conexion();
+
         $sql = "SELECT 
-    tse.id AS id_timesummary_estados,
-    tse.id_pm_calidad,
-    pg.id AS id_proyecto_gestionado,
-    c.client_rs AS cliente,
-    pg.refProy AS referencia,
-    tm_categoria.cat_nom AS producto,
-    IFNULL(dim.total_hs_dimensionadas, 0) AS hs_dimensionadas,
-    tse.est,
-    CASE 
-        WHEN tse.id_pm_calidad IS NOT NULL THEN 'SI'
-        ELSE 'NO'
-    END AS es_pm
-FROM proyecto_gestionado pg
-
-LEFT JOIN tm_estados e 
-    ON pg.estados_id = e.estados_id
-
-LEFT JOIN tm_categoria 
-    ON pg.cat_id = tm_categoria.cat_id
-
-INNER JOIN timesummary_estados tse 
-    ON pg.id = tse.id_proyecto_gestionado
-    AND tse.usuario_asignado = :usuario_asignado
-
-LEFT JOIN proyecto_cantidad_servicios pcs
-    ON pcs.id = pg.id_proyecto_cantidad_servicios
-
-LEFT JOIN proyectos p
-    ON p.proy_id = pcs.proy_id
-
-LEFT JOIN clientes c
-    ON c.client_id = p.client_id
-
-LEFT JOIN (
-    SELECT id_proyecto_gestionado, SUM(hs_dimensionadas) AS total_hs_dimensionadas
-    FROM dimensionamiento
-    GROUP BY id_proyecto_gestionado
-) AS dim 
-    ON dim.id_proyecto_gestionado = pg.id
-
-WHERE e.estados_id IN (1, 2, 3, 4)  
-ORDER BY tse.est DESC, id_proyecto_gestionado ASC";
-
+        tse.id AS id_timesummary_estados,
+        tse.id_pm_calidad,
+        pg.id AS id_proyecto_gestionado,
+        c.client_rs AS cliente,
+        pg.refProy AS referencia,
+        tm_categoria.cat_nom AS producto,
+        IFNULL(dim.total_hs_dimensionadas, 0) AS hs_dimensionadas,
+        tse.est,
+        CASE 
+            WHEN tse.id_pm_calidad IS NOT NULL THEN 'SI'
+            ELSE 'NO'
+        END AS es_pm
+    FROM proyecto_gestionado pg
+    LEFT JOIN tm_estados e 
+        ON pg.estados_id = e.estados_id
+    LEFT JOIN tm_categoria 
+        ON pg.cat_id = tm_categoria.cat_id
+    INNER JOIN timesummary_estados tse 
+        ON pg.id = tse.id_proyecto_gestionado
+        AND tse.usuario_asignado = :usuario_asignado
+    LEFT JOIN proyecto_cantidad_servicios pcs
+        ON pcs.id = pg.id_proyecto_cantidad_servicios
+    LEFT JOIN proyectos p
+        ON p.proy_id = pcs.proy_id
+    LEFT JOIN clientes c
+        ON c.client_id = p.client_id
+    LEFT JOIN (
+        SELECT id_proyecto_gestionado, SUM(hs_dimensionadas) AS total_hs_dimensionadas
+        FROM dimensionamiento
+        GROUP BY id_proyecto_gestionado
+    ) AS dim 
+        ON dim.id_proyecto_gestionado = pg.id
+    WHERE 1=1";
+        if (!$mostrar_historico) {
+            $sql .= " AND tse.est = 1";
+        }
+        $sql .= " ORDER BY tse.est DESC, id_proyecto_gestionado ASC";
         $stmt = $conexion->prepare($sql);
         $stmt->bindParam(':usuario_asignado', $usu_asignado, PDO::PARAM_INT);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
-
 
     public function get_estado_tarea($id_timesummary_estados)
     {

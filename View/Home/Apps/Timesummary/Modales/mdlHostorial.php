@@ -7,6 +7,9 @@
                     <h5>Historial de tareas</h5>
                 </div>
                 <div class="modal-body">
+                    <div style="display: flex; justify-content: end;">
+                        <label class="form-control-sm text-dark badge bg-light border border-dark" for="mostrar_historico">Ver historico<input type="checkbox" id="mostrar_historico" class="mx-1"></label>
+                    </div>
                     <table id="tableHistorialTimesummary">
                         <thead class="text-center">
                             <tr class="text-center">
@@ -37,6 +40,9 @@
                     <h5>Historial de tareas</h5>
                 </div>
                 <div class="modal-body">
+                    <div style="display: flex; justify-content: end;">
+                        <label class="form-control-sm text-dark badge bg-light border border-dark" for="mostrar_historico">Ver historico<input type="checkbox" id="mostrar_historico" class="mx-1"></label>
+                    </div>
                     <table id="tableHistorialTimesummary">
                         <thead>
                             <tr class="text-center">

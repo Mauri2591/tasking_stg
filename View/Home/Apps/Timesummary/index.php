@@ -515,8 +515,16 @@ if (isset($_SESSION['usu_id'])) {
             }
         });
 
+        $("#mostrar_historico").change(function() {
+            if ($.fn.DataTable.isDataTable('#tableHistorialTimesummary')) {
+                $('#tableHistorialTimesummary').DataTable().ajax.reload();
+            }
+        });
+
         document.getElementById("btnVerHistorialTimesummary").addEventListener("click", function() {
+
             $("#mdlHistorialTimesummary").modal("show")
+
             tabla = $("#tableHistorialTimesummary").dataTable({
                 "aProcessing": true,
                 "aServerSide": true,
@@ -526,24 +534,33 @@ if (isset($_SESSION['usu_id'])) {
                 "searching": true,
                 lenghtChange: false,
                 colReorder: true,
+
                 buttons: [
                     'copyHtml5',
                     'excelHtml5',
                     'csvHtml5',
                     'pdfHtml5'
                 ],
+
                 "ajax": {
                     url: URL + "Controller/ctrTimesummary.php?accion=get_titulos_proyectos_total",
                     type: "post",
                     dataType: "json",
-                    data: {},
+
+                    // 👇 esto manda el valor al backend
+                    data: function(d) {
+                        d.mostrar_historico = $("#mostrar_historico").is(":checked") ? 1 : 0;
+                    },
+
                     error: function(e) {}
                 },
+
                 "bDestroy": true,
                 "responsive": true,
                 "bInfo": true,
-                "iDisplayLength": 15, //cantidad de tuplas o filas a mostrar
+                "iDisplayLength": 15,
                 "autoWith": false,
+
                 "language": {
                     "sProcessing": "Procesando..",
                     "sLengthMenu": "Mostrar _MENU_ registros",
@@ -552,36 +569,17 @@ if (isset($_SESSION['usu_id'])) {
                     "sInfo": "Mostrando un total de _TOTAL_ registros",
                     "sInfoEmpty": "Mostrando un total de 0 registros",
                     "sInfoFiltered": "(Filtrado de un total de _MAX_ registros)",
-                    "sInfoPostFix": "",
                     "sSearch": "Buscar: ",
-                    "sUrl": "",
-                    "sInfoThousands": ",",
                     "sLoadingRecords": "Cargando",
                     "oPaginate": {
                         "sFirst": "Primero",
                         "sLast": "Ùltimo",
                         "sNext": "Siguiente",
                         "sPrevious": "Anterior"
-                    },
-                    "oAria": {
-                        "sSortAscending": ":Activar para ordenar la columna de manera ascendiente",
-                        "sSortDescending": ":Activar para ordenar la columna de manera descendiente"
                     }
                 }
             });
 
-            // Handler: cuando el modal se oculta
-            $('#mdlHistorialTimesummary').on('hidden.bs.modal', function() {
-                if ($.fn.DataTable && $.fn.DataTable.isDataTable('#tableHistorialTimesummary')) {
-                    $('#tableHistorialTimesummary').DataTable().clear().destroy();
-                    $('#tableHistorialTimesummary tbody').empty();
-                }
-
-                if (huboUpdate) {
-                    location.reload(); // solo recarga si se hizo un update
-                    huboUpdate = false; // reseteamos la bandera
-                }
-            });
         });
         calendar.render();
     });
