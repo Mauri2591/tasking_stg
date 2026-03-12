@@ -547,9 +547,9 @@ if (isset($_SESSION['usu_id'])) {
                     type: "post",
                     dataType: "json",
 
-   data: function(d) {
-    d.mostrar_historico = $("#mostrar_historico").is(":checked") ? 1 : 0;
-},
+                    data: function(d) {
+                        d.mostrar_historico = $("#mostrar_historico").is(":checked") ? 1 : 0;
+                    },
 
                     error: function(e) {}
                 },
@@ -577,6 +577,19 @@ if (isset($_SESSION['usu_id'])) {
                         "sPrevious": "Anterior"
                     }
                 }
+            });
+            $('#mdlHistorialTimesummary').on('hidden.bs.modal', function() {
+
+                if ($.fn.DataTable.isDataTable('#tableHistorialTimesummary')) {
+                    $('#tableHistorialTimesummary').DataTable().clear().destroy();
+                    $('#tableHistorialTimesummary tbody').empty();
+                }
+
+                if (huboUpdate) {
+                    location.reload();
+                    huboUpdate = false;
+                }
+
             });
 
         });
