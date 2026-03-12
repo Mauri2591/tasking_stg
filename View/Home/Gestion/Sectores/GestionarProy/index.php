@@ -171,6 +171,7 @@ if (isset($_SESSION['usu_id'])) {
                                                 <span id="proy_recurrencia" style="display: none; color:orangered" class="badge ml-1 bg-light"></span>
                                                 <span id="cont_dimensionamiento" class="badge mx-1 text-primary bg-light fs-10">Horas: <span class="fw-bold" id="dimensionamiento"></span></span>
                                                 <span id="workshop" style="display: none;" class="badge mx-1 text-light bg-info border border-light">workshop</span>
+                                                <span id="estadoProyecto" class="badge mx-1 text-primary bg-light"></span>
                                             </div>
 
                                             <div class="card-body p-0">
@@ -405,37 +406,45 @@ if (isset($_SESSION['usu_id'])) {
                 $.post("../../../../../Controller/ctrProyectos.php?proy=validar_boton_usuario_asignado_y_calidad", {
                     id_proyecto_gestionado: id_proyecto_gestionado
                 }, function(data) {
+
                     let mostrar = false;
-                    if (sector_usu_id == "4") {
-                        mostrar = true;
-                    } else {
-                        mostrar = false;
-                    }
 
                     data.forEach(elem => {
-                        if (elem.usu_asignado == session_usu_id || sector_usu_id == "4") {
+
+                        const estadoBloqueado = ["3", "4", "14", "15", "16", "17"].includes(String(elem.estados_id));
+
+                        // Sector 4 siempre puede
+                        if (sector_usu_id == "4") {
+                            mostrar = true;
+                            return;
+                        }
+
+                        // Estado cerrado bloquea todo excepto sector 4
+                        if (estadoBloqueado) {
+                            mostrar = false;
+
+                            $.post("../../../../../Controller/ctrProyectos.php?proy=get_datos_usuario_finalizador_proyecto", {
+                                id_proyecto_gestionado: id_proyecto_gestionado
+                            }, function(data) {
+                                document.getElementById("cont_usuario_finalizador").style.display = "block";
+                                $("#cont_usuario_finalizador").html(data);
+                            }, "html");
+
+                            return;
+                        }
+
+                        // Usuario asignado puede escribir si el estado está abierto
+                        if (elem.usu_asignado == session_usu_id) {
                             mostrar = true;
                         }
-                        if (elem.estados_id == "3" || elem.estados_id == "4" || elem.estados_id ==
-                            "14" || elem.estados_id == "15" || elem.estados_id == "16" || elem
-                            .estados_id == "17") {
-                            mostrar = false;
-                            $.post("../../../../../Controller/ctrProyectos.php?proy=get_datos_usuario_finalizador_proyecto", {
-                                    id_proyecto_gestionado: id_proyecto_gestionado
-                                },
-                                function(data, textStatus, jqXHR) {
-                                    document.getElementById("cont_usuario_finalizador").style
-                                        .display = "block";
-                                    $("#cont_usuario_finalizador").html(data)
-                                },
-                                "html"
-                            );
-                        }
+
                     });
+
                     const contenedor = document.getElementById("sect_descrip");
                     if (contenedor) {
                         contenedor.style.display = mostrar ? "block" : "none";
                     }
+
                 }, "json");
             }
             validar_boton_usuario_asignado_y_calidad()
@@ -444,18 +453,56 @@ if (isset($_SESSION['usu_id'])) {
                     id: id_proyecto_gestionado
                 },
                 function(data, textStatus, jqXHR) {
-                    console.log(data);
                     $("#referencia_proy").text(data.refProy)
                     $("#dimensionamiento").text(data.dimensionamiento)
+                    $("#estadoProyecto").text(data.estado)
+                    switch (data.estado) {
+                        case 'BORRADOR':
+                            $("#estadoProyecto").addClass('badge mx-1 text-dark bg-light')
+                            break;
 
-                    $.post("../../../../../Controller/ctrProyectos.php?proy=validarContenedorBtnDockerfile", {
-                            id: id_proyecto_gestionado,
-                            pg: pg
-                        },
-                        function(data, textStatus, jqXHR) {
-                            $("#contHerramientas").html(data);
-                        },
-                    );
+                        case 'NUEVO':
+                            $("#estadoProyecto").addClass('badge mx-1 fw-bold text-info border border-info bg-light')
+                            break;
+
+                        case 'ABIERTO':
+                            $("#estadoProyecto").addClass('badge mx-1 fw-bold text-info border border-info bg-light')
+                            break;
+
+                        case 'REALIZADO':
+                            $("#estadoProyecto").addClass('badge mx-1 fw-bold text-success border border-success bg-light')
+                            break;
+
+                        case 'CERRADO CALIDAD':
+                            $("#estadoProyecto").addClass('badge mx-1 fw-bold text-success border border-success bg-light')
+                            break;
+
+                        case 'FIN SIN IMPLEM':
+                            $("#estadoProyecto").addClass('badge mx-1 text-dark bg-light')
+                            break;
+
+                        case 'ELIMINADO':
+                            $("#estadoProyecto").addClass('badge mx-1 text-danger bg-light border border-danger')
+                            break;
+
+                        case 'CANCELADO':
+                            $("#estadoProyecto").addClass('badge mx-1 text-danger bg-light border border-danger')
+                            break;
+
+                        default:
+                            break;
+                    }
+
+                    if (data.estado == 'REALIZADO' || data.estado == 'CERRADO CALIDAD')
+
+                        $.post("../../../../../Controller/ctrProyectos.php?proy=validarContenedorBtnDockerfile", {
+                                id: id_proyecto_gestionado,
+                                pg: pg
+                            },
+                            function(data, textStatus, jqXHR) {
+                                $("#contHerramientas").html(data);
+                            },
+                        );
 
                     if (data.workshop == "SI") {
                         document.getElementById("workshop").style.display = "flex";

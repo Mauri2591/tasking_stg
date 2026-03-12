@@ -1792,13 +1792,14 @@ WHERE tm_usuario.sector_id = ?
         $conn = parent::get_conexion();
         $sql = "SELECT proyecto_gestionado.*, proyecto_recurrencia.posicion_recurrencia, 
         tm_categoria.cat_nom, tm_subcategoria.cats_nom, if(proyecto_rechequeo.id, 'SI','NO') AS rechequeo, 
-        if(workshop.est = 1,'SI','NO') AS workshop, dimensionamiento.hs_dimensionadas AS dimensionamiento FROM proyecto_gestionado 
+        if(workshop.est = 1,'SI','NO') AS workshop, dimensionamiento.hs_dimensionadas AS dimensionamiento, tm_estados.estados_nombre AS estado FROM proyecto_gestionado 
         LEFT JOIN tm_categoria ON proyecto_gestionado.cat_id = tm_categoria.cat_id 
         LEFT JOIN tm_subcategoria ON proyecto_gestionado.cats_id = tm_subcategoria.cats_id 
         LEFT JOIN proyecto_rechequeo ON proyecto_rechequeo.id_proyecto_gestionado=proyecto_gestionado.id 
         LEFT JOIN proyecto_recurrencia ON proyecto_gestionado.id=proyecto_recurrencia.id_proyecto_gestionado 
         LEFT JOIN workshop ON proyecto_gestionado.id=workshop.id_proyecto_gestionado 
         LEFT JOIN dimensionamiento ON proyecto_gestionado.id=dimensionamiento.id_proyecto_gestionado
+        INNER JOIN tm_estados ON tm_estados.estados_id=proyecto_gestionado.estados_id
         WHERE proyecto_gestionado.id = :id AND proyecto_gestionado.est = 1";
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(':id', $id, PDO::PARAM_INT);

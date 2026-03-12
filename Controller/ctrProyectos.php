@@ -1684,13 +1684,17 @@ switch ($_GET['proy']) {
                                         class="text-muted fs-12"><?php echo $val['fech_crea'] ?></span>)</span></a>
                         </h6>
                         <?php
-                        // Estados donde NUNCA se borra
+                        // Estados donde normalmente no se borra
                         $estadoNoEditable = in_array($val['estados_id'], [3, 4]);
 
-                        // El usuario que escribió la descripción
+                        // Usuario que creó la descripción
                         $esAutor = ($_SESSION['usu_id'] == $val['usu_crea']);
 
-                        $tienePermiso = !$estadoNoEditable && $esAutor;
+                        // Usuario pertenece al sector 4
+                        $esSector4 = ($_SESSION['sector_id'] == 4);
+
+                        // Permiso final
+                        $tienePermiso = $esAutor && (!$estadoNoEditable || $esSector4);
 
                         if ($tienePermiso):
                         ?>
@@ -1702,8 +1706,6 @@ switch ($_GET['proy']) {
                                 class="ri-delete-bin-2-fill ms-3 fs-14 text-danger">
                             </i>
                         <?php endif; ?>
-
-
                     </div>
                     <p id="sector_descripcion" class="text-muted fs-11" style="margin-left: 1.5rem;">
                         <span class="badge bg-light text-primary"><?php echo $val['sector_nombre'] ?></span>
@@ -1721,15 +1723,9 @@ switch ($_GET['proy']) {
             overflow-wrap:anywhere;
             vertical-align:top;
             margin-left:2rem;
-            font-family: monospace;
-        "
+            font-family: monospace;"
                     class="fs-14 fw-bold"><?php echo $val['descripcion_proyecto']; ?></span>
             </div>
-
-
-
-
-
             <?php if (isset($val['captura_imagen']) && !empty($val['captura_imagen'])) {
             ?>
                 <div style="width: 85%;" class="ms-5">
