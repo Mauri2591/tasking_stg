@@ -2413,9 +2413,6 @@ function verProyPorIdCliente(client_id) {
                     console.log(e.responseText);
                 }
             },
-            order: [
-                [0, "desc"]
-            ],
             language: {
                 sProcessing: "Procesando..",
                 sLengthMenu: "Mostrar _MENU_ registros",
