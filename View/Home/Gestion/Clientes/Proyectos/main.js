@@ -1755,7 +1755,6 @@ function consultar_activos_borrdor(proy_id, numero_proyecto) {
 }
 
 function actualizarComboActivos(valor) {
-    alert(valor)
     valor = valor.toString();
 
     if (valor === '4') {
