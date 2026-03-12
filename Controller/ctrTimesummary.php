@@ -13,91 +13,91 @@ $timesummary = new timesummary;
 switch ($_GET['accion']) {
 
     case 'insert_tarea':
-    $hora_desde = $_POST['hora_desde'] ?? null;
-    $hora_hasta = $_POST['hora_hasta'] ?? null;
+        $hora_desde = $_POST['hora_desde'] ?? null;
+        $hora_hasta = $_POST['hora_hasta'] ?? null;
 
-    // NORMALIZACIÓN DE FECHA
-    $fecha_raw = $_POST['fecha'] ?? null;
-    if (!$fecha_raw) {
-        http_response_code(400);
-        echo json_encode(["error" => "Fecha obligatoria"]);
-        exit;
-    }
+        // NORMALIZACIÓN DE FECHA
+        $fecha_raw = $_POST['fecha'] ?? null;
+        if (!$fecha_raw) {
+            http_response_code(400);
+            echo json_encode(["error" => "Fecha obligatoria"]);
+            exit;
+        }
 
-    try {
-        // Acepta YYYY-MM-DD o ISO 8601 con timezone
-        $fecha_mysql = (new DateTime($fecha_raw))->format('Y-m-d');
-    } catch (Exception $e) {
-        http_response_code(400);
-        echo json_encode(["error" => "Formato de fecha inválido"]);
-        exit;
-    }
+        try {
+            // Acepta YYYY-MM-DD o ISO 8601 con timezone
+            $fecha_mysql = (new DateTime($fecha_raw))->format('Y-m-d');
+        } catch (Exception $e) {
+            http_response_code(400);
+            echo json_encode(["error" => "Formato de fecha inválido"]);
+            exit;
+        }
 
-    $data = [
-        "proyecto" => $_POST['id_proyecto_gestionado'] ?? null,
-        "producto" => $_POST['id_producto'] ?? null,
-        "id_tarea" => $_POST['id_tarea'] ?? null,
-        "es_telecom" => $_POST['es_telecom'] ?? null,
-        "fecha" => $fecha_mysql, // ✅ ya normalizada
-        "desde" => $hora_desde,
-        "hasta" => $hora_hasta
-    ];
+        $data = [
+            "proyecto" => $_POST['id_proyecto_gestionado'] ?? null,
+            "producto" => $_POST['id_producto'] ?? null,
+            "id_tarea" => $_POST['id_tarea'] ?? null,
+            "es_telecom" => $_POST['es_telecom'] ?? null,
+            "fecha" => $fecha_mysql, // ✅ ya normalizada
+            "desde" => $hora_desde,
+            "hasta" => $hora_hasta
+        ];
 
-    // Validación de formato de hora
-    if (!timesummary::validarHora($hora_desde) || !timesummary::validarHora($hora_hasta)) {
-        http_response_code(400);
-        echo json_encode(["error" => "Formato de hora inválido. Use HH:MM"]);
-        exit;
-    }
+        // Validación de formato de hora
+        if (!timesummary::validarHora($hora_desde) || !timesummary::validarHora($hora_hasta)) {
+            http_response_code(400);
+            echo json_encode(["error" => "Formato de hora inválido. Use HH:MM"]);
+            exit;
+        }
 
-    // Validación de campos vacíos
-    if (!timesummary::validarDatosVacios($data)) {
-        http_response_code(400);
-        echo json_encode(["error" => "Hay campos obligatorios vacíos"]);
-        exit;
-    }
+        // Validación de campos vacíos
+        if (!timesummary::validarDatosVacios($data)) {
+            http_response_code(400);
+            echo json_encode(["error" => "Hay campos obligatorios vacíos"]);
+            exit;
+        }
 
-    $validacion_horas = timesummary::validar_horas_minutos($hora_desde, $hora_hasta);
-    if (!$validacion_horas['success']) {
-        http_response_code(400);
-        echo json_encode(["error" => $validacion_horas['error']]);
-        exit;
-    }
+        $validacion_horas = timesummary::validar_horas_minutos($hora_desde, $hora_hasta);
+        if (!$validacion_horas['success']) {
+            http_response_code(400);
+            echo json_encode(["error" => $validacion_horas['error']]);
+            exit;
+        }
 
-    $horas_consumidas = $validacion_horas['duracion'];
+        $horas_consumidas = $validacion_horas['duracion'];
 
-    try {
-        $timesummary->insert_tarea(
-            $_SESSION['usu_id'] ?? null,
-            $_POST['id_proyecto_gestionado'] ?? null,
-            $_POST['id_producto'] ?? null,
-            $_POST['id_tarea'] ?? null,
-            $_POST['es_telecom'] ?? null,
-            $_POST['id_pm_calidad'] ?? null,
-            $fecha_mysql,              // ✅ ACÁ
-            $hora_desde,
-            $hora_hasta,
-            $_POST['descripcion'] ?? null,
-            $horas_consumidas
-        );
+        try {
+            $timesummary->insert_tarea(
+                $_SESSION['usu_id'] ?? null,
+                $_POST['id_proyecto_gestionado'] ?? null,
+                $_POST['id_producto'] ?? null,
+                $_POST['id_tarea'] ?? null,
+                $_POST['es_telecom'] ?? null,
+                $_POST['id_pm_calidad'] ?? null,
+                $fecha_mysql,              // ✅ ACÁ
+                $hora_desde,
+                $hora_hasta,
+                $_POST['descripcion'] ?? null,
+                $horas_consumidas
+            );
 
-        http_response_code(200);
-        echo json_encode(["success" => "Tarea agregada correctamente"]);
-    } catch (PDOException $e) {
-        http_response_code(400);
-        echo json_encode([
-            "error" => "Error SQL",
-            "message" => $e->getMessage(),
-            "sqlstate" => $e->getCode()
-        ]);
-    } catch (Exception $e) {
-        http_response_code(500);
-        echo json_encode([
-            "error" => "Error general",
-            "message" => $e->getMessage()
-        ]);
-    }
-    break;
+            http_response_code(200);
+            echo json_encode(["success" => "Tarea agregada correctamente"]);
+        } catch (PDOException $e) {
+            http_response_code(400);
+            echo json_encode([
+                "error" => "Error SQL",
+                "message" => $e->getMessage(),
+                "sqlstate" => $e->getCode()
+            ]);
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode([
+                "error" => "Error general",
+                "message" => $e->getMessage()
+            ]);
+        }
+        break;
 
 
     // OBTENER TAREAS PARA FULLCALENDAR
@@ -304,14 +304,18 @@ switch ($_GET['accion']) {
         break;
 
     case 'get_titulos_proyectos_total':
-        $mostrar_historico = $_POST['mostrar_historico'] ?? 0;
-        $datos = $timesummary->get_titulos_proyectos_total($_SESSION['usu_id'],$mostrar_historico);
-        $data=[];
+        $mostrar_historico = isset($_POST['mostrar_historico']) ? (int)$_POST['mostrar_historico'] : 0;
+
+        $datos = $timesummary->get_titulos_proyectos_total(
+            $_SESSION['usu_id'],
+            $mostrar_historico
+        );
+        $data = [];
         if ($_SESSION['sector_id'] == "4") {
             foreach ($datos as $row) {
                 $sub_array = array();
                 $sub_array[] = $row['cliente'];
-                    $sub_array[] ='<p class="text-center">'. $row['referencia'].'</p>';
+                $sub_array[] = '<p class="text-center">' . $row['referencia'] . '</p>';
                 $sub_array[] = '<p class="text-center p-0 m-0"><span class="badge border border-dark bg-light text-dark">' . $row['hs_dimensionadas'] . '</span></p>';
                 $sub_array[] = '<span class="text-center badge border border-dark bg-light text-dark">' . $row['producto'] . '</span>';
                 $sub_array[] = $row['es_pm'] == "SI"
@@ -333,7 +337,7 @@ switch ($_GET['accion']) {
                 if (!in_array($row['id_proyecto_gestionado'], $proyectos_vistos)) {
                     $sub_array = array();
                     $sub_array[] = $row['cliente'];
-                    $sub_array[] ='<p class="text-center">'. $row['referencia'].'</p>';
+                    $sub_array[] = '<p class="text-center">' . $row['referencia'] . '</p>';
                     $sub_array[] = '<p class="text-center p-0 m-0"><span class="badge border border-dark bg-light text-dark">' . $row['hs_dimensionadas'] . '</span></p>';
                     $sub_array[] = '<span class="text-center badge border border-dark bg-light text-dark">' . $row['producto'] . '</span>';
                     $sub_array[] = $row['est'] == 1
@@ -489,7 +493,7 @@ switch ($_GET['accion']) {
         break;
 
     case 'getDatosParaEventDrop':
-        $datos=$timesummary->getDatosParaEventDrop($_POST['id']);
+        $datos = $timesummary->getDatosParaEventDrop($_POST['id']);
         echo json_encode($datos);
         break;
 

@@ -547,10 +547,9 @@ if (isset($_SESSION['usu_id'])) {
                     type: "post",
                     dataType: "json",
 
-                    // 👇 esto manda el valor al backend
-                    data: function(d) {
-                        d.mostrar_historico = $("#mostrar_historico").is(":checked") ? 1 : 0;
-                    },
+   data: function(d) {
+    d.mostrar_historico = $("#mostrar_historico").is(":checked") ? 1 : 0;
+},
 
                     error: function(e) {}
                 },
