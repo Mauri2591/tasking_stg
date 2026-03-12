@@ -520,7 +520,7 @@ if (isset($_SESSION['usu_id'])) {
             tabla = $("#tableHistorialTimesummary").dataTable({
                 "aProcessing": true,
                 "aServerSide": true,
-                "ordering": true,
+                "ordering": false,
                 "lengthChange": false,
                 dom: 'Bfrtip',
                 "searching": true,
