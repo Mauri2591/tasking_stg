@@ -12,6 +12,10 @@
                     <input type="hidden" hidden id="inputHiddenIdCliente">
                 </div>
 
+                <div style="display: flex; justify-content: end;">
+                    <label class="form-control-sm text-dark badge bg-light border border-dark" for="mostrar_historico">Ver historico<input type="checkbox" id="mostrar_historico" class="mx-1"></label>
+                </div>
+
                 <?php if ($_SESSION['sector_id'] == "4"): ?>
 
                     <div class="card card-body">

@@ -1948,60 +1948,63 @@ ORDER BY cantidad_proyectos DESC";
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function get_proyectos_total_x_client_id($client_id, $sector_id)
-    {
-        $conn = parent::get_conexion();
-        $sql = "SELECT  
-            pg.id,
-            pg.titulo,
-            pg.fech_vantive,
-            pg.fech_crea,
-            pg.refProy AS referencia,
-            pg.fech_fin,
-            pg.fech_inicio,
-            s.sector_nombre,
-            c.cat_nom AS producto,
-            cl.client_rs AS cliente,
-            tm_estados.estados_nombre AS estado,
-            pcs.id AS id_proyecto_cantidad_servicios,
-            prc.posicion_recurrencia,
-            IF(pr.id IS NULL, NULL, 'SI') AS rechequeo,
-            pr.id_proyecto_gestionado_origen AS rechequeo_de,  
-            SUM(CASE WHEN hosts.tipo = 'IP' THEN 1 ELSE 0 END) AS ips,
-            SUM(CASE WHEN hosts.tipo = 'URL' THEN 1 ELSE 0 END) AS urls,
-            SUM(CASE WHEN hosts.tipo = 'DISPOSITIVO' THEN 1 ELSE 0 END) AS dispositivos,
-            SUM(CASE WHEN hosts.tipo = 'AGENTE' THEN 1 ELSE 0 END) AS agentes,
-            SUM(CASE WHEN hosts.tipo = 'EQUIPO' THEN 1 ELSE 0 END) AS equipos,
-            SUM(CASE 
-                WHEN hosts.tipo NOT IN ('IP','URL','DISPOSITIVO','AGENTE','EQUIPO') 
-                THEN 1 ELSE 0 
-            END) AS otros
-        FROM proyecto_gestionado pg
-        LEFT JOIN sectores s ON pg.sector_id = s.sector_id
-        LEFT JOIN tm_categoria c ON pg.cat_id = c.cat_id
-        LEFT JOIN dimensionamiento d ON pg.id = d.id_proyecto_gestionado
-        LEFT JOIN proyecto_cantidad_servicios pcs ON pg.id_proyecto_cantidad_servicios = pcs.id
-        LEFT JOIN proyectos p ON pcs.proy_id = p.proy_id
-        LEFT JOIN proyecto_recurrencia prc ON pg.id = prc.id_proyecto_gestionado
-        LEFT JOIN clientes cl ON p.client_id = cl.client_id
-        LEFT JOIN tm_estados ON pg.estados_id = tm_estados.estados_id
-        LEFT JOIN proyecto_rechequeo pr ON pg.id = pr.id_proyecto_gestionado
-        LEFT JOIN hosts ON pg.id = hosts.id_proyecto_gestionado
-        WHERE cl.client_id = :client_id
-        AND (
-            (:sector_id = 4) OR (pg.cat_id IN (
-                SELECT cat_id FROM tm_categoria WHERE sector_id = :sector_id OR cat_id = 26
-            ))
-        )
-        GROUP BY pg.id, pg.titulo, pg.fech_vantive, s.sector_nombre, c.cat_nom, cl.client_rs, pg.refProy
-        ORDER BY pg.refProy, pg.id";
-        $stmt = $conn->prepare($sql);
-        $stmt->bindValue(":client_id", $client_id, PDO::PARAM_INT);
-        $stmt->bindValue(":sector_id", $sector_id, PDO::PARAM_INT);
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    public function get_proyectos_total_x_client_id($client_id, $sector_id, $mostrar_historico = false)
+{
+    $conn = parent::get_conexion();
+
+    $sql = "SELECT  
+        pg.id,
+        pg.titulo,
+        pg.fech_vantive,
+        pg.fech_crea,
+        pg.refProy AS referencia,
+        pg.fech_fin,
+        pg.fech_inicio,
+        s.sector_nombre,
+        c.cat_nom AS producto,
+        cl.client_rs AS cliente,
+        tm_estados.estados_nombre AS estado,
+        pcs.id AS id_proyecto_cantidad_servicios,
+        prc.posicion_recurrencia,
+        IF(pr.id IS NULL, NULL, 'SI') AS rechequeo,
+        pr.id_proyecto_gestionado_origen AS rechequeo_de,  
+        SUM(CASE WHEN hosts.tipo = 'IP' THEN 1 ELSE 0 END) AS ips,
+        SUM(CASE WHEN hosts.tipo = 'URL' THEN 1 ELSE 0 END) AS urls,
+        SUM(CASE WHEN hosts.tipo = 'DISPOSITIVO' THEN 1 ELSE 0 END) AS dispositivos,
+        SUM(CASE WHEN hosts.tipo = 'AGENTE' THEN 1 ELSE 0 END) AS agentes,
+        SUM(CASE WHEN hosts.tipo = 'EQUIPO' THEN 1 ELSE 0 END) AS equipos,
+        SUM(CASE WHEN hosts.tipo NOT IN ('IP','URL','DISPOSITIVO','AGENTE','EQUIPO') THEN 1 ELSE 0 END) AS otros
+    FROM proyecto_gestionado pg
+    LEFT JOIN sectores s ON pg.sector_id = s.sector_id
+    LEFT JOIN tm_categoria c ON pg.cat_id = c.cat_id
+    LEFT JOIN proyecto_cantidad_servicios pcs ON pg.id_proyecto_cantidad_servicios = pcs.id
+    LEFT JOIN proyectos p ON pcs.proy_id = p.proy_id
+    LEFT JOIN proyecto_recurrencia prc ON pg.id = prc.id_proyecto_gestionado
+    LEFT JOIN clientes cl ON p.client_id = cl.client_id
+    LEFT JOIN tm_estados ON pg.estados_id = tm_estados.estados_id
+    LEFT JOIN proyecto_rechequeo pr ON pg.id = pr.id_proyecto_gestionado
+    LEFT JOIN hosts ON pg.id = hosts.id_proyecto_gestionado
+    WHERE cl.client_id = :client_id
+    AND (
+        (:sector_id = 4) OR (pg.cat_id IN (
+            SELECT cat_id FROM tm_categoria WHERE sector_id = :sector_id OR cat_id = 26
+        ))
+    )";
+
+    if (!$mostrar_historico) {
+        $sql .= " AND pg.estados_id NOT IN(15,16,17)";
     }
 
+    $sql .= " GROUP BY pg.id
+              ORDER BY pg.refProy, pg.id";
+
+    $stmt = $conn->prepare($sql);
+    $stmt->bindValue(":client_id", $client_id, PDO::PARAM_INT);
+    $stmt->bindValue(":sector_id", $sector_id, PDO::PARAM_INT);
+    $stmt->execute();
+
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
     public function getDatosCliente($id)
     {
         $conn = parent::get_conexion();

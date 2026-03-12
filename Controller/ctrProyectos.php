@@ -1973,7 +1973,8 @@ switch ($_GET['proy']) {
         break;
 
     case 'get_proyectos_total_x_client_id':
-        $datos = $proyecto->get_proyectos_total_x_client_id($_POST['client_id'], $_SESSION['sector_id']);
+        $mostrar_historico = $_POST['mostrar_historico'] ?? 0;
+        $datos = $proyecto->get_proyectos_total_x_client_id($_POST['client_id'], $_SESSION['sector_id'], $mostrar_historico);
 
         $id_to_pos = [];
         foreach ($datos as $index => $fila) {
