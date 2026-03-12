@@ -67,10 +67,10 @@ class Reportes
             'HORAS',
             'IPS',
             'URLS',
-            'OTROS',
             'DISPOSITIVO',
             'AGENTE',
             'EQUIPO',
+            'OTROS',
             'ESTADO'
         ];
         $sheet->fromArray($headers, NULL, 'A1');
@@ -122,10 +122,10 @@ class Reportes
                     $row['dimensionamiento'] ?? '-',
                     $row['ips'] ?? '-',
                     $row['urls'] ?? '-',
-                    $row['otros'] ?? '-',
                     $row['dispositivos'] ?? '-',
                     $row['agentes'] ?? '-',
                     $row['equipos'] ?? '-',
+                    $row['otros'] ?? '-',
                     $row['estado'] ?? '-'
                 ], NULL, 'A' . $rowNum);
 
