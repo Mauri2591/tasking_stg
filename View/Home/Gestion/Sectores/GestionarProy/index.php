@@ -111,8 +111,9 @@ if (isset($_SESSION['usu_id'])) {
                                 </div>
 
                                 <div class="col-lg-12 p-2 mt-1">
-                                    <div class="row d-flex justify-content-evenly">
-                                        <div class="col-ms-2 col text-center">
+                                    <div id="contenedor_ips_y_descripcion" class="row d-flex justify-content-evenly" style="opacity:0;">
+
+                                        <div id="contenedor_ips" style="display:none;" class="col-ms-2 col text-center">
                                             <span type="button"
                                                 onclick="copiar_ips(<?php echo isset($_GET['p']) ? Openssl::get_ssl_decrypt($_GET['p']) : ''; ?>)"
                                                 class="btn btn-sm py-0 px-1 btn-outline-success waves-effect waves-light mb-2">Ips<i
@@ -123,8 +124,7 @@ if (isset($_SESSION['usu_id'])) {
                                             </div>
                                         </div>
 
-
-                                        <div class="col-ms-4 col text-center">
+                                        <div id="contenedor_urls" style="display:none;" class="col-ms-4 col text-center">
                                             <span type="button"
                                                 onclick="copiar_urls(<?php echo isset($_GET['p']) ? Openssl::get_ssl_decrypt($_GET['p']) : ''; ?>)"
                                                 class="btn btn-sm py-0 px-1 btn-outline-success waves-effect waves-light mb-2">Urls
@@ -135,7 +135,40 @@ if (isset($_SESSION['usu_id'])) {
                                             </div>
                                         </div>
 
-                                        <div class="col-ms-2 col text-center">
+                                        <div id="contenedor_dispositivos" style="display:none;" class="col-ms-2 col text-center">
+                                            <span type="button"
+                                                onclick="copiar_dispositivos(<?php echo isset($_GET['p']) ? Openssl::get_ssl_decrypt($_GET['p']) : ''; ?>)"
+                                                class="btn btn-sm py-0 px-1 btn-outline-success waves-effect waves-light mb-2">Dispositivos<i
+                                                    class=" ri-file-copy-line"></i></span>
+                                            <div style="max-height: 220px;  min-height: 220px; overflow-y: scroll; border-radius: 5px;"
+                                                class=" border border-success">
+                                                <div class="text-center" id="cont_dispositivos"></div>
+                                            </div>
+                                        </div>
+
+                                        <div id="contenedor_agentes" style="display:none;" class="col-ms-2 col text-center">
+                                            <span type="button"
+                                                onclick="copiar_agentes(<?php echo isset($_GET['p']) ? Openssl::get_ssl_decrypt($_GET['p']) : ''; ?>)"
+                                                class="btn btn-sm py-0 px-1 btn-outline-success waves-effect waves-light mb-2">Agentes<i
+                                                    class=" ri-file-copy-line"></i></span>
+                                            <div style="max-height: 220px;  min-height: 220px; overflow-y: scroll; border-radius: 5px;"
+                                                class=" border border-success">
+                                                <div class="text-center" id="cont_agentes"></div>
+                                            </div>
+                                        </div>
+
+                                        <div id="contenedor_equipos" style="display:none;" class="col-ms-2 col text-center">
+                                            <span type="button"
+                                                onclick="copiar_equipos(<?php echo isset($_GET['p']) ? Openssl::get_ssl_decrypt($_GET['p']) : ''; ?>)"
+                                                class="btn btn-sm py-0 px-1 btn-outline-success waves-effect waves-light mb-2">Equipos<i
+                                                    class=" ri-file-copy-line"></i></span>
+                                            <div style="max-height: 220px;  min-height: 220px; overflow-y: scroll; border-radius: 5px;"
+                                                class=" border border-success">
+                                                <div class="text-center" id="cont_equipos"></div>
+                                            </div>
+                                        </div>
+
+                                        <div id="contenedor_otros" style="display:none;" class="col-ms-2 col text-center">
                                             <span type="button"
                                                 onclick="copiar_otros(<?php echo isset($_GET['p']) ? Openssl::get_ssl_decrypt($_GET['p']) : ''; ?>)"
                                                 class="btn btn-sm py-0 px-1 btn-outline-success waves-effect waves-light mb-2 ">Otros<i
@@ -160,10 +193,10 @@ if (isset($_SESSION['usu_id'])) {
 
 
                                             <div style="display: flex; margin-top: .2rem; margin-bottom: .2rem;">
-                                                                                        <span class="badge bg-light text-dark mx-1">Ref: <span id="referencia_proy"></span></span>
-    
-                                            <span style="width: 7rem;"
-                                                
+                                                <span class="badge bg-light text-dark mx-1">Ref: <span id="referencia_proy"></span></span>
+
+                                                <span style="width: 7rem;"
+
                                                     class="me-2 badge bg-light text-primary ">Desde:
                                                     <span id="fech_inicio" class="text-dark"></span>
                                                 </span>
@@ -379,6 +412,56 @@ if (isset($_SESSION['usu_id'])) {
 
 
         document.addEventListener("DOMContentLoaded", function() {
+
+            function mostrar_contenedores_de_activos(id_proyecto_gestionado) {
+                $.ajax({
+                    type: "POST",
+                    url: "../../../../../Controller/ctrProyectos.php?proy=get_sector_x_proy",
+                    data: {
+                        id: id_proyecto_gestionado
+                    },
+                    dataType: "json",
+                    success: function(response) {
+
+                        switch (response.sector_id) {
+
+                            case 1:
+                                $("#contenedor_ips").show();
+                                $("#contenedor_urls").show();
+                                $("#contenedor_otros").show();
+                                break;
+
+                            case 2:
+                                $("#contenedor_dispositivos").show();
+                                $("#contenedor_agentes").show();
+                                $("#contenedor_otros").show();
+                                break;
+
+                            case 3:
+                                $("#contenedor_ips").show();
+                                $("#contenedor_equipos").show();
+                                $("#contenedor_otros").show();
+                                break;
+
+                            case 4:
+                                $("#contenedor_ips_y_descripcion").text("NO POSEE HOSTS");
+                                break;
+
+                            case 5:
+                                $("#contenedor_ips").show();
+                                $("#contenedor_equipos").show();
+                                $("#contenedor_otros").show();
+                                $("#contenedor_dispositivos").show();
+                                $("#contenedor_agentes").show();
+                                $("#contenedor_urls").show();
+                                break;
+                        }
+                        // 🔥 mostrar recién cuando el layout ya está correcto
+                        $("#contenedor_ips_y_descripcion").css("opacity", "1");
+                    }
+                });
+            }
+
             let btn_guardar_descripcion = document.getElementById("btn_guardar_descripcion");
 
             let btn_finalizar_proyecto = document.getElementById("btn_finalizar_proyecto");
@@ -631,6 +714,39 @@ if (isset($_SESSION['usu_id'])) {
                 },
                 "html"
             );
+
+            $.post("../../../../../Controller/ctrProyectos.php?proy=get_hosts_proy_equipo", {
+                    id_proyecto_gestionado: id_proyecto_gestionado
+                },
+                function(data) {
+                    if (data) {
+                        $("#cont_equipos").html(data)
+                    } else {
+                        $("#cont_equipos").text("No hay equipos")
+                    }
+                }, "html");
+
+            $.post("../../../../../Controller/ctrProyectos.php?proy=get_hosts_proy_agente", {
+                    id_proyecto_gestionado: id_proyecto_gestionado
+                },
+                function(data) {
+                    if (data) {
+                        $("#cont_agentes").html(data)
+                    } else {
+                        $("#cont_agentes").text("No hay agentes")
+                    }
+                }, "html");
+
+            $.post("../../../../../Controller/ctrProyectos.php?proy=get_hosts_proy_dispositivo", {
+                    id_proyecto_gestionado: id_proyecto_gestionado
+                },
+                function(data) {
+                    if (data) {
+                        $("#cont_dispositivos").html(data)
+                    } else {
+                        $("#cont_dispositivos").text("No hay dispositivos")
+                    }
+                }, "html");
 
             $.post("../../../../../Controller/ctrProyectos.php?proy=get_hosts_proy_otro", {
                     id_proyecto_gestionado: id_proyecto_gestionado
@@ -1014,6 +1130,9 @@ if (isset($_SESSION['usu_id'])) {
                     });
                 });
             }
+
+            mostrar_contenedores_de_activos(id_proyecto_gestionado)
+
             finalizar_proyecto(id_proyecto_gestionado);
         });
 
@@ -1138,6 +1257,57 @@ if (isset($_SESSION['usu_id'])) {
             }).showToast();
 
             let contenido = document.getElementById("cont_url").innerText.trim();
+            navigator.clipboard.writeText(contenido).then(function() {
+                toast.success('Successfully toasted!')
+            }).catch(function(error) {
+                console.error("Error al copiar: ", error);
+            });
+        }
+
+        function copiar_dispositivos(id_proyecto_cantidad_servicios) {
+            Toastify({
+                text: "Dispositivos copiadas!",
+                duration: 2000,
+                gravity: "top",
+                position: "right",
+                backgroundColor: "#0ab39c",
+            }).showToast();
+
+            let contenido = document.getElementById("cont_dispositivos").innerText.trim();
+            navigator.clipboard.writeText(contenido).then(function() {
+                toast.success('Successfully toasted!')
+            }).catch(function(error) {
+                console.error("Error al copiar: ", error);
+            });
+        }
+
+        function copiar_agentes(id_proyecto_cantidad_servicios) {
+            Toastify({
+                text: "Agentes copiados!",
+                duration: 2000,
+                gravity: "top",
+                position: "right",
+                backgroundColor: "#0ab39c",
+            }).showToast();
+
+            let contenido = document.getElementById("cont_agentes").innerText.trim();
+            navigator.clipboard.writeText(contenido).then(function() {
+                toast.success('Successfully toasted!')
+            }).catch(function(error) {
+                console.error("Error al copiar: ", error);
+            });
+        }
+
+        function copiar_equipos(id_proyecto_cantidad_servicios) {
+            Toastify({
+                text: "Equipos copiados!",
+                duration: 2000,
+                gravity: "top",
+                position: "right",
+                backgroundColor: "#0ab39c",
+            }).showToast();
+
+            let contenido = document.getElementById("cont_equipos").innerText.trim();
             navigator.clipboard.writeText(contenido).then(function() {
                 toast.success('Successfully toasted!')
             }).catch(function(error) {

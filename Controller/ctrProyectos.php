@@ -138,6 +138,51 @@ switch ($_GET['proy']) {
         echo $sectionIps;
         break;
 
+    case 'get_hosts_proy_agente':
+        $data = $proyecto->get_hosts_proy($_POST['id_proyecto_gestionado']);
+        $ip = [];
+        $sectionIps = '';
+        foreach ($data as $key => $val) {
+            if ($val['tipo'] == "AGENTE") {
+                $ip[] = $val['host'];
+            }
+        }
+        foreach ($ip as $key => $val) {
+            $sectionIps .= '<section><span class="badge bg-light text-dark">' . $val . '</span></section>';
+        }
+        echo $sectionIps;
+        break;
+
+    case 'get_hosts_proy_dispositivo':
+        $data = $proyecto->get_hosts_proy($_POST['id_proyecto_gestionado']);
+        $ip = [];
+        $sectionIps = '';
+        foreach ($data as $key => $val) {
+            if ($val['tipo'] == "DISPOSITIVO") {
+                $ip[] = $val['host'];
+            }
+        }
+        foreach ($ip as $key => $val) {
+            $sectionIps .= '<section><span class="badge bg-light text-dark">' . $val . '</span></section>';
+        }
+        echo $sectionIps;
+        break;
+
+    case 'get_hosts_proy_equipo':
+        $data = $proyecto->get_hosts_proy($_POST['id_proyecto_gestionado']);
+        $ip = [];
+        $sectionIps = '';
+        foreach ($data as $key => $val) {
+            if ($val['tipo'] == "EQUIPO") {
+                $ip[] = $val['host'];
+            }
+        }
+        foreach ($ip as $key => $val) {
+            $sectionIps .= '<section><span class="badge bg-light text-dark">' . $val . '</span></section>';
+        }
+        echo $sectionIps;
+        break;
+
     case 'get_si_proy_recurrencia_is_null':
         echo json_encode($proyecto->get_si_proy_recurrencia_is_null($_POST['id']));
         break;
@@ -205,11 +250,17 @@ switch ($_GET['proy']) {
         $ips   = $_POST['ips'] ?? '';
         $urls  = $_POST['urls'] ?? '';
         $otros = $_POST['otros'] ?? '';
+        $dispositivos = $_POST['dispositivos'] ?? '';
+        $agentes  = $_POST['agentes'] ?? '';
+        $equipos = $_POST['equipos'] ?? '';
 
         $hosts = array_merge(
             $validacion->parse_hosts($ips, 'IP'),
             $validacion->parse_hosts($urls, 'URL'),
-            $validacion->parse_hosts($otros, 'OTRO')
+            $validacion->parse_hosts($otros, 'OTRO'),
+            $validacion->parse_hosts($dispositivos, 'DISPOSITIVO'),
+            $validacion->parse_hosts($agentes, 'AGENTE'),
+            $validacion->parse_hosts($equipos, 'EQUIPO')
         );
 
         for ($i = 1; $i <= $cantidad_recurrencias; $i++) {
@@ -556,7 +607,7 @@ switch ($_GET['proy']) {
                 $usuarios_ids
             );
 
-            if ($updated_usuarios === false) {
+            if ($updated_usuarios === false && !empty($usuarios_ids)) {
                 throw new Exception("Error actualizando usuarios asignados");
             }
 

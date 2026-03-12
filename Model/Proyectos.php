@@ -1291,13 +1291,13 @@ ORDER BY id_proyecto_cantidad_servicios ASC";
         $stmt->execute();
     }
 
-   public function insert_usuarios_proyecto(int $id_proyecto_gestionado, $usu_asignado)
-{
-    if (empty($usu_asignado)) {
-        return;
-    }
-    $conn = parent::get_conexion();
-    $sql = "INSERT INTO usuario_proyecto (id_proyecto_gestionado, usu_asignado)
+    public function insert_usuarios_proyecto(int $id_proyecto_gestionado, $usu_asignado)
+    {
+        if (empty($usu_asignado)) {
+            return;
+        }
+        $conn = parent::get_conexion();
+        $sql = "INSERT INTO usuario_proyecto (id_proyecto_gestionado, usu_asignado)
         SELECT :id_proyecto_gestionado, :usu_asignado
         WHERE NOT EXISTS (
             SELECT 1
@@ -1306,11 +1306,11 @@ ORDER BY id_proyecto_cantidad_servicios ASC";
               AND usu_asignado = :usu_asignado
         )
     ";
-    $stmt = $conn->prepare($sql);
-    $stmt->bindValue(':id_proyecto_gestionado', $id_proyecto_gestionado, PDO::PARAM_INT);
-    $stmt->bindValue(':usu_asignado', (int)$usu_asignado, PDO::PARAM_INT);
-    $stmt->execute();
-}
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue(':id_proyecto_gestionado', $id_proyecto_gestionado, PDO::PARAM_INT);
+        $stmt->bindValue(':usu_asignado', (int)$usu_asignado, PDO::PARAM_INT);
+        $stmt->execute();
+    }
     public function insertar_usuarios_a_recurrente(int $id_proyecto_gestionado, $usu_asignado)
     {
         $conn = parent::get_conexion();
@@ -1641,7 +1641,10 @@ WHERE
         $sql = "    SELECT
             SUM(CASE WHEN tipo = 'IP'   THEN 1 ELSE 0 END) AS total_ip,
             SUM(CASE WHEN tipo = 'URL'  THEN 1 ELSE 0 END) AS total_url,
-            SUM(CASE WHEN tipo = 'OTRO' THEN 1 ELSE 0 END) AS total_otro
+            SUM(CASE WHEN tipo = 'OTRO' THEN 1 ELSE 0 END) AS total_otro,
+            SUM(CASE WHEN tipo = 'EQUIPO'  THEN 1 ELSE 0 END) AS total_equipos,
+            SUM(CASE WHEN tipo = 'DISPOSITIVO' THEN 1 ELSE 0 END) AS total_dispositivos,
+            SUM(CASE WHEN tipo = 'AGENTE' THEN 1 ELSE 0 END) AS total_agentes
             FROM hosts
             WHERE id_proyecto_gestionado = :id_proyecto_gestionado
             AND est = 1";
@@ -1809,10 +1812,10 @@ WHERE tm_usuario.sector_id = ?
 
 
     public function grafico_get_total_servicios($sector_id)
-{
-    $conn = parent::get_conexion();
+    {
+        $conn = parent::get_conexion();
 
-    $sql = "SELECT 
+        $sql = "SELECT 
                 tm_categoria.cat_nom,
                 sectores.sector_nombre,
                 COUNT(pg.id) AS total
@@ -1822,19 +1825,19 @@ WHERE tm_usuario.sector_id = ?
             INNER JOIN sectores 
                 ON pg.sector_id = sectores.sector_id
             WHERE pg.estados_id = 4";
-    //Si NO es Calidad (4), filtro por sector
-    if ($sector_id != 4) {
-        $sql .= " AND pg.sector_id = :sector_id";
-    }
-    $sql .= " GROUP BY pg.cat_id, pg.sector_id
+        //Si NO es Calidad (4), filtro por sector
+        if ($sector_id != 4) {
+            $sql .= " AND pg.sector_id = :sector_id";
+        }
+        $sql .= " GROUP BY pg.cat_id, pg.sector_id
               ORDER BY total DESC";
-    $stmt = $conn->prepare($sql);
-    if ($sector_id != 4) {
-        $stmt->bindValue(':sector_id', $sector_id, PDO::PARAM_INT);
+        $stmt = $conn->prepare($sql);
+        if ($sector_id != 4) {
+            $stmt->bindValue(':sector_id', $sector_id, PDO::PARAM_INT);
+        }
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
-    $stmt->execute();
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);
-}
 
     public function grafico_get_total_servicios_por_sector()
     {
@@ -1964,10 +1967,15 @@ ORDER BY cantidad_proyectos DESC";
             prc.posicion_recurrencia,
             IF(pr.id IS NULL, NULL, 'SI') AS rechequeo,
             pr.id_proyecto_gestionado_origen AS rechequeo_de,  
-            SUM(DISTINCT d.hs_dimensionadas) AS dimensionamiento,
             SUM(CASE WHEN hosts.tipo = 'IP' THEN 1 ELSE 0 END) AS ips,
             SUM(CASE WHEN hosts.tipo = 'URL' THEN 1 ELSE 0 END) AS urls,
-            SUM(CASE WHEN hosts.tipo NOT IN ('IP','URL') THEN 1 ELSE 0 END) AS otros
+            SUM(CASE WHEN hosts.tipo = 'DISPOSITIVO' THEN 1 ELSE 0 END) AS dispositivos,
+            SUM(CASE WHEN hosts.tipo = 'AGENTE' THEN 1 ELSE 0 END) AS agentes,
+            SUM(CASE WHEN hosts.tipo = 'EQUIPO' THEN 1 ELSE 0 END) AS equipos,
+            SUM(CASE 
+                WHEN hosts.tipo NOT IN ('IP','URL','DISPOSITIVO','AGENTE','EQUIPO') 
+                THEN 1 ELSE 0 
+            END) AS otros
         FROM proyecto_gestionado pg
         LEFT JOIN sectores s ON pg.sector_id = s.sector_id
         LEFT JOIN tm_categoria c ON pg.cat_id = c.cat_id

@@ -9,9 +9,7 @@
                         <form id="agregar_activos_borrador" method="post">
                             <select id="combo_select_activo" class="text-center fw-bold form-select form-select-sm"
                                 aria-label=".form-select-sm example">
-                                <option value="IP">IP's</option>
-                                <option value="URL">URL's</option>
-                                <option value="OTRO">OTROS</option>
+                               
                             </select>
                             <textarea id="agregar_nuevo_host" rows="15" class="form-control form-control-sm mt-2"></textarea>
                             <!-- <input id="agregar_nuevo_host" class="form-control form-control-sm mt-2" type="text"> -->

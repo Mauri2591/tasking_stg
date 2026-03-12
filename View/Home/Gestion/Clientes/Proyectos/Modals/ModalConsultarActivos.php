@@ -5,7 +5,7 @@
         <div class="modal-content">
             <div class="card-body">
                 <span id="proy_cliente_periodo" class="fw-bold"></span><br>
-
+                <input type="hidden" hidden id="mdl_id_proyecto_gestionado_nuevos_hosts">
                 <span class="mt-4 badge bg-light border border-primary fs-10 text-primary"
                     style="font-weight: bold;">Activos</span><span onclick='agregar_activos_borrdor()'
                     data-placement="top" title="Agregar nuevos" type="button"><i

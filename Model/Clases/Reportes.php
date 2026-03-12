@@ -68,6 +68,9 @@ class Reportes
             'IPS',
             'URLS',
             'OTROS',
+            'DISPOSITIVO',
+            'AGENTE',
+            'EQUIPO',
             'ESTADO'
         ];
         $sheet->fromArray($headers, NULL, 'A1');
@@ -120,6 +123,9 @@ class Reportes
                     $row['ips'] ?? '-',
                     $row['urls'] ?? '-',
                     $row['otros'] ?? '-',
+                    $row['dispositivos'] ?? '-',
+                    $row['agentes'] ?? '-',
+                    $row['equipos'] ?? '-',
                     $row['estado'] ?? '-'
                 ], NULL, 'A' . $rowNum);
 
@@ -180,7 +186,8 @@ class Reportes
         }
 
         // ===== Estilos del encabezado =====
-        $headerRange = 'A1:P1';
+        $headerRange = 'A1:S1';
+        $sheet->setAutoFilter($headerRange);
         $headerStyle = $sheet->getStyle($headerRange);
         $headerStyle->getFont()->setBold(true)->getColor()->setRGB('FFFFFF');
         $headerStyle->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
@@ -189,14 +196,14 @@ class Reportes
         $headerStyle->getBorders()->getBottom()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
 
         // Centrar columnas
-        $centerColumns = ['A', 'D', 'E', 'F', 'G', 'H', 'I', 'L', 'M', 'N'];
+        $centerColumns = ['A', 'D', 'E', 'F', 'G', 'H', 'I', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S'];
         foreach ($centerColumns as $col) {
             $sheet->getStyle($col)->getAlignment()
                 ->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
         }
 
         // Autoajuste de columnas
-        foreach (range('A', 'N') as $col) {
+        foreach (range('A', 'S') as $col) {
             $sheet->getColumnDimension($col)->setAutoSize(true);
         }
 

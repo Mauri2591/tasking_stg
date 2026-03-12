@@ -386,8 +386,264 @@ $(document).ready(function () {
                 }
             }
         });
-    })
+    });
 });
+
+$("#combo_sector_proy_nuevo").change(function (e) {
+    // e.preventDefault();
+    switch (this.value) {
+        case '1': //EH
+            document.getElementById('container_ips_urls').innerHTML =
+                `<div class="col-sm-3 mr-1">
+                <div class="mb-3">
+                    <span class="badge bg-light fs-10 mb-1 text-dark">Ip's</span>
+                    <input type="hidden" hidden value="IP">
+                    <textarea class="form-control" id="ips_proy_nuevo_eh" rows="3"
+                        placeholder="Engrese las Ips"></textarea>
+                </div>
+                    <div id="mje_ips_proy_nuevo_eh">
+
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="mb-3">
+                        <span class="badge bg-light fs-10 mb-1 text-dark">Url's</span>
+                        <input type="hidden" hidden value="URL">
+                        <textarea class="form-control" id="urls_proy_nuevo_eh" rows="3"
+                            placeholder="Ingrese las URL's"></textarea>
+                    </div>
+                    <div id="mje_urls_proy_nuevo_eh">
+                    </div>
+                </div>
+                <div class="col-sm-3 ml-1">
+                    <div class="mb-3">
+                        <input type="hidden" hidden value="OTROS">
+                        <span class="badge bg-light fs-10 mb-1 text-dark">Otros activos</span>
+
+                        <textarea class="form-control" id="otros_proy_nuevo" rows="3"
+                            placeholder="Otros"></textarea>
+                    </div>
+                    <div id="mje_urls_proy_nuevo_otros">
+                    </div>
+                </div>`;
+            activarValidacionTextarea(
+                "ips_proy_nuevo_eh",
+                "mje_ips_proy_nuevo_eh",
+                "IP"
+            );
+
+            activarValidacionTextarea(
+                "urls_proy_nuevo_eh",
+                "mje_urls_proy_nuevo_eh",
+                "URL"
+            );
+            break;
+
+        case '2': //SOC
+            document.getElementById('container_ips_urls').innerHTML =
+                `<div class="col-sm-3 mr-1">
+                <div class="mb-3">
+                    <span class="badge bg-light fs-10 mb-1 text-dark">Dispositivos</span>
+                    <input type="hidden" hidden value="DISPOSITIVOS">
+                    <textarea class="form-control" id="dispositivos_proy_nuevo_soc" rows="3"
+                        placeholder="Engrese dispositivos"></textarea>
+                </div>
+                    <div id="mje_dispositivos_proy_nuevo_soc">
+
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="mb-3">
+                        <span class="badge bg-light fs-10 mb-1 text-dark">Agentes</span>
+                        <input type="hidden" hidden value="AGENTES">
+                        <textarea class="form-control" id="agentes_proy_nuevo_soc" rows="3"
+                            placeholder="Ingrese los agentes"></textarea>
+                    </div>
+                    <div id="mje_agentes_proy_nuevo_soc">
+                    </div>
+                </div>
+                <div class="col-sm-3 ml-1">
+                    <div class="mb-3">
+                        <input type="hidden" hidden value="OTROS">
+                        <span class="badge bg-light fs-10 mb-1 text-dark">Otros activos</span>
+
+                        <textarea class="form-control" id="otros_proy_nuevo_soc" rows="3"
+                            placeholder="Otros"></textarea>
+                    </div>
+                    <div id="mje_urls_proy_nuevo_otros">
+                    </div>
+                </div>`;
+            break;
+
+        case '3': //SASE
+            document.getElementById('container_ips_urls').innerHTML =
+                `<div class="col-sm-3 mr-1">
+                <div class="mb-3">
+                    <span class="badge bg-light fs-10 mb-1 text-dark">Ip's</span>
+                    <input type="hidden" hidden value="IP">
+                    <textarea class="form-control" id="ips_proy_nuevo_eh" rows="3"
+                        placeholder="Engrese las Ips"></textarea>
+                </div>
+                    <div id="mje_ips_proy_nuevo_eh">
+
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="mb-3">
+                        <span class="badge bg-light fs-10 mb-1 text-dark">Equipos</span>
+                        <input type="hidden" hidden value="EQUIPOS">
+                        <textarea class="form-control" id="equipos_proy_nuevo_sase" rows="3"
+                            placeholder="Ingrese los equipos"></textarea>
+                    </div>
+                    <div id="mje_equipos_proy_nuevo_sase">
+                    </div>
+                </div>
+                <div class="col-sm-3 ml-1">
+                    <div class="mb-3">
+                        <input type="hidden" hidden value="OTROS">
+                        <span class="badge bg-light fs-10 mb-1 text-dark">Otros activos</span>
+
+                        <textarea class="form-control" id="otros_proy_nuevo_sase" rows="3"
+                            placeholder="Otros"></textarea>
+                    </div>
+                    <div id="mje_urls_proy_nuevo_otros">
+                    </div>
+                </div>`;
+            break;
+
+        case '4': //CALIDAD
+            document.getElementById('container_ips_urls').innerHTML =
+                `<div class="col-sm-3 mr-1">
+           
+                </div>`;
+            break;
+
+        case '5': //IR
+            document.getElementById('container_ips_urls').innerHTML =
+                `<div class="col-sm-3 mr-1">
+                <div class="mb-3">
+                    <span class="badge bg-light fs-10 mb-1 text-dark">Ip's</span>
+                    <input type="hidden" hidden value="IP">
+                    <textarea class="form-control" id="ips_proy_nuevo_eh" rows="3"
+                        placeholder="Engrese las Ips"></textarea>
+                </div>
+                    <div id="mje_ips_proy_nuevo_eh">
+
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="mb-3">
+                        <span class="badge bg-light fs-10 mb-1 text-dark">Url's</span>
+                        <input type="hidden" hidden value="URL">
+                        <textarea class="form-control" id="urls_proy_nuevo_eh" rows="3"
+                            placeholder="Ingrese las URL's"></textarea>
+                    </div>
+                    <div id="mje_urls_proy_nuevo_eh">
+                    </div>
+                </div>
+
+                <div class="col-sm-3">
+                 <div class="mb-3">
+                    <span class="badge bg-light fs-10 mb-1 text-dark">Dispositivos</span>
+                    <input type="hidden" hidden value="DISPOSITIVOS">
+                    <textarea class="form-control" id="dispositivos_proy_nuevo_soc" rows="3"
+                        placeholder="Engrese dispositivos"></textarea>
+                </div>
+                    <div id="mje_dispositivos_proy_nuevo_soc">
+
+                    </div>
+                </div>
+
+                <div class="col-sm-4">
+                    <div class="mb-3">
+                        <span class="badge bg-light fs-10 mb-1 text-dark">Agentes</span>
+                        <input type="hidden" hidden value="AGENTES">
+                        <textarea class="form-control" id="agentes_proy_nuevo_soc" rows="3"
+                            placeholder="Ingrese los agentes"></textarea>
+                    </div>
+                    <div id="mje_agentes_proy_nuevo_soc">
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="mb-3">
+                        <span class="badge bg-light fs-10 mb-1 text-dark">Equipos</span>
+                        <input type="hidden" hidden value="EQUIPOS">
+                        <textarea class="form-control" id="equipos_proy_nuevo_sase" rows="3"
+                            placeholder="Ingrese los equipos"></textarea>
+                    </div>
+                    <div id="mje_equipos_proy_nuevo_sase">
+                    </div>
+                </div>
+                <div class="col-sm-4 ml-1">
+                    <div class="mb-3">
+                        <input type="hidden" hidden value="OTROS">
+                        <span class="badge bg-light fs-10 mb-1 text-dark">Otros activos</span>
+
+                        <textarea class="form-control" id="otros_proy_nuevo" rows="3"
+                            placeholder="Otros"></textarea>
+                    </div>
+                    <div id="mje_urls_proy_nuevo_otros">
+                    </div>
+                </div>`;
+            activarValidacionTextarea(
+                "ips_proy_nuevo_eh",
+                "mje_ips_proy_nuevo_eh",
+                "IP"
+            );
+
+            activarValidacionTextarea(
+                "urls_proy_nuevo_eh",
+                "mje_urls_proy_nuevo_eh",
+                "URL"
+            );
+            break;
+
+        default:
+            break;
+    }
+});
+
+function validarIP(ip) {
+    const regexIP = /^(25[0-5]|2[0-4][0-9]|1?[0-9]{1,2})(\.(25[0-5]|2[0-4][0-9]|1?[0-9]{1,2})){3}$/;
+    return regexIP.test(ip);
+}
+
+function validarURL(url) {
+    return url.startsWith("http://") || url.startsWith("https://");
+}
+
+function activarValidacionTextarea(textareaId, mensajeId, tipo) {
+    const textarea = document.getElementById(textareaId);
+    if (!textarea) return;
+    textarea.addEventListener("input", function () {
+        if (this.value.trim() === "") {
+            document.getElementById(mensajeId).innerHTML = "";
+            return;
+        }
+        const items = this.value
+            .split(/[\s,]+/)
+            .map(x => x.trim())
+            .filter(x => x.length > 0);
+        this.value = items.join('\n');
+        let invalidos = [];
+        if (tipo === "IP") {
+            invalidos = items.filter(i => !validarIP(i));
+        }
+        if (tipo === "URL") {
+            invalidos = items.filter(i => !validarURL(i));
+        }
+        if (invalidos.length > 0) {
+            const lista = invalidos.map(i => `<li>${i}</li>`).join('');
+            document.getElementById(mensajeId).innerHTML =
+                `<div class="alert alert-warning text-center">
+                <strong>Formato inválido</strong>
+                <ul class="mb-0">${lista}</ul>
+            </div>`;
+        } else {
+            document.getElementById(mensajeId).innerHTML = "";
+        }
+    });
+}
 
 
 function validar_combo_prioridad(valorInicial) {
@@ -418,6 +674,30 @@ function validar_combo_prioridad(valorInicial) {
 
 function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
 
+    $.ajax({
+        type: "POST",
+        url: "../../../../../Controller/ctrProyectos.php?proy=get_sector_x_proy",
+        data: {
+            id: id
+        },
+        dataType: "json",
+        success: function (response) {
+
+            let sector_id = parseInt(response.sector_id);
+
+            console.log("sector:", sector_id);
+
+            if (sector_id === 4) {
+                $("#icon_activos").hide();
+                $("#span_activos").hide();
+            } else {
+                $("#icon_activos").show();
+                $("#span_activos").show();
+            }
+
+        }
+    });
+
     if (!id) {
         $("#cont_activos_ips_urls_otros").show();
         $("#cont_archivo").show();
@@ -428,6 +708,7 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
         $("#cont_activos").show();
         $("#recurrencia").hide();
         $("#cont_combo_workshop").show();
+        $("#mdl_id_proyecto_gestionado_nuevos_hosts").val(id); //id para modificar hosts de un proeycto creado
     }
 
 
@@ -1162,7 +1443,12 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
     //quede acá
     function get_datos_insert_proyecto_gestionado() {
         let formData = new FormData();
-        let archivo = document.getElementById('archivo').files[0];
+
+        let archivoInput = document.getElementById('archivo');
+        if (archivoInput.files.length > 0) {
+            formData.append('archivo', archivoInput.files[0]);
+        }
+
 
         let checkboxes = document.querySelectorAll('#combo_usuario_x_sector input[name="usu_asignado[]"]:checked');
         checkboxes.forEach((check, index) => {
@@ -1182,11 +1468,15 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
         formData.append('fech_inicio', document.getElementById('fech_ini_proy_nuevo').value);
         formData.append('fech_fin', document.getElementById('fech_fin_proy_nuevo').value);
         formData.append('fech_vantive', document.getElementById('fech_vantive').value);
-        formData.append('archivo', archivo);
         formData.append('captura_imagen', document.getElementById('captura_imagen').value);
-        formData.append('ips', document.getElementById("ips_proy_nuevo_eh").value);
-        formData.append('urls', document.getElementById("urls_proy_nuevo_eh").value);
-        formData.append('otros', document.getElementById("otros_proy_nuevo_eh").value);
+
+        formData.append('ips', document.getElementById("ips_proy_nuevo_eh")?.value || "");
+        formData.append('urls', document.getElementById("urls_proy_nuevo_eh")?.value || "");
+        formData.append('otros', document.getElementById("otros_proy_nuevo")?.value || "");
+        formData.append('equipos', document.getElementById("equipos_proy_nuevo_sase")?.value || "");
+        formData.append('agentes', document.getElementById("agentes_proy_nuevo_soc")?.value || "");
+        formData.append('dispositivos', document.getElementById("dispositivos_proy_nuevo_soc")?.value || "");
+
         formData.append('hs_dimensionadas', document.getElementById('hs_dimensionadas').value);
         return formData;
     }
@@ -1464,12 +1754,84 @@ function consultar_activos_borrdor(proy_id, numero_proyecto) {
     });
 }
 
+function actualizarComboActivos(valor) {
+    alert(valor)
+    valor = valor.toString();
+
+    if (valor === '4') {
+        $("#combo_select_activo").html(""); // limpia el select
+        return;
+    }
+
+    let opciones = "";
+
+    switch (valor) {
+
+        case '1':
+            opciones = `
+                <option value="IP">IP's</option>
+                <option value="URL">URL's</option>
+                <option value="OTRO">Otros</option>
+            `;
+            break;
+        case '2':
+            opciones = `
+                <option value="DISPOSITIVO">Dispositivos</option>
+                <option value="AGENTE">Agentes</option>
+                <option value="OTRO">Otros</option>
+            `;
+            break;
+
+        case '3':
+            opciones = `
+                <option value="IP">IP's</option>
+                <option value="EQUIPO">Equipos</option>
+                <option value="OTRO">Otros</option>
+            `;
+            break;
+        case '5':
+            opciones = `
+                <option value="IP">IP's</option>
+                <option value="URL">URL's</option>
+                <option value="DISPOSITIVO">Dispositivos</option>
+                <option value="AGENTE">Agentes</option>
+                <option value="EQUIPO">Equipos</option>
+                <option value="OTRO">Otros</option>
+            `;
+            break;
+    }
+
+    $("#combo_select_activo").html(opciones);
+}
+
+$(document).ready(function () {
+
+    $("#mdl_id_proyecto_gestionado_nuevos_hosts").on("change", function () {
+        actualizarComboActivos($(this).val());
+    });
+
+});
 
 function agregar_activos_borrdor() {
-    let input_ip = `<input id="ips_agregar" class="form-control form-control-sm mt-2" type="text" placeholder="Ingrese la  ip">`;
-    $("#container_input_host").html(input_ip)
-    document.getElementById("agregar_activos_borrador").reset();
-    $("#ModalAgregarActivos").modal("show");
+
+    $("#agregar_activos_borrador")[0].reset();
+
+    let idProyecto = $("#mdl_id_proyecto_gestionado_nuevos_hosts").val();
+
+    $.post("../../../../../Controller/ctrProyectos.php?proy=get_sector_x_proy", {
+        id: idProyecto
+    }, function (data) {
+
+        // Si el sector es 4, no mostrar modal
+        if (data.sector_id == 4) {
+            return;
+        }
+
+        actualizarComboActivos(data.sector_id);
+
+        $("#ModalAgregarActivos").modal("show");
+
+    }, "json");
 }
 
 function gestionar_numero_servicio(cantidad_servicios, proy_id) {
@@ -1506,40 +1868,49 @@ function eliminarMensajeInvalido() {
 }
 
 // ✅ Evento de validación dinámica según opción seleccionada
-document.getElementById("agregar_nuevo_host").addEventListener("input", function () {
-    const tipo = document.getElementById("combo_select_activo").value;
-    const texto = this.value.trim();
+const inputHost = document.getElementById("agregar_nuevo_host");
 
-    if (texto === "") {
-        eliminarMensajeInvalido();
-        return;
-    }
+if (inputHost) {
+    inputHost.addEventListener("input", function () {
 
-    const items = texto
-        .split(/[\s,]+/)
-        .map(t => t.trim())
-        .filter(t => t.length > 0);
+        const tipo = document.getElementById("combo_select_activo").value;
+        const texto = this.value.trim();
 
-    this.value = items.join('\n');
+        if (texto === "") {
+            eliminarMensajeInvalido();
+            return;
+        }
 
-    if (tipo === "IP") {
-        const invalidas = items.filter(ip => !validarIP(ip));
-        if (invalidas.length > 0) mostrarMensajeInvalido(invalidas, "IP");
-        else eliminarMensajeInvalido();
-    } else if (tipo === "URL") {
-        const invalidas = items.filter(url => !validarURL(url));
-        if (invalidas.length > 0) mostrarMensajeInvalido(invalidas, "URL");
-        else eliminarMensajeInvalido();
-    } else {
-        eliminarMensajeInvalido(); // OTRO no se valida
-    }
-});
+        const items = texto
+            .split(/[\s,]+/)
+            .map(t => t.trim())
+            .filter(t => t.length > 0);
+
+        this.value = items.join('\n');
+
+        if (tipo === "IP") {
+            const invalidas = items.filter(ip => !validarIP(ip));
+            if (invalidas.length > 0) mostrarMensajeInvalido(invalidas, "IP");
+            else eliminarMensajeInvalido();
+        } else if (tipo === "URL") {
+            const invalidas = items.filter(url => !validarURL(url));
+            if (invalidas.length > 0) mostrarMensajeInvalido(invalidas, "URL");
+            else eliminarMensajeInvalido();
+        } else {
+            eliminarMensajeInvalido();
+        }
+    });
+}
 
 // Limpiar mensajes al cambiar de tipo
-document.getElementById("combo_select_activo").addEventListener("change", function () {
-    eliminarMensajeInvalido();
-    document.getElementById("agregar_host").value = ""; // opcional: limpiar input al cambiar tipo
-});
+const comboActivo = document.getElementById("combo_select_activo");
+
+if (comboActivo) {
+    comboActivo.addEventListener("change", function () {
+        eliminarMensajeInvalido();
+        document.getElementById("agregar_nuevo_host").value = "";
+    });
+}
 
 function ver_hosts_eh(id_proyecto_gestionado) {
 
@@ -1749,7 +2120,7 @@ function cambiar_proy_a_nuevo(id_proyecto_gestionado) {
             });
 
             setTimeout(() => {
-                
+
                 if ($.fn.DataTable.isDataTable('#table_proyectos_en_proceso')) {
                     $('#table_proyectos_en_proceso').DataTable().ajax.reload(null, false);
                 }
@@ -1803,6 +2174,7 @@ function cerrar_proyecto(id_proyecto_gestionado) {
 
 document.getElementById("btn_eliminar_proyecto").addEventListener("click", (e) => {
     const ID_PROYECTO_GESTIONADO = document.getElementById("mdl_id_proyecto_gestionado").value;
+
     const ID_PROYECTO_CANTIDAD_SERVICIOS = document.getElementById("id_proyecto_cantidad_servicios").value;
     e.preventDefault();
     if (!ID_PROYECTO_GESTIONADO) {

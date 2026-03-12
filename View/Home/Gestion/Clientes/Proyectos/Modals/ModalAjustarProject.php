@@ -241,7 +241,7 @@
                                             <input type="hidden" hidden value="OTROS">
                                             <span class="badge bg-light fs-10 mb-1 text-dark">Otros activos</span>
 
-                                            <textarea class="form-control" id="otros_proy_nuevo_eh" rows="3"
+                                            <textarea class="form-control" id="otros_proy_nuevo" rows="3"
                                                 placeholder="Otros"></textarea>
                                         </div>
                                         <div id="mje_urls_proy_nuevo_otros">
@@ -261,7 +261,7 @@
 
                             <section id="contenedor_cont_activos">
                                 <div id="cont_activos" class="mt-2">
-                                    <span class="mt-3 badge bg-light border border-primary text-primary"
+                                    <span id="span_activos" class="mt-3 badge bg-light border border-primary text-primary"
                                         style="font-weight: bold;">Activos</span><span
                                         onclick='consultar_activos_borrdor($("#valor_cantidad_servicios").val())'
                                         data-placement="top" title="Consultar activos" type="button"><i id="icon_activos"
