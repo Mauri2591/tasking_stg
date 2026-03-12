@@ -2310,6 +2310,7 @@ document.getElementById("btn_finalizar_estado_proyecto").addEventListener("click
 })
 
 function verProyPorIdCliente(client_id) {
+    $("#mostrar_historico").prop("checked", false);
     $("#ModalHistorialProyectosCalidad").modal("show");
     $("#inputHiddenIdCliente").val(client_id)
     $.post("../../../../../Controller/ctrProyectos.php?proy=get_nombre_proyectos_total_x_client_id", {
@@ -2380,64 +2381,66 @@ function verProyPorIdCliente(client_id) {
         }
     });
 
-$("#mostrar_historico").change(function () {
+    $("#mostrar_historico").change(function () {
 
-    let mostrar = $(this).is(":checked") ? 1 : 0;
+        let mostrar = $(this).is(":checked") ? 1 : 0;
 
-    tabla = $("#tablelHistorialProyectosCalidad").DataTable({
-        processing: true,
-        serverSide: true,
-        paging: false,
-        searching: true,
-        lengthChange: false,
-        colReorder: true,
-        destroy: true,
-        responsive: true,
-        autoWidth: false,
-        info: true,
+        tabla = $("#tablelHistorialProyectosCalidad").DataTable({
+            processing: true,
+            serverSide: true,
+            paging: false,
+            searching: true,
+            lengthChange: false,
+            colReorder: true,
+            destroy: true,
+            responsive: true,
+            autoWidth: false,
+            info: true,
 
-        dom: 'Bfrtip',
-        buttons: [
-            'copyHtml5',
-            'excelHtml5',
-            'csvHtml5',
-            'pdfHtml5'
-        ],
+            dom: 'Bfrtip',
+            buttons: [
+                'copyHtml5',
+                'excelHtml5',
+                'csvHtml5',
+                'pdfHtml5'
+            ],
 
-        ajax: {
-            url: "../../../../../Controller/ctrProyectos.php?proy=get_proyectos_total_x_client_id",
-            type: "POST",
-            dataType: "json",
-            data: {
-                client_id: client_id,
-                mostrar_historico: mostrar
+            ajax: {
+                url: "../../../../../Controller/ctrProyectos.php?proy=get_proyectos_total_x_client_id",
+                type: "POST",
+                dataType: "json",
+                data: {
+                    client_id: client_id,
+                    mostrar_historico: mostrar
+                },
+                error: function (e) {
+                    console.log(e.responseText);
+                }
             },
-            error: function (e) {
-                console.log(e.responseText);
-            }
-        },
 
-        order: [[0, "desc"]],
+            order: [
+                [0, "desc"]
+            ],
 
-        language: {
-            sProcessing: "Procesando..",
-            sLengthMenu: "Mostrar _MENU_ registros",
-            sZeroRecords: "No se encontraron resultados..",
-            sEmptyTable: "Ninguna tarea disponible en esta tabla",
-            sInfo: "",
-            sInfoEmpty: "",
-            sInfoFiltered: "(Filtrado de un total de _MAX_ registros)",
-            sSearch: "Buscar: ",
-            oPaginate: {
-                sFirst: "Primero",
-                sLast: "Último",
-                sNext: "Siguiente",
-                sPrevious: "Anterior"
+            language: {
+                sProcessing: "Procesando..",
+                sLengthMenu: "Mostrar _MENU_ registros",
+                sZeroRecords: "No se encontraron resultados..",
+                sEmptyTable: "Ninguna tarea disponible en esta tabla",
+                sInfo: "",
+                sInfoEmpty: "",
+                sInfoFiltered: "(Filtrado de un total de _MAX_ registros)",
+                sSearch: "Buscar: ",
+                oPaginate: {
+                    sFirst: "Primero",
+                    sLast: "Último",
+                    sNext: "Siguiente",
+                    sPrevious: "Anterior"
+                }
             }
-        }
+        });
+
     });
-
-});
 
 
 
