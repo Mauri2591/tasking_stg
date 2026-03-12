@@ -2382,9 +2382,7 @@ function verProyPorIdCliente(client_id) {
     });
 
     $("#mostrar_historico").change(function () {
-
         let mostrar = $(this).is(":checked") ? 1 : 0;
-
         tabla = $("#tablelHistorialProyectosCalidad").DataTable({
             processing: true,
             serverSide: true,
@@ -2396,7 +2394,6 @@ function verProyPorIdCliente(client_id) {
             responsive: true,
             autoWidth: false,
             info: true,
-
             dom: 'Bfrtip',
             buttons: [
                 'copyHtml5',
@@ -2404,7 +2401,6 @@ function verProyPorIdCliente(client_id) {
                 'csvHtml5',
                 'pdfHtml5'
             ],
-
             ajax: {
                 url: "../../../../../Controller/ctrProyectos.php?proy=get_proyectos_total_x_client_id",
                 type: "POST",
@@ -2417,11 +2413,9 @@ function verProyPorIdCliente(client_id) {
                     console.log(e.responseText);
                 }
             },
-
             order: [
                 [0, "desc"]
             ],
-
             language: {
                 sProcessing: "Procesando..",
                 sLengthMenu: "Mostrar _MENU_ registros",
@@ -2439,11 +2433,7 @@ function verProyPorIdCliente(client_id) {
                 }
             }
         });
-
     });
-
-
-
 }
 
 function crearRechequeo(id) {

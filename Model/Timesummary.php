@@ -290,7 +290,7 @@ LEFT JOIN (
     ON dim.id_proyecto_gestionado = pg.id
 
 WHERE e.estados_id IN (1, 2, 3, 4)  
-ORDER BY id_proyecto_gestionado ASC";
+ORDER BY tse.est DESC, id_proyecto_gestionado ASC";
 
         $stmt = $conexion->prepare($sql);
         $stmt->bindParam(':usuario_asignado', $usu_asignado, PDO::PARAM_INT);
