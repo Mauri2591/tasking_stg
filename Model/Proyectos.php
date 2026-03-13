@@ -1916,7 +1916,6 @@ ORDER BY cantidad_proyectos DESC";
     {
         $conn = parent::get_conexion();
         $sector_id = $_SESSION['sector_id'] ?? null;
-
         $sql = "SELECT 
                 c.client_id,
                 c.client_rs,

@@ -311,6 +311,7 @@ class Reportes
         }
 
         $sheet->freezePane('A2');
+        $sheet->setAutoFilter("A1:{$ultimaCol}" . ($rowNum - 2));
 
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         header("Content-Disposition: attachment;filename=\"{$nombre}.xlsx\"");

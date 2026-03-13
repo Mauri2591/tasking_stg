@@ -41,7 +41,6 @@ switch ($_GET['case'] ?? null) {
         $fecha_desde = $_POST['fecha_desde'] ?? null;
         $fecha_hasta = $_POST['fecha_hasta'] ?? null;
         $data = $proyecto->get_proyectos_total_excel($fecha_desde, $fecha_hasta);
-
         if (empty($data)) {
             http_response_code(404);
             header("Location:" . URL . "/View/Home/Gestion/Clientes/Proyectos/?doc=error");
@@ -49,6 +48,7 @@ switch ($_GET['case'] ?? null) {
         }
         $reporte::total_excel($data, "PROYECTOS_TOTAL");
         break;
+
 
     case 'getDatosReporteSinFiltro':
 
