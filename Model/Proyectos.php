@@ -1959,6 +1959,7 @@ ORDER BY cantidad_proyectos DESC";
         pg.refProy AS referencia,
         pg.fech_fin,
         pg.fech_inicio,
+        dimensionamiento.hs_dimensionadas AS dimensionamiento,
         s.sector_nombre,
         c.cat_nom AS producto,
         cl.client_rs AS cliente,
@@ -1983,6 +1984,7 @@ ORDER BY cantidad_proyectos DESC";
     LEFT JOIN tm_estados ON pg.estados_id = tm_estados.estados_id
     LEFT JOIN proyecto_rechequeo pr ON pg.id = pr.id_proyecto_gestionado
     LEFT JOIN hosts ON pg.id = hosts.id_proyecto_gestionado
+    LEFT JOIN dimensionamiento ON dimensionamiento.id_proyecto_gestionado=pg.id
     WHERE cl.client_id = :client_id
     AND (
         (:sector_id = 4) OR (pg.cat_id IN (
