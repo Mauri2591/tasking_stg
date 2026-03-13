@@ -8,7 +8,7 @@
                 </div>
                 <div class="modal-body">
                     <div style="display: flex; justify-content: end;">
-                        <label class="form-control-sm text-dark badge bg-light border border-dark" for="mostrar_historico">Ver historico<input type="checkbox" id="mostrar_historico" class="mx-1"></label>
+                        <label style="border: .1rem solid #e9ebec" class="form-control-sm text-dark badge bg-light" for="mostrar_historico">Ver historico<input type="checkbox" id="mostrar_historico" class="mx-1"></label>
                     </div>
                     <table id="tableHistorialTimesummary">
                         <thead class="text-center">
@@ -41,7 +41,7 @@
                 </div>
                 <div class="modal-body">
                     <div style="display: flex; justify-content: end;">
-                        <label class="form-control-sm text-dark badge bg-light border border-dark" for="mostrar_historico">Ver historico<input type="checkbox" id="mostrar_historico" class="mx-1"></label>
+                        <label style="border: .1rem solid #e9ebec" class="form-control-sm text-dark badge bg-light" for="mostrar_historico">Ver historico<input type="checkbox" id="mostrar_historico" class="mx-1"></label>
                     </div>
                     <table id="tableHistorialTimesummary">
                         <thead>
