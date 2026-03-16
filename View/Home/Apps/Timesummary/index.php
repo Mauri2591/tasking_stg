@@ -155,16 +155,17 @@ if (isset($_SESSION['usu_id'])) {
                                     URL + "Controller/ctrTimesummary.php?accion=get_cat_id_by_proyecto_gestionado", {
                                         id: idProyecto
                                     },
-                                    function(resp) {
+                                    function(resp) {                                        
                                         if (resp.cat_id) {
                                             $("#id_producto").val(resp.cat_id);
                                             $("#dimensionamiento").text(resp.dimensionamiento ? resp.dimensionamiento : '-');
                                             $("#referencia").text(resp.referencia ? resp.referencia : '-');
-                                            $("#periodo").text(resp.referencia ? resp.periodo : '-');
+                                            $("#periodo").text(resp.periodo ? resp.periodo : '-');
                                         } else {
                                             $("#dimensionamiento").text('-')
                                             $("#referencia").text('-')
                                             $("#periodo").text('-')
+                                            $("#periodo").text('-');
                                         }
                                     },
                                     "json"
