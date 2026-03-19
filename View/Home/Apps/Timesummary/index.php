@@ -28,13 +28,13 @@ if (isset($_SESSION['usu_id'])) {
             <!-- Contenido principal -->
             <div class="row g-3">
                 <!-- Calendario -->
-                <div class="col-lg-7"
+                <div class="col-lg-6"
                     style="border: 1px solid gainsboro; padding: 1rem; border-radius: 6px; background: #fff;">
                     <div id="calendar"></div>
                 </div>
 
                 <!-- Tabla lateral -->
-                <div class="col-lg-5"
+                <div class="col-lg-6"
                     style="
                     background: #fff; 
                     border: 1px solid gainsboro; 
@@ -54,7 +54,7 @@ if (isset($_SESSION['usu_id'])) {
                         <input id="id_tareas_x_similitud" type="text" class="form-control form-control-sm" style="width: 60%;">
                     </div>
 
-                    <div style="overflow-x: auto;">
+                    <div class="table table-sm" style="overflow-x: auto;">
                         <table style="
                         width: 100%;
                         border-collapse: collapse;
@@ -66,7 +66,8 @@ if (isset($_SESSION['usu_id'])) {
                             <thead style="background: #f8f9fa; font-weight: bold;">
                                 <tr>
                                     <th style="width: 40%; border: 1px solid gainsboro;">Proyecto</th>
-                                    <th style="width: 5%; border: 1px solid gainsboro;">Producto</th>
+                                    <th style="width: 17%; border: 1px solid gainsboro;">Periodo</th>
+                                    <th style="width: 23%; border: 1px solid gainsboro;">Producto</th>
                                     <th style="width: 5%; border: 1px solid gainsboro;">Dim</th>
                                     <th style="width: 5%; border: 1px solid gainsboro;">Mis Hs</th>
                                     <th style="width: 5%; border: 1px solid gainsboro;">Total</th>

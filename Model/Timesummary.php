@@ -162,9 +162,11 @@ class timesummary extends Conexion
     public function get_titulos_proyectos($usu_asignado)
     {
         $conn = parent::get_conexion();
+        $conn->exec("SET lc_time_names = 'es_ES'");
         $sql = "SELECT 
     tse.id AS id_timesummary_estados,
     pg.id AS id_proyecto_gestionado,
+    DATE_FORMAT(pg.fech_inicio, '%M-%Y') AS periodo,
     pg.titulo,
     tm_categoria.cat_nom AS producto,
     IFNULL(dim.total_hs_dimensionadas, 0) AS hs_dimensionadas,

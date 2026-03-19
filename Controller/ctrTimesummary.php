@@ -233,20 +233,22 @@ switch ($_GET['accion']) {
             <br>
             <tr>
             <td class="px-1 text-center">' . htmlspecialchars(strtoupper($telecom['client_rs'])) . '</td>
-            <td class="px-1 text-center">TELECOM</td>
+            <td class="px-1 text-center bg-light" style="border:.1rem solid gainsboro">-</td>
+            <td class="px-1 text-center bg-light" style="border:.1rem solid gainsboro">-</td>
             <td class="px-1 text-center bg-light" style="border:.1rem solid gainsboro">-</td>
             <td class="px-1 text-center bg-light" style="border:.1rem solid gainsboro">-</td>
             <td class="px-1 text-center bg-light" style="border:.1rem solid gainsboro">-</td>
         </tr>';
         }
 
-        // Luego agregamos el resto según la lógica
+        // Luego agrego el resto según la lógica
         if ($_SESSION['sector_id'] == "4") {
             foreach ($datos as $val) {
                 $htmlTable .= '
             <tr>
                 <td class="px-1 text-center">' . substr($val['titulo'], 0, 30) . '</td>
-                <td class="px-1 text-center">' . substr($val['producto'], 0, 10) . '</td>
+                <td class="px-1 text-center">'.$val['periodo'].'</td>
+                <td title="'.$val['producto'].'" class="px-1 text-center">' . substr($val['producto'], 0, 10) . '</td>
                 <td class="px-1 text-center bg-light" style="border:.1rem solid gainsboro">' . $val['hs_dimensionadas'] . '</td>
                 <td class="px-1 text-center bg-light fw-bold" style="border:.1rem solid gainsboro">' . $val['horas_consumidas'] . '</td>
                 ' . (
@@ -264,7 +266,8 @@ switch ($_GET['accion']) {
                     $htmlTable .= '
                 <tr>
                     <td class="px-1 text-center">' . substr($val['titulo'], 0, 30) . '</td>
-                    <td class="px-1 text-center">' . substr($val['producto'], 0, 10) . '</td>
+                    <td class="px-1 text-center">'.$val['periodo'].'</td>
+                    <td title="'.$val['producto'].'" class="px-1 text-center">' . substr($val['producto'], 0, 10) . '</td>
                     <td class="px-1 text-center bg-light" style="border:.1rem solid gainsboro">' . $val['hs_dimensionadas'] . '</td>
                     <td class="px-1 text-center bg-light fw-bold" style="border:.1rem solid gainsboro">' . $val['horas_consumidas'] . '</td>
                     ' . (
@@ -277,7 +280,6 @@ switch ($_GET['accion']) {
                 }
             }
         }
-
         echo $htmlTable;
         break;
 
