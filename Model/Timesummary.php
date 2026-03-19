@@ -170,6 +170,7 @@ class timesummary extends Conexion
     pg.titulo,
     tm_categoria.cat_nom AS producto,
     IFNULL(dim.total_hs_dimensionadas, 0) AS hs_dimensionadas,
+    proyecto_recurrencia.posicion_recurrencia,
 
     -- horas_consumidas (solo las que el usuario actual cargó)
     IFNULL((
@@ -223,6 +224,7 @@ class timesummary extends Conexion
 FROM proyecto_gestionado pg
 LEFT JOIN tm_estados e 
     ON pg.estados_id = e.estados_id
+    LEFT JOIN proyecto_recurrencia ON pg.id=proyecto_recurrencia.id_proyecto_gestionado
 LEFT JOIN tm_categoria 
     ON pg.cat_id = tm_categoria.cat_id
 INNER JOIN timesummary_estados tse 
@@ -240,7 +242,7 @@ LEFT JOIN (
 WHERE e.estados_id IN (1, 2, 3, 4)
 GROUP BY 
     tse.id, pg.id, pg.titulo, tm_categoria.cat_nom, dim.total_hs_dimensionadas, tse.est, tse.id_pm_calidad
-ORDER BY pg.titulo";
+ORDER BY pg.titulo;";
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(":usu_asignado", $usu_asignado, PDO::PARAM_INT);
         $stmt->execute();
