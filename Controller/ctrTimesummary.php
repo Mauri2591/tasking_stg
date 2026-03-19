@@ -155,12 +155,21 @@ switch ($_GET['accion']) {
         break;
 
     case 'get_producto_proyectos':
-        $datos = $timesummary->get_producto_proyectos($_SESSION['sector_id']);
-        $htmlOption = '';
-        foreach ($datos as $val) {
-            $htmlOption .= '<option value="' . $val['cat_id'] . '">' . $val['cat_nom'] . '</option>';
+        if ($_SESSION['sector_id'] == '4') {
+            $datos = $timesummary->get_producto_proyectos_total();
+            $htmlOption = '';
+            foreach ($datos as $val) {
+                $htmlOption .= '<option value="' . $val['cat_id'] . '">' . $val['cat_nom'] . '</option>';
+            }
+            echo $htmlOption;
+        } else {
+            $datos = $timesummary->get_producto_proyectos($_SESSION['sector_id']);
+            $htmlOption = '';
+            foreach ($datos as $val) {
+                $htmlOption .= '<option value="' . $val['cat_id'] . '">' . $val['cat_nom'] . '</option>';
+            }
+            echo $htmlOption;
         }
-        echo $htmlOption;
         break;
 
     case 'delete_tarea':

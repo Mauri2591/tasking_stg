@@ -363,6 +363,18 @@ ORDER BY pg.titulo";
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+        public function get_producto_proyectos_total()
+    {
+        $conn = parent::get_conexion();
+        $sql = "SELECT *
+            FROM tm_categoria
+            WHERE est = 1
+            OR cat_id = 26";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
     public function get_cat_id_by_proyecto_gestionado($id)
     {
         $conn = parent::get_conexion();
