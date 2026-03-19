@@ -275,7 +275,7 @@ switch ($_GET['accion']) {
                         ? '<td class="px-1 text-center fw-bold text-success bg-light" style="border:.1rem solid gainsboro">' . $val['horas_total'] . '</td>'
                         : '<td class="px-1 text-center fw-bold text-danger bg-light" style="border:.1rem solid gainsboro">' . $val['horas_total'] . '</td>'
                     ) . '
-                </tr>';
+                </tr></tr>';
                     $proyectos_mostrados[] = $id_proyecto;
                 }
             }

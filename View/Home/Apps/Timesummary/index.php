@@ -55,22 +55,15 @@ if (isset($_SESSION['usu_id'])) {
                     </div>
 
                     <div class="table table-sm" style="overflow-x: auto;">
-                        <table style="
-                        width: 100%;
-                        border-collapse: collapse;
-                        text-align: center;
-                        font-size: 0.75rem;
-                        color: #333;
-                        border: 1px solid gainsboro;
-                        border-radius: 6px;">
+                        <table class="table table-sm table-hover">
                             <thead style="background: #f8f9fa; font-weight: bold;">
                                 <tr>
                                     <th style="width: 40%; border: 1px solid gainsboro;">Proyecto</th>
                                     <th style="width: 17%; border: 1px solid gainsboro;">Periodo</th>
                                     <th style="width: 23%; border: 1px solid gainsboro;">Producto</th>
-                                    <th style="width: 5%; border: 1px solid gainsboro;">Dim</th>
-                                    <th style="width: 5%; border: 1px solid gainsboro;">Mis Hs</th>
-                                    <th style="width: 5%; border: 1px solid gainsboro;">Total</th>
+                                    <th style="width: 10%; border: 1px solid gainsboro;">Dim</th>
+                                    <th style="width: 10%; border: 1px solid gainsboro;">Mis Hs</th>
+                                    <th style="width: 10%; border: 1px solid gainsboro;">Total</th>
                                 </tr>
                             </thead>
                             <tbody id="tbody_tabla_timasummary"
