@@ -119,6 +119,7 @@ if (isset($_SESSION['usu_id'])) {
             dateClick: function(info) {
                 let FECHA = info.dateStr;
                 $("#mdlCarcaTimesummary").modal("show");
+                document.getElementById("validar_periodo").style.display = 'none';
                 $("#fechaSeleccionada").text(FECHA);
 
                 $.post(URL + "Controller/ctrTimesummary.php?accion=get_producto_proyectos", function(productosHTML) {
@@ -149,17 +150,33 @@ if (isset($_SESSION['usu_id'])) {
                                     URL + "Controller/ctrTimesummary.php?accion=get_cat_id_by_proyecto_gestionado", {
                                         id: idProyecto
                                     },
-                                    function(resp) {                                        
+                                    function(resp) {
                                         if (resp.cat_id) {
+
+                                            let fechaSeleccionada = $("#fechaSeleccionada").text(); // 👈 SIEMPRE actual
+                                            let partesFecha = FECHA.split('-');
+                                            let mesCalendar = partesFecha[1];
+                                            let partesInicio = resp.fecha_inicio.split('-');
+                                            let mesInicio = String(partesInicio[1]).padStart(2, '0');
+
+                                            if (mesCalendar === mesInicio) {
+                                                document.getElementById("validar_periodo").style.display = "none";
+                                            } else {
+                                                document.getElementById("validar_periodo").style.display = "flex";
+                                            }
+
                                             $("#id_producto").val(resp.cat_id);
                                             $("#dimensionamiento").text(resp.dimensionamiento ? resp.dimensionamiento : '-');
                                             $("#referencia").text(resp.referencia ? resp.referencia : '-');
-                                            $("#periodo").text(resp.periodo ? resp.periodo : '-');
+                                            $("#periodo").text(resp.periodo ? resp.periodo : 'No posee');
+                                            $("#desde").text(resp.fecha_inicio ? resp.fecha_inicio : 'No posee');
+                                            $("#hasta").text(resp.fecha_fin ? resp.fecha_fin : 'No posee');
                                         } else {
                                             $("#dimensionamiento").text('-')
                                             $("#referencia").text('-')
                                             $("#periodo").text('-')
-                                            $("#periodo").text('-');
+                                            $("#desde").text('-')
+                                            $("#hasta").text('-')
                                         }
                                     },
                                     "json"
@@ -192,6 +209,10 @@ if (isset($_SESSION['usu_id'])) {
                                             $("#dimensionamiento").text(resp.dimensionamiento ? resp.dimensionamiento : '-');
                                             $("#referencia").text(resp.referencia ? resp.referencia : '-');
                                             $("#periodo").text(resp.referencia ? resp.periodo : '-');
+
+                                            console.log(FECHA);
+
+
                                         } else {
                                             $("#dimensionamiento").text('-')
                                             $("#referencia").text('-')

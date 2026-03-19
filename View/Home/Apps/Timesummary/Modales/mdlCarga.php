@@ -3,16 +3,18 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <span id="fechaSeleccionada" class="badge fs-11 text-light border bg-primary"></span>
+        <span id="fechaSeleccionada" class="badge fs-12 text-light border bg-success"></span>
       </div>
 
       <span class="badge bg-success text-light" style="display: none;width: 7%; margin-left: 1.3rem;" id="validar_si_tiene_id_pm_calidad_es_pm">PM</span>
       <?php if ($_SESSION['sector_id'] == '4'): ?>
         <span class="badge bg-danger text-light mt-1" style="display: none;width: 25%; margin-left: 1.3rem;" id="validar_si_tiene_id_pm_calidad_proy_asignado">PROYECTO ASIGNADO</span>
       <?php endif; ?>
-      <span class="badge bg-light text-primary mt-2" style="width: 40%; margin-left: 1.3rem;">REF <span class="fw-bold fs-11" id="referencia"></span> </span>
-      <span class="badge bg-light text-primary mt-1" style="width: 40%; margin-left: 1.3rem;">HS <span class="fw-bold fs-11" id="dimensionamiento"></span> </span>
-            <span class="badge bg-light text-primary mt-1" style="width: 40%; margin-left: 1.3rem;">PERIODO <span class="fw-bold fs-11" id="periodo"></span> </span>
+      <span class="badge bg-light text-primary mt-2 text-start" style="width: 35%; margin-left: 1.3rem;">REF <span class="fw-bold fs-11" id="referencia"></span> </span>
+      <span class="badge bg-light text-primary mt-1 text-start" style="width: 35%; margin-left: 1.3rem;">HS <span class="fw-bold fs-11" id="dimensionamiento"></span> </span>
+      <span class="badge bg-light text-primary mt-1 text-start" style="width: 35%; margin-left: 1.3rem;">PERIODO <span class="fw-bold fs-11" id="periodo"></span> </span>
+      <span class="badge bg-light text-primary mt-1 text-start" style="width: 35%; margin-left: 1.3rem;">DESDE <span class="fw-bold fs-11" id="desde"></span> <br>HASTA <span class="fw-bold fs-11" id="hasta"></span> </span>
+
       <div class="modal-body pt-0">
 
         <input type="hidden" hidden id="id_pm_calidad">
@@ -66,6 +68,10 @@
           </div>
 
         </section>
+
+        <div id="validar_periodo" class="alert alert-warning fs-14" style="display: none;" role="alert">
+          Vas a guardar una tarea en diferente periodo
+        </div>
 
       </div>
       <div class="modal-footer">

@@ -221,28 +221,28 @@ class timesummary extends Conexion
     tse.id_pm_calidad,
     CASE WHEN tse.id_pm_calidad IS NOT NULL THEN 'SI' ELSE 'NO' END AS es_pm
 
-FROM proyecto_gestionado pg
-LEFT JOIN tm_estados e 
-    ON pg.estados_id = e.estados_id
-    LEFT JOIN proyecto_recurrencia ON pg.id=proyecto_recurrencia.id_proyecto_gestionado
-LEFT JOIN tm_categoria 
-    ON pg.cat_id = tm_categoria.cat_id
-INNER JOIN timesummary_estados tse 
-    ON pg.id = tse.id_proyecto_gestionado
-   AND tse.usuario_asignado = :usu_asignado
-   AND tse.est = 1
-LEFT JOIN (
-    SELECT 
-        id_proyecto_gestionado,
-        SUM(hs_dimensionadas) AS total_hs_dimensionadas
-    FROM dimensionamiento
-    GROUP BY id_proyecto_gestionado
-) AS dim 
-    ON dim.id_proyecto_gestionado = pg.id
-WHERE e.estados_id IN (1, 2, 3, 4)
-GROUP BY 
-    tse.id, pg.id, pg.titulo, tm_categoria.cat_nom, dim.total_hs_dimensionadas, tse.est, tse.id_pm_calidad
-ORDER BY pg.titulo;";
+    FROM proyecto_gestionado pg
+    LEFT JOIN tm_estados e 
+        ON pg.estados_id = e.estados_id
+        LEFT JOIN proyecto_recurrencia ON pg.id=proyecto_recurrencia.id_proyecto_gestionado
+    LEFT JOIN tm_categoria 
+        ON pg.cat_id = tm_categoria.cat_id
+    INNER JOIN timesummary_estados tse 
+        ON pg.id = tse.id_proyecto_gestionado
+    AND tse.usuario_asignado = :usu_asignado
+    AND tse.est = 1
+    LEFT JOIN (
+        SELECT 
+            id_proyecto_gestionado,
+            SUM(hs_dimensionadas) AS total_hs_dimensionadas
+        FROM dimensionamiento
+        GROUP BY id_proyecto_gestionado
+    ) AS dim 
+        ON dim.id_proyecto_gestionado = pg.id
+    WHERE e.estados_id IN (1, 2, 3, 4)
+    GROUP BY 
+        tse.id, pg.id, pg.titulo, tm_categoria.cat_nom, dim.total_hs_dimensionadas, tse.est, tse.id_pm_calidad
+    ORDER BY pg.titulo;";
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(":usu_asignado", $usu_asignado, PDO::PARAM_INT);
         $stmt->execute();
@@ -386,6 +386,8 @@ ORDER BY pg.titulo;";
         $sql = "SELECT 
                 proyecto_gestionado.cat_id,
                 proyecto_gestionado.refProy AS referencia,
+                DATE_FORMAT(proyecto_gestionado.fech_inicio, '%d-%m') AS fecha_inicio,
+                DATE_FORMAT(proyecto_gestionado.fech_fin, '%d-%m') AS fecha_fin,
                 dimensionamiento.hs_dimensionadas AS dimensionamiento,
                 CONCAT(
                     UPPER(LEFT(DATE_FORMAT(proyecto_gestionado.fech_inicio, '%M'),1)),

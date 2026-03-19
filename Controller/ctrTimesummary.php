@@ -140,13 +140,17 @@ switch ($_GET['accion']) {
 
         // Agregar proyectos del usuario
         if (!empty($datos)) {
-            foreach ($datos as $val) {
-                $idProyecto = htmlspecialchars($val['id_proyecto_gestionado'], ENT_QUOTES, 'UTF-8');
-                $idPm = htmlspecialchars($val['id_pm_calidad'] ?? '', ENT_QUOTES, 'UTF-8');
-                $titulo = htmlspecialchars($val['titulo'], ENT_QUOTES, 'UTF-8');
+           foreach ($datos as $val) {
+    $idProyecto = htmlspecialchars($val['id_proyecto_gestionado'], ENT_QUOTES, 'UTF-8');
+    $idPm = htmlspecialchars($val['id_pm_calidad'] ?? '', ENT_QUOTES, 'UTF-8');
+    $titulo = htmlspecialchars($val['titulo'], ENT_QUOTES, 'UTF-8');
 
-                $htmlOption .= "<option value=\"$idProyecto\" data-pm=\"$idPm\">$titulo</option>";
-            }
+    $titulo .= !empty($val['posicion_recurrencia']) 
+        ? ' - Rec ' . htmlspecialchars($val['posicion_recurrencia'], ENT_QUOTES, 'UTF-8') 
+        : '';
+
+    $htmlOption .= "<option value=\"$idProyecto\" data-pm=\"$idPm\">$titulo</option>";
+}
         } else {
             $htmlOption .= '';
         }
