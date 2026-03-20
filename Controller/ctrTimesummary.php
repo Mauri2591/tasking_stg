@@ -140,17 +140,17 @@ switch ($_GET['accion']) {
 
         // Agregar proyectos del usuario
         if (!empty($datos)) {
-           foreach ($datos as $val) {
-    $idProyecto = htmlspecialchars($val['id_proyecto_gestionado'], ENT_QUOTES, 'UTF-8');
-    $idPm = htmlspecialchars($val['id_pm_calidad'] ?? '', ENT_QUOTES, 'UTF-8');
-    $titulo = htmlspecialchars($val['titulo'], ENT_QUOTES, 'UTF-8');
+            foreach ($datos as $val) {
+                $idProyecto = htmlspecialchars($val['id_proyecto_gestionado'], ENT_QUOTES, 'UTF-8');
+                $idPm = htmlspecialchars($val['id_pm_calidad'] ?? '', ENT_QUOTES, 'UTF-8');
+                $titulo = htmlspecialchars($val['titulo'], ENT_QUOTES, 'UTF-8');
 
-    $titulo .= !empty($val['posicion_recurrencia']) 
-        ? ' - Rec ' . htmlspecialchars($val['posicion_recurrencia'], ENT_QUOTES, 'UTF-8') 
-        : '';
+                $titulo .= !empty($val['posicion_recurrencia'])
+                    ? ' - Rec ' . htmlspecialchars($val['posicion_recurrencia'], ENT_QUOTES, 'UTF-8')
+                    : '';
 
-    $htmlOption .= "<option value=\"$idProyecto\" data-pm=\"$idPm\">$titulo</option>";
-}
+                $htmlOption .= "<option value=\"$idProyecto\" data-pm=\"$idPm\">$titulo</option>";
+            }
         } else {
             $htmlOption .= '';
         }
@@ -231,26 +231,26 @@ switch ($_GET['accion']) {
         $datos = $timesummary->get_titulos_proyectos($_SESSION['usu_id']);
         $datosTelecom = $timesummary->getDatosTelecom();
         $htmlTable = '';
-        // Primero agregamos datosTelecom
-        foreach ($datosTelecom as $telecom) {
-            $htmlTable .= '
-            <br>
-            <tr>
-            <td class="px-1 text-center">' . htmlspecialchars(strtoupper($telecom['client_rs'])) . '</td>
-            <td class="px-1 text-center bg-light" style="border:.1rem solid gainsboro">-</td>
-            <td class="px-1 text-center bg-light" style="border:.1rem solid gainsboro">-</td>
-            <td class="px-1 text-center bg-light" style="border:.1rem solid gainsboro">-</td>
-            <td class="px-1 text-center bg-light" style="border:.1rem solid gainsboro">-</td>
-            <td class="px-1 text-center bg-light" style="border:.1rem solid gainsboro">-</td>
-        </tr>';
-        }
+        // Primero agrego datosTelecom
+        // foreach ($datosTelecom as $telecom) {
+        //     $htmlTable .= '
+        //     <br>
+        //     <tr>
+        //     <td class="px-1 text-center">' . htmlspecialchars(strtoupper($telecom['client_rs'])) . '</td>
+        //     <td class="px-1 text-center bg-light" style="border:.1rem solid gainsboro">-</td>
+        //     <td class="px-1 text-center bg-light" style="border:.1rem solid gainsboro">-</td>
+        //     <td class="px-1 text-center bg-light" style="border:.1rem solid gainsboro">-</td>
+        //     <td class="px-1 text-center bg-light" style="border:.1rem solid gainsboro">-</td>
+        //     <td class="px-1 text-center bg-light" style="border:.1rem solid gainsboro">-</td>
+        // </tr>';
+        // }
 
         // Luego agrego el resto según la lógica
         if ($_SESSION['sector_id'] == "4") {
             foreach ($datos as $val) {
                 $htmlTable .= '
             <tr>
-<td title="' . $val['titulo'] . '" class="px-1 text-center">'
+                <td title="' . $val['titulo'] . '" class="px-1 text-center">'
                     . $val['titulo'] . ' ' .
                     ($val['posicion_recurrencia'] != null
                         ? '- Recurrencia ' . $val['posicion_recurrencia']
@@ -273,7 +273,7 @@ switch ($_GET['accion']) {
                 if (!in_array($id_proyecto, $proyectos_mostrados)) {
                     $htmlTable .= '
                 <tr>
-<td title="' . $val['titulo'] . '" class="px-1 text-center">'
+                    <td title="' . $val['titulo'] . '" class="px-1 text-center">'
                         . $val['titulo'] . ' ' .
                         ($val['posicion_recurrencia'] != null
                             ? '- Recurrencia ' . $val['posicion_recurrencia']
