@@ -151,32 +151,44 @@ if (isset($_SESSION['usu_id'])) {
                                         id: idProyecto
                                     },
                                     function(resp) {
+                                                        document.getElementById("validar_periodo").style.display = 'none';
                                         if (resp.cat_id) {
 
                                             let fechaSeleccionada = $("#fechaSeleccionada").text(); // 👈 SIEMPRE actual
+
                                             let partesFecha = FECHA.split('-');
                                             let mesCalendar = partesFecha[1];
-                                            let partesInicio = resp.fecha_inicio.split('-');
-                                            let mesInicio = String(partesInicio[1]).padStart(2, '0');
 
-                                            if (mesCalendar === mesInicio) {
+                                            let mesInicio = null;
+
+                                            if (resp.fecha_inicio) {
+                                                let partesInicio = resp.fecha_inicio.split('-');
+                                                mesInicio = String(partesInicio[1]).padStart(2, '0');
+                                            }
+
+                                            if (!resp.fecha_inicio) {
+                                                // 🔥 No tiene fecha → NO validar → NO alertar
                                                 document.getElementById("validar_periodo").style.display = "none";
+
+                                            } else if (mesCalendar === mesInicio) {
+                                                document.getElementById("validar_periodo").style.display = "none";
+
                                             } else {
                                                 document.getElementById("validar_periodo").style.display = "flex";
                                             }
 
                                             $("#id_producto").val(resp.cat_id);
-                                            $("#dimensionamiento").text(resp.dimensionamiento ? resp.dimensionamiento : '-');
-                                            $("#referencia").text(resp.referencia ? resp.referencia : '-');
+                                            $("#dimensionamiento").text(resp.dimensionamiento ? resp.dimensionamiento : 'No posee');
+                                            $("#referencia").text(resp.referencia ? resp.referencia : 'No posee');
                                             $("#periodo").text(resp.periodo ? resp.periodo : 'No posee');
                                             $("#desde").text(resp.fecha_inicio ? resp.fecha_inicio : 'No posee');
                                             $("#hasta").text(resp.fecha_fin ? resp.fecha_fin : 'No posee');
                                         } else {
-                                            $("#dimensionamiento").text('-')
-                                            $("#referencia").text('-')
-                                            $("#periodo").text('-')
-                                            $("#desde").text('-')
-                                            $("#hasta").text('-')
+                                            $("#dimensionamiento").text('No posee')
+                                            $("#referencia").text('No posee')
+                                            $("#periodo").text('No posee')
+                                            $("#desde").text('No posee')
+                                            $("#hasta").text('No posee')
                                         }
                                     },
                                     "json"
@@ -208,15 +220,12 @@ if (isset($_SESSION['usu_id'])) {
                                             $("#id_producto").val(resp.cat_id);
                                             $("#dimensionamiento").text(resp.dimensionamiento ? resp.dimensionamiento : '-');
                                             $("#referencia").text(resp.referencia ? resp.referencia : '-');
-                                            $("#periodo").text(resp.referencia ? resp.periodo : '-');
-
-                                            console.log(FECHA);
-
+                                            $("#periodo").text(resp.periodo ? resp.periodo : '-');
 
                                         } else {
-                                            $("#dimensionamiento").text('-')
-                                            $("#referencia").text('-')
-                                            $("#periodo").text('-')
+                                            $("#dimensionamiento").text('No posee')
+                                            $("#referencia").text('No posee')
+                                            $("#periodo").text('No posee')
                                         }
                                     },
                                     "json"
@@ -249,22 +258,47 @@ if (isset($_SESSION['usu_id'])) {
                     let horaDesde = $("#hora_desde").val();
                     let horaHasta = $("#hora_hasta").val();
 
+                    // 🔴 Validaciones básicas
+                    if (!FECHA || !horaDesde || !horaHasta) {
+                        Swal.fire({
+                            icon: "warning",
+                            title: "Error",
+                            text: "Debe completar fecha y horarios.",
+                            timer: 1200,
+                            showConfirmButton: false
+                        });
+                        return;
+                    }
+
                     let nuevoInicio = new Date(`${FECHA}T${horaDesde}`);
                     let nuevoFin = new Date(`${FECHA}T${horaHasta}`);
 
-                    // Buscar si hay eventos que se solapan
-                    let existeConflicto = calendar.getEvents().some(evento => {
-                        let inicio = evento.start;
-                        let fin = evento.end;
+                    // 🔴 Validar rango lógico
+                    if (nuevoFin <= nuevoInicio) {
+                        Swal.fire({
+                            icon: "warning",
+                            title: "Error",
+                            text: "La hora hasta debe ser mayor a la hora desde.",
+                            timer: 1200,
+                            showConfirmButton: false
+                        });
+                        return;
+                    }
 
-                        // mismo día y horarios que se cruzan
+                    // 🔥 Buscar conflictos (versión robusta)
+                    let existeConflicto = calendar.getEvents().some(evento => {
+
+                        if (!evento.start) return false; // 🔥 evita null
+
+                        let inicio = evento.start;
+                        let fin = evento.end || new Date(inicio.getTime() + 60 * 60 * 1000); // fallback 1h
+
+                        let fechaEvento = inicio.toISOString().split("T")[0];
+
                         return (
-                            inicio.toISOString().split("T")[0] === FECHA &&
-                            (
-                                (nuevoInicio >= inicio && nuevoInicio < fin) ||
-                                (nuevoFin > inicio && nuevoFin <= fin) ||
-                                (nuevoInicio <= inicio && nuevoFin >= fin)
-                            )
+                            fechaEvento === FECHA &&
+                            nuevoInicio < fin &&
+                            nuevoFin > inicio
                         );
                     });
 
@@ -273,14 +307,15 @@ if (isset($_SESSION['usu_id'])) {
                             icon: "warning",
                             title: "Error",
                             text: "Ya existe una tarea en ese rango horario.",
-                            showConfirmButton: false,
-                            timer: 1000
+                            timer: 1200,
+                            showConfirmButton: false
                         });
                         return;
                     }
 
                     let data = {
-                        id_proyecto_gestionado: $("#id_proyecto_gestionado").val() == "209" ? null : $("#id_proyecto_gestionado").val(),
+                        id_proyecto_gestionado: $("#id_proyecto_gestionado").val() == "209" ?
+                            null : $("#id_proyecto_gestionado").val(),
                         id_producto: $("#id_producto").val(),
                         id_tarea: $("#id_tarea").val(),
                         es_telecom: $("#id_proyecto_gestionado").val() == "209" ? "Telecom" : null,
@@ -296,13 +331,14 @@ if (isset($_SESSION['usu_id'])) {
                         url: URL + "Controller/ctrTimesummary.php?accion=insert_tarea",
                         data: data,
                         dataType: "json",
+
                         success: function(response) {
                             Swal.fire({
                                 icon: "success",
                                 title: "Bien",
                                 text: response.success,
-                                showConfirmButton: false,
-                                timer: 1000
+                                timer: 1000,
+                                showConfirmButton: false
                             });
 
                             setTimeout(() => {
@@ -312,13 +348,14 @@ if (isset($_SESSION['usu_id'])) {
                                 refrescarTablaTS();
                             }, 500);
                         },
+
                         error: function(error) {
                             Swal.fire({
                                 icon: "error",
                                 title: "Error",
-                                text: error.responseJSON.error,
-                                showConfirmButton: false,
-                                timer: 1500
+                                text: error?.responseJSON?.error || "Error inesperado",
+                                timer: 1500,
+                                showConfirmButton: false
                             });
                         }
                     });

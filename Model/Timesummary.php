@@ -249,11 +249,11 @@ class timesummary extends Conexion
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-   public function get_titulos_proyectos_total($usu_asignado, $mostrar_historico = 0)
-{
-    $conexion = parent::get_conexion();
-
-    $sql = "SELECT 
+    public function get_titulos_proyectos_total($usu_asignado, $mostrar_historico = 0)
+    {
+        $conexion = parent::get_conexion();
+        $conexion->exec("SET lc_time_names = 'es_ES'");
+        $sql = "SELECT 
         tse.id AS id_timesummary_estados,
         tse.id_pm_calidad,
         pg.id AS id_proyecto_gestionado,
@@ -262,6 +262,13 @@ class timesummary extends Conexion
         tm_categoria.cat_nom AS producto,
         IFNULL(dim.total_hs_dimensionadas, 0) AS hs_dimensionadas,
         tse.est,
+        proyecto_recurrencia.posicion_recurrencia AS recurrencia,
+       CONCAT(
+    'Desde ',
+    COALESCE(DATE_FORMAT(pg.fech_inicio, '%d-%m-%Y'), 'NO POSEE'),
+    '<br>Hasta ',
+    COALESCE(DATE_FORMAT(pg.fech_fin, '%d-%m-%Y'), 'NO POSEE')
+) AS inicio_fin,
         CASE 
             WHEN tse.id_pm_calidad IS NOT NULL THEN 'SI'
             ELSE 'NO'
@@ -293,22 +300,22 @@ class timesummary extends Conexion
         GROUP BY id_proyecto_gestionado
     ) AS dim 
         ON dim.id_proyecto_gestionado = pg.id
-
+	LEFT JOIN proyecto_recurrencia ON proyecto_recurrencia.id_proyecto_gestionado=pg.id
     WHERE e.estados_id IN (1,2,3,4)";
 
-    // 👇 solo mostrar activos si NO está marcado el checkbox
-    if(!$mostrar_historico){
-        $sql .= " AND tse.est = 1";
+        // solo mostrar activos si NO está marcado el checkbox
+        if (!$mostrar_historico) {
+            $sql .= " AND tse.est = 1";
+        }
+
+        $sql .= " ORDER BY tse.est DESC, id_proyecto_gestionado ASC";
+
+        $stmt = $conexion->prepare($sql);
+        $stmt->bindParam(':usuario_asignado', $usu_asignado, PDO::PARAM_INT);
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
-
-    $sql .= " ORDER BY tse.est DESC, id_proyecto_gestionado ASC";
-
-    $stmt = $conexion->prepare($sql);
-    $stmt->bindParam(':usuario_asignado', $usu_asignado, PDO::PARAM_INT);
-    $stmt->execute();
-
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);
-}
 
 
     public function get_estado_tarea($id_timesummary_estados)
@@ -367,7 +374,7 @@ class timesummary extends Conexion
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-        public function get_producto_proyectos_total()
+    public function get_producto_proyectos_total()
     {
         $conn = parent::get_conexion();
         $sql = "SELECT *

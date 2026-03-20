@@ -337,9 +337,12 @@ switch ($_GET['accion']) {
         if ($_SESSION['sector_id'] == "4") {
             foreach ($datos as $row) {
                 $sub_array = array();
-                $sub_array[] = $row['cliente'];
+                $sub_array[] = !empty($row['recurrencia']) ? $row['cliente'] . " - Recurrencia " . $row['recurrencia'] : $row['cliente'];
                 $sub_array[] = '<p class="text-center">' . $row['referencia'] . '</p>';
-                $sub_array[] = '<p class="text-center p-0 m-0"><span class="badge border border-dark bg-light text-dark">' . $row['hs_dimensionadas'] . '</span></p>';
+                $sub_array[] = '<span class="badge bg-light px-2 text-dark fs-10 d-inline-block text-start">'
+                    . $row['inicio_fin'] .
+                    '</span>';
+                $sub_array[] = '<p class="text-center p-0 m-0"><span class="badge fs-10 bg-light text-dark">' . $row['hs_dimensionadas'] . '</span></p>';
                 $sub_array[] = '<span class="text-center badge border border-dark bg-light text-dark">' . $row['producto'] . '</span>';
                 $sub_array[] = $row['es_pm'] == "SI"
                     ? '<span class="badge text-center border border-dark fs-9 fw-bold text-dark">PM</span>'
@@ -359,9 +362,12 @@ switch ($_GET['accion']) {
                 // Evita duplicados por id_proyecto_gestionado
                 if (!in_array($row['id_proyecto_gestionado'], $proyectos_vistos)) {
                     $sub_array = array();
-                    $sub_array[] = $row['cliente'];
+                    $sub_array[] = !empty($row['recurrencia']) ? $row['cliente'] . " - Recurrencia " . $row['recurrencia'] : $row['cliente'];
                     $sub_array[] = '<p class="text-center">' . $row['referencia'] . '</p>';
-                    $sub_array[] = '<p class="text-center p-0 m-0"><span class="badge border border-dark bg-light text-dark">' . $row['hs_dimensionadas'] . '</span></p>';
+                    $sub_array[] = '<span class="badge bg-light px-2 text-dark fs-10 d-inline-block text-start">'
+                        . $row['inicio_fin'] .
+                        '</span>';
+                    $sub_array[] = '<p class="text-center p-0 m-0"><span class="badge fs-10 bg-light text-dark">' . $row['hs_dimensionadas'] . '</span></p>';
                     $sub_array[] = '<span class="text-center badge border border-dark bg-light text-dark">' . $row['producto'] . '</span>';
                     $sub_array[] = $row['est'] == 1
                         ? '<span class="text-center badge bg-success text-light"> Activo </span>'
