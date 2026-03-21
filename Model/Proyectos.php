@@ -1994,7 +1994,7 @@ ORDER BY cantidad_proyectos DESC";
     )";
 
     if (!$mostrar_historico) {
-        $sql .= " AND pg.estados_id NOT IN(15,16,17)";
+        $sql .= " AND pg.estados_id NOT IN(16,17)";
     }
 
     $sql .= " GROUP BY pg.id
