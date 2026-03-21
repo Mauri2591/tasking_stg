@@ -302,7 +302,7 @@ class timesummary extends Conexion
     ) AS dim 
         ON dim.id_proyecto_gestionado = pg.id
 	LEFT JOIN proyecto_recurrencia ON proyecto_recurrencia.id_proyecto_gestionado=pg.id
-    WHERE e.estados_id IN (1,2,3,4,14,15)";
+    WHERE e.estados_id IN (1,2,3,4,14)";
 
         // solo mostrar activos si NO está marcado el checkbox
         if (!$mostrar_historico) {
