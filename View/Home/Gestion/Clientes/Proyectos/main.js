@@ -6,6 +6,7 @@ $(document).ready(function () {
 
     let SECTOR_ID = null;
     let CATEGORIA_ID = null;
+    let TITULO_EDITADO_MANUAL = false;
 
     tabla = $("#table_proyectos_borrador").dataTable({
         "aProcessing": true,
@@ -390,6 +391,7 @@ $(document).ready(function () {
             }
         });
     });
+
 });
 
 $("#combo_sector_proy_nuevo").change(function (e) {
@@ -648,7 +650,6 @@ function activarValidacionTextarea(textareaId, mensajeId, tipo) {
     });
 }
 
-
 function validar_combo_prioridad(valorInicial) {
     const $combo = $("#combo_prioridad_proy_nuevo");
 
@@ -676,6 +677,36 @@ function validar_combo_prioridad(valorInicial) {
 }
 
 function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
+
+
+    function actualizarTitulo() {
+
+        if (TITULO_EDITADO_MANUAL) return;
+
+        const client_rs = $("#client_rs_alta_proy").val() || "";
+        const ref = $("#client_refPro_proy_nuevo").val()?.trim() || "";
+        const recurrencia = $("#combo_recurrente_proy_nuevo").val()?.trim().toUpperCase() || "";
+
+        let base = $("#titulo_client_rs_alta_proy").data("base") || client_rs;
+
+        let extra = "";
+        let tituloActual = $("#titulo_client_rs_alta_proy").val();
+
+        if (tituloActual.includes(" - ")) {
+            extra = " - " + tituloActual.split(" - ")[1];
+        }
+
+        let nuevoTitulo = base;
+
+        if (ref) nuevoTitulo += `_Ref ${ref}`;
+        if (recurrencia && recurrencia !== "NO" && recurrencia !== "0") {
+            nuevoTitulo += `_Recurrente SI`;
+        }
+
+        nuevoTitulo += extra;
+
+        $("#titulo_client_rs_alta_proy").val(nuevoTitulo);
+    }
 
     $.ajax({
         type: "POST",
@@ -780,7 +811,6 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
                                     id: $("#mdl_id_proyecto_gestionado").val()
                                 },
                                 function (data, textStatus, jqXHR) {
-                                    console.log(data);
                                     $("#titulo_client_rs_alta_proy").val(data.titulo);
                                 },
                                 "json"
@@ -836,8 +866,6 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
 
     $("#id_proyecto_cantidad_servicios").val(id_proyecto_cantidad_servicios);
     $("#proy_id").val(proy_id);
-
-
 
     function get_data_editar_proyecto() {
 
@@ -898,64 +926,23 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
         // Asigna los valores base
         $("#client_rs_alta_proy").val(client_rs);
         $("#pais_id_carga_proy").val(data.pais_nombre);
-        $("#titulo_client_rs_alta_proy").val(tituloDefault);
+
+        $("#titulo_client_rs_alta_proy")
+            .val(tituloDefault)
+            .data("base", client_rs);
+
+        TITULO_EDITADO_MANUAL = false;
+
         $("#proy_cliente_periodo").text(data.titulo);
-
-        // --- 🔁 Lógica dinámica para REF, FECHA y RECURRENCIA ---
-        function actualizarTitulo() {
-            const ref = $("#client_refPro_proy_nuevo").val().trim();
-            // const fechaInput = $("#fech_ini_proy_nuevo").val().trim();
-            let recurrencia = $("#combo_recurrente_proy_nuevo").val();
-
-            // 🧹 Normalizar el valor del combo
-            recurrencia = recurrencia ? recurrencia.toString().trim().toUpperCase() : "";
-
-            // Convertir la fecha de YYYY-MM-DD a DD/MM/YYYY
-            // let fechaFormateada = "";
-            // if (fechaInput) {
-            //     const [year, month, day] = fechaInput.split("-");
-            //     fechaFormateada = `${day}/${month}/${year}`;
-            // }
-
-            // 🔄 Reconstruir el título desde cero
-            let nuevoTitulo = tituloDefault;
-
-            if (ref) nuevoTitulo += `_Ref ${ref}`;
-            if (recurrencia !== "" && recurrencia !== "NO" && recurrencia !== "0") {
-                nuevoTitulo += `_Recurrente SI`;
-            }
-            // if (fechaFormateada) nuevoTitulo += `_Fecha ${fechaFormateada}`;
-
-            $("#titulo_client_rs_alta_proy").val(nuevoTitulo);
-        }
 
         // Registrar eventos
         $("#client_refPro_proy_nuevo").off("input").on("input", actualizarTitulo);
-        // $("#fech_ini_proy_nuevo").off("change").on("change", actualizarTitulo);
         $("#combo_recurrente_proy_nuevo").off("change").on("change", actualizarTitulo);
+        $("#titulo_client_rs_alta_proy").off("input").on("input", function () {
+            TITULO_EDITADO_MANUAL = true;
+        });
+        
     }, "json");
-
-
-
-    function actualizarTitulo() {
-        const client_rs = $("#client_rs_alta_proy").val() || "";
-        const ref = $("#client_refPro_proy_nuevo").val()?.trim() || "";
-        // const fechaInput = $("#fech_ini_proy_nuevo").val()?.trim() || "";
-        const recurrencia = $("#combo_recurrente_proy_nuevo").val()?.trim().toUpperCase() || "";
-
-        // let fechaFormateada = "";
-        // if (fechaInput && fechaInput.includes("-")) {
-        //     const [year, month, day] = fechaInput.split("-");
-        //     fechaFormateada = `${day}/${month}/${year}`;
-        // }
-
-        let nuevoTitulo = client_rs;
-        if (ref) nuevoTitulo += `_Ref ${ref}`;
-        if (recurrencia && recurrencia !== "NO" && recurrencia !== "0") nuevoTitulo += `_Recurrente SI`;
-        // if (fechaFormateada) nuevoTitulo += `_Fecha Inicio ${fechaFormateada}`;
-
-        $("#titulo_client_rs_alta_proy").val(nuevoTitulo);
-    }
 
     $("#combo_categoria_proy_nuevo").prop("disabled", false);
     $("#combo_subcategoria_proy_nuevo").prop("disabled", false);
@@ -1012,8 +999,6 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
             $("#combo_recurrente_proy_nuevo").val(data.recurrencia);
             $("#fech_ini_proy_nuevo").val(data.fech_inicio);
             $("#titulo_client_rs_alta_proy").val(data.titulo);
-
-            actualizarTitulo();
 
             $.post("../../../../../Controller/ctrProyectos.php?proy=get_sectores", function (res) {
                 $("#combo_sector_proy_nuevo").html(res);
@@ -1113,17 +1098,15 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
             });
 
             // ===============================
-            // 🔹 BOTÓN: Editar proyecto
+            // BOTÓN: Editar proyecto
             // ===============================
             $("#btn_editar_proyecto").attr("type", "button").off().on("click", function (e) {
                 e.preventDefault();
                 e.stopPropagation();
 
-                // 🔥 valores actuales del form
                 let sectorActual = $("#combo_sector_proy_nuevo").val();
                 let categoriaActual = $("#combo_categoria_proy_nuevo").val();
 
-                // 🔥 VALIDACIÓN CLAVE
                 if (
                     parseInt(sectorActual) !== parseInt(SECTOR_ID) ||
                     parseInt(categoriaActual) !== parseInt(CATEGORIA_ID)
@@ -2004,6 +1987,7 @@ function cambiar_a_borrador(id_proyecto_gestionado) {
         }
     })
 }
+
 
 function inactivar_host_borrador(id_proyecto_gestionado, host_id) {
     Swal.fire({
