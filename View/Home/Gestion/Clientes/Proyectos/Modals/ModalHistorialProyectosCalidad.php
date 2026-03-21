@@ -95,7 +95,11 @@
                     </div>
 
                 <?php endif; ?>
-
+                <div class="text-center p-2 border bg-light">
+                    <small class="text-danger mt-0 fs-14">
+                        Este reporte muestra la Informacion de todos los <strong>Proyectos por Cliente.</strong><br> Se excluyen aquellos que hayan sido <strong>Borrados</strong>.
+                    </small>
+                </div>
             </div>
         </div>
     </div>

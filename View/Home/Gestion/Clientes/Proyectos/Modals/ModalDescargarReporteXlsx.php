@@ -1,5 +1,5 @@
 <!-- Modal -->
-<div class="modal fade" id="modalDescargarExcelProyectosTotal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+<div class="modal fade" id="modalDescargarExcelProyectosTotal" data-bs-keyboard="false" tabindex="-1"
     aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog">
         <form id="formDescargarReporteXlsx" action="<?php echo URL . "Controller/ctrReportes.php?case=total_excel" ?>" method="post">
@@ -9,8 +9,6 @@
                         <div class="mt-4 live-preview">
                             <div style="display: flex; justify-content: end;">
                     </h5>
-                    <small class="text-danger mt-0 fs-12">
-Este reporte contabiliza el total de proyectos por cliente, excluyendo aquellos que se encuentran en estado Borrado, Finalizado sin implementar o Cancelado</small>
                     <section class="card-body border border-ligth p-2 mt-4 mb-4">
                         <div style="display: flex; justify-content: space-evenly;">
                             <div class="mb-2 row">
@@ -28,12 +26,18 @@ Este reporte contabiliza el total de proyectos por cliente, excluyendo aquellos 
 
                         </div>
                     </section>
-                    <div style="display: flex; justify-content: end; margin-bottom: .5rem; margin-top: 2rem; margin-right: .5rem;">
+
+                    <div style="display: flex; justify-content: end; margin-bottom: .5rem; margin-top: 3rem; margin-right: .5rem;">
                         <button type="button" class="btn btn-sm btn-light mx-2"
                             data-bs-dismiss="modal">Cerrar</button>
                         <button type="submit" class="btn btn-sm btn-primary">Descargar</button>
                     </div>
         </form>
+        <div class="mt-3 mb-1 mx-2 text-center p-2 border bg-light">
+            <small class="text-danger mt-0 fs-12">
+                Este reporte muestra el total de todos los <strong>Proyectos por Cliente.</strong><br> Se excluyen aquellos que hayan sido <strong>Borrados o Finalizados Sin Implementar</strong>.
+            </small>
+        </div>
     </div>
 </div>
 </div>
