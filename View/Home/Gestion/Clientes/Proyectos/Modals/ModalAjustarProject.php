@@ -88,7 +88,7 @@
 
                                 <div class="mb-3 col-sm-6">
                                     <span class="badge bg-light fs-10 mb-1 text-dark">Titulo</span>
-                                    <input readonly type="text"
+                                    <input type="text"
                                         class="bg-primary text-light form-control form-control-sm"
                                         id="titulo_client_rs_alta_proy">
                                 </div>

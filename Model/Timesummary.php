@@ -633,6 +633,7 @@ class timesummary extends Conexion
             proyecto_gestionado.fech_inicio,
             proyecto_gestionado.fech_fin,
             proyecto_gestionado.refProy,
+            proyecto_gestionado.titulo,
             dimensionamiento.hs_dimensionadas AS dimensionamiento,
             -- hs_restante: lo que falta (nunca negativo)
             CASE 
@@ -745,6 +746,7 @@ class timesummary extends Conexion
         proyecto_gestionado.fech_inicio,
         proyecto_gestionado.fech_fin,
         proyecto_gestionado.refProy,
+        proyecto_gestionado.titulo,
         dimensionamiento.hs_dimensionadas AS dimensionamiento,
         -- hs_restante: lo que falta (nunca negativo)
         CASE 
@@ -859,6 +861,7 @@ class timesummary extends Conexion
             proyecto_gestionado.fech_inicio,
             proyecto_gestionado.fech_fin,
             proyecto_gestionado.refProy,
+            proyecto_gestionado.titulo,
             dimensionamiento.hs_dimensionadas AS dimensionamiento,
             -- hs_restante: lo que falta (nunca negativo)
             CASE 
@@ -972,6 +975,7 @@ class timesummary extends Conexion
             proyecto_gestionado.fech_inicio,
             proyecto_gestionado.refProy,
             proyecto_gestionado.fech_fin,
+            proyecto_gestionado.titulo,
             dimensionamiento.hs_dimensionadas AS dimensionamiento,
             -- hs_restante: lo que falta (nunca negativo)
             CASE 
