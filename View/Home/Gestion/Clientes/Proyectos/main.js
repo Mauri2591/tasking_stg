@@ -811,7 +811,9 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
                                     id: $("#mdl_id_proyecto_gestionado").val()
                                 },
                                 function (data, textStatus, jqXHR) {
-                                    $("#titulo_client_rs_alta_proy").val(data.titulo);
+                                    $("#titulo_client_rs_alta_proy")
+                                        .val(data.titulo)
+                                        .data("base", data.titulo.split("_Ref")[0]); // 🔥 CLAVE
                                 },
                                 "json"
                             );
@@ -941,7 +943,7 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
         $("#titulo_client_rs_alta_proy").off("input").on("input", function () {
             TITULO_EDITADO_MANUAL = true;
         });
-        
+
     }, "json");
 
     $("#combo_categoria_proy_nuevo").prop("disabled", false);
@@ -998,7 +1000,10 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
             $("#client_refPro_proy_nuevo").val(data.refProy);
             $("#combo_recurrente_proy_nuevo").val(data.recurrencia);
             $("#fech_ini_proy_nuevo").val(data.fech_inicio);
-            $("#titulo_client_rs_alta_proy").val(data.titulo);
+
+            $("#titulo_client_rs_alta_proy")
+                .val(data.titulo)
+                .data("base", data.titulo.split("_Ref")[0]); // 🔥 CLAVE
 
             $.post("../../../../../Controller/ctrProyectos.php?proy=get_sectores", function (res) {
                 $("#combo_sector_proy_nuevo").html(res);
