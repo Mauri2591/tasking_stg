@@ -1926,7 +1926,7 @@ ORDER BY cantidad_proyectos DESC";
             LEFT JOIN proyecto_cantidad_servicios pcs ON pcs.proy_id = p.proy_id
             LEFT JOIN proyecto_gestionado pg ON pg.id_proyecto_cantidad_servicios = pcs.id
             LEFT JOIN tm_categoria tc ON pg.cat_id = tc.cat_id
-            WHERE pcs.est = 1 AND pg.estados_id NOT IN(16,17)";
+            WHERE pcs.est = 1 AND pg.estados_id NOT IN(15,16,17)";
         if (!empty($fecha_desde) && !empty($fecha_hasta)) {
             $sql .= " AND pg.fech_inicio BETWEEN :fecha_desde AND :fecha_hasta";
         }
@@ -1948,10 +1948,10 @@ ORDER BY cantidad_proyectos DESC";
     }
 
     public function get_proyectos_total_x_client_id($client_id, $sector_id, $mostrar_historico = false)
-    {
-        $es_reporte = false;
-        $conn = parent::get_conexion();
-        $sql = "SELECT  
+{
+    $conn = parent::get_conexion();
+
+    $sql = "SELECT  
         pg.id,
         pg.titulo,
         pg.fech_vantive,
@@ -1992,24 +1992,18 @@ ORDER BY cantidad_proyectos DESC";
             SELECT cat_id FROM tm_categoria WHERE sector_id = :sector_id OR cat_id = 26
         ))
     )";
-        if (!$mostrar_historico) {
-            if ($es_reporte) {
-                $sql .= " AND pg.estados_id NOT IN(15,16,17)";
-            } else {
-                $sql .= " AND pg.estados_id NOT IN(16,17)";
-            }
-        }
-
-        $sql .= " GROUP BY pg.id
-              ORDER BY pg.refProy, pg.id";
-
-        $stmt = $conn->prepare($sql);
-        $stmt->bindValue(":client_id", $client_id, PDO::PARAM_INT);
-        $stmt->bindValue(":sector_id", $sector_id, PDO::PARAM_INT);
-        $stmt->execute();
-
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    if (!$mostrar_historico) {
+        $sql .= " AND pg.estados_id NOT IN(16,17)";
     }
+    $sql .= " GROUP BY pg.id
+              ORDER BY pg.refProy, pg.id";
+    $stmt = $conn->prepare($sql);
+    $stmt->bindValue(":client_id", $client_id, PDO::PARAM_INT);
+    $stmt->bindValue(":sector_id", $sector_id, PDO::PARAM_INT);
+    $stmt->execute();
+
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
     public function getDatosCliente($id)
     {
         $conn = parent::get_conexion();
