@@ -1881,7 +1881,7 @@ LEFT JOIN proyecto_cantidad_servicios pcs
     ON pcs.proy_id = p.proy_id
 LEFT JOIN proyecto_gestionado pg 
     ON pg.id_proyecto_cantidad_servicios = pcs.id
-WHERE pcs.est = 1  AND pg.estados_id NOT IN (14,15,16,17)
+WHERE pcs.est = 1  AND pg.estados_id NOT IN (16,17)
 GROUP BY c.client_id, c.client_rs
 ORDER BY cantidad_proyectos DESC";
         $stmt = $conn->prepare($sql);
@@ -1902,7 +1902,7 @@ ORDER BY cantidad_proyectos DESC";
     LEFT JOIN proyecto_gestionado pg ON pg.id_proyecto_cantidad_servicios = pcs.id
     LEFT JOIN tm_categoria tc ON pg.cat_id = tc.cat_id
     LEFT JOIN sectores s ON pg.sector_id = s.sector_id
-    WHERE (s.sector_id = :sector_id OR tc.cat_id = 26) AND pg.estados_id NOT IN (14,15,16,17)
+    WHERE (s.sector_id = :sector_id OR tc.cat_id = 26) AND pg.estados_id NOT IN (16,17)
     AND pcs.est = 1
     GROUP BY c.client_id, c.client_rs
     ORDER BY cantidad_proyectos DESC";
@@ -1926,7 +1926,7 @@ ORDER BY cantidad_proyectos DESC";
             LEFT JOIN proyecto_cantidad_servicios pcs ON pcs.proy_id = p.proy_id
             LEFT JOIN proyecto_gestionado pg ON pg.id_proyecto_cantidad_servicios = pcs.id
             LEFT JOIN tm_categoria tc ON pg.cat_id = tc.cat_id
-            WHERE pcs.est = 1 AND pg.estados_id NOT IN(15,16,17)";
+            WHERE pcs.est = 1 AND pg.estados_id NOT IN(16,17)";
         if (!empty($fecha_desde) && !empty($fecha_hasta)) {
             $sql .= " AND pg.fech_inicio BETWEEN :fecha_desde AND :fecha_hasta";
         }
@@ -1962,6 +1962,7 @@ ORDER BY cantidad_proyectos DESC";
         dimensionamiento.hs_dimensionadas AS dimensionamiento,
         s.sector_nombre,
         c.cat_nom AS producto,
+        cl.client_cuit AS cuit,
         cl.client_rs AS cliente,
         tm_estados.estados_nombre AS estado,
         pcs.id AS id_proyecto_cantidad_servicios,
@@ -1993,7 +1994,7 @@ ORDER BY cantidad_proyectos DESC";
     )";
 
     if (!$mostrar_historico) {
-        $sql .= " AND pg.estados_id NOT IN(15,16,17)";
+        $sql .= " AND pg.estados_id NOT IN(16,17)";
     }
 
     $sql .= " GROUP BY pg.id

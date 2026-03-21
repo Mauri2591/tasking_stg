@@ -301,7 +301,7 @@ class timesummary extends Conexion
     ) AS dim 
         ON dim.id_proyecto_gestionado = pg.id
 	LEFT JOIN proyecto_recurrencia ON proyecto_recurrencia.id_proyecto_gestionado=pg.id
-    WHERE e.estados_id IN (1,2,3,4)";
+    WHERE e.estados_id IN (1,2,3,4,14,15)";
 
         // solo mostrar activos si NO está marcado el checkbox
         if (!$mostrar_historico) {
@@ -627,6 +627,7 @@ class timesummary extends Conexion
         $sql = "SELECT
             clientes.client_id,
             clientes.client_rs,
+            clientes.client_cuit AS cuit,
             COUNT(DISTINCT proyecto_gestionado.id) AS proyectos_gestionados,
             COUNT(DISTINCT proyecto_cantidad_servicios.id) AS total_proyectos_cantidad_servicios,
             proyecto_gestionado.fech_inicio,
@@ -716,7 +717,7 @@ class timesummary extends Conexion
             GROUP BY tc.id_proyecto_gestionado, tc.usu_id, tc.id_pm_calidad, tm_usuario.usu_nom
         ) AS horas_usuarios ON horas_usuarios.id_proyecto_gestionado = proyecto_gestionado.id
         LEFT JOIN tm_estados ON proyecto_gestionado.estados_id = tm_estados.estados_id
-        WHERE proyecto_gestionado.estados_id IN (1,2,3,4,14)
+        WHERE proyecto_gestionado.estados_id IN (1,2,3,4,14,15)
         GROUP BY 
             clientes.client_id,
             clientes.client_rs,
@@ -738,6 +739,7 @@ class timesummary extends Conexion
         $sql = "SELECT
         clientes.client_id,
         clientes.client_rs,
+        clientes.client_cuit AS cuit,
         COUNT(DISTINCT proyecto_gestionado.id) AS proyectos_gestionados,
         COUNT(DISTINCT proyecto_cantidad_servicios.id) AS total_proyectos_cantidad_servicios,
         proyecto_gestionado.fech_inicio,
@@ -827,7 +829,7 @@ class timesummary extends Conexion
             GROUP BY tc.id_proyecto_gestionado, tc.usu_id, tc.id_pm_calidad, tm_usuario.usu_nom
         ) AS horas_usuarios ON horas_usuarios.id_proyecto_gestionado = proyecto_gestionado.id
         LEFT JOIN tm_estados ON proyecto_gestionado.estados_id = tm_estados.estados_id
-        WHERE proyecto_gestionado.fech_inicio BETWEEN :fecha_desde AND :fecha_hasta AND proyecto_gestionado.estados_id IN(1,2,3,4,14)
+        WHERE proyecto_gestionado.fech_inicio BETWEEN :fecha_desde AND :fecha_hasta AND proyecto_gestionado.estados_id IN(1,2,3,4,14,15)
         GROUP BY 
             clientes.client_id,
             clientes.client_rs,
@@ -851,6 +853,7 @@ class timesummary extends Conexion
         $sql = "SELECT
             clientes.client_id,
             clientes.client_rs,
+            clientes.client_cuit AS cuit,
             COUNT(DISTINCT proyecto_gestionado.id) AS proyectos_gestionados,
             COUNT(DISTINCT proyecto_cantidad_servicios.id) AS total_proyectos_cantidad_servicios,
             proyecto_gestionado.fech_inicio,
@@ -939,7 +942,7 @@ class timesummary extends Conexion
             GROUP BY tc.id_proyecto_gestionado, tc.usu_id, tc.id_pm_calidad, tm_usuario.usu_nom
         ) AS horas_usuarios ON horas_usuarios.id_proyecto_gestionado = proyecto_gestionado.id
         LEFT JOIN tm_estados ON proyecto_gestionado.estados_id = tm_estados.estados_id
-        WHERE clientes.client_id=:client_id AND proyecto_gestionado.estados_id IN(1,2,3,4,14)
+        WHERE clientes.client_id=:client_id AND proyecto_gestionado.estados_id IN(1,2,3,4,14,15)
         GROUP BY 
             clientes.client_id,
             clientes.client_rs,
@@ -963,6 +966,7 @@ class timesummary extends Conexion
         $sql = "SELECT
             clientes.client_id,
             clientes.client_rs,
+            clientes.client_cuit AS cuit,
             COUNT(DISTINCT proyecto_gestionado.id) AS proyectos_gestionados,
             COUNT(DISTINCT proyecto_cantidad_servicios.id) AS total_proyectos_cantidad_servicios,
             proyecto_gestionado.fech_inicio,
@@ -1051,7 +1055,7 @@ class timesummary extends Conexion
             GROUP BY tc.id_proyecto_gestionado, tc.usu_id, tc.id_pm_calidad, tm_usuario.usu_nom
         ) AS horas_usuarios ON horas_usuarios.id_proyecto_gestionado = proyecto_gestionado.id
         LEFT JOIN tm_estados ON proyecto_gestionado.estados_id = tm_estados.estados_id
-        WHERE clientes.client_id=:client_id AND proyecto_gestionado.fech_inicio BETWEEN :fecha_desde AND :fecha_hasta AND proyecto_gestionado.estados_id IN(1,2,3,4,14)
+        WHERE clientes.client_id=:client_id AND proyecto_gestionado.fech_inicio BETWEEN :fecha_desde AND :fecha_hasta AND proyecto_gestionado.estados_id IN(1,2,3,4,14,15)
         GROUP BY 
             clientes.client_id,
             clientes.client_rs,

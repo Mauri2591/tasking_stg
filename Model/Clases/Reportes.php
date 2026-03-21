@@ -55,6 +55,7 @@ class Reportes
         $headers = [
             'ID',
             'CLIENTE',
+            'CUIT',
             'TITULO',
             'REFERENCIA',
             'RECURRENTE',
@@ -83,7 +84,7 @@ class Reportes
 
         $rowNum = 2;
 
-        // 🎨 Mapa de colores
+        // Mapa de colores
         $color_map = [];
 
         // 🔹 Mapa auxiliar para saber qué IDs tienen rechequeos asociados
@@ -94,11 +95,11 @@ class Reportes
             }
         }
 
-        // 🔹 Recorrer y exportar filas
+        // Recorrer y exportar filas
         foreach ($data as $key => $row) {
-            if (!in_array($row['estado'], ["FIN SIN IMPLEM", "ELIMINADO", "CANCELADO"])) {
+            if (!in_array($row['estado'], ["ELIMINADO", "CANCELADO"])) {
 
-                // 🧠 Resolver número de proyecto origen
+                // Resolver número de proyecto origen
                 $num_rechequeo_de = '-';
                 if (!empty($row['rechequeo_de'])) {
                     $num_rechequeo_de = isset($id_to_pos[$row['rechequeo_de']])
@@ -106,10 +107,11 @@ class Reportes
                         : $row['rechequeo_de'];
                 }
 
-                // 📋 Insertar fila
+                // Insertar fila
                 $sheet->fromArray([
                     $key + 1,
                     $row['cliente'] ?? '-',
+                    $row['cuit'] ?? '-',
                     $row['titulo'] ?? '-',
                     $row['referencia'] ?? '-',
                     (empty($row['posicion_recurrencia']) ? '-' : $row['posicion_recurrencia']),
@@ -129,7 +131,7 @@ class Reportes
                     $row['estado'] ?? '-'
                 ], NULL, 'A' . $rowNum);
 
-                // 🎨 Si tiene rechequeo_de, pinta la celda F (RECHEQUEO DE PROYECTO)
+                // Si tiene rechequeo_de, pinta la celda F (RECHEQUEO DE PROYECTO)
                 if (!empty($row['rechequeo_de'])) {
                     $referencia = $row['rechequeo_de']; // ID al que hace referencia
 
@@ -141,7 +143,7 @@ class Reportes
                     $color_hex = $color_map[$referencia];
 
                     // Pintar celda F (rechequeo de proyecto)
-                    $sheet->getStyle('F' . $rowNum)
+                    $sheet->getStyle('G' . $rowNum)
                         ->getFill()
                         ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
                         ->getStartColor()
@@ -154,7 +156,7 @@ class Reportes
                     $brightness = ($r * 299 + $g * 587 + $b * 114) / 1000;
                     $textColor = ($brightness < 140) ? 'FFFFFF' : '000000';
 
-                    $sheet->getStyle('F' . $rowNum)->getFont()->getColor()->setRGB($textColor);
+                    $sheet->getStyle('G' . $rowNum)->getFont()->getColor()->setRGB($textColor);
                 }
 
                 $proyecto_id = $row['id'];
@@ -186,7 +188,7 @@ class Reportes
         }
 
         // ===== Estilos del encabezado =====
-        $headerRange = 'A1:S1';
+        $headerRange = 'A1:T1';
         $sheet->setAutoFilter($headerRange);
         $headerStyle = $sheet->getStyle($headerRange);
         $headerStyle->getFont()->setBold(true)->getColor()->setRGB('FFFFFF');
@@ -196,14 +198,14 @@ class Reportes
         $headerStyle->getBorders()->getBottom()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
 
         // Centrar columnas
-        $centerColumns = ['A', 'D', 'E', 'F', 'G', 'H', 'I', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S'];
+        $centerColumns = ['A', 'D', 'E', 'F', 'G', 'H', 'I', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T'];
         foreach ($centerColumns as $col) {
             $sheet->getStyle($col)->getAlignment()
                 ->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
         }
 
         // Autoajuste de columnas
-        foreach (range('A', 'S') as $col) {
+        foreach (range('A', 'T') as $col) {
             $sheet->getColumnDimension($col)->setAutoSize(true);
         }
 
@@ -331,6 +333,7 @@ class Reportes
         $headers = [
             'ID',
             'CLIENTE',
+            'CUIT',
             'REF',
             'PRODUCTO',
             'SECTOR',
@@ -370,6 +373,7 @@ class Reportes
             $sheet->fromArray([
                 $row - 1,
                 $fila['client_rs'],
+                $fila['cuit'],
                 $fila['refProy'],
                 $fila['producto'],
                 $fila['sector'],
@@ -388,10 +392,10 @@ class Reportes
         }
 
         // AutoFilter
-        $sheet->setAutoFilter("A1:N" . ($row - 1));
+        $sheet->setAutoFilter("A1:O" . ($row - 1));
 
         // Estilo encabezado
-        $sheet->getStyle("A1:N1")->applyFromArray([
+        $sheet->getStyle("A1:O1")->applyFromArray([
             'font' => ['bold' => true, 'color' => ['rgb' => 'FFFFFF']],
             'fill' => [
                 'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
@@ -409,7 +413,7 @@ class Reportes
                     ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
                     ->getStartColor()->setRGB('F2F2F2');
 
-                $sheet->getStyle("I{$i}:N{$i}")->getFill()
+                $sheet->getStyle("I{$i}:J{$i}")->getFill()
                     ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
                     ->getStartColor()->setRGB('F2F2F2');
             }
@@ -417,18 +421,18 @@ class Reportes
 
         // Colores HS
         for ($i = 2; $i < $row; $i++) {
-            $neg = $sheet->getCell("H{$i}")->getValue();
-            $res = $sheet->getCell("I{$i}")->getValue();
+            $neg = $sheet->getCell("I{$i}")->getValue();
+            $res = $sheet->getCell("J{$i}")->getValue();
 
             // HS NEGATIVAS
-            $sheet->getStyle("H{$i}")->getFill()
+            $sheet->getStyle("I{$i}")->getFill()
                 ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
                 ->getStartColor()->setRGB(
                     $neg !== '00:00' ? 'FFA500' : '90EE90'
                 );
 
             // HS RESTANTES
-            $sheet->getStyle("I{$i}")->getFill()
+            $sheet->getStyle("J{$i}")->getFill()
                 ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
                 ->getStartColor()->setRGB(
                     $res !== '00:00' ? 'ADD8E6' : '90EE90'
@@ -436,13 +440,13 @@ class Reportes
         }
 
         // Centrado
-        foreach (range('A', 'N') as $col) {
+        foreach (range('A', 'O') as $col) {
             $sheet->getStyle($col)->getAlignment()
                 ->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
         }
 
         // Bordes
-        $sheet->getStyle("A1:N" . ($row - 1))->applyFromArray([
+        $sheet->getStyle("A1:O" . ($row - 1))->applyFromArray([
             'borders' => [
                 'outline' => ['borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN],
                 'inside'  => ['borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN]
@@ -450,7 +454,7 @@ class Reportes
         ]);
 
         // AutoSize
-        foreach (range('A', 'N') as $col) {
+        foreach (range('A', 'O') as $col) {
             $sheet->getColumnDimension($col)->setAutoSize(true);
         }
 

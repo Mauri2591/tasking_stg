@@ -962,7 +962,6 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
     $.post("../../../../../Controller/ctrProyectos.php?proy=get_datos_proyecto_creado", {
         id: $("#mdl_id_proyecto_gestionado").val()
     }, function (data, textStatus, jqXHR) {
-        console.log(data);
         $("#contenedor_cont_activos").show();
 
         if (data.cat_id == 78) {
