@@ -34,7 +34,7 @@
                     </div>
         </form>
         <div class="mt-3 mb-1 mx-2 text-center p-2 border bg-light">
-            <small class="text-danger mt-0 fs-12">
+            <small class="text-danger mt-0 fs-13">
                 Este reporte muestra el total de todos los <strong>Proyectos de todos los Clientes.</strong><br> Se excluyen aquellos que hayan sido <strong>Borrados o Finalizados Sin Implementar</strong>.
             </small>
         </div>
