@@ -250,12 +250,8 @@ switch ($_GET['accion']) {
             foreach ($datos as $val) {
                 $htmlTable .= '
             <tr>
-                <td title="' . $val['titulo'] . '" class="px-1 text-center">'
-                    . $val['titulo'] . ' ' .
-                    ($val['posicion_recurrencia'] != null
-                        ? '- Recurrencia ' . $val['posicion_recurrencia']
-                        : '')
-                    . '</td>                <td class="px-1 text-center">' . $val['periodo'] . '</td>
+                <td title="' . $val['titulo'] . '" class="px-1 text-center">'. $val['titulo'] .'</td>
+                <td class="px-1 text-center">' . $val['periodo'] . '</td>
                 <td title="' . $val['producto'] . '" class="px-1 text-center">' . substr($val['producto'], 0, 10) . '</td>
                 <td class="px-1 text-center bg-light" style="border:.1rem solid gainsboro">' . $val['hs_dimensionadas'] . '</td>
                 <td class="px-1 text-center bg-light fw-bold" style="border:.1rem solid gainsboro">' . $val['horas_consumidas'] . '</td>
@@ -273,12 +269,8 @@ switch ($_GET['accion']) {
                 if (!in_array($id_proyecto, $proyectos_mostrados)) {
                     $htmlTable .= '
                 <tr>
-                    <td title="' . $val['titulo'] . '" class="px-1 text-center">'
-                        . $val['titulo'] . ' ' .
-                        ($val['posicion_recurrencia'] != null
-                            ? '- Recurrencia ' . $val['posicion_recurrencia']
-                            : '')
-                        . '</td>                    <td class="px-1 text-center">' . $val['periodo'] . '</td>
+                   <td title="' . $val['titulo'] . '" class="px-1 text-center">'. $val['titulo'] .'</td>
+                   <td class="px-1 text-center">' . $val['periodo'] . '</td>
                     <td title="' . $val['producto'] . '" class="px-1 text-center">' . substr($val['producto'], 0, 10) . '</td>
                     <td class="px-1 text-center bg-light" style="border:.1rem solid gainsboro">' . $val['hs_dimensionadas'] . '</td>
                     <td class="px-1 text-center bg-light fw-bold" style="border:.1rem solid gainsboro">' . $val['horas_consumidas'] . '</td>
@@ -337,7 +329,7 @@ switch ($_GET['accion']) {
         if ($_SESSION['sector_id'] == "4") {
             foreach ($datos as $row) {
                 $sub_array = array();
-                $sub_array[] = !empty($row['recurrencia']) ? $row['cliente'] . " - Recurrencia " . $row['recurrencia'] : $row['cliente'];
+                $sub_array[] = $row['titulo'];
                 $sub_array[] = '<p class="text-center">' . $row['referencia'] . '</p>';
                 $sub_array[] = '<span class="badge bg-light px-2 text-dark fs-10 d-inline-block text-start">'
                     . $row['inicio_fin'] .
@@ -362,7 +354,7 @@ switch ($_GET['accion']) {
                 // Evita duplicados por id_proyecto_gestionado
                 if (!in_array($row['id_proyecto_gestionado'], $proyectos_vistos)) {
                     $sub_array = array();
-                    $sub_array[] = !empty($row['recurrencia']) ? $row['cliente'] . " - Recurrencia " . $row['recurrencia'] : $row['cliente'];
+                    $sub_array[] = $row['titulo'];
                     $sub_array[] = '<p class="text-center">' . $row['referencia'] . '</p>';
                     $sub_array[] = '<span class="badge bg-light px-2 text-dark fs-10 d-inline-block text-start">'
                         . $row['inicio_fin'] .

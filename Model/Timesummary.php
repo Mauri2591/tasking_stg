@@ -257,6 +257,7 @@ class timesummary extends Conexion
         tse.id AS id_timesummary_estados,
         tse.id_pm_calidad,
         pg.id AS id_proyecto_gestionado,
+        pg.titulo,
         c.client_rs AS cliente,
         pg.refProy AS referencia,
         tm_categoria.cat_nom AS producto,

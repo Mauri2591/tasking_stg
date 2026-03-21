@@ -4,6 +4,9 @@ var VALIDAR_SI_HAY_FECHA_INICIO = false;
 //***************  Borradores  *****************************
 $(document).ready(function () {
 
+    let SECTOR_ID = null;
+    let CATEGORIA_ID = null;
+
     tabla = $("#table_proyectos_borrador").dataTable({
         "aProcessing": true,
         "aServerSide": true,
@@ -962,6 +965,10 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
     $.post("../../../../../Controller/ctrProyectos.php?proy=get_datos_proyecto_creado", {
         id: $("#mdl_id_proyecto_gestionado").val()
     }, function (data, textStatus, jqXHR) {
+
+        SECTOR_ID = data.sector_id;
+        CATEGORIA_ID = data.cat_id;
+
         $("#contenedor_cont_activos").show();
 
         if (data.cat_id == 78) {
@@ -1111,6 +1118,24 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
             $("#btn_editar_proyecto").attr("type", "button").off().on("click", function (e) {
                 e.preventDefault();
                 e.stopPropagation();
+
+                // 🔥 valores actuales del form
+                let sectorActual = $("#combo_sector_proy_nuevo").val();
+                let categoriaActual = $("#combo_categoria_proy_nuevo").val();
+
+                // 🔥 VALIDACIÓN CLAVE
+                if (
+                    parseInt(sectorActual) !== parseInt(SECTOR_ID) ||
+                    parseInt(categoriaActual) !== parseInt(CATEGORIA_ID)
+                ) {
+                    Swal.fire({
+                        icon: "warning",
+                        title: "Error",
+                        text: "No es posible modificar el sector o la categoría del proyecto. Actualice la página para restaurar los valores originales y continuar"
+                    });
+                    return;
+                }
+
 
                 let dataForm = get_data_editar_proyecto();
 
