@@ -1,7 +1,7 @@
 <!-- Modal -->
 <div class="modal fade" id="modalDescargarExcelProyectosTotal" data-bs-keyboard="false" tabindex="-1"
     aria-labelledby="staticBackdropLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg">
         <form id="formDescargarReporteXlsx" action="<?php echo URL . "Controller/ctrReportes.php?case=total_excel" ?>" method="post">
             <div class="modal-content">
                 <div class="card-body">
