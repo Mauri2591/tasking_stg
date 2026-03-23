@@ -2647,7 +2647,7 @@ function asignarPm(id_proyecto_gestionado, id_pm_calidad) {
             icon: "error",
             title: "Error",
             text: "No se puede asignar como PM a este proyecto",
-            showConfirmButton: true,
+            showConfirmButton: false,
             showCancelButton: true
         })
     }
