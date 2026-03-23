@@ -169,6 +169,7 @@ class timesummary extends Conexion
             $estados[] = 14;
         }
         $placeholders = implode(',', array_fill(0, count($estados), '?'));
+        $params = array_merge([$usu_asignado], $estados);
 
         $sql = "SELECT 
     tse.id AS id_timesummary_estados,
@@ -236,7 +237,7 @@ class timesummary extends Conexion
         ON pg.cat_id = tm_categoria.cat_id
     INNER JOIN timesummary_estados tse 
         ON pg.id = tse.id_proyecto_gestionado
-    AND tse.usuario_asignado = :usu_asignado
+    AND tse.usuario_asignado = ?
     AND tse.est = 1
     LEFT JOIN (
         SELECT 
@@ -251,8 +252,8 @@ class timesummary extends Conexion
         tse.id, pg.id, pg.titulo, tm_categoria.cat_nom, dim.total_hs_dimensionadas, tse.est, tse.id_pm_calidad
     ORDER BY pg.titulo";
         $stmt = $conn->prepare($sql);
-        $stmt->bindValue(":usu_asignado", $usu_asignado, PDO::PARAM_INT);
-        $stmt->execute();
+        $params = array_merge([$usu_asignado], $estados);
+        $stmt->execute($params);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
