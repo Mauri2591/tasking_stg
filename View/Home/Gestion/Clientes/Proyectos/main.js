@@ -2608,6 +2608,8 @@ function gestionar_proy_recurrente(id_proyecto_cantidad_servicios, conteo_id_rec
 }
 
 function asignarPm(id_proyecto_gestionado,id_pm_calidad) {
+    alert(id_proyecto_gestionado)
+    alert(id_pm_calidad)
     Swal.fire({
         icon: "info",
         title: "Atencion",
