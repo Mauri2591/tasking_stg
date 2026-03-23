@@ -309,8 +309,11 @@ switch ($_GET['accion']) {
             $htmlTable .= '
                     <tr>
                         <td class="px-3 text-center">' . substr($val['titulo'], 0, 20) . '</td>
+                        <td class="px-3 text-center">' . $val['periodo'] . '</td>
                         <td class="px-3 text-center">' . $val['producto'] . '</td>
                         <td class="px-3 text-center">' . $val['hs_dimensionadas'] . '</td>
+                        <td class="px-3 text-center">' . $val['mis_horas'] . '</td>
+                        <td class="px-3 text-center">' . $val['horas_total'] . '</td>
                         <td class="px-3 text-center"><a type="button" title="Desea inactivar esta tarea?" onclick="editarTarea(' . $val['id_timesummary_estados'] . ')" class="ri-edit-fill text-danger"></a></td>
                     </tr>          
             ';

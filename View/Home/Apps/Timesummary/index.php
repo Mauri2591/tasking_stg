@@ -64,6 +64,7 @@ if (isset($_SESSION['usu_id'])) {
                                     <th style="width: 10%; border: 1px solid gainsboro;">Dim</th>
                                     <th style="width: 10%; border: 1px solid gainsboro;">Mis Hs</th>
                                     <th style="width: 10%; border: 1px solid gainsboro;">Total</th>
+                                    <th style="width: 10%; border: 1px solid gainsboro;"></th>
                                 </tr>
                             </thead>
                             <tbody id="tbody_tabla_timasummary"

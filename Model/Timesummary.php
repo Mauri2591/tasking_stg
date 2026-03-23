@@ -338,7 +338,7 @@ class timesummary extends Conexion
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function get_titulos_proyectos_like($usu_asignado, $titulo)
+   public function get_titulos_proyectos_like($usu_asignado, $titulo)
 {
     $conn = parent::get_conexion();
     $conn->exec("SET lc_time_names = 'es_ES'");
@@ -352,16 +352,16 @@ class timesummary extends Conexion
         IFNULL(dim.total_hs_dimensionadas, 0) AS hs_dimensionadas,
         proyecto_recurrencia.posicion_recurrencia,
 
-        -- horas_consumidas
+        -- MIS HORAS
         IFNULL((
             SELECT TIME_FORMAT(SEC_TO_TIME(SUM(TIME_TO_SEC(tc1.horas_consumidas))), '%H:%i')
             FROM timesummary_carga tc1
             WHERE tc1.id_proyecto_gestionado = pg.id
               AND tc1.usu_id = tse.usuario_asignado
               AND tc1.est = 1
-        ), '00:00') AS horas_consumidas,
+        ), '00:00') AS mis_horas,
 
-        -- horas_total
+        -- HORAS TOTAL
         CASE 
             WHEN tse.id_pm_calidad IS NOT NULL THEN 
                 IFNULL((
@@ -381,25 +381,8 @@ class timesummary extends Conexion
                 ), '00:00')
         END AS horas_total,
 
-        -- comparacion
-        IF(
-            (
-                SELECT SUM(TIME_TO_SEC(tc4.horas_consumidas))
-                FROM timesummary_carga tc4
-                WHERE tc4.id_proyecto_gestionado = pg.id
-                  AND tc4.est = 1
-                  AND (
-                       (tse.id_pm_calidad IS NOT NULL AND tc4.id_pm_calidad = tse.id_pm_calidad)
-                    OR (tse.id_pm_calidad IS NULL AND (tc4.id_pm_calidad IS NULL OR tc4.id_pm_calidad = 0))
-                  )
-            ) > (IFNULL(dim.total_hs_dimensionadas,0) * 3600),
-            'HORAS_TOTAL_MAYOR_QUE_DIM',
-            'HORAS_TOTAL_MENOR_QUE_DIM'
-        ) AS comparacion_horas,
-
         tse.est,
-        tse.id_pm_calidad,
-        CASE WHEN tse.id_pm_calidad IS NOT NULL THEN 'SI' ELSE 'NO' END AS es_pm
+        tse.id_pm_calidad
 
     FROM proyecto_gestionado pg
 
@@ -441,7 +424,7 @@ class timesummary extends Conexion
 
     ORDER BY pg.titulo";
 
-    // 🔥 orden: usuario → titulo
+    // 🔥 ORDEN IMPORTANTE
     $params = [$usu_asignado, $titulo];
 
     $stmt = $conn->prepare($sql);
