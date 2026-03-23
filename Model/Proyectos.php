@@ -278,8 +278,17 @@ LEFT JOIN proyecto_rechequeo
 LEFT JOIN (
     SELECT 
         tse.id_proyecto_gestionado,
-        GROUP_CONCAT(DISTINCT tse.id_pm_calidad) AS id_pm_calidad
+        MAX(tse.id_pm_calidad) AS id_pm_calidad,
+        GROUP_CONCAT(
+            DISTINCT CONCAT(
+                UPPER(LEFT(u.usu_nom, 1)),
+                LOWER(SUBSTRING(u.usu_nom, 2))
+            )
+            SEPARATOR ',<br>'
+        ) AS pm_calidad_nombres
     FROM timesummary_estados tse
+    INNER JOIN tm_usuario u 
+        ON u.usu_id = tse.usuario_asignado
     WHERE 
         tse.id_pm_calidad IS NOT NULL
         AND tse.est = 1
