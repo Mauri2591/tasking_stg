@@ -57,7 +57,7 @@ if (isset($_SESSION['usu_id'])) {
                                                     <th>TITULO</th>
                                                     <th>INICIO</th>
                                                     <th>FIN</th>
-                                                    <th>CREADOR</th>
+                                                    <th>PM</th>
                                                     <th>SERVICIO</th>
                                                     <th>TIPO</th>
                                                     <th>HS</th>
@@ -80,7 +80,7 @@ if (isset($_SESSION['usu_id'])) {
                                                     <th>CLIENTE</th>
                                                     <th>INICIO</th>
                                                     <th>FIN</th>
-                                                    <th>CREADOR</th>
+                                                    <th>PM</th>
                                                     <th>SERVICIO</th>
                                                     <th>TIPO</th>
                                                     <th>HS</th>
@@ -103,7 +103,7 @@ if (isset($_SESSION['usu_id'])) {
                                                     <th>CLIENTE</th>
                                                     <th>INICIO</th>
                                                     <th>FIN</th>
-                                                    <th>CREADOR</th>
+                                                    <th>PM</th>
                                                     <th>SERVICIO</th>
                                                     <th>TIPO</th>
                                                     <th>HS</th>

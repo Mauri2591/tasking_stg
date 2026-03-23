@@ -1478,7 +1478,7 @@ switch ($_GET['proy']) {
                 : "badge bg-light text-dark";
             $sub_array[] = '<span class="' . $clase . '">' . $row['prioridad'] . '</span>';
             $sub_array[] = $row['client_rs'];
-            $sub_array[] = $row['creador_proy'];
+            $sub_array[] = $_SESSION['sector_id'] == "4" ? '<span class="badge bg-light text-dark" title="Asignarme como PM" type="button" onclick="asignarPm(' . $row['id_proyecto_gestionado'] . "," . $row['id_pm_calidad'] . ')">' . $row['creador_proy'] . '</span>' : '<span class="badge bg-light text-dark">' . $row['creador_proy'] . '</span>';
 
             $sub_array[] = $row['posicion_recurrencia'] == '' ? '-' : '<span class="badge bg-success">' . $row['posicion_recurrencia'] . '</span>';
 
@@ -1559,6 +1559,10 @@ switch ($_GET['proy']) {
             "aaData" => $data
         );
         echo json_encode($results);
+        break;
+
+    case 'insert_nuevo_pm':
+        $proyecto->insert_nuevo_pm($_POST['id_pm_calidad'],$_SESSION['usu_id'],$_POST['id_proyecto_gestionado']);
         break;
 
     case 'get_proyectos_realizados_vista_calidad':

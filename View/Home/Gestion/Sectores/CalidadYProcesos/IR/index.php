@@ -76,7 +76,7 @@ if (isset($_SESSION['usu_id'])) {
                                                 <th style="width: 30px;text-align: center;">FIN</th>
                                                 <th style="width: 30px;text-align: center;">REC</th>
                                                 <th style="width: 30px;text-align: center;">RETEST</th>
-                                                <th style="width: 30px;text-align: center;">CREADOR</th>
+                                                <th style="width: 30px;text-align: center;">PM</th>
                                                 <th style="width: 30px;text-align: center;">TIPO</th>
                                                 <th style="width: 30px;text-align: center;">HS</th>
                                                 <th style="width: 30px;text-align: center;">ASIGNADO</th>
@@ -115,7 +115,7 @@ if (isset($_SESSION['usu_id'])) {
                                                 <th style="width: 300px;text-align: center;">TITULO</th>
                                                 <th style="width: 300px;text-align: center;">INICIO</th>
                                                 <th style="width: 30px;text-align: center;">FIN</th>
-                                                <th style="width: 30px;text-align: center;">CREADOR</th>
+                                                <th style="width: 30px;text-align: center;">PM</th>
                                                 <th style="width: 30px;text-align: center;">TIPO</th>
                                                 <th style="width: 30px;text-align: center;">HS</th>
                                                 <th style="width: 30px;text-align: center;">ASIGNADO</th>
@@ -152,7 +152,7 @@ if (isset($_SESSION['usu_id'])) {
                                                 <th style="width: 300px;text-align: center;">TITULO</th>
                                                 <th style="width: 300px;text-align: center;">INICIO</th>
                                                 <th style="width: 30px;text-align: center;">FIN</th>
-                                                <th style="width: 30px;text-align: center;">CREADOR</th>
+                                                <th style="width: 30px;text-align: center;">PM</th>
                                                 <th style="width: 30px;text-align: center;">TIPO</th>
                                                 <th style="width: 30px;text-align: center;">HS</th>
                                                 <th style="width: 30px;text-align: center;">ASIGNADO</th>
@@ -187,7 +187,7 @@ if (isset($_SESSION['usu_id'])) {
                                                 <th style="width: 300px;text-align: center;">TITULO</th>
                                                 <th style="width: 300px;text-align: center;">INICIO</th>
                                                 <th style="width: 30px;text-align: center;">FIN</th>
-                                                <th style="width: 30px;text-align: center;">CREADOR</th>
+                                                <th style="width: 30px;text-align: center;">PM</th>
                                                 <th style="width: 30px;text-align: center;">TIPO</th>
                                                 <th style="width: 30px;text-align: center;">HS</th>
                                                 <th style="width: 30px;text-align: center;">ASIGNADO</th>

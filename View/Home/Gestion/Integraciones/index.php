@@ -69,7 +69,7 @@ if (isset($_SESSION['usu_id'])) {
                                     <th style="width: 50%;text-align: center;">API KEY</th>
                                     <th style="width: 5%;text-align: center;">HERRAMIENTA</th>
                                     <th style="width: 10%;text-align: center;">SECTOR</th>
-                                    <th style="width: 10%;text-align: center;">CREADOR</th>
+                                    <th style="width: 10%;text-align: center;">PM</th>
                                     <th style="width: 10%;text-align: center;"></th>
                                 </tr>
                             </thead>

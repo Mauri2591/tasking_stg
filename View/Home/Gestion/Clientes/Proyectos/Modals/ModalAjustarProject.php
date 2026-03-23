@@ -35,7 +35,7 @@
                                 </div>
 
                                 <div class="mb-3 col-sm-2">
-                                    <span class="badge bg-light fs-10 mb-1 text-dark">Creador</span>
+                                    <span class="badge bg-light fs-10 mb-1 text-dark">Pm</span>
                                     <input type="hidden" hidden id="usu_id_creador_proy_nuevo">
                                     <input type="text" disabled
                                         class="form-control bg-primary text-light form-control-sm"

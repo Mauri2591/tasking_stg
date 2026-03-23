@@ -975,7 +975,20 @@ ORDER BY id_proyecto_cantidad_servicios ASC";
     DATE_FORMAT(pg.fech_fin, '%d-%m-%Y') AS fech_fin,
     p.cantidad_servicios, 
     c.client_rs, 
-    u.usu_nom AS creador_proy,                 -- ✅ ahora desde proyecto_gestionado
+
+    pm_concat.id_pm_calidad AS id_pm_calidad,  -- ✅ FIX
+
+    COALESCE(
+        pm_concat.pm_calidad_nombres,
+        GROUP_CONCAT(
+            DISTINCT CONCAT(
+                UPPER(LEFT(u.usu_nom, 1)),
+                LOWER(SUBSTRING(u.usu_nom, 2))
+            )
+            SEPARATOR ',<br>'
+        )
+    ) AS creador_proy,  
+
     s.sector_nombre,
     s.sector_id,
     tsc.cats_nom,
@@ -987,53 +1000,93 @@ ORDER BY id_proyecto_cantidad_servicios ASC";
     pg.titulo,
     prio.prioridad AS prioridad,
     prio.prioridad AS prioridad_nom,
+
     CASE 
         WHEN proyecto_rechequeo.id_proyecto_gestionado IS NOT NULL THEN 'SI'
         ELSE 'NO'
     END AS rechequeo,
+
     GROUP_CONCAT(
-    CONCAT(
-        UPPER(LEFT(uas.usu_nom, 1)),
-        LOWER(SUBSTRING(uas.usu_nom, 2))
-    )
-    SEPARATOR ',<br>'
-) AS usu_nom_asignado,
+        CONCAT(
+            UPPER(LEFT(uas.usu_nom, 1)),
+            LOWER(SUBSTRING(uas.usu_nom, 2))
+        )
+        SEPARATOR ',<br>'
+    ) AS usu_nom_asignado,
+
     (
         SELECT SUM(d.hs_dimensionadas)
         FROM dimensionamiento d
         WHERE d.id_proyecto_gestionado = pg.id
     ) AS hs_dimensionadas,
+
     tmc.cat_nom
+
 FROM proyecto_cantidad_servicios pcs
+
 JOIN proyectos p 
     ON pcs.proy_id = p.proy_id
+
 LEFT JOIN clientes c 
     ON p.client_id = c.client_id
+
 LEFT JOIN tm_pais tp 
     ON c.pais_id = tp.pais_id
+
 LEFT JOIN proyecto_gestionado pg 
     ON pg.id_proyecto_cantidad_servicios = pcs.id
+
 LEFT JOIN tm_usuario u 
-    ON pg.usu_crea = u.usu_id                -- ✅ creador del proyecto gestionado
+    ON pg.usu_crea = u.usu_id
+
 LEFT JOIN sectores s 
     ON pg.sector_id = s.sector_id
+
 LEFT JOIN tm_subcategoria tsc 
     ON pg.cats_id = tsc.cats_id
+
 LEFT JOIN tm_categoria tmc 
     ON pg.cat_id = tmc.cat_id
+
 LEFT JOIN prioridad prio 
     ON pg.prioridad_id = prio.id
+
 LEFT JOIN usuario_proyecto ua 
     ON pg.id = ua.id_proyecto_gestionado
+
 LEFT JOIN tm_usuario uas 
     ON ua.usu_asignado = uas.usu_id
+
 LEFT JOIN proyecto_rechequeo 
     ON proyecto_rechequeo.id_proyecto_gestionado = pg.id
+
 LEFT JOIN proyecto_recurrencia 
     ON pg.id = proyecto_recurrencia.id_proyecto_gestionado
+
+-- ✅ SUBQUERY CORRECTO
+LEFT JOIN (
+    SELECT 
+        tse.id_proyecto_gestionado,
+        MAX(tse.id_pm_calidad) AS id_pm_calidad,
+        GROUP_CONCAT(
+            DISTINCT CONCAT(
+                UPPER(LEFT(u.usu_nom, 1)),
+                LOWER(SUBSTRING(u.usu_nom, 2))
+            )
+            SEPARATOR ',<br>'
+        ) AS pm_calidad_nombres
+    FROM timesummary_estados tse
+    INNER JOIN tm_usuario u 
+        ON u.usu_id = tse.usuario_asignado
+    WHERE tse.id_pm_calidad IS NOT NULL
+    GROUP BY tse.id_proyecto_gestionado
+) pm_concat 
+ON pm_concat.id_proyecto_gestionado = pg.id
+
 WHERE 
     pcs.est = 1 
     AND (pg.estados_id = 1 OR pg.estados_id = 2)
+
 GROUP BY 
     pcs.id,
     pcs.proy_id, 
@@ -1058,6 +1111,16 @@ ORDER BY id_proyecto_cantidad_servicios ASC";
         $stmt = $conn->prepare($sql);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function insert_nuevo_pm($id_pm_calidad,$usuario_asignado,$id_proyecto_gestionado){
+        $conn=parent::get_conexion();
+        $sql="INSERT INTO timesummary_estados (id_pm_calidad, usuario_asignado,id_proyecto_gestionado) VALUES (:id_pm_calidad, :usuario_asignado,:id_proyecto_gestionado)";
+        $stmt=$conn->prepare($sql);
+        $stmt->bindValue(":id_pm_calidad",$id_pm_calidad,PDO::PARAM_INT);
+        $stmt->bindValue(":usuario_asignado",$usuario_asignado,PDO::PARAM_INT);
+        $stmt->bindValue(":id_proyecto_gestionado",$id_proyecto_gestionado,PDO::PARAM_INT);
+        $stmt->execute();
     }
     public function get_proyectos_($estados_id)
     {

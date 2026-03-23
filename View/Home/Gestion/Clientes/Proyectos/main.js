@@ -2607,6 +2607,42 @@ function gestionar_proy_recurrente(id_proyecto_cantidad_servicios, conteo_id_rec
 
 }
 
+function asignarPm(id_proyecto_gestionado,id_pm_calidad) {
+    Swal.fire({
+        icon: "info",
+        title: "Atencion",
+        text: "Desea asignarse como PM de este proyecto?",
+        showConfirmButton: true,
+        showCancelButton: true
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.post("../../../../../Controller/ctrProyectos.php?proy=insert_nuevo_pm", {
+                id_pm_calidad:id_pm_calidad,    
+                id_proyecto_gestionado: id_proyecto_gestionado
+
+                },
+                function (data, textStatus, jqXHR) {
+
+                },
+                "json"
+            );
+            setTimeout(() => {
+                if ($.fn.DataTable.isDataTable('#table_proyectos_en_proceso')) {
+                    $('#table_proyectos_en_proceso').DataTable().ajax.reload(null, false);
+                    $('#table_proyectos_borrador').DataTable().ajax.reload(null, false);
+                }
+            }, 500);
+            Swal.fire({
+                icon: "success",
+                title: "Bien",
+                text: "Asignado correctamente",
+                timer: 1000,
+                showConfirmButton: false
+            });
+        }
+    })
+}
+
 $("#btnPasarRecurrenteABorrador").off("click").on("click", function () {
     if (!dataRecurrente) {
         Swal.fire({
