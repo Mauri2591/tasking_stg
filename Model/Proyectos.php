@@ -278,7 +278,7 @@ LEFT JOIN proyecto_rechequeo
 LEFT JOIN (
     SELECT 
         tse.id_proyecto_gestionado,
-        MAX(tse.id_pm_calidad) AS id_pm_calidad
+        GROUP_CONCAT(DISTINCT tse.id_pm_calidad) AS id_pm_calidad
     FROM timesummary_estados tse
     WHERE 
         tse.id_pm_calidad IS NOT NULL
@@ -306,7 +306,7 @@ GROUP BY
     pg.id_proyecto_recurrencia,
     pm_concat.id_pm_calidad   -- ✅ importante en algunos MySQL
 
-ORDER BY pcs.proy_id ASC, pcs.numero_servicio ASC;";
+ORDER BY pcs.proy_id ASC, pcs.numero_servicio ASC";
         $stmt = $conn->prepare($sql);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
