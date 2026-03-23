@@ -88,8 +88,8 @@ if (isset($_SESSION['usu_id'])) {
                                         <tr style="text-align: center;">
                                             <th style="width: 100px;text-align: center;">INICIO</th>
                                             <th style="width: 100px;text-align: center;">PRIORIDAD</th>
-                                            <th style="width: 400px;text-align: center;">CLIENTE</th>
-                                            <th style="width: 20px;text-align: center;">PM</th>
+                                            <th style="width: 300px;text-align: center;">CLIENTE</th>
+                                            <th style="width: 100px;text-align: center;">PM</th>
                                             <th style="width: 20px;text-align: center;">REC</th>
                                             <th style="width: 20px;text-align: center;">RETEST</th>
                                             <th style="width: 20px;text-align: center;">SECTOR</th>
