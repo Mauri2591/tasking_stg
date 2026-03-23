@@ -341,56 +341,111 @@ class timesummary extends Conexion
     public function get_titulos_proyectos_like($usu_asignado, $titulo)
 {
     $conn = parent::get_conexion();
+    $conn->exec("SET lc_time_names = 'es_ES'");
 
     $sql = "SELECT 
-    tse.id AS id_timesummary_estados, 
-    pg.id AS id_proyecto_gestionado, 
-    pg.titulo, 
-    up.usu_asignado, 
-    IFNULL(SUM(d.hs_dimensionadas),0) AS hs_dimensionadas, 
-    tm_categoria.cat_nom AS producto, 
-    tse.est 
+        tse.id AS id_timesummary_estados,
+        pg.id AS id_proyecto_gestionado,
+        DATE_FORMAT(pg.fech_inicio, '%M-%Y') AS periodo,
+        pg.titulo,
+        tm_categoria.cat_nom AS producto,
+        IFNULL(dim.total_hs_dimensionadas, 0) AS hs_dimensionadas,
+        proyecto_recurrencia.posicion_recurrencia,
 
-FROM proyecto_gestionado pg 
+        -- horas_consumidas
+        IFNULL((
+            SELECT TIME_FORMAT(SEC_TO_TIME(SUM(TIME_TO_SEC(tc1.horas_consumidas))), '%H:%i')
+            FROM timesummary_carga tc1
+            WHERE tc1.id_proyecto_gestionado = pg.id
+              AND tc1.usu_id = tse.usuario_asignado
+              AND tc1.est = 1
+        ), '00:00') AS horas_consumidas,
 
-LEFT JOIN usuario_proyecto up 
-    ON pg.id = up.id_proyecto_gestionado 
-    AND up.usu_asignado = :usu_asignado
+        -- horas_total
+        CASE 
+            WHEN tse.id_pm_calidad IS NOT NULL THEN 
+                IFNULL((
+                    SELECT TIME_FORMAT(SEC_TO_TIME(SUM(TIME_TO_SEC(tc2.horas_consumidas))), '%H:%i')
+                    FROM timesummary_carga tc2
+                    WHERE tc2.id_proyecto_gestionado = pg.id
+                      AND tc2.est = 1
+                      AND tc2.id_pm_calidad = tse.id_pm_calidad
+                ), '00:00')
+            ELSE
+                IFNULL((
+                    SELECT TIME_FORMAT(SEC_TO_TIME(SUM(TIME_TO_SEC(tc3.horas_consumidas))), '%H:%i')
+                    FROM timesummary_carga tc3
+                    WHERE tc3.id_proyecto_gestionado = pg.id
+                      AND tc3.est = 1
+                      AND (tc3.id_pm_calidad IS NULL OR tc3.id_pm_calidad = 0)
+                ), '00:00')
+        END AS horas_total,
 
-LEFT JOIN tm_estados e 
-    ON pg.estados_id = e.estados_id 
+        -- comparacion
+        IF(
+            (
+                SELECT SUM(TIME_TO_SEC(tc4.horas_consumidas))
+                FROM timesummary_carga tc4
+                WHERE tc4.id_proyecto_gestionado = pg.id
+                  AND tc4.est = 1
+                  AND (
+                       (tse.id_pm_calidad IS NOT NULL AND tc4.id_pm_calidad = tse.id_pm_calidad)
+                    OR (tse.id_pm_calidad IS NULL AND (tc4.id_pm_calidad IS NULL OR tc4.id_pm_calidad = 0))
+                  )
+            ) > (IFNULL(dim.total_hs_dimensionadas,0) * 3600),
+            'HORAS_TOTAL_MAYOR_QUE_DIM',
+            'HORAS_TOTAL_MENOR_QUE_DIM'
+        ) AS comparacion_horas,
 
-LEFT JOIN dimensionamiento d 
-    ON pg.id = d.id_proyecto_gestionado 
+        tse.est,
+        tse.id_pm_calidad,
+        CASE WHEN tse.id_pm_calidad IS NOT NULL THEN 'SI' ELSE 'NO' END AS es_pm
 
-LEFT JOIN tm_categoria 
-    ON pg.cat_id = tm_categoria.cat_id 
+    FROM proyecto_gestionado pg
 
-LEFT JOIN timesummary_estados tse 
-    ON pg.id = tse.id_proyecto_gestionado 
-    AND tse.est = 1
+    LEFT JOIN tm_estados e 
+        ON pg.estados_id = e.estados_id
 
-WHERE 
-    pg.titulo LIKE CONCAT('%', :titulo, '%') 
-    AND e.estados_id IN (1, 2, 3, 4)
+    LEFT JOIN proyecto_recurrencia 
+        ON pg.id = proyecto_recurrencia.id_proyecto_gestionado
 
-GROUP BY 
-    tse.id,
-    pg.id,
-    pg.titulo,
-    up.usu_asignado,
-    tm_categoria.cat_nom,
-    tse.est
+    LEFT JOIN tm_categoria 
+        ON pg.cat_id = tm_categoria.cat_id
 
-ORDER BY pg.titulo ASC";
+    INNER JOIN timesummary_estados tse 
+        ON pg.id = tse.id_proyecto_gestionado
+        AND tse.usuario_asignado = ?
+        AND tse.est = 1
+
+    LEFT JOIN (
+        SELECT 
+            id_proyecto_gestionado,
+            SUM(hs_dimensionadas) AS total_hs_dimensionadas
+        FROM dimensionamiento
+        GROUP BY id_proyecto_gestionado
+    ) AS dim 
+        ON dim.id_proyecto_gestionado = pg.id
+
+    WHERE 
+        e.estados_id IN (1,2,3,4)
+        AND pg.titulo LIKE CONCAT('%', ?, '%')
+
+    GROUP BY 
+        tse.id, 
+        pg.id, 
+        pg.titulo, 
+        tm_categoria.cat_nom, 
+        dim.total_hs_dimensionadas, 
+        tse.est, 
+        tse.id_pm_calidad
+
+    ORDER BY pg.titulo";
+
+    // 🔥 orden: usuario → titulo
+    $params = [$usu_asignado, $titulo];
 
     $stmt = $conn->prepare($sql);
-
-    // 🔥 IMPORTANTE: sin htmlentities
-    $stmt->bindValue(":usu_asignado", $usu_asignado, PDO::PARAM_INT);
-    $stmt->bindValue(":titulo", $titulo, PDO::PARAM_STR);
-
-    $stmt->execute();
+    $stmt->execute($params);
 
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
