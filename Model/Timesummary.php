@@ -338,7 +338,7 @@ class timesummary extends Conexion
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-  public function get_titulos_proyectos_like($usu_asignado, $titulo)
+   public function get_titulos_proyectos_like($usu_asignado, $titulo)
 {
     $conn = parent::get_conexion();
     $conn->exec("SET lc_time_names = 'es_ES'");
@@ -352,12 +352,12 @@ class timesummary extends Conexion
         IFNULL(dim.total_hs_dimensionadas, 0) AS hs_dimensionadas,
         proyecto_recurrencia.posicion_recurrencia,
 
-        -- MIS HORAS (solo si existe para el usuario)
+        -- MIS HORAS
         IFNULL((
             SELECT TIME_FORMAT(SEC_TO_TIME(SUM(TIME_TO_SEC(tc1.horas_consumidas))), '%H:%i')
             FROM timesummary_carga tc1
             WHERE tc1.id_proyecto_gestionado = pg.id
-              AND tc1.usu_id = ?
+              AND tc1.usu_id = tse.usuario_asignado
               AND tc1.est = 1
         ), '00:00') AS mis_horas,
 
@@ -395,9 +395,9 @@ class timesummary extends Conexion
     LEFT JOIN tm_categoria 
         ON pg.cat_id = tm_categoria.cat_id
 
-    -- 🔥 IMPORTANTE: ahora LEFT JOIN (no filtra por usuario)
-    LEFT JOIN timesummary_estados tse 
+    INNER JOIN timesummary_estados tse 
         ON pg.id = tse.id_proyecto_gestionado
+        AND tse.usuario_asignado = ?
         AND tse.est = 1
 
     LEFT JOIN (
@@ -410,8 +410,8 @@ class timesummary extends Conexion
         ON dim.id_proyecto_gestionado = pg.id
 
     WHERE 
-        e.estados_id IN (1,2,3,4)
-        AND LOWER(TRIM(pg.titulo)) LIKE LOWER(CONCAT('%', TRIM(?), '%'))
+        e.estados_id IN (1,2,3,4,14)
+        AND pg.titulo LIKE CONCAT('%', ?, '%')
 
     GROUP BY 
         tse.id, 
@@ -424,9 +424,7 @@ class timesummary extends Conexion
 
     ORDER BY pg.titulo";
 
-    // 🔥 ORDEN:
-    // 1. usuario (para mis_horas)
-    // 2. titulo
+    // 🔥 ORDEN IMPORTANTE
     $params = [$usu_asignado, $titulo];
 
     $stmt = $conn->prepare($sql);
