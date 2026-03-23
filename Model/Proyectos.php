@@ -214,7 +214,16 @@ class Proyectos extends Conexion
 
     pm_concat.id_pm_calidad AS id_pm_calidad,  -- ✅ NUEVO
 
-    u.usu_nom AS creador_proy,
+COALESCE(
+    pm_concat.pm_calidad_nombres,
+    GROUP_CONCAT(
+        DISTINCT CONCAT(
+            UPPER(LEFT(u.usu_nom, 1)),
+            LOWER(SUBSTRING(u.usu_nom, 2))
+        )
+        SEPARATOR ',<br>'
+    )
+) AS creador_proy,
     s.sector_nombre,
     tc.cat_nom,
     tp.pais_nombre,
@@ -1157,13 +1166,14 @@ ORDER BY id_proyecto_cantidad_servicios ASC";
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function insert_nuevo_pm($id_pm_calidad,$usuario_asignado,$id_proyecto_gestionado){
-        $conn=parent::get_conexion();
-        $sql="INSERT INTO timesummary_estados (id_pm_calidad, usuario_asignado,id_proyecto_gestionado) VALUES (:id_pm_calidad, :usuario_asignado,:id_proyecto_gestionado)";
-        $stmt=$conn->prepare($sql);
-        $stmt->bindValue(":id_pm_calidad",$id_pm_calidad,PDO::PARAM_INT);
-        $stmt->bindValue(":usuario_asignado",$usuario_asignado,PDO::PARAM_INT);
-        $stmt->bindValue(":id_proyecto_gestionado",$id_proyecto_gestionado,PDO::PARAM_INT);
+    public function insert_nuevo_pm($id_pm_calidad, $usuario_asignado, $id_proyecto_gestionado)
+    {
+        $conn = parent::get_conexion();
+        $sql = "INSERT INTO timesummary_estados (id_pm_calidad, usuario_asignado,id_proyecto_gestionado) VALUES (:id_pm_calidad, :usuario_asignado,:id_proyecto_gestionado)";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue(":id_pm_calidad", $id_pm_calidad, PDO::PARAM_INT);
+        $stmt->bindValue(":usuario_asignado", $usuario_asignado, PDO::PARAM_INT);
+        $stmt->bindValue(":id_proyecto_gestionado", $id_proyecto_gestionado, PDO::PARAM_INT);
         $stmt->execute();
     }
     public function get_proyectos_($estados_id)
@@ -2055,10 +2065,10 @@ ORDER BY cantidad_proyectos DESC";
     }
 
     public function get_proyectos_total_x_client_id($client_id, $sector_id, $mostrar_historico = false)
-{
-    $conn = parent::get_conexion();
+    {
+        $conn = parent::get_conexion();
 
-    $sql = "SELECT  
+        $sql = "SELECT  
         pg.id,
         pg.titulo,
         pg.fech_vantive,
@@ -2099,18 +2109,18 @@ ORDER BY cantidad_proyectos DESC";
             SELECT cat_id FROM tm_categoria WHERE sector_id = :sector_id OR cat_id = 26
         ))
     )";
-    if (!$mostrar_historico) {
-        $sql .= " AND pg.estados_id NOT IN(16,17)";
-    }
-    $sql .= " GROUP BY pg.id
+        if (!$mostrar_historico) {
+            $sql .= " AND pg.estados_id NOT IN(16,17)";
+        }
+        $sql .= " GROUP BY pg.id
               ORDER BY pg.refProy, pg.id";
-    $stmt = $conn->prepare($sql);
-    $stmt->bindValue(":client_id", $client_id, PDO::PARAM_INT);
-    $stmt->bindValue(":sector_id", $sector_id, PDO::PARAM_INT);
-    $stmt->execute();
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue(":client_id", $client_id, PDO::PARAM_INT);
+        $stmt->bindValue(":sector_id", $sector_id, PDO::PARAM_INT);
+        $stmt->execute();
 
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);
-}
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
     public function getDatosCliente($id)
     {
         $conn = parent::get_conexion();
