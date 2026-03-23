@@ -2631,6 +2631,7 @@ function asignarPm(id_proyecto_gestionado, id_pm_calidad) {
                     if ($.fn.DataTable.isDataTable('#table_proyectos_en_proceso')) {
                         $('#table_proyectos_en_proceso').DataTable().ajax.reload(null, false);
                         $('#table_proyectos_borrador').DataTable().ajax.reload(null, false);
+                        $("#table_proyectos_realizados").DataTable().ajax.reload(null, false);
                     }
                 }, 500);
                 Swal.fire({
