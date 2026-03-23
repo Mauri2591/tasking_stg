@@ -1270,7 +1270,20 @@ ORDER BY
     DATE_FORMAT(pg.fech_fin, '%d-%m-%Y') AS fech_fin,
     p.cantidad_servicios, 
     c.client_rs, 
-    u.usu_nom AS creador_proy,               -- ✅ ahora desde proyecto_gestionado
+
+    pm_concat.id_pm_calidad AS id_pm_calidad,  -- ✅ agregado
+
+    COALESCE(
+        pm_concat.pm_calidad_nombres,
+        GROUP_CONCAT(
+            DISTINCT CONCAT(
+                UPPER(LEFT(u.usu_nom, 1)),
+                LOWER(SUBSTRING(u.usu_nom, 2))
+            )
+            SEPARATOR ',<br>'
+        )
+    ) AS creador_proy,
+
     s.sector_nombre,
     s.sector_id,
     tsc.cats_nom,
@@ -1281,39 +1294,84 @@ ORDER BY
     pg.titulo,
     prio.id AS prioridad,
     prio.prioridad AS prioridad_nom,
-    GROUP_CONCAT(uas.usu_nom SEPARATOR ',<br>') AS usu_nom_asignado,
+
+    GROUP_CONCAT(
+        DISTINCT CONCAT(
+            UPPER(LEFT(uas.usu_nom, 1)),
+            LOWER(SUBSTRING(uas.usu_nom, 2))
+        )
+        SEPARATOR ',<br>'
+    ) AS usu_nom_asignado,
+
     (
         SELECT SUM(d.hs_dimensionadas)
         FROM dimensionamiento d
         WHERE d.id_proyecto_gestionado = pg.id
     ) AS hs_dimensionadas,
+
     tmc.cat_nom AS categoria
+
 FROM proyecto_cantidad_servicios pcs
+
 JOIN proyectos p 
     ON pcs.proy_id = p.proy_id
+
 LEFT JOIN clientes c 
     ON p.client_id = c.client_id
+
 LEFT JOIN tm_pais tp 
     ON c.pais_id = tp.pais_id
+
 LEFT JOIN proyecto_gestionado pg 
     ON pg.id_proyecto_cantidad_servicios = pcs.id
+
 LEFT JOIN tm_usuario u 
-    ON pg.usu_crea = u.usu_id                -- ✅ cambio clave
+    ON pg.usu_crea = u.usu_id
+
 LEFT JOIN sectores s 
     ON pg.sector_id = s.sector_id
+
 LEFT JOIN tm_subcategoria tsc 
     ON pg.cats_id = tsc.cats_id
+
 LEFT JOIN tm_categoria tmc 
     ON pg.cat_id = tmc.cat_id
+
 LEFT JOIN prioridad prio 
     ON pg.prioridad_id = prio.id
+
 LEFT JOIN usuario_proyecto ua 
     ON pg.id = ua.id_proyecto_gestionado
+
 LEFT JOIN tm_usuario uas 
     ON ua.usu_asignado = uas.usu_id
+
+-- ✅ SUBQUERY PM (igual que las otras)
+LEFT JOIN (
+    SELECT 
+        tse.id_proyecto_gestionado,
+        MAX(tse.id_pm_calidad) AS id_pm_calidad,
+        GROUP_CONCAT(
+            DISTINCT CONCAT(
+                UPPER(LEFT(u.usu_nom, 1)),
+                LOWER(SUBSTRING(u.usu_nom, 2))
+            )
+            SEPARATOR ',<br>'
+        ) AS pm_calidad_nombres
+    FROM timesummary_estados tse
+    INNER JOIN tm_usuario u 
+        ON u.usu_id = tse.usuario_asignado
+    WHERE 
+        tse.id_pm_calidad IS NOT NULL
+        AND tse.est = 1
+    GROUP BY tse.id_proyecto_gestionado
+) pm_concat 
+ON pm_concat.id_proyecto_gestionado = pg.id
+
 WHERE 
     pcs.est = 1 
     AND pg.estados_id = ?
+
 GROUP BY 
     pcs.id,
     pcs.proy_id, 
@@ -1322,7 +1380,6 @@ GROUP BY
     pg.fech_fin,
     p.cantidad_servicios, 
     c.client_rs, 
-    u.usu_nom,
     s.sector_nombre,
     s.sector_id,
     tsc.cats_nom,
@@ -1333,7 +1390,8 @@ GROUP BY
     pg.titulo,
     prio.id,
     prio.prioridad,
-    tmc.cat_nom
+    tmc.cat_nom,
+    pm_concat.id_pm_calidad 
 ORDER BY id_proyecto_cantidad_servicios ASC";
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(1, htmlspecialchars($estados_id, ENT_QUOTES), PDO::PARAM_INT);
