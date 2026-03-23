@@ -318,6 +318,7 @@ switch ($_GET['accion']) {
                     </tr>          
             ';
         }
+        var_dump($_POST['titulo']);
         echo $htmlTable;
         break;
 
