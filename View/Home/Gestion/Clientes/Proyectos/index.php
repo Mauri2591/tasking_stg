@@ -181,7 +181,7 @@ if (isset($_SESSION['usu_id'])) {
                                     <thead style="text-align: center;">
                                         <tr style="text-align: center;">
                                             <th style="width: 10px;text-align: center;">PRIO</th>
-                                            <th style="width: 250px;text-align: center;">CLIENTE</th>
+                                            <th style="width: 200px;text-align: center;">CLIENTE</th>
                                             <th style="width: 50px;text-align: center;">PM</th>
                                             <th style="width: 10px;text-align: center;">REC</th>
                                             <th style="width: 10px;text-align: center;">RETEST</th>
