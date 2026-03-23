@@ -163,6 +163,13 @@ class timesummary extends Conexion
     {
         $conn = parent::get_conexion();
         $conn->exec("SET lc_time_names = 'es_ES'");
+        
+        $estados = [1, 2, 3, 4];
+        if ($_SESSION['sector_id'] == "4") {
+            $estados[] = 14;
+        }
+        $placeholders = implode(',', array_fill(0, count($estados), '?'));
+
         $sql = "SELECT 
     tse.id AS id_timesummary_estados,
     pg.id AS id_proyecto_gestionado,
@@ -239,10 +246,10 @@ class timesummary extends Conexion
         GROUP BY id_proyecto_gestionado
     ) AS dim 
         ON dim.id_proyecto_gestionado = pg.id
-    WHERE e.estados_id IN (1, 2, 3, 4)
+    WHERE e.estados_id IN ($placeholders)
     GROUP BY 
         tse.id, pg.id, pg.titulo, tm_categoria.cat_nom, dim.total_hs_dimensionadas, tse.est, tse.id_pm_calidad
-    ORDER BY pg.titulo;";
+    ORDER BY pg.titulo";
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(":usu_asignado", $usu_asignado, PDO::PARAM_INT);
         $stmt->execute();
