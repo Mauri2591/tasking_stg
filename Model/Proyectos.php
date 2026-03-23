@@ -211,6 +211,9 @@ class Proyectos extends Conexion
     DATE_FORMAT(pg.fech_inicio, '%d-%m-%Y') AS fech_inicio, 
     p.cantidad_servicios, 
     c.client_rs, 
+
+    pm_concat.id_pm_calidad AS id_pm_calidad,  -- ✅ NUEVO
+
     u.usu_nom AS creador_proy,
     s.sector_nombre,
     tc.cat_nom,
@@ -219,44 +222,74 @@ class Proyectos extends Conexion
     pr.posicion_recurrencia,
     prioridad.prioridad,
     IF(proyecto_rechequeo.id,'SI','NO') as rechequeo,
+
     CASE 
         WHEN pg.id_proyecto_recurrencia IS NULL THEN 0 
         ELSE pg.id_proyecto_recurrencia 
     END AS id_proyecto_recurrencia,
-GROUP_CONCAT(
-  CONCAT(
-    UPPER(LEFT(tmu.usu_nom, 1)),
-    LOWER(SUBSTRING(tmu.usu_nom, 2))
-  )
-  SEPARATOR ',<br>'
-) AS usu_nom_asignado
+
+    GROUP_CONCAT(
+        CONCAT(
+            UPPER(LEFT(tmu.usu_nom, 1)),
+            LOWER(SUBSTRING(tmu.usu_nom, 2))
+        )
+        SEPARATOR ',<br>'
+    ) AS usu_nom_asignado
+
 FROM proyecto_cantidad_servicios pcs
+
 JOIN proyectos p 
     ON pcs.proy_id = p.proy_id
+
 LEFT JOIN clientes c 
     ON p.client_id = c.client_id
+
 LEFT JOIN tm_pais tp 
     ON c.pais_id = tp.pais_id
+
 LEFT JOIN proyecto_gestionado pg 
     ON pg.id_proyecto_cantidad_servicios = pcs.id
+
 LEFT JOIN tm_usuario u 
-    ON pg.usu_crea = u.usu_id           -- ✅ cambio aquí
+    ON pg.usu_crea = u.usu_id
+
 LEFT JOIN tm_categoria tc 
     ON pg.cat_id = tc.cat_id
+
 LEFT JOIN sectores s 
     ON pg.sector_id = s.sector_id
+
 LEFT JOIN usuario_proyecto AS ua 
     ON pg.id = ua.id_proyecto_gestionado
+
 LEFT JOIN tm_usuario tmu 
     ON ua.usu_asignado = tmu.usu_id
+
 LEFT JOIN proyecto_recurrencia pr 
     ON pg.id_proyecto_recurrencia = pr.id
+
 LEFT JOIN prioridad 
     ON pg.prioridad_id = prioridad.id
+
 LEFT JOIN proyecto_rechequeo 
     ON pg.id = proyecto_rechequeo.id_proyecto_gestionado
+
+-- ✅ SUBQUERY PM CALIDAD
+LEFT JOIN (
+    SELECT 
+        tse.id_proyecto_gestionado,
+        MAX(tse.id_pm_calidad) AS id_pm_calidad
+    FROM timesummary_estados tse
+    WHERE 
+        tse.id_pm_calidad IS NOT NULL
+        AND tse.est = 1
+    GROUP BY tse.id_proyecto_gestionado
+) pm_concat 
+ON pm_concat.id_proyecto_gestionado = pg.id
+
 WHERE pcs.est = 1 
   AND (pg.estados_id IS NULL OR pg.estados_id = 14)
+
 GROUP BY 
     pcs.id,
     pcs.proy_id, 
@@ -270,8 +303,10 @@ GROUP BY
     tp.pais_nombre,
     pg.id,
     pr.posicion_recurrencia,
-    pg.id_proyecto_recurrencia
-ORDER BY pcs.proy_id ASC, pcs.numero_servicio ASC";
+    pg.id_proyecto_recurrencia,
+    pm_concat.id_pm_calidad   -- ✅ importante en algunos MySQL
+
+ORDER BY pcs.proy_id ASC, pcs.numero_servicio ASC;";
         $stmt = $conn->prepare($sql);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
