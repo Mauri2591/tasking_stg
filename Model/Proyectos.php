@@ -1063,7 +1063,6 @@ LEFT JOIN proyecto_rechequeo
 LEFT JOIN proyecto_recurrencia 
     ON pg.id = proyecto_recurrencia.id_proyecto_gestionado
 
--- ✅ SUBQUERY CORRECTO
 LEFT JOIN (
     SELECT 
         tse.id_proyecto_gestionado,
@@ -1078,7 +1077,9 @@ LEFT JOIN (
     FROM timesummary_estados tse
     INNER JOIN tm_usuario u 
         ON u.usu_id = tse.usuario_asignado
-    WHERE tse.id_pm_calidad IS NOT NULL
+    WHERE 
+        tse.id_pm_calidad IS NOT NULL
+        AND tse.est = 1   -- ✅ ACÁ VA
     GROUP BY tse.id_proyecto_gestionado
 ) pm_concat 
 ON pm_concat.id_proyecto_gestionado = pg.id
@@ -1086,7 +1087,6 @@ ON pm_concat.id_proyecto_gestionado = pg.id
 WHERE 
     pcs.est = 1 
     AND (pg.estados_id = 1 OR pg.estados_id = 2)
-
 GROUP BY 
     pcs.id,
     pcs.proy_id, 
