@@ -343,46 +343,46 @@ class timesummary extends Conexion
     $conn = parent::get_conexion();
 
     $sql = "SELECT 
-        tse.id AS id_timesummary_estados, 
-        pg.id AS id_proyecto_gestionado, 
-        pg.titulo, 
-        up.usu_asignado, 
-        IFNULL(SUM(d.hs_dimensionadas),0) AS hs_dimensionadas, 
-        tm_categoria.cat_nom AS producto, 
-        tse.est 
+    tse.id AS id_timesummary_estados, 
+    pg.id AS id_proyecto_gestionado, 
+    pg.titulo, 
+    up.usu_asignado, 
+    IFNULL(SUM(d.hs_dimensionadas),0) AS hs_dimensionadas, 
+    tm_categoria.cat_nom AS producto, 
+    tse.est 
 
-    FROM proyecto_gestionado pg 
+FROM proyecto_gestionado pg 
 
-    LEFT JOIN usuario_proyecto up 
-        ON pg.id = up.id_proyecto_gestionado 
+LEFT JOIN usuario_proyecto up 
+    ON pg.id = up.id_proyecto_gestionado 
+    AND up.usu_asignado = :usu_asignado
 
-    LEFT JOIN tm_estados e 
-        ON pg.estados_id = e.estados_id 
+LEFT JOIN tm_estados e 
+    ON pg.estados_id = e.estados_id 
 
-    LEFT JOIN dimensionamiento d 
-        ON pg.id = d.id_proyecto_gestionado 
+LEFT JOIN dimensionamiento d 
+    ON pg.id = d.id_proyecto_gestionado 
 
-    LEFT JOIN tm_categoria 
-        ON pg.cat_id = tm_categoria.cat_id 
+LEFT JOIN tm_categoria 
+    ON pg.cat_id = tm_categoria.cat_id 
 
-    LEFT JOIN timesummary_estados tse 
-        ON pg.id = tse.id_proyecto_gestionado 
-        AND tse.est = 1
+LEFT JOIN timesummary_estados tse 
+    ON pg.id = tse.id_proyecto_gestionado 
+    AND tse.est = 1
 
-    WHERE 
-        pg.titulo LIKE CONCAT('%', :titulo, '%') 
-        AND up.usu_asignado = :usu_asignado
-        AND e.estados_id IN (1, 2, 3, 4)
+WHERE 
+    pg.titulo LIKE CONCAT('%', :titulo, '%') 
+    AND e.estados_id IN (1, 2, 3, 4)
 
-    GROUP BY 
-        tse.id,
-        pg.id,
-        pg.titulo,
-        up.usu_asignado,
-        tm_categoria.cat_nom,
-        tse.est
+GROUP BY 
+    tse.id,
+    pg.id,
+    pg.titulo,
+    up.usu_asignado,
+    tm_categoria.cat_nom,
+    tse.est
 
-    ORDER BY pg.titulo ASC";
+ORDER BY pg.titulo ASC";
 
     $stmt = $conn->prepare($sql);
 
