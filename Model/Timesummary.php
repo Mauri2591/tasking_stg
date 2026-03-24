@@ -164,10 +164,8 @@ class timesummary extends Conexion
         $conn = parent::get_conexion();
         $conn->exec("SET lc_time_names = 'es_ES'");
         
-        $estados = [1, 2, 3, 4];
-        if ($_SESSION['sector_id'] == "4") {
-            $estados[] = 14;
-        }
+        $estados = [1, 2, 3, 4, 14];
+
         $placeholders = implode(',', array_fill(0, count($estados), '?'));
         $params = array_merge([$usu_asignado], $estados);
 
