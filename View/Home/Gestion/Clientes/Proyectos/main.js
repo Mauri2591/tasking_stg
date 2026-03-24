@@ -2633,7 +2633,7 @@ function asignarPm(id_proyecto_gestionado, id_pm_calidad) {
                         $('#table_proyectos_borrador').DataTable().ajax.reload(null, false);
                         $("#table_proyectos_realizados").DataTable().ajax.reload(null, false);
                     }
-                }, 500);
+                }, 100);
                 Swal.fire({
                     icon: "success",
                     title: "Bien",
