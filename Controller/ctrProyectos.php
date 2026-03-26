@@ -301,16 +301,18 @@ switch ($_GET['proy']) {
             $_SESSION['usu_id']
         );
 
-        if (isset($_POST['usu_asignado'])) {
-            if (empty($_POST['usu_asignado'])) {
-                $proyecto->insert_usuarios_proyecto($id_proyecto_gestionado, null);
-            }
-        } else {
-            $proyecto->insert_usuarios_proyecto($id_proyecto_gestionado, null);
-        }
+        if (!empty($_POST['usu_asignado'])) {
 
-        for ($i = 0; $i < $longitud_usu_asignado; $i++) {
-            $proyecto->insert_usuarios_proyecto($id_proyecto_gestionado, $_POST['usu_asignado'][$i]);
+            $usuarios = array_unique($_POST['usu_asignado']);
+
+            foreach ($usuarios as $usuario_id) {
+
+                if ($usuario_id == $_SESSION['usu_id']) {
+                    continue;
+                }
+
+                $proyecto->insert_usuarios_proyecto($id_proyecto_gestionado, $usuario_id);
+            }
         }
 
         echo json_encode(["Status" => "OK", "Message" => "Proyecto insertado correctamente"]);
