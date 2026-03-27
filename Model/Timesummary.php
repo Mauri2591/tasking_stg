@@ -719,71 +719,35 @@ class timesummary extends Conexion
     dimensionamiento.hs_dimensionadas AS dimensionamiento,
 
 -- hs_restante
-CASE 
-    WHEN (SUM(CASE 
-            WHEN horas_usuarios.es_pm = 0 
-            THEN horas_usuarios.total_segundos 
-            ELSE 0 
-        END) / 3600) >= dimensionamiento.hs_dimensionadas
-    THEN '00:00'
-    ELSE CONCAT(
-        LPAD(FLOOR(ROUND((
-            dimensionamiento.hs_dimensionadas - 
-            (SUM(CASE 
+TIME_FORMAT(
+    SEC_TO_TIME(
+        GREATEST(
+            (dimensionamiento.hs_dimensionadas * 3600) -
+            SUM(CASE 
                 WHEN horas_usuarios.es_pm = 0 
                 THEN horas_usuarios.total_segundos 
                 ELSE 0 
-            END) / 3600)
-        ), 2)), 2, '0'), ':',
-        LPAD(ROUND((ROUND((
-            dimensionamiento.hs_dimensionadas - 
-            (SUM(CASE 
-                WHEN horas_usuarios.es_pm = 0 
-                THEN horas_usuarios.total_segundos 
-                ELSE 0 
-            END) / 3600)
-        ), 2) - FLOOR(ROUND((
-            dimensionamiento.hs_dimensionadas - 
-            (SUM(CASE 
-                WHEN horas_usuarios.es_pm = 0 
-                THEN horas_usuarios.total_segundos 
-                ELSE 0 
-            END) / 3600)
-        ), 2))) * 60), 2, '0')
-    )
-END AS hs_restante,
+            END),
+            0
+        )
+    ),
+    '%H:%i'
+) AS hs_restante,
 
--- hs_resto
-CASE 
-    WHEN (SUM(CASE 
-            WHEN horas_usuarios.es_pm = 0 
-            THEN horas_usuarios.total_segundos 
-            ELSE 0 
-        END) / 3600) > dimensionamiento.hs_dimensionadas
-    THEN CONCAT(
-        LPAD(FLOOR(ROUND((
-            (SUM(CASE 
+-- hs_resto (exceso)
+TIME_FORMAT(
+    SEC_TO_TIME(
+        GREATEST(
+            SUM(CASE 
                 WHEN horas_usuarios.es_pm = 0 
                 THEN horas_usuarios.total_segundos 
                 ELSE 0 
-            END) / 3600) - dimensionamiento.hs_dimensionadas
-        ), 2)), 2, '0'), ':',
-        LPAD(ROUND((ROUND((
-            (SUM(CASE 
-                WHEN horas_usuarios.es_pm = 0 
-                THEN horas_usuarios.total_segundos 
-                ELSE 0 
-            END) / 3600) - dimensionamiento.hs_dimensionadas
-        ), 2) - FLOOR(ROUND((
-            (SUM(CASE 
-                WHEN horas_usuarios.es_pm = 0 
-                THEN horas_usuarios.total_segundos 
-                ELSE 0 
-            END) / 3600) - dimensionamiento.hs_dimensionadas
-        ), 2))) * 60), 2, '0')
-    )
-    ELSE NULL
-END AS hs_resto,
+            END) - (dimensionamiento.hs_dimensionadas * 3600),
+            0
+        )
+    ),
+    '%H:%i'
+) AS hs_resto,
 
 -- PM por usuario
 GROUP_CONCAT(
