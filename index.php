@@ -242,10 +242,9 @@ require_once __DIR__ . "/Config/Config.php";
 
     <script>
         const lines = [
-            "[OK] Cargando módulos de proyectos",
-            "[OK] Sincronizando clientes",
+            "[OK] Cargando módulos",
+            "[OK] Sincronizando proyectos",
             "[OK] Inicializando timesummary",
-            "[OK] Validando dimensionamiento",
             "[OK] Preparando dashboard",
             "[OK] Sistema listo"
         ];
