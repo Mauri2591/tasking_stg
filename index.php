@@ -232,7 +232,7 @@ require_once __DIR__ . "/Config/Config.php";
         text-align:center;
         font-size:12px;
         color:#475569;">
-        © <?php echo date('Y'); ?> Personal <span style="color:#3b82f6;">(MSSP)</span> · Managed Security Services Platform
+        © <?php echo date('Y'); ?> Personal-Tech <span style="color:#3b82f6;">(MSSP)</span>
     </div>
 </body>
 
