@@ -787,7 +787,7 @@ END AS hs_resto,
 
 -- PM por usuario
 GROUP_CONCAT(
-    CASE 
+    DISTINCT CASE 
         WHEN horas_usuarios.es_pm = 1 THEN
             CONCAT(
                 horas_usuarios.usu_nom, ' ',
@@ -823,7 +823,7 @@ TIME_FORMAT(
 
 -- detalle por usuario
 GROUP_CONCAT(
-    CASE 
+    DISTINCT CASE 
         WHEN horas_usuarios.es_pm = 0 THEN
             CONCAT(
                 horas_usuarios.usu_nom, ' ',
@@ -832,7 +832,7 @@ GROUP_CONCAT(
     END SEPARATOR ', '
 ) AS horas_consumidas_por_usuario,
 
--- este podés dejarlo con DISTINCT (está bien acá)
+-- usuarios asignados (este está bien con DISTINCT)
 GROUP_CONCAT(DISTINCT tm_usuario.usu_nom SEPARATOR ', ') AS usuarios_asignados,
 
 tm_categoria.cat_nom AS producto,
