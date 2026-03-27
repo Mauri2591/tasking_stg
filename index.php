@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__."/Config/Conexion.php";
+require_once __DIR__ . "/Config/Conexion.php";
 require_once __DIR__ . "/Config/Config.php";
 ?>
 
@@ -35,171 +35,244 @@ require_once __DIR__ . "/Config/Config.php";
         rel="stylesheet" type="text/css" />
 
     <style>
-        .parentesis {
-            display: inline-block;
-            font-weight: 500;
-            font-size: 1rem;
-            color: aliceblue;
-            transform: scaleX(1.35) scaleY(0.70);
-            letter-spacing: -0.15em;
-            /* junta ( ) */
+        @keyframes pulseGlow {
+            0% {
+                opacity: 0.4;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 0.7;
+                transform: scale(1.1);
+            }
+
+            100% {
+                opacity: 0.4;
+                transform: scale(1);
+            }
+        }
+
+        .bg-glow {
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.2), transparent 70%);
+            filter: blur(80px);
+            animation: pulseGlow 6s infinite ease-in-out;
         }
     </style>
 
 </head>
 
-<body class="bg-primary">
+<body style="margin:0; font-family:'Poppins',sans-serif; background:#020617; overflow:hidden;">
 
-    <div class="auth-page-wrapper pt-5">
-        <!-- auth page content -->
-        <div class="auth-page-content p-0">
-            <div class="container">
-                <!-- <div class="row">
-                    <div class="col-lg-12">
-                        <div class="text-center mt-sm-5 mb-4 text-white-50">
-                            <div>
-                                <h1 style="font-size: 50px; color:white">Tasking</h1>
-                            </div>
-                        </div>
-                    </div>
-                </div> -->
-                <!-- end row -->
-                <div class="row justify-content-center" style="margin-top: 14rem;">
-                    <div class="col-md-8 col-lg-6 col-xl-5">
-                        <div class="card" style="margin-top: 5rem;">
+    <div style="
+position:absolute;
+width:600px;
+height:600px;
+background: radial-gradient(circle, rgba(59,130,246,0.15), transparent 70%);
+filter: blur(100px);
+top:-200px;
+left:-200px;
+animation: float 10s ease-in-out infinite;
+"></div>
 
-                            <div class="card-body bg-light"
-                                style="border: 1px solid #3f0d66; box-shadow:0 0 20px 5px  #3f0d66;">
-                                <div class="text-center">
-                                    <div>
-                                        <marquee class="text-primary" behavior="" direction=""><span
-                                                style="font-family: monospace; color:#3f0d66; font-weight: bold;"
-                                                class="fs-22">Bienvenido a
-                                                TASKING <i
-                                                    class="ri-git-repository-line text-success fw-normal fs-20 p-0 m-0"></i></span>
-                                        </marquee>
-                                    </div>
-                                </div>
+    <div style="
+position:absolute;
+width:500px;
+height:500px;
+background: radial-gradient(circle, rgba(34,197,94,0.12), transparent 70%);
+filter: blur(100px);
+bottom:-150px;
+right:-150px;
+animation: float 12s ease-in-out infinite;
+"></div>
 
-                                <div>
-                                    <form method="POST" action="Controller/ctrLogin.php">
-                                        <div>
-                                            <label for="username" class="form-label fw-bold mb-0"
-                                                style="color:#3f0d66">Correo</label>
-                                            <input type="text" class="form-control" name="usu_correo"
-                                                placeholder="Ingrese su email">
-                                        </div>
+    <div style="display:flex; height:100vh; position:relative; z-index:2;">
 
-                                        <div class="mb-2">
-                                            <label class="form-label fw-bold" style="color:#3f0d66"
-                                                for="password-input">Password</label>
-                                            <div class="position-relative auth-pass-inputgroup mb-1">
-                                                <input type="password" class="form-control pe-5"
-                                                    placeholder="Ingrese su password" name="usu_pass">
-                                            </div>
-                                        </div>
+        <!-- PANEL IZQUIERDO-->
+        <div style="
+        flex:1;
+        display:flex;
+        flex-direction:column;
+        justify-content:center;
+        padding:60px;
+        color:#e2e8f0;
+    ">
 
-                                        <div class="mb-2">
-                                            <input type="hidden" hidden class="form-control pe-5"
-                                                name="token_csrf" 
-                                                <?php $_SESSION['token_csrf']= bin2hex(random_bytes(32));?>
-                                                value="<?php echo $_SESSION['token_csrf'] ?? '' ?>">
-                                        </div>
+            <h1 style="font-size:4.5rem; font-weight:700; margin-bottom:10px;">
+                TASKING
+            </h1>
 
-                                        <div class="mt-1">
-                                            <button class="btn btn-success w-100" name="btnLogin" value="ingresar"
-                                                type="submit">Ingresar</button>
-                                        </div>
-                                        <?php if (isset($_GET['err']) && $_GET['err'] === "err_usu"): ?>
-                                            <div id="err_usu" class="alert text-center mt-2 alert-warning alert-borderless"
-                                                role="alert">
-                                                <strong> Error </strong><br> Datos vacios!
-                                            </div>
-                                        <?php endif; ?>
-                                        <?php if (isset($_GET['err']) && $_GET['err'] === "err_pass"): ?>
-                                            <div id="err_pass" class="alert text-center mt-2 alert-warning alert-borderless"
-                                                role="alert">
-                                                <strong> Error </strong><br> Datos no validos!
-                                            </div>
-                                        <?php endif; ?>
-
-                                        <?php if (isset($_GET['err']) && $_GET['err'] === "err_csrf"): ?>
-                                            <div id="err_csrf" class="alert text-center mt-2 alert-warning alert-borderless"
-                                                role="alert">
-                                                <strong> Error </strong><br> Token csrf invalido!
-                                            </div>
-                                        <?php endif; ?>
-
-                                    </form>
-                                </div>
-                            </div>
-                            <!-- end card body -->
-                        </div>
-                        <!-- end card -->
-                    </div>
-                </div>
-                <!-- end row -->
+            <div style="color:#64748b; margin-bottom:30px;">
+                Plataforma integral de gestión, dimensionamiento y seguimiento de proyectos
             </div>
-            <!-- end container -->
+
+            <div style="display:flex; flex-direction:column; gap:12px; font-size:14px;">
+                <div>📁 Gestión de Proyectos y Servicios</div>
+                <div>👥 Gestión de Clientes y equipos</div>
+                <div>⏱️ Control de horas</div>
+                <div>📐 Dimensionamiento de Proyectos</div>
+                <div>📊 Seguimiento de avance y estados</div>
+                <div>🔗 API REST para integración con sistemas externos</div>
+            </div>
+
+            <!-- TERMINAL-->
+            <div style="
+    margin-top:40px;
+    background:#020617;
+    border:1px solid #1e293b;
+    border-radius:10px;
+    padding:15px;
+    font-size:12px;
+    color:#22c55e;
+    font-family:monospace;
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+" id="terminalBox">
+                Inicializando plataforma...
+            </div>
+
         </div>
-        <!-- end auth page content -->
-        <!-- footer -->
-        <footer class="footer pt-3 pb-0">
-            <div class="container">
-                <div class="row">
-                    <div class="col-lg-12">
-                        <div class="text-center">
-                            <p class="mb-0 text-light fs-16">&copy;
 
+        <div style="
+        width:420px;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        padding:30px;
+    ">
 
-                                <span>
-                                    <span style="font-family: 'Poppins', sans-serif;color:#fff; font-size: 1.2rem; font-weight: 600;">
-                                        pers</span><span class="parentesis">()</span><span style="font-family: 'Poppins', sans-serif;color:#fff; font-size: 1.2rem;"><span style="font-family: 'Poppins', sans-serif;color:#fff; font-size: 1.2rem;font-weight: 600; margin-left: .2rem;">nal</span> tech</span>
-                                </span>
-                                <script>
-                                    document.write(new Date().getFullYear())
-                                </script>
-                            </p>
-                        </div>
-                    </div>
+            <div style="
+            width:100%;
+            background: rgba(0,0,0,0.65);
+            border:1px solid rgba(59,130,246,0.25);
+            border-radius:16px;
+            padding:2rem;
+            box-shadow:
+                0 0 40px rgba(59,130,246,0.15),
+                inset 0 0 10px rgba(255,255,255,0.03);
+            backdrop-filter: blur(12px);
+        ">
+
+                <div style="text-align:center; margin-bottom:20px;">
+                    <h2 style="color:#3b82f6;">Acceso seguro</h2>
+                    <small style="color:#64748b;">
+                        Autenticación requerida
+                    </small>
                 </div>
+
+                <form method="POST" action="Controller/ctrLogin.php">
+
+                    <input type="hidden" name="token_csrf"
+                        <?php $_SESSION['token_csrf'] = bin2hex(random_bytes(32)); ?>
+                        value="<?php echo $_SESSION['token_csrf'] ?? '' ?>">
+
+                    <div style="margin-bottom:12px;">
+                        <input type="text" name="usu_correo"
+                            placeholder="usuario@empresa.com"
+                            style="
+                            width:100%;
+                            padding:12px;
+                            border-radius:8px;
+                            border:1px solid #1e293b;
+                            background:#020617;
+                            color:#e2e8f0;
+                            outline:none;
+                        "
+                            onfocus="this.style.border='1px solid #3b82f6'"
+                            onblur="this.style.border='1px solid #1e293b'">
+                    </div>
+
+                    <div style="margin-bottom:12px;">
+                        <input type="password" name="usu_pass"
+                            placeholder="Contraseña"
+                            style="
+                            width:100%;
+                            padding:12px;
+                            border-radius:8px;
+                            border:1px solid #1e293b;
+                            background:#020617;
+                            color:#e2e8f0;
+                            outline:none;
+                        "
+                            onfocus="this.style.border='1px solid #3b82f6'"
+                            onblur="this.style.border='1px solid #1e293b'">
+                    </div>
+
+                    <button type="submit" name="btnLogin" value="ingresar"
+                        style="
+                        width:100%;
+                        padding:12px;
+                        border:none;
+                        border-radius:8px;
+                        background:#3b82f6;
+                        color:#fff;
+                        font-weight:600;
+                        cursor:pointer;
+                        transition:0.3s;
+                    "
+                        onmouseover="this.style.background='#2563eb'"
+                        onmouseout="this.style.background='#3b82f6'">
+                        Ingresar
+                    </button>
+
+                    <?php if (isset($_GET['err']) && $_GET['err'] === "err_pass"): ?>
+                        <div style="margin-top:10px; color:#ef4444; text-align:center;">
+                            Credenciales inválidas
+                        </div>
+                    <?php endif; ?>
+
+                </form>
+
             </div>
-        </footer>
-        <!-- end Footer -->
+
+        </div>
+
     </div>
-    <!-- end auth-page-wrapper -->
 
-    <!-- JAVASCRIPT -->
-    <script
-        src="<?php echo URL; ?>/View/Home/Public/velzon/assets/libs/bootstrap/js/bootstrap.bundle.min.js?sheet=<?php echo rand(); ?>">
-    </script>
-    <script
-        src="<?php echo URL; ?>/View/Home/Public/velzon/assets/libs/simplebar/simplebar.min.js?sheet=<?php echo rand(); ?>">
-    </script>
-    <script
-        src="<?php echo URL; ?>/View/Home/Public/velzon/assets/libs/node-waves/waves.min.js?sheet=<?php echo rand(); ?>">
-    </script>
-    <script
-        src="<?php echo URL; ?>/View/Home/Public/velzon/assets/libs/feather-icons/feather.min.js?sheet=<?php echo rand(); ?>">
-    </script>
-    <script
-        src="<?php echo URL; ?>/View/Home/Public/velzon/assets/js/pages/plugins/lord-icon-2.1.0.js?sheet=<?php echo rand(); ?>">
-    </script>
-    <script src="<?php echo URL; ?>/View/Home/Public/velzon/assets/js/plugins.js?sheet=<?php echo rand(); ?>"></script>
+    <script>
+const hayErrorLogin = <?php echo (isset($_GET['err']) ? 'true' : 'false'); ?>;
+</script>
 
-    <!-- particles js -->
-    <script
-        src="<?php echo URL; ?>/View/Home/Public/velzon/assets/libs/particles.js/particles.js?sheet=<?php echo rand(); ?>">
-    </script>
-    <!-- particles app js -->
-    <script
-        src="<?php echo URL; ?>/View/Home/Public/velzon/assets/js/pages/particles.app.js?sheet=<?php echo rand(); ?>">
-    </script>
-    <!-- password-addon init -->
-    <script
-        src="<?php echo URL; ?>/View/Home/Public/velzon/assets/js/pages/password-addon.init.js?sheet=<?php echo rand(); ?>">
-    </script>
-    <script src="main.js?sheet=<?php echo rand(); ?>"></script>
-</body>
+    <script>
+const lines = [
+    "[OK] Cargando módulos de proyectos",
+    "[OK] Sincronizando clientes",
+    "[OK] Inicializando timesummary",
+    "[OK] Validando dimensionamiento",
+    "[OK] Preparando dashboard",
+    "[OK] Sistema listo"
+];
+
+let i = 0;
+
+const yaEjecutado = sessionStorage.getItem("terminal_loaded");
+
+function writeLine(){
+    if(i < lines.length){
+        document.getElementById("terminalBox").innerHTML += "<br>" + lines[i];
+        i++;
+        setTimeout(writeLine, 700);
+    } else {
+        sessionStorage.setItem("terminal_loaded", "true");
+    }
+}
+
+if(hayErrorLogin){
+    document.getElementById("terminalBox").innerHTML = `
+        Inicializando plataforma...<br>
+        ${lines.join("<br>")}
+    `;
+}
+else if(!yaEjecutado){
+    writeLine();
+}
+else {
+    document.getElementById("terminalBox").innerHTML = `
+        Inicializando plataforma...<br>
+        ${lines.join("<br>")}
+    `;
+}
+</script>
 
 </html>
