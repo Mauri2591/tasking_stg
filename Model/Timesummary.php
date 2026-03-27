@@ -720,7 +720,7 @@ class timesummary extends Conexion
 
     -- hs_restante
     CASE 
-        WHEN (SUM(CASE 
+        WHEN (SUM(DISTINCT CASE 
                 WHEN horas_usuarios.es_pm = 0 
                 THEN horas_usuarios.total_segundos 
                 ELSE 0 
@@ -729,7 +729,7 @@ class timesummary extends Conexion
         ELSE CONCAT(
             LPAD(FLOOR(ROUND((
                 dimensionamiento.hs_dimensionadas - 
-                (SUM(CASE 
+                (SUM(DISTINCT CASE 
                     WHEN horas_usuarios.es_pm = 0 
                     THEN horas_usuarios.total_segundos 
                     ELSE 0 
@@ -737,14 +737,14 @@ class timesummary extends Conexion
             ), 2)), 2, '0'), ':',
             LPAD(ROUND((ROUND((
                 dimensionamiento.hs_dimensionadas - 
-                (SUM(CASE 
+                (SUM(DISTINCT CASE 
                     WHEN horas_usuarios.es_pm = 0 
                     THEN horas_usuarios.total_segundos 
                     ELSE 0 
                 END) / 3600)
             ), 2) - FLOOR(ROUND((
                 dimensionamiento.hs_dimensionadas - 
-                (SUM(CASE 
+                (SUM(DISTINCT CASE 
                     WHEN horas_usuarios.es_pm = 0 
                     THEN horas_usuarios.total_segundos 
                     ELSE 0 
@@ -755,27 +755,27 @@ class timesummary extends Conexion
 
     -- hs_resto
     CASE 
-        WHEN (SUM(CASE 
+        WHEN (SUM(DISTINCT CASE 
                 WHEN horas_usuarios.es_pm = 0 
                 THEN horas_usuarios.total_segundos 
                 ELSE 0 
             END) / 3600) > dimensionamiento.hs_dimensionadas
         THEN CONCAT(
             LPAD(FLOOR(ROUND((
-                (SUM(CASE 
+                (SUM(DISTINCT CASE 
                     WHEN horas_usuarios.es_pm = 0 
                     THEN horas_usuarios.total_segundos 
                     ELSE 0 
                 END) / 3600) - dimensionamiento.hs_dimensionadas
             ), 2)), 2, '0'), ':',
             LPAD(ROUND((ROUND((
-                (SUM(CASE 
+                (SUM(DISTINCT CASE 
                     WHEN horas_usuarios.es_pm = 0 
                     THEN horas_usuarios.total_segundos 
                     ELSE 0 
                 END) / 3600) - dimensionamiento.hs_dimensionadas
             ), 2) - FLOOR(ROUND((
-                (SUM(CASE 
+                (SUM(DISTINCT CASE 
                     WHEN horas_usuarios.es_pm = 0 
                     THEN horas_usuarios.total_segundos 
                     ELSE 0 
@@ -812,7 +812,7 @@ class timesummary extends Conexion
     -- horas normales
     TIME_FORMAT(
         SEC_TO_TIME(
-            SUM(CASE 
+            SUM(DISTINCT CASE 
                 WHEN horas_usuarios.es_pm = 0 
                 THEN horas_usuarios.total_segundos 
                 ELSE 0 
