@@ -720,11 +720,11 @@ class timesummary extends Conexion
 
     -- hs_restante
     CASE 
-        WHEN SUM(CASE 
-    WHEN horas_usuarios.es_pm = 0 
-    THEN horas_usuarios.total_segundos 
-    ELSE 0 
-END) / 3600) >= dimensionamiento.hs_dimensionadas
+        WHEN (SUM(DISTINCT CASE 
+                WHEN horas_usuarios.es_pm = 0 
+                THEN horas_usuarios.total_segundos 
+                ELSE 0 
+            END) / 3600) >= dimensionamiento.hs_dimensionadas
         THEN '00:00'
         ELSE CONCAT(
             LPAD(FLOOR(ROUND((
@@ -755,11 +755,11 @@ END) / 3600) >= dimensionamiento.hs_dimensionadas
 
     -- hs_resto
     CASE 
-        WHEN SUM(CASE 
-    WHEN horas_usuarios.es_pm = 0 
-    THEN horas_usuarios.total_segundos 
-    ELSE 0 
-END) / 3600) > dimensionamiento.hs_dimensionadas
+        WHEN (SUM(DISTINCT CASE 
+                WHEN horas_usuarios.es_pm = 0 
+                THEN horas_usuarios.total_segundos 
+                ELSE 0 
+            END) / 3600) > dimensionamiento.hs_dimensionadas
         THEN CONCAT(
             LPAD(FLOOR(ROUND((
                 (SUM(DISTINCT CASE 
