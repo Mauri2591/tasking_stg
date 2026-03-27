@@ -718,92 +718,126 @@ class timesummary extends Conexion
     proyecto_gestionado.titulo,
     dimensionamiento.hs_dimensionadas AS dimensionamiento,
 
--- hs_restante
-TIME_FORMAT(
-    SEC_TO_TIME(
-        GREATEST(
-            (dimensionamiento.hs_dimensionadas * 3600) -
-            SUM(CASE 
+    -- hs_restante
+    CASE 
+        WHEN (SUM(DISTINCT CASE 
                 WHEN horas_usuarios.es_pm = 0 
                 THEN horas_usuarios.total_segundos 
                 ELSE 0 
-            END),
-            0
+            END) / 3600) >= dimensionamiento.hs_dimensionadas
+        THEN '00:00'
+        ELSE CONCAT(
+            LPAD(FLOOR(ROUND((
+                dimensionamiento.hs_dimensionadas - 
+                (SUM(DISTINCT CASE 
+                    WHEN horas_usuarios.es_pm = 0 
+                    THEN horas_usuarios.total_segundos 
+                    ELSE 0 
+                END) / 3600)
+            ), 2)), 2, '0'), ':',
+            LPAD(ROUND((ROUND((
+                dimensionamiento.hs_dimensionadas - 
+                (SUM(DISTINCT CASE 
+                    WHEN horas_usuarios.es_pm = 0 
+                    THEN horas_usuarios.total_segundos 
+                    ELSE 0 
+                END) / 3600)
+            ), 2) - FLOOR(ROUND((
+                dimensionamiento.hs_dimensionadas - 
+                (SUM(DISTINCT CASE 
+                    WHEN horas_usuarios.es_pm = 0 
+                    THEN horas_usuarios.total_segundos 
+                    ELSE 0 
+                END) / 3600)
+            ), 2))) * 60), 2, '0')
         )
-    ),
-    '%H:%i'
-) AS hs_restante,
+    END AS hs_restante,
 
--- hs_resto (exceso)
-TIME_FORMAT(
-    SEC_TO_TIME(
-        GREATEST(
-            SUM(CASE 
+    -- hs_resto
+    CASE 
+        WHEN (SUM(DISTINCT CASE 
                 WHEN horas_usuarios.es_pm = 0 
                 THEN horas_usuarios.total_segundos 
                 ELSE 0 
-            END) - (dimensionamiento.hs_dimensionadas * 3600),
-            0
+            END) / 3600) > dimensionamiento.hs_dimensionadas
+        THEN CONCAT(
+            LPAD(FLOOR(ROUND((
+                (SUM(DISTINCT CASE 
+                    WHEN horas_usuarios.es_pm = 0 
+                    THEN horas_usuarios.total_segundos 
+                    ELSE 0 
+                END) / 3600) - dimensionamiento.hs_dimensionadas
+            ), 2)), 2, '0'), ':',
+            LPAD(ROUND((ROUND((
+                (SUM(DISTINCT CASE 
+                    WHEN horas_usuarios.es_pm = 0 
+                    THEN horas_usuarios.total_segundos 
+                    ELSE 0 
+                END) / 3600) - dimensionamiento.hs_dimensionadas
+            ), 2) - FLOOR(ROUND((
+                (SUM(DISTINCT CASE 
+                    WHEN horas_usuarios.es_pm = 0 
+                    THEN horas_usuarios.total_segundos 
+                    ELSE 0 
+                END) / 3600) - dimensionamiento.hs_dimensionadas
+            ), 2))) * 60), 2, '0')
         )
-    ),
-    '%H:%i'
-) AS hs_resto,
+        ELSE NULL
+    END AS hs_resto,
 
--- PM por usuario
-GROUP_CONCAT(
-    DISTINCT CASE 
-        WHEN horas_usuarios.es_pm = 1 THEN
-            CONCAT(
-                horas_usuarios.usu_nom, ' ',
-                TIME_FORMAT(SEC_TO_TIME(horas_usuarios.total_segundos), '%H:%i')
-            )
-    END
-    SEPARATOR ', '
-) AS usuario_pm_calidad,
+    -- ✅ PM por usuario (CORRECTO)
+    GROUP_CONCAT(
+        DISTINCT CASE 
+            WHEN horas_usuarios.es_pm = 1 THEN
+                CONCAT(
+                    horas_usuarios.usu_nom, ' ',
+                    TIME_FORMAT(SEC_TO_TIME(horas_usuarios.total_segundos), '%H:%i')
+                )
+        END
+        SEPARATOR ', '
+    ) AS usuario_pm_calidad,
 
--- horas PM total
-TIME_FORMAT(
-    SEC_TO_TIME(
-        SUM(CASE 
-            WHEN horas_usuarios.es_pm = 1 
-            THEN horas_usuarios.total_segundos 
-            ELSE 0 
-        END)
-    ),
-    '%H:%i'
-) AS horas_pm,
+    -- horas PM total
+    TIME_FORMAT(
+        SEC_TO_TIME(
+            SUM(CASE 
+                WHEN horas_usuarios.es_pm = 1 
+                THEN horas_usuarios.total_segundos 
+                ELSE 0 
+            END)
+        ),
+        '%H:%i'
+    ) AS horas_pm,
 
--- horas normales
-TIME_FORMAT(
-    SEC_TO_TIME(
-        SUM(CASE 
-            WHEN horas_usuarios.es_pm = 0 
-            THEN horas_usuarios.total_segundos 
-            ELSE 0 
-        END)
-    ),
-    '%H:%i'
-) AS horas_consumidas_total,
+    -- horas normales
+    TIME_FORMAT(
+        SEC_TO_TIME(
+            SUM(DISTINCT CASE 
+                WHEN horas_usuarios.es_pm = 0 
+                THEN horas_usuarios.total_segundos 
+                ELSE 0 
+            END)
+        ),
+        '%H:%i'
+    ) AS horas_consumidas_total,
 
--- detalle por usuario
-GROUP_CONCAT(
-    DISTINCT CASE 
-        WHEN horas_usuarios.es_pm = 0 THEN
-            CONCAT(
-                horas_usuarios.usu_nom, ' ',
-                TIME_FORMAT(SEC_TO_TIME(horas_usuarios.total_segundos), '%H:%i')
-            )
-    END SEPARATOR ', '
-) AS horas_consumidas_por_usuario,
+    -- detalle por usuario
+    GROUP_CONCAT(
+        DISTINCT CASE 
+            WHEN horas_usuarios.es_pm = 0 THEN
+                CONCAT(
+                    horas_usuarios.usu_nom, ' ',
+                    TIME_FORMAT(SEC_TO_TIME(horas_usuarios.total_segundos), '%H:%i')
+                )
+        END SEPARATOR ', '
+    ) AS horas_consumidas_por_usuario,
 
--- usuarios asignados (este está bien con DISTINCT)
-GROUP_CONCAT(DISTINCT tm_usuario.usu_nom SEPARATOR ', ') AS usuarios_asignados,
-
-tm_categoria.cat_nom AS producto,
-sectores.sector_nombre AS sector,
-MAX(proyecto_gestionado.recurrencia) AS recurrencia,
-MAX(tm_estados.estados_nombre) AS estado,
-proyectos.cantidad_servicios
+    GROUP_CONCAT(DISTINCT tm_usuario.usu_nom SEPARATOR ', ') AS usuarios_asignados,
+    tm_categoria.cat_nom AS producto,
+    sectores.sector_nombre AS sector,
+    MAX(proyecto_gestionado.recurrencia) AS recurrencia,
+    MAX(tm_estados.estados_nombre) AS estado,
+    proyectos.cantidad_servicios
 
 FROM proyectos
 INNER JOIN clientes ON proyectos.client_id = clientes.client_id
