@@ -384,7 +384,7 @@ if (isset($_SESSION['usu_id'])) {
 
                 $("#hora_desde_edit").val(`${START_HORA}:${START_MIN}`);
                 $("#hora_hasta_edit").val(END ? `${END_HORA}:${END_MIN}` : '');
-                $("#id_editar_proyecto_gestionado").val(TITLE)
+                $("#id_editar_proyecto_gestionado").val(TITLE).attr('title',TITLE)
                 $("#id_editar_producto").val(PRODUCTO)
                 $("#id_editar_tarea").val(ID_TAREA)
                 $("#editar_descripcion").val(DESCRIPCION)
