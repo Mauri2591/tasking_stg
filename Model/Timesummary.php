@@ -185,7 +185,7 @@ class timesummary extends Conexion
         WHERE tc1.id_proyecto_gestionado = pg.id
           AND tc1.usu_id = tse.usuario_asignado
           AND tc1.est = 1
-    ), '00:00') AS horas_consumidas,
+    ), '') AS horas_consumidas,
 
     -- horas_total (suma general según grupo PM o no PM)
     CASE 
@@ -196,7 +196,7 @@ class timesummary extends Conexion
                 WHERE tc2.id_proyecto_gestionado = pg.id
                   AND tc2.est = 1
                   AND tc2.id_pm_calidad = tse.id_pm_calidad
-            ), '00:00')
+            ), '')
         ELSE
             IFNULL((
                 SELECT TIME_FORMAT(SEC_TO_TIME(SUM(TIME_TO_SEC(tc3.horas_consumidas))), '%H:%i')
@@ -204,7 +204,7 @@ class timesummary extends Conexion
                 WHERE tc3.id_proyecto_gestionado = pg.id
                   AND tc3.est = 1
                   AND (tc3.id_pm_calidad IS NULL OR tc3.id_pm_calidad = 0)
-            ), '00:00')
+            ), '')
     END AS horas_total,
 
     -- comparacion_horas (solo contra el grupo del usuario)
@@ -357,7 +357,7 @@ class timesummary extends Conexion
             WHERE tc1.id_proyecto_gestionado = pg.id
               AND tc1.usu_id = tse.usuario_asignado
               AND tc1.est = 1
-        ), '00:00') AS mis_horas,
+        ), '') AS mis_horas,
 
         -- HORAS TOTAL
         CASE 
@@ -368,7 +368,7 @@ class timesummary extends Conexion
                     WHERE tc2.id_proyecto_gestionado = pg.id
                       AND tc2.est = 1
                       AND tc2.id_pm_calidad = tse.id_pm_calidad
-                ), '00:00')
+                ), '')
             ELSE
                 IFNULL((
                     SELECT TIME_FORMAT(SEC_TO_TIME(SUM(TIME_TO_SEC(tc3.horas_consumidas))), '%H:%i')
@@ -376,7 +376,7 @@ class timesummary extends Conexion
                     WHERE tc3.id_proyecto_gestionado = pg.id
                       AND tc3.est = 1
                       AND (tc3.id_pm_calidad IS NULL OR tc3.id_pm_calidad = 0)
-                ), '00:00')
+                ), '')
         END AS horas_total,
 
         tse.est,
@@ -725,7 +725,7 @@ class timesummary extends Conexion
                 THEN horas_usuarios.total_segundos 
                 ELSE 0 
             END) / 3600) >= dimensionamiento.hs_dimensionadas
-        THEN '00:00'
+        THEN ''
         ELSE CONCAT(
             LPAD(FLOOR(ROUND((
                 dimensionamiento.hs_dimensionadas - 
@@ -911,7 +911,7 @@ ORDER BY clientes.client_rs";
         -- hs_restante: lo que falta (nunca negativo)
         CASE 
             WHEN (SUM(DISTINCT CASE WHEN horas_usuarios.id_pm_calidad IS NULL OR horas_usuarios.id_pm_calidad = 0 THEN horas_usuarios.total_segundos ELSE 0 END) / 3600) >= dimensionamiento.hs_dimensionadas
-            THEN '00:00'
+            THEN ''
             ELSE CONCAT(
                 LPAD(FLOOR(ROUND((
                     dimensionamiento.hs_dimensionadas - (SUM(DISTINCT CASE WHEN horas_usuarios.id_pm_calidad IS NULL OR horas_usuarios.id_pm_calidad = 0 THEN horas_usuarios.total_segundos ELSE 0 END) / 3600)
@@ -1026,7 +1026,7 @@ ORDER BY clientes.client_rs";
             -- hs_restante: lo que falta (nunca negativo)
             CASE 
                 WHEN (SUM(DISTINCT CASE WHEN horas_usuarios.id_pm_calidad IS NULL OR horas_usuarios.id_pm_calidad = 0 THEN horas_usuarios.total_segundos ELSE 0 END) / 3600) >= dimensionamiento.hs_dimensionadas
-                THEN '00:00'
+                THEN ''
                 ELSE CONCAT(
                     LPAD(FLOOR(ROUND((
                         dimensionamiento.hs_dimensionadas - (SUM(DISTINCT CASE WHEN horas_usuarios.id_pm_calidad IS NULL OR horas_usuarios.id_pm_calidad = 0 THEN horas_usuarios.total_segundos ELSE 0 END) / 3600)
@@ -1140,7 +1140,7 @@ ORDER BY clientes.client_rs";
             -- hs_restante: lo que falta (nunca negativo)
             CASE 
                 WHEN (SUM(DISTINCT CASE WHEN horas_usuarios.id_pm_calidad IS NULL OR horas_usuarios.id_pm_calidad = 0 THEN horas_usuarios.total_segundos ELSE 0 END) / 3600) >= dimensionamiento.hs_dimensionadas
-                THEN '00:00'
+                THEN ''
                 ELSE CONCAT(
                     LPAD(FLOOR(ROUND((
                         dimensionamiento.hs_dimensionadas - (SUM(DISTINCT CASE WHEN horas_usuarios.id_pm_calidad IS NULL OR horas_usuarios.id_pm_calidad = 0 THEN horas_usuarios.total_segundos ELSE 0 END) / 3600)
