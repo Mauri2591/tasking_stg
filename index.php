@@ -105,7 +105,7 @@ require_once __DIR__ . "/Config/Config.php";
                 <div>👥 Gestión de Clientes y equipos</div>
                 <div>⏱️ Control de horas</div>
                 <div>📐 Dimensionamiento de Proyectos</div>
-                <div>📊 Seguimiento de avance y estados</div>
+                <div>📊 Seguimiento de avances y estados</div>
                 <div>🔗 API REST para integración con sistemas externos</div>
             </div>
 
