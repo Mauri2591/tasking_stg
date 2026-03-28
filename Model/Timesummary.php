@@ -163,7 +163,7 @@ class timesummary extends Conexion
     {
         $conn = parent::get_conexion();
         $conn->exec("SET lc_time_names = 'es_ES'");
-        
+
         $estados = [1, 2, 3, 4, 14];
 
         $placeholders = implode(',', array_fill(0, count($estados), '?'));
@@ -336,12 +336,12 @@ class timesummary extends Conexion
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-   public function get_titulos_proyectos_like($usu_asignado, $titulo)
-{
-    $conn = parent::get_conexion();
-    $conn->exec("SET lc_time_names = 'es_ES'");
+    public function get_titulos_proyectos_like($usu_asignado, $titulo)
+    {
+        $conn = parent::get_conexion();
+        $conn->exec("SET lc_time_names = 'es_ES'");
 
-    $sql = "SELECT 
+        $sql = "SELECT 
         tse.id AS id_timesummary_estados,
         pg.id AS id_proyecto_gestionado,
         DATE_FORMAT(pg.fech_inicio, '%M-%Y') AS periodo,
@@ -422,14 +422,14 @@ class timesummary extends Conexion
 
     ORDER BY pg.titulo";
 
-    // 🔥 ORDEN IMPORTANTE
-    $params = [$usu_asignado, $titulo];
+        // 🔥 ORDEN IMPORTANTE
+        $params = [$usu_asignado, $titulo];
 
-    $stmt = $conn->prepare($sql);
-    $stmt->execute($params);
+        $stmt = $conn->prepare($sql);
+        $stmt->execute($params);
 
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);
-}
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 
     public function get_validar_si_hay_tareas_activas($usu_asignado)
     {
@@ -1060,10 +1060,21 @@ ORDER BY clientes.client_rs";
             )
         ) AS usuario_pm_calidad,
             -- Horas PM (sumadas si id_pm_calidad coincide con pm_calidad.id)
-            TIME_FORMAT(
-                SEC_TO_TIME(SUM(DISTINCT CASE WHEN horas_usuarios.id_pm_calidad = pm_calidad.id THEN horas_usuarios.total_segundos ELSE 0 END)),
-                '%H:%i'
-            ) AS horas_pm,
+            CASE 
+        WHEN SUM(DISTINCT CASE 
+            WHEN horas_usuarios.id_pm_calidad = pm_calidad.id 
+            THEN horas_usuarios.total_segundos 
+            ELSE 0 
+        END) = 0 
+        THEN NULL
+        ELSE TIME_FORMAT(
+            SEC_TO_TIME(SUM(DISTINCT CASE 
+                WHEN horas_usuarios.id_pm_calidad = pm_calidad.id 
+                THEN horas_usuarios.total_segundos 
+                ELSE 0 
+            END)),
+            '%H:%i')
+        END AS horas_pm,
             -- Horas consumidas normales (sin PM)
             TIME_FORMAT(
                 SEC_TO_TIME(SUM(DISTINCT CASE WHEN horas_usuarios.id_pm_calidad IS NULL OR horas_usuarios.id_pm_calidad = 0 THEN horas_usuarios.total_segundos ELSE 0 END)),
