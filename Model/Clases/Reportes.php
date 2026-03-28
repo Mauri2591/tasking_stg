@@ -355,7 +355,7 @@ class Reportes
         foreach ($data as $fila) {
 
             $dimensionamiento = self::normalizarHoras($fila['dimensionamiento']);
-            $consumidas       = self::normalizarHoras($fila['horas_consumidas_total'] ?? '00:00');
+            $consumidas       = self::normalizarHoras($fila['horas_consumidas_total'] ?? '');
 
             $minResto =
                 self::horasToMin($dimensionamiento) -
