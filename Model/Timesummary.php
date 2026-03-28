@@ -163,7 +163,7 @@ class timesummary extends Conexion
     {
         $conn = parent::get_conexion();
         $conn->exec("SET lc_time_names = 'es_ES'");
-
+        
         $estados = [1, 2, 3, 4, 14];
 
         $placeholders = implode(',', array_fill(0, count($estados), '?'));
@@ -336,12 +336,12 @@ class timesummary extends Conexion
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function get_titulos_proyectos_like($usu_asignado, $titulo)
-    {
-        $conn = parent::get_conexion();
-        $conn->exec("SET lc_time_names = 'es_ES'");
+   public function get_titulos_proyectos_like($usu_asignado, $titulo)
+{
+    $conn = parent::get_conexion();
+    $conn->exec("SET lc_time_names = 'es_ES'");
 
-        $sql = "SELECT 
+    $sql = "SELECT 
         tse.id AS id_timesummary_estados,
         pg.id AS id_proyecto_gestionado,
         DATE_FORMAT(pg.fech_inicio, '%M-%Y') AS periodo,
@@ -422,14 +422,14 @@ class timesummary extends Conexion
 
     ORDER BY pg.titulo";
 
-        // 🔥 ORDEN IMPORTANTE
-        $params = [$usu_asignado, $titulo];
+    // 🔥 ORDEN IMPORTANTE
+    $params = [$usu_asignado, $titulo];
 
-        $stmt = $conn->prepare($sql);
-        $stmt->execute($params);
+    $stmt = $conn->prepare($sql);
+    $stmt->execute($params);
 
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
 
     public function get_validar_si_hay_tareas_activas($usu_asignado)
     {
@@ -1009,129 +1009,166 @@ ORDER BY clientes.client_rs";
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function getDatosReporteConFiltroPoriDCliente($client_id)
-    {
-        $conn = parent::get_conexion();
-        $sql = "SELECT
-            clientes.client_id,
-            clientes.client_rs,
-            clientes.client_cuit AS cuit,
-            COUNT(DISTINCT proyecto_gestionado.id) AS proyectos_gestionados,
-            COUNT(DISTINCT proyecto_cantidad_servicios.id) AS total_proyectos_cantidad_servicios,
-            proyecto_gestionado.fech_inicio,
-            proyecto_gestionado.fech_fin,
-            proyecto_gestionado.refProy,
-            proyecto_gestionado.titulo,
-            dimensionamiento.hs_dimensionadas AS dimensionamiento,
-            -- hs_restante: lo que falta (nunca negativo)
-            CASE 
-                WHEN (SUM(DISTINCT CASE WHEN horas_usuarios.id_pm_calidad IS NULL OR horas_usuarios.id_pm_calidad = 0 THEN horas_usuarios.total_segundos ELSE 0 END) / 3600) >= dimensionamiento.hs_dimensionadas
-                THEN ''
-                ELSE CONCAT(
-                    LPAD(FLOOR(ROUND((
-                        dimensionamiento.hs_dimensionadas - (SUM(DISTINCT CASE WHEN horas_usuarios.id_pm_calidad IS NULL OR horas_usuarios.id_pm_calidad = 0 THEN horas_usuarios.total_segundos ELSE 0 END) / 3600)
-                    ), 2)), 2, '0'), ':',
-                    LPAD(ROUND((ROUND((
-                        dimensionamiento.hs_dimensionadas - (SUM(DISTINCT CASE WHEN horas_usuarios.id_pm_calidad IS NULL OR horas_usuarios.id_pm_calidad = 0 THEN horas_usuarios.total_segundos ELSE 0 END) / 3600)
-                    ), 2) - FLOOR(ROUND((
-                        dimensionamiento.hs_dimensionadas - (SUM(DISTINCT CASE WHEN horas_usuarios.id_pm_calidad IS NULL OR horas_usuarios.id_pm_calidad = 0 THEN horas_usuarios.total_segundos ELSE 0 END) / 3600)
-                    ), 2))) * 60), 2, '0')
-                )
-            END AS hs_restante,
-            -- hs_resto: exceso si consumidas > dimensionamiento
-            CASE 
-                WHEN (SUM(DISTINCT CASE WHEN horas_usuarios.id_pm_calidad IS NULL OR horas_usuarios.id_pm_calidad = 0 THEN horas_usuarios.total_segundos ELSE 0 END) / 3600) > dimensionamiento.hs_dimensionadas
-                THEN CONCAT(
-                    LPAD(FLOOR(ROUND((
-                        (SUM(DISTINCT CASE WHEN horas_usuarios.id_pm_calidad IS NULL OR horas_usuarios.id_pm_calidad = 0 THEN horas_usuarios.total_segundos ELSE 0 END) / 3600) - dimensionamiento.hs_dimensionadas
-                    ), 2)), 2, '0'), ':',
-                    LPAD(ROUND((ROUND((
-                        (SUM(DISTINCT CASE WHEN horas_usuarios.id_pm_calidad IS NULL OR horas_usuarios.id_pm_calidad = 0 THEN horas_usuarios.total_segundos ELSE 0 END) / 3600) - dimensionamiento.hs_dimensionadas
-                    ), 2) - FLOOR(ROUND((
-                        (SUM(DISTINCT CASE WHEN horas_usuarios.id_pm_calidad IS NULL OR horas_usuarios.id_pm_calidad = 0 THEN horas_usuarios.total_segundos ELSE 0 END) / 3600) - dimensionamiento.hs_dimensionadas
-                    ), 2))) * 60), 2, '0')
-                )
-                ELSE NULL
-            END AS hs_resto,
-        CONCAT(tm_usuario_pm.usu_nom, ' ', 
-            TIME_FORMAT(
-                SEC_TO_TIME(SUM(DISTINCT CASE WHEN horas_usuarios.id_pm_calidad = pm_calidad.id THEN horas_usuarios.total_segundos ELSE 0 END)),
-                '%H:%i'
+   public function getDatosReporteConFiltroPoriDCliente($client_id)
+{
+    $conn = parent::get_conexion();
+    $sql = "SELECT
+        clientes.client_id,
+        clientes.client_rs,
+        clientes.client_cuit AS cuit,
+        COUNT(DISTINCT proyecto_gestionado.id) AS proyectos_gestionados,
+        COUNT(DISTINCT proyecto_cantidad_servicios.id) AS total_proyectos_cantidad_servicios,
+        proyecto_gestionado.fech_inicio,
+        proyecto_gestionado.fech_fin,
+        proyecto_gestionado.refProy,
+        proyecto_gestionado.titulo,
+        dimensionamiento.hs_dimensionadas AS dimensionamiento,
+
+        CASE 
+            WHEN (SUM(DISTINCT CASE WHEN horas_usuarios.id_pm_calidad IS NULL OR horas_usuarios.id_pm_calidad = 0 THEN horas_usuarios.total_segundos ELSE 0 END) / 3600) >= dimensionamiento.hs_dimensionadas
+            THEN ''
+            ELSE CONCAT(
+                LPAD(FLOOR(ROUND((
+                    dimensionamiento.hs_dimensionadas - 
+                    (SUM(DISTINCT CASE WHEN horas_usuarios.id_pm_calidad IS NULL OR horas_usuarios.id_pm_calidad = 0 THEN horas_usuarios.total_segundos ELSE 0 END) / 3600)
+                ), 2)), 2, '0'), ':',
+                LPAD(ROUND((ROUND((
+                    dimensionamiento.hs_dimensionadas - 
+                    (SUM(DISTINCT CASE WHEN horas_usuarios.id_pm_calidad IS NULL OR horas_usuarios.id_pm_calidad = 0 THEN horas_usuarios.total_segundos ELSE 0 END) / 3600)
+                ), 2) - FLOOR(ROUND((
+                    dimensionamiento.hs_dimensionadas - 
+                    (SUM(DISTINCT CASE WHEN horas_usuarios.id_pm_calidad IS NULL OR horas_usuarios.id_pm_calidad = 0 THEN horas_usuarios.total_segundos ELSE 0 END) / 3600)
+                ), 2))) * 60), 2, '0')
             )
-        ) AS usuario_pm_calidad,
-            -- Horas PM (sumadas si id_pm_calidad coincide con pm_calidad.id)
-            CASE 
-        WHEN SUM(DISTINCT CASE 
-            WHEN horas_usuarios.id_pm_calidad = pm_calidad.id 
-            THEN horas_usuarios.total_segundos 
-            ELSE 0 
-        END) = 0 
-        THEN NULL
-        ELSE TIME_FORMAT(
-            SEC_TO_TIME(SUM(DISTINCT CASE 
+        END AS hs_restante,
+
+        CASE 
+            WHEN (SUM(DISTINCT CASE WHEN horas_usuarios.id_pm_calidad IS NULL OR horas_usuarios.id_pm_calidad = 0 THEN horas_usuarios.total_segundos ELSE 0 END) / 3600) > dimensionamiento.hs_dimensionadas
+            THEN CONCAT(
+                LPAD(FLOOR(ROUND((
+                    (SUM(DISTINCT CASE WHEN horas_usuarios.id_pm_calidad IS NULL OR horas_usuarios.id_pm_calidad = 0 THEN horas_usuarios.total_segundos ELSE 0 END) / 3600) - dimensionamiento.hs_dimensionadas
+                ), 2)), 2, '0'), ':',
+                LPAD(ROUND((ROUND((
+                    (SUM(DISTINCT CASE WHEN horas_usuarios.id_pm_calidad IS NULL OR horas_usuarios.id_pm_calidad = 0 THEN horas_usuarios.total_segundos ELSE 0 END) / 3600) - dimensionamiento.hs_dimensionadas
+                ), 2) - FLOOR(ROUND((
+                    (SUM(DISTINCT CASE WHEN horas_usuarios.id_pm_calidad IS NULL OR horas_usuarios.id_pm_calidad = 0 THEN horas_usuarios.total_segundos ELSE 0 END) / 3600) - dimensionamiento.hs_dimensionadas
+                ), 2))) * 60), 2, '0')
+            )
+            ELSE NULL
+        END AS hs_resto,
+
+        -- 🔥 USUARIO PM CORREGIDO
+        CASE 
+            WHEN SUM(DISTINCT CASE 
                 WHEN horas_usuarios.id_pm_calidad = pm_calidad.id 
                 THEN horas_usuarios.total_segundos 
                 ELSE 0 
-            END)),
-            '%H:%i')
-        END AS horas_pm,
-            -- Horas consumidas normales (sin PM)
-            TIME_FORMAT(
-                SEC_TO_TIME(SUM(DISTINCT CASE WHEN horas_usuarios.id_pm_calidad IS NULL OR horas_usuarios.id_pm_calidad = 0 THEN horas_usuarios.total_segundos ELSE 0 END)),
+            END) = 0
+            THEN NULL
+            ELSE CONCAT(
+                tm_usuario_pm.usu_nom, ' ',
+                TIME_FORMAT(
+                    SEC_TO_TIME(SUM(DISTINCT CASE 
+                        WHEN horas_usuarios.id_pm_calidad = pm_calidad.id 
+                        THEN horas_usuarios.total_segundos 
+                        ELSE 0 
+                    END)),
+                    '%H:%i'
+                )
+            )
+        END AS usuario_pm_calidad,
+
+        -- 🔥 HORAS PM CORREGIDO
+        CASE 
+            WHEN SUM(DISTINCT CASE 
+                WHEN horas_usuarios.id_pm_calidad = pm_calidad.id 
+                THEN horas_usuarios.total_segundos 
+                ELSE 0 
+            END) = 0 
+            THEN NULL
+            ELSE TIME_FORMAT(
+                SEC_TO_TIME(SUM(DISTINCT CASE 
+                    WHEN horas_usuarios.id_pm_calidad = pm_calidad.id 
+                    THEN horas_usuarios.total_segundos 
+                    ELSE 0 
+                END)),
                 '%H:%i'
-            ) AS horas_consumidas_total,
-            GROUP_CONCAT(
-                DISTINCT CASE WHEN horas_usuarios.id_pm_calidad IS NULL OR horas_usuarios.id_pm_calidad = 0 THEN
-                    CONCAT(horas_usuarios.usu_nom, ' ',
+            )
+        END AS horas_pm,
+
+        TIME_FORMAT(
+            SEC_TO_TIME(SUM(DISTINCT CASE 
+                WHEN horas_usuarios.id_pm_calidad IS NULL OR horas_usuarios.id_pm_calidad = 0 
+                THEN horas_usuarios.total_segundos 
+                ELSE 0 
+            END)),
+            '%H:%i'
+        ) AS horas_consumidas_total,
+
+        GROUP_CONCAT(
+            DISTINCT CASE 
+                WHEN horas_usuarios.id_pm_calidad IS NULL OR horas_usuarios.id_pm_calidad = 0 THEN
+                    CONCAT(
+                        horas_usuarios.usu_nom, ' ',
                         TIME_FORMAT(SEC_TO_TIME(horas_usuarios.total_segundos), '%H:%i')
                     )
-                END SEPARATOR ', '
-            ) AS horas_consumidas_por_usuario,
-            GROUP_CONCAT(DISTINCT tm_usuario.usu_nom SEPARATOR ', ') AS usuarios_asignados,
-            tm_categoria.cat_nom AS producto,
-            sectores.sector_nombre AS sector,
-            MAX(proyecto_gestionado.recurrencia) AS recurrencia,
-            MAX(tm_estados.estados_nombre) AS estado,
-            proyectos.cantidad_servicios
-            FROM proyectos
-            INNER JOIN clientes ON proyectos.client_id = clientes.client_id
-            LEFT JOIN proyecto_cantidad_servicios ON proyecto_cantidad_servicios.proy_id = proyectos.proy_id
-            LEFT JOIN proyecto_gestionado ON proyecto_gestionado.id_proyecto_cantidad_servicios = proyecto_cantidad_servicios.id
-            LEFT JOIN tm_categoria ON proyecto_gestionado.cat_id = tm_categoria.cat_id
-            LEFT JOIN sectores ON sectores.sector_id = proyecto_gestionado.sector_id
-            LEFT JOIN dimensionamiento ON proyecto_gestionado.id = dimensionamiento.id_proyecto_gestionado
-            LEFT JOIN usuario_proyecto ON proyecto_gestionado.id = usuario_proyecto.id_proyecto_gestionado
-            LEFT JOIN tm_usuario ON tm_usuario.usu_id = usuario_proyecto.usu_asignado
-            LEFT JOIN pm_calidad ON pm_calidad.id_proyecto_gestionado = proyecto_gestionado.id
-            LEFT JOIN tm_usuario AS tm_usuario_pm ON tm_usuario_pm.usu_id = pm_calidad.usu_crea
-            LEFT JOIN (
-            SELECT 
-                tc.id_proyecto_gestionado,
-                tc.usu_id,
-                tc.id_pm_calidad,
-                tm_usuario.usu_nom,
-                SUM(TIME_TO_SEC(tc.horas_consumidas)) AS total_segundos
-            FROM timesummary_carga tc
-            INNER JOIN tm_usuario ON tm_usuario.usu_id = tc.usu_id
-            GROUP BY tc.id_proyecto_gestionado, tc.usu_id, tc.id_pm_calidad, tm_usuario.usu_nom
-        ) AS horas_usuarios ON horas_usuarios.id_proyecto_gestionado = proyecto_gestionado.id
-        LEFT JOIN tm_estados ON proyecto_gestionado.estados_id = tm_estados.estados_id
-        WHERE clientes.client_id=:client_id AND proyecto_gestionado.estados_id IN(1,2,3,4,14,15)
-        GROUP BY 
-            clientes.client_id,
-            clientes.client_rs,
-            tm_categoria.cat_nom,
-            sectores.sector_nombre,
-            proyecto_gestionado.fech_inicio,
-            proyecto_gestionado.fech_fin,
-            dimensionamiento.hs_dimensionadas,
-            tm_usuario_pm.usu_nom
-        ORDER BY clientes.client_rs";
-        $stmt = $conn->prepare($sql);
-        $stmt->bindValue(":client_id", $client_id, PDO::PARAM_STR);
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
+            END SEPARATOR ', '
+        ) AS horas_consumidas_por_usuario,
+
+        GROUP_CONCAT(DISTINCT tm_usuario.usu_nom SEPARATOR ', ') AS usuarios_asignados,
+        tm_categoria.cat_nom AS producto,
+        sectores.sector_nombre AS sector,
+        MAX(proyecto_gestionado.recurrencia) AS recurrencia,
+        MAX(tm_estados.estados_nombre) AS estado,
+        proyectos.cantidad_servicios
+
+    FROM proyectos
+    INNER JOIN clientes ON proyectos.client_id = clientes.client_id
+    LEFT JOIN proyecto_cantidad_servicios ON proyecto_cantidad_servicios.proy_id = proyectos.proy_id
+    LEFT JOIN proyecto_gestionado ON proyecto_gestionado.id_proyecto_cantidad_servicios = proyecto_cantidad_servicios.id
+    LEFT JOIN tm_categoria ON proyecto_gestionado.cat_id = tm_categoria.cat_id
+    LEFT JOIN sectores ON sectores.sector_id = proyecto_gestionado.sector_id
+    LEFT JOIN dimensionamiento ON proyecto_gestionado.id = dimensionamiento.id_proyecto_gestionado
+    LEFT JOIN usuario_proyecto ON proyecto_gestionado.id = usuario_proyecto.id_proyecto_gestionado
+    LEFT JOIN tm_usuario ON tm_usuario.usu_id = usuario_proyecto.usu_asignado
+    LEFT JOIN pm_calidad ON pm_calidad.id_proyecto_gestionado = proyecto_gestionado.id
+    LEFT JOIN tm_usuario AS tm_usuario_pm ON tm_usuario_pm.usu_id = pm_calidad.usu_crea
+
+    LEFT JOIN (
+        SELECT 
+            tc.id_proyecto_gestionado,
+            tc.usu_id,
+            tc.id_pm_calidad,
+            tm_usuario.usu_nom,
+            SUM(TIME_TO_SEC(tc.horas_consumidas)) AS total_segundos
+        FROM timesummary_carga tc
+        INNER JOIN tm_usuario ON tm_usuario.usu_id = tc.usu_id
+        GROUP BY tc.id_proyecto_gestionado, tc.usu_id, tc.id_pm_calidad, tm_usuario.usu_nom
+    ) AS horas_usuarios 
+    ON horas_usuarios.id_proyecto_gestionado = proyecto_gestionado.id
+
+    LEFT JOIN tm_estados ON proyecto_gestionado.estados_id = tm_estados.estados_id
+
+    WHERE clientes.client_id=:client_id 
+    AND proyecto_gestionado.estados_id IN(1,2,3,4,14,15)
+
+    GROUP BY 
+        clientes.client_id,
+        clientes.client_rs,
+        tm_categoria.cat_nom,
+        sectores.sector_nombre,
+        proyecto_gestionado.fech_inicio,
+        proyecto_gestionado.fech_fin,
+        dimensionamiento.hs_dimensionadas,
+        tm_usuario_pm.usu_nom
+
+    ORDER BY clientes.client_rs";
+
+    $stmt = $conn->prepare($sql);
+    $stmt->bindValue(":client_id", $client_id, PDO::PARAM_STR);
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
 
 
     public function getReportePorFechasYCliente($client_id, $fecha_desde, $fecha_hasta)
