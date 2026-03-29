@@ -6,24 +6,25 @@ class timesummary extends Conexion
     public function get_tareas($usu_id = null)
     {
         $conn = parent::get_conexion();
-        $sql = "SELECT
-                t.id,
-                t.fecha,
-                t.hora_desde,
-                t.hora_hasta,
-                CASE WHEN es_telecom = 'Telecom' THEN 'TELECOM' ELSE p.titulo END AS titulo_proyecto,
-                t.descripcion,
-                t.id_proyecto_gestionado,
-                t.id_producto,
-                tareas.id AS id_tarea,
-                tareas.nombre AS nombre_tarea,
-                t.id_pm_calidad,
-                tm_categoria.cat_nom AS producto
-            FROM timesummary_carga t
-            LEFT JOIN proyecto_gestionado p ON t.id_proyecto_gestionado = p.id
-            LEFT JOIN tm_categoria ON t.id_producto = tm_categoria.cat_id
-            LEFT JOIN tareas ON t.id_tarea = tareas.id
-            WHERE t.usu_id = :usu_id";
+            $sql = "SELECT
+                    t.id,
+                    t.fecha,
+                    t.hora_desde,
+                    t.hora_hasta,
+                    CASE WHEN es_telecom = 'Telecom' THEN 'TELECOM' ELSE p.titulo END AS titulo_proyecto,
+                    t.descripcion,
+                    t.id_proyecto_gestionado,
+                    t.id_producto,
+                    tareas.id AS id_tarea,
+                    tareas.nombre AS nombre_tarea,
+                    t.id_pm_calidad,
+                    tm_categoria.cat_nom AS producto,
+                    t.es_telecom
+                FROM timesummary_carga t
+                LEFT JOIN proyecto_gestionado p ON t.id_proyecto_gestionado = p.id
+                LEFT JOIN tm_categoria ON t.id_producto = tm_categoria.cat_id
+                LEFT JOIN tareas ON t.id_tarea = tareas.id
+                WHERE t.usu_id = :usu_id";
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(":usu_id", $usu_id, PDO::PARAM_INT);
         $stmt->execute();

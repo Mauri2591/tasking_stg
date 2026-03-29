@@ -152,10 +152,10 @@ if (isset($_SESSION['usu_id'])) {
                                         id: idProyecto
                                     },
                                     function(resp) {
-                                                        document.getElementById("validar_periodo").style.display = 'none';
+                                        document.getElementById("validar_periodo").style.display = 'none';
                                         if (resp.cat_id) {
 
-                                            let fechaSeleccionada = $("#fechaSeleccionada").text(); // 👈 SIEMPRE actual
+                                            let fechaSeleccionada = $("#fechaSeleccionada").text(); // SIEMPRE actual
 
                                             let partesFecha = FECHA.split('-');
                                             let mesCalendar = partesFecha[1];
@@ -259,7 +259,7 @@ if (isset($_SESSION['usu_id'])) {
                     let horaDesde = $("#hora_desde").val();
                     let horaHasta = $("#hora_hasta").val();
 
-                    // 🔴 Validaciones básicas
+                    // Validaciones básicas
                     if (!FECHA || !horaDesde || !horaHasta) {
                         Swal.fire({
                             icon: "warning",
@@ -274,7 +274,7 @@ if (isset($_SESSION['usu_id'])) {
                     let nuevoInicio = new Date(`${FECHA}T${horaDesde}`);
                     let nuevoFin = new Date(`${FECHA}T${horaHasta}`);
 
-                    // 🔴 Validar rango lógico
+                    // Validar rango lógico
                     if (nuevoFin <= nuevoInicio) {
                         Swal.fire({
                             icon: "warning",
@@ -364,6 +364,8 @@ if (isset($_SESSION['usu_id'])) {
 
             },
             eventClick: function(info) {
+                console.log(info);
+
                 const EVENTO = info.event;
                 const TITLE = EVENTO.title;
                 const EVENTO_ID = EVENTO.id;
@@ -384,7 +386,7 @@ if (isset($_SESSION['usu_id'])) {
 
                 $("#hora_desde_edit").val(`${START_HORA}:${START_MIN}`);
                 $("#hora_hasta_edit").val(END ? `${END_HORA}:${END_MIN}` : '');
-                $("#id_editar_proyecto_gestionado").val(TITLE).attr('title',TITLE)
+                $("#id_editar_proyecto_gestionado").val(TITLE).attr('title', TITLE)
                 $("#id_editar_producto").val(PRODUCTO)
                 $("#id_editar_tarea").val(ID_TAREA)
                 $("#editar_descripcion").val(DESCRIPCION)
@@ -566,6 +568,13 @@ if (isset($_SESSION['usu_id'])) {
                     console.log("Error al obtener datos");
                     info.revert();
                 });
+            },
+            eventDidMount: function(info) {
+                if (info.event.extendedProps.es_telecom) {
+                    info.el.style.backgroundColor = '#3577f1';
+                    info.el.style.borderColor = '#3577f1';
+                    info.el.title = 'Tarea computada a Telecom, no a proyectos';
+                }
             }
         });
 
