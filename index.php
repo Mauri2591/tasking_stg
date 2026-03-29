@@ -157,7 +157,7 @@ require_once __DIR__ . "/Config/Config.php";
 
                     <div style="margin-bottom:12px;">
                         <input type="text" name="usu_correo"
-                            placeholder="usuario@empresa.com"
+                            placeholder="Ingrese el usuario"
                             style="
                             width:100%;
                             padding:12px;
