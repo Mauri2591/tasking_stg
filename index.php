@@ -97,7 +97,7 @@ require_once __DIR__ . "/Config/Config.php";
             </h1>
 
             <div style="color:#64748b; margin-bottom:30px;">
-                Plataforma integral de gestión, dimensionamiento y seguimiento de proyectos
+                Plataforma de gestión, dimensionamiento y seguimiento de proyectos
             </div>
 
             <div style="display:flex; flex-direction:column; gap:12px; font-size:14px;">
