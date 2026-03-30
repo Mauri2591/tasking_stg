@@ -9,6 +9,12 @@ if (isset($_SESSION['usu_id'])) {
 
 
 ?>
+<style>
+.fc-event:hover {
+    color: #ebebeb !important;
+}
+</style>
+
     <div class="page-content">
         <div class="container-fluid">
 
@@ -571,8 +577,7 @@ if (isset($_SESSION['usu_id'])) {
             },
             eventDidMount: function(info) {
                 if (info.event.extendedProps.es_telecom) {
-                    info.el.style.backgroundColor = '#508dff';
-                    info.el.style.borderColor = '#3577f1';
+                    info.el.style.backgroundColor = '#abb9e8';
                     info.el.title = 'Tarea computada a Telecom, no a proyectos';
                 }
             }
