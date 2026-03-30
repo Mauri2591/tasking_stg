@@ -9,11 +9,11 @@ if (isset($_SESSION['usu_id'])) {
 
 
 ?>
-<style>
-.fc-event:hover {
-    color: #ebebeb !important;
-}
-</style>
+    <style>
+        .fc-event:hover {
+            color: #ebebeb !important;
+        }
+    </style>
 
     <div class="page-content">
         <div class="container-fluid">
@@ -52,8 +52,20 @@ if (isset($_SESSION['usu_id'])) {
 
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: .5rem;">
                         <div id="caption_tareas"></div>
-                        <i id="btnVerHistorialTimesummary" type="button" title="Ver todos"
-                            class="ri-history-line" style="font-size: 1.2rem; cursor: pointer;"></i>
+                        <i id="btnVerHistorialTimesummary"
+                            class="ri-history-line text-light"
+                            title="Ver historico"
+                            style="
+                            font-size: 1.2rem;
+                            cursor: pointer;
+                            display: inline-flex;
+                            align-items: center;
+                            justify-content: center;
+                            width: 2rem;
+                            height: 2rem;
+                            border-radius: .5rem;
+                            background: gray;">
+                        </i>
                     </div>
 
                     <div style="display: flex; justify-content: end; margin-bottom: .5rem;">
