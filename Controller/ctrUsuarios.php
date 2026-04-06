@@ -13,6 +13,7 @@ switch ($_GET['usuarios']) {
             $sub_array[] = strtolower($row['usu_correo']);
             $sub_array[] = strtolower($row['usu_tel']);
             $sub_array[] = '<span class="badge badge-soft-primary ms-auto">' . strtoupper($row['sector']) . '</span>';
+            $sub_array[] = strtolower($row['usuario_estado']);
             $data[] = $sub_array;
         }
         $results = array(

@@ -128,7 +128,7 @@ if (isset($_SESSION['usu_id'])) {
                                     <th style="width: 30px;text-align: center;">CORREO</th>
                                     <th style="width: 30px;text-align: center;">TEL</th>
                                     <th style="width: 30px;text-align: center;">SECTOR</th>
-                                    <!-- <th style="width: 30px;text-align: center;">ESTADO</th> -->
+                                    <th style="width: 30px;text-align: center;">ESTADO</th>
 
                                 </tr>
                             </thead>
@@ -138,7 +138,7 @@ if (isset($_SESSION['usu_id'])) {
                                     <td style="width: 30px;text-align: center;"></td>
                                     <td style="width: 30px;text-align: center;"></td>
                                     <td style="width: 30px;text-align: center;"></td>
-                                    <!-- <td style="width: 30px;"></td> -->
+                                    <td style="width: 30px;"></td>
                                 </tr>
                             </tbody>
                         </table>

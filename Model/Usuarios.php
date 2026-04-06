@@ -4,10 +4,15 @@ class Usuarios extends Conexion
     public function get_usuarios()
     {
         $conn = parent::get_conexion();
-        $sql = "SELECT usu_id,usu_nom,usu_correo,usu_tel,sectores.sector_nombre 
-        AS sector FROM tm_usuario INNER JOIN sectores 
-        ON tm_usuario.sector_id=sectores.sector_id 
-        WHERE tm_usuario.est= 1";
+        $sql = "SELECT usu_id, usu_nom, usu_correo, usu_tel, 
+        IF(tm_usuario.est = 1, 
+            '<span class=\"badge bg-success text-light\">ACTIVO</span>', 
+            '<span class=\"badge text-light\" style=\"background-color:gray; color:white;\">INACTIVO</span>'
+        ) AS usuario_estado, 
+        sectores.sector_nombre AS sector 
+        FROM tm_usuario 
+        INNER JOIN sectores ON tm_usuario.sector_id = sectores.sector_id
+        ORDER BY tm_usuario.est DESC";
         $stmt = $conn->prepare($sql);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);

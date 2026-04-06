@@ -23,12 +23,12 @@ document.addEventListener("DOMContentLoaded", function () {
             error: function (e) {}
         },
         "order": [
-            [0, "desc"]
+            [5, "desc"]
         ], //Ordenar descendentemente
         "bDestroy": true,
         "responsive": true,
         "bInfo": true,
-        "iDisplayLength": 7, //cantidad de tuplas o filas a mostrar
+        "iDisplayLength": 10, //cantidad de tuplas o filas a mostrar
         "autoWith": false,
         "language": {
             "sProcessing": "Procesando..",
