@@ -724,11 +724,11 @@ class Reportes
         $sheet->getCell('D' . $rowNum)->setValue($buildRichText($row['sectores_faltantes'] ?? ''));
         $sheet->getStyle('D' . $rowNum)
             ->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
-            ->getStartColor()->setRGB('FEF3C7');
+            ->getStartColor()->setRGB('FFEC99');
         $sheet->getStyle('D' . $rowNum)
             ->getBorders()->getAllBorders()
             ->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN)
-            ->getColor()->setRGB('C47D2E');
+            ->getColor()->setRGB('FFEB70');
 
         $rowNum++;
     }
