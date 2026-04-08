@@ -836,8 +836,7 @@ return function (App $app) {
             ts.horas_consumidas AS HT,
             IF(ts.horas_consumidas < 0, ts.horas_consumidas, NULL) AS HN,
             CASE WHEN ts.es_telecom = 'Telecom' THEN 'TELECOM' ELSE cli.client_rs END AS cliente,
-            CASE WHEN ts.es_telecom = 'Telecom' THEN 'ARGENTINA' ELSE p.pais_nombre END AS pais,
-            ts.descripcion
+            CASE WHEN ts.es_telecom = 'Telecom' THEN 'ARGENTINA' ELSE p.pais_nombre END AS pais
         FROM timesummary_carga ts
         LEFT JOIN tm_usuario u ON u.usu_id = ts.usu_id
         LEFT JOIN tm_categoria c ON c.cat_id = ts.id_producto
@@ -870,8 +869,7 @@ return function (App $app) {
         CASE
             WHEN ts.es_telecom = 'Telecom' THEN 'ARGENTINA'
             ELSE p.pais_nombre
-        END AS pais,
-        ts.descripcion
+        END AS pais
         FROM timesummary_carga ts
         LEFT JOIN tm_usuario u ON u.usu_id = ts.usu_id
         LEFT JOIN tm_categoria c ON c.cat_id = ts.id_producto
