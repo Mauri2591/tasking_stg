@@ -686,16 +686,43 @@ class Reportes
         $rowNum = 2;
 
         foreach ($data as $row) {
-            $sheet->fromArray([
-                $row['client_rs'] ?? '-',
-                $row['cuit'] ?? '-',
-                $row['sectores_contratados'] ?? '-',
-                $row['sectores_faltantes'] ?? '-',
-                date('Y', strtotime($row['fech_crea'])) ?? '-'
-            ], NULL, 'A' . $rowNum);
+    $sheet->fromArray([
+        $row['client_rs'] ?? '-',
+        $row['cuit'] ?? '-',
+        $row['sectores_contratados'] ?? '-',
+        $row['sectores_faltantes'] ?? '-',
+        date('Y', strtotime($row['fech_crea'])) ?? '-'
+    ], NULL, 'A' . $rowNum);
 
-            $rowNum++;
-        }
+    $sheet->getStyle('C' . $rowNum)
+        ->getFont()
+        ->setBold(false);
+
+    // Sectores faltantes — dorado claro con borde dorado oscuro
+    $sheet->getStyle('D' . $rowNum)
+        ->getFill()
+        ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
+        ->getStartColor()
+        ->setRGB('FEF3C7'); // Dorado claro pastel
+
+    $sheet->getStyle('D' . $rowNum)
+        ->getFont()
+        ->getColor()
+        ->setRGB('92400E'); // Marrón dorado texto
+
+    $sheet->getStyle('D' . $rowNum)
+        ->getFont()
+        ->setBold(true);
+
+    $sheet->getStyle('D' . $rowNum)
+        ->getBorders()
+        ->getAllBorders()
+        ->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN)
+        ->getColor()
+        ->setRGB('C47D2E'); // Borde dorado oscuro
+
+    $rowNum++;
+}
 
         // Estilos del encabezado
         $headerRange = 'A1:E1';

@@ -230,7 +230,7 @@ $(document).ready(function () {
         }
     });
 
-     tabla = $("#table_cross_sell_sectores").dataTable({
+    tabla = $("#table_cross_sell_sectores").dataTable({
         "aProcessing": true,
         "aServerSide": true,
         "ordering": true, // ✅ respetar el ORDER BY del SQL
@@ -1581,9 +1581,11 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
                         $('#tablelHistorialProyectosCalidad').DataTable().ajax.reload(null, false);
                     }
                 }, 500);
-                // setTimeout(() => {
-                //     window.location.reload();
-                // }, 1300);
+
+                setTimeout(() => {
+                    $('#table_cross_sell_sectores').DataTable().ajax.reload(null, false);
+                }, 500)
+                
             },
             error: function (error) {
                 let htmlmje = `<div id="extension_no_permitida" class="alert alert-warning text-center" role="alert">
@@ -2589,7 +2591,7 @@ function mdlDescargarExcelProyectosTotal() {
 }
 
 function mdlDescargarExcelProyectosCrossSell() {
-    document.location.href=`../../../../../Controller/ctrReportes.php?case=reporteExcelProyectosCrossSell`;
+    document.location.href = `../../../../../Controller/ctrReportes.php?case=reporteExcelProyectosCrossSell`;
 }
 
 const params = new URLSearchParams(window.location.search);
