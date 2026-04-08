@@ -2339,7 +2339,7 @@ TXT;
 
         foreach ($datos as $row) {
             $sub_array = array();
-            $sub_array[] = '<span>' . $row['client_rs'] . '</span>';
+            $sub_array[] = '<span>' . strtoupper($row['client_rs']) . '</span>';
             $sub_array[] = '<span>' . $row['cuit'] . '</span>';
             // Sectores contratados
             $badges_contratados = '';
