@@ -728,7 +728,7 @@ class Reportes
         $sheet->getStyle('D' . $rowNum)
             ->getBorders()->getAllBorders()
             ->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN)
-            ->getColor()->setRGB('FFEB70');
+            ->getColor()->setRGB('D9C54A');
 
         $rowNum++;
     }
