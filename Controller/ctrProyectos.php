@@ -2328,6 +2328,48 @@ TXT;
         }
         break;
 
+    case 'getClientesConSectorSinContratar':
+        $datos = $proyecto->getClientesConSectorSinContratar();
+        $data = array();
+        $colores = array(
+            "ETHICAL HACKING" => "bg-warning text-dark",
+            "SOC" => "bg-dark text-light",
+            "SASE" => "bg-info text-light"
+        );
+
+        foreach ($datos as $row) {
+            $sub_array = array();
+            $sub_array[] = '<span>' . $row['client_rs'] . '</span>';
+            $sub_array[] = '<span>' . $row['cuit'] . '</span>';
+            // Sectores contratados
+            $badges_contratados = '';
+            foreach (explode(', ', $row['sectores_contratados']) as $sector) {
+                $sector = trim($sector);
+                $clase = isset($colores[$sector]) ? $colores[$sector] : 'bg-secondary text-light';
+                $badges_contratados .= '<span class="badge ' . $clase . '">' . $sector . '</span> ';
+            }
+            $sub_array[] = $badges_contratados;
+
+            // Sectores faltantes
+            $badges_faltantes = '';
+            foreach (explode(', ', $row['sectores_faltantes']) as $sector) {
+                $sector = trim($sector);
+                $clase = isset($colores[$sector]) ? $colores[$sector] : 'bg-secondary text-light';
+                $badges_faltantes .= '<span class="badge ' . $clase . '">' . $sector . '</span> ';
+            }
+            $sub_array[] = $badges_faltantes;
+
+            $data[] = $sub_array;
+        }
+        $results = array(
+            "sEcho" => 1,
+            "iTotalRecords" => count($data),
+            "iTotalDisplayRecords" => count($data),
+            "aaData" => $data
+        );
+        echo json_encode($results);
+        break;
+
     default:
         break;
 }

@@ -49,6 +49,10 @@ switch ($_GET['case'] ?? null) {
         $reporte::total_excel($data, "PROYECTOS_TOTAL");
         break;
 
+    case 'reporteExcelProyectosCrossSell':
+        $data=$proyecto->getClientesConSectorSinContratar();
+        Reportes::reporteExcelProyectosCrossSell($data);
+        break;
 
     case 'getDatosReporteSinFiltro':
 
@@ -60,22 +64,22 @@ switch ($_GET['case'] ?? null) {
         // Normalizar cliente (puede venir de Docx o Xlsx)
         $idCliente = $idClienteDocx ?: $idClienteXlsx;
 
-        // 1️⃣ FECHAS + CLIENTE (más específica)
+        // FECHAS + CLIENTE (más específica)
         if ((!empty($fechaDesde) || !empty($fechaHasta)) && !empty($idCliente)) {
             $data = $timesummary->getReportePorFechasYCliente($idCliente, $fechaDesde, $fechaHasta);
             $nombreReporte = "Timesummary";
         }
-        // 2️⃣ SOLO FECHAS
+        // SOLO FECHAS
         else if (!empty($fechaDesde) || !empty($fechaHasta)) {
             $data = $timesummary->getDatosReporteConFiltroFechas($fechaDesde, $fechaHasta);
             $nombreReporte = "Timesummary";
         }
-        // 3️⃣ SOLO CLIENTE
+        // SOLO CLIENTE
         else if (!empty($idCliente)) {
             $data = $timesummary->getDatosReporteConFiltroPoriDCliente($idCliente);
             $nombreReporte = "Timesummary";
         }
-        // 4️⃣ SIN FILTROS
+        // 4SIN FILTROS
         else {
             $data = $timesummary->getDatosReporteSinFiltro();
             $nombreReporte = "Timesummary";
@@ -93,6 +97,8 @@ switch ($_GET['case'] ?? null) {
         break;
 
     default:
-        echo "Acción no reconocida";
+        echo "Endpoint no reconocido";
+        http_response_code(404);
+        exit;
         break;
 }

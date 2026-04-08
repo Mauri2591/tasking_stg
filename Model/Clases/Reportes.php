@@ -667,4 +667,64 @@ class Reportes
         $writer->save("php://output");
         exit;
     }
+
+    public static function reporteExcelProyectosCrossSell($data)
+    {
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+
+        // Encabezados
+        $headers = [
+            'CLIENTE',
+            'CUIT',
+            'SECTORES CONTRATADOS',
+            'SECTORES FALTANTES'
+        ];
+        $sheet->fromArray($headers, NULL, 'A1');
+
+        $rowNum = 2;
+
+        foreach ($data as $row) {
+            $sheet->fromArray([
+                $row['client_rs'] ?? '-',
+                $row['cuit'] ?? '-',
+                $row['sectores_contratados'] ?? '-',
+                $row['sectores_faltantes'] ?? '-'
+            ], NULL, 'A' . $rowNum);
+
+            $rowNum++;
+        }
+
+        // Estilos del encabezado
+        $headerRange = 'A1:D1';
+        $sheet->setAutoFilter($headerRange);
+        $headerStyle = $sheet->getStyle($headerRange);
+        $headerStyle->getFont()->setBold(true)->getColor()->setRGB('FFFFFF');
+        $headerStyle->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
+            ->getStartColor()->setRGB('43578F');
+        $headerStyle->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+        $headerStyle->getBorders()->getBottom()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
+
+        // Centrar columnas
+        foreach (['A', 'B', 'C', 'D'] as $col) {
+            $sheet->getStyle($col)->getAlignment()
+                ->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+        }
+
+        // Autoajuste de columnas
+        foreach (['A', 'B', 'C', 'D'] as $col) {
+            $sheet->getColumnDimension($col)->setAutoSize(true);
+        }
+
+        $sheet->freezePane('A2');
+
+        // Salida
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="Reporte-Cross-Sell.xlsx"');
+        header('Cache-Control: max-age=0');
+
+        $writer = new Xlsx($spreadsheet);
+        $writer->save('php://output');
+        exit;
+    }
 }
