@@ -678,7 +678,7 @@ class Reportes
         'CLIENTE',
         'CUIT',
         'SECTORES CONTRATADOS',
-        'SECTORES FALTANTES',
+        'SECTORES SIN CONTRATAR',
         'PERIODO'
     ];
     $sheet->fromArray($headers, NULL, 'A1');
