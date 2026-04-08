@@ -669,91 +669,100 @@ class Reportes
     }
 
     public static function reporteExcelProyectosCrossSell($data)
-    {
-        $spreadsheet = new Spreadsheet();
-        $sheet = $spreadsheet->getActiveSheet();
+{
+    $spreadsheet = new Spreadsheet();
+    $sheet = $spreadsheet->getActiveSheet();
 
-        // Encabezados
-        $headers = [
-            'CLIENTE',
-            'CUIT',
-            'SECTORES CONTRATADOS',
-            'SECTORES FALTANTES',
-            'PERIODO'
-        ];
-        $sheet->fromArray($headers, NULL, 'A1');
+    // Encabezados
+    $headers = [
+        'CLIENTE',
+        'CUIT',
+        'SECTORES CONTRATADOS',
+        'SECTORES FALTANTES',
+        'PERIODO'
+    ];
+    $sheet->fromArray($headers, NULL, 'A1');
 
-        $rowNum = 2;
+    $rowNum = 2;
 
-        foreach ($data as $row) {
-    $sheet->fromArray([
-        $row['client_rs'] ?? '-',
-        $row['cuit'] ?? '-',
-        $row['sectores_contratados'] ?? '-',
-        $row['sectores_faltantes'] ?? '-',
-        date('Y', strtotime($row['fech_crea'])) ?? '-'
-    ], NULL, 'A' . $rowNum);
+    // Colores por sector
+    $coloresSector = [
+        'ETHICAL HACKING' => '92400E', // Mostaza
+        'SOC'             => '000000', // Negro
+        'SASE'            => '0EA5E9', // Celeste
+    ];
 
-    $sheet->getStyle('C' . $rowNum)
-        ->getFont()
-        ->setBold(false);
-
-    // Sectores faltantes — dorado claro con borde dorado oscuro
-    $sheet->getStyle('D' . $rowNum)
-        ->getFill()
-        ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
-        ->getStartColor()
-        ->setRGB('FEF3C7'); // Dorado claro pastel
-
-    $sheet->getStyle('D' . $rowNum)
-        ->getFont()
-        ->getColor()
-        ->setRGB('92400E'); // Marrón dorado texto
-
-    $sheet->getStyle('D' . $rowNum)
-        ->getFont()
-        ->setBold(true);
-
-    $sheet->getStyle('D' . $rowNum)
-        ->getBorders()
-        ->getAllBorders()
-        ->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN)
-        ->getColor()
-        ->setRGB('C47D2E'); // Borde dorado oscuro
-
-    $rowNum++;
-}
-
-        // Estilos del encabezado
-        $headerRange = 'A1:E1';
-        $sheet->setAutoFilter($headerRange);
-        $headerStyle = $sheet->getStyle($headerRange);
-        $headerStyle->getFont()->setBold(true)->getColor()->setRGB('FFFFFF');
-        $headerStyle->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
-            ->getStartColor()->setRGB('43578F');
-        $headerStyle->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
-        $headerStyle->getBorders()->getBottom()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
-
-        // Centrar columnas
-        foreach (['A', 'B', 'C', 'D', 'E'] as $col) {
-            $sheet->getStyle($col)->getAlignment()
-                ->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+    // Función helper para generar RichText
+    $buildRichText = function ($sectoresStr) use ($coloresSector) {
+        $richText = new \PhpOffice\PhpSpreadsheet\RichText\RichText();
+        $sectores = explode(', ', $sectoresStr);
+        foreach ($sectores as $i => $sector) {
+            $sector = trim($sector);
+            $run = $richText->createTextRun($sector);
+            $run->getFont()->setBold(true);
+            $color = $coloresSector[$sector] ?? '000000';
+            $run->getFont()->getColor()->setRGB($color);
+            if ($i < count($sectores) - 1) {
+                $richText->createText(', ');
+            }
         }
+        return $richText;
+    };
 
-        // Autoajuste de columnas
-        foreach (['A', 'B', 'C', 'D', 'E'] as $col) {
-            $sheet->getColumnDimension($col)->setAutoSize(true);
-        }
+    foreach ($data as $row) {
+        $sheet->fromArray([
+            $row['client_rs'] ?? '-',
+            $row['cuit'] ?? '-',
+            '',  // C - se llena con RichText abajo
+            '',  // D - se llena con RichText abajo
+            date('Y', strtotime($row['fech_crea'])) ?? '-'
+        ], NULL, 'A' . $rowNum);
 
-        $sheet->freezePane('A2');
+        $sheet->getCell('C' . $rowNum)->setValue($row['sectores_contratados'] ?? '-');
+        
+        // Sectores faltantes (D) — fondo dorado claro
+        $sheet->getCell('D' . $rowNum)->setValue($buildRichText($row['sectores_faltantes'] ?? ''));
+        $sheet->getStyle('D' . $rowNum)
+            ->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
+            ->getStartColor()->setRGB('FEF3C7');
+        $sheet->getStyle('D' . $rowNum)
+            ->getBorders()->getAllBorders()
+            ->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN)
+            ->getColor()->setRGB('C47D2E');
 
-        // Salida
-        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        header('Content-Disposition: attachment;filename="Reporte-Cross-Sell_periodo_'.date('Y').'.xlsx"');
-        header('Cache-Control: max-age=0');
-
-        $writer = new Xlsx($spreadsheet);
-        $writer->save('php://output');
-        exit;
+        $rowNum++;
     }
+
+    // Estilos del encabezado
+    $headerRange = 'A1:E1';
+    $sheet->setAutoFilter($headerRange);
+    $headerStyle = $sheet->getStyle($headerRange);
+    $headerStyle->getFont()->setBold(true)->getColor()->setRGB('FFFFFF');
+    $headerStyle->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
+        ->getStartColor()->setRGB('43578F');
+    $headerStyle->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+    $headerStyle->getBorders()->getBottom()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
+
+    // Centrar columnas
+    foreach (['A', 'B', 'C', 'D', 'E'] as $col) {
+        $sheet->getStyle($col)->getAlignment()
+            ->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+    }
+
+    // Autoajuste de columnas
+    foreach (['A', 'B', 'C', 'D', 'E'] as $col) {
+        $sheet->getColumnDimension($col)->setAutoSize(true);
+    }
+
+    $sheet->freezePane('A2');
+
+    // Salida
+    header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    header('Content-Disposition: attachment;filename="Reporte-Cross-Sell_periodo_' . date('Y') . '.xlsx"');
+    header('Cache-Control: max-age=0');
+
+    $writer = new Xlsx($spreadsheet);
+    $writer->save('php://output');
+    exit;
+}
 }
