@@ -268,7 +268,7 @@ if (isset($_SESSION['usu_id'])) {
                                         <tr style="text-align: center;">
                                             <th style="width: 300px;text-align: center;">CLIENTE</th>
                                             <th style="width: 300px;text-align: center;">CUIT</th>
-                                            <th style="width: 300px;text-align: center;">SECTORES CONTRATADOS</th>
+                                            <th style="width: 300px;text-align: center;">SECTORES <br> CONTRATADOS</th>
                                             <th style="width: 30px;text-align: center;">SECTORES FALTANTES</th>
                                             <th style="width: 15px;text-align: center;">PERIODO</th>
                                         </tr>
