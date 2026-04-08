@@ -678,7 +678,8 @@ class Reportes
             'CLIENTE',
             'CUIT',
             'SECTORES CONTRATADOS',
-            'SECTORES FALTANTES'
+            'SECTORES FALTANTES',
+            'PERIODO'
         ];
         $sheet->fromArray($headers, NULL, 'A1');
 
@@ -689,14 +690,15 @@ class Reportes
                 $row['client_rs'] ?? '-',
                 $row['cuit'] ?? '-',
                 $row['sectores_contratados'] ?? '-',
-                $row['sectores_faltantes'] ?? '-'
+                $row['sectores_faltantes'] ?? '-',
+                date('Y', strtotime($row['fech_crea'])) ?? '-'
             ], NULL, 'A' . $rowNum);
 
             $rowNum++;
         }
 
         // Estilos del encabezado
-        $headerRange = 'A1:D1';
+        $headerRange = 'A1:E1';
         $sheet->setAutoFilter($headerRange);
         $headerStyle = $sheet->getStyle($headerRange);
         $headerStyle->getFont()->setBold(true)->getColor()->setRGB('FFFFFF');
@@ -706,13 +708,13 @@ class Reportes
         $headerStyle->getBorders()->getBottom()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
 
         // Centrar columnas
-        foreach (['A', 'B', 'C', 'D'] as $col) {
+        foreach (['A', 'B', 'C', 'D', 'E'] as $col) {
             $sheet->getStyle($col)->getAlignment()
                 ->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
         }
 
         // Autoajuste de columnas
-        foreach (['A', 'B', 'C', 'D'] as $col) {
+        foreach (['A', 'B', 'C', 'D', 'E'] as $col) {
             $sheet->getColumnDimension($col)->setAutoSize(true);
         }
 
@@ -720,7 +722,7 @@ class Reportes
 
         // Salida
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        header('Content-Disposition: attachment;filename="Reporte-Cross-Sell.xlsx"');
+        header('Content-Disposition: attachment;filename="Reporte-Cross-Sell_periodo_'.date('Y').'.xlsx"');
         header('Cache-Control: max-age=0');
 
         $writer = new Xlsx($spreadsheet);

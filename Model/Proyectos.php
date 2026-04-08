@@ -2724,33 +2724,36 @@ WHERE pg.id_proyecto_cantidad_servicios = :id_proyecto_cantidad_servicios";
     public function getClientesConSectorSinContratar() // Clientes con al menos un sector sin contratar (EH, SOC, SASE)
     {
         $conn = parent::get_conexion();
-        $sql = "SELECT 
-            c.client_id,
-            c.client_rs,
-            c.client_cuit AS cuit,
-            GROUP_CONCAT(DISTINCT s.sector_nombre ORDER BY s.sector_nombre SEPARATOR ', ') AS sectores_contratados,
-            COUNT(DISTINCT pg.sector_id) AS cantidad_sectores,
-            GROUP_CONCAT(DISTINCT sf.sector_nombre ORDER BY sf.sector_nombre SEPARATOR ', ') AS sectores_faltantes
-            FROM clientes c
-            INNER JOIN proyectos p ON p.client_id = c.client_id
-            INNER JOIN proyecto_cantidad_servicios pcs ON pcs.proy_id = p.proy_id
-            INNER JOIN proyecto_gestionado pg ON pg.id_proyecto_cantidad_servicios = pcs.id
-            INNER JOIN sectores s ON s.sector_id = pg.sector_id
-            INNER JOIN sectores sf ON sf.sector_id IN (1,2,3)
-                AND sf.sector_id NOT IN (
-                    SELECT DISTINCT pg2.sector_id
-                    FROM proyecto_gestionado pg2
-                    INNER JOIN proyecto_cantidad_servicios pcs2 ON pcs2.id = pg2.id_proyecto_cantidad_servicios
-                    INNER JOIN proyectos p2 ON p2.proy_id = pcs2.proy_id
-                    WHERE p2.client_id = c.client_id
-                    AND pg2.estados_id IN (1,2,3,4,14)
-                    AND pg2.sector_id IN (1,2,3)
-                )
-            WHERE pg.estados_id IN (1,2,3,4,14)
-            AND pg.sector_id IN (1,2,3)
-            GROUP BY c.client_id, c.client_rs
-            HAVING COUNT(DISTINCT pg.sector_id) < 3
-            ORDER BY c.client_rs";
+       $sql = "SELECT 
+    c.client_id,
+    c.client_rs,
+    c.client_cuit AS cuit,
+    pg.fech_crea,
+    GROUP_CONCAT(DISTINCT s.sector_nombre ORDER BY s.sector_nombre SEPARATOR ', ') AS sectores_contratados,
+    COUNT(DISTINCT pg.sector_id) AS cantidad_sectores,
+    GROUP_CONCAT(DISTINCT sf.sector_nombre ORDER BY sf.sector_nombre SEPARATOR ', ') AS sectores_faltantes
+    FROM clientes c
+    INNER JOIN proyectos p ON p.client_id = c.client_id
+    INNER JOIN proyecto_cantidad_servicios pcs ON pcs.proy_id = p.proy_id
+    INNER JOIN proyecto_gestionado pg ON pg.id_proyecto_cantidad_servicios = pcs.id
+    INNER JOIN sectores s ON s.sector_id = pg.sector_id
+    INNER JOIN sectores sf ON sf.sector_id IN (1,2,3)
+        AND sf.sector_id NOT IN (
+            SELECT DISTINCT pg2.sector_id
+            FROM proyecto_gestionado pg2
+            INNER JOIN proyecto_cantidad_servicios pcs2 ON pcs2.id = pg2.id_proyecto_cantidad_servicios
+            INNER JOIN proyectos p2 ON p2.proy_id = pcs2.proy_id
+            WHERE p2.client_id = c.client_id
+            AND pg2.estados_id IN (1,2,3,4,14)
+            AND pg2.sector_id IN (1,2,3)
+            AND YEAR(pg2.fech_crea) = YEAR(CURDATE())
+        )
+    WHERE pg.estados_id IN (1,2,3,4,14)
+    AND pg.sector_id IN (1,2,3)
+    AND YEAR(pg.fech_crea) = YEAR(CURDATE())
+    GROUP BY c.client_id, c.client_rs
+    HAVING COUNT(DISTINCT pg.sector_id) < 3
+    ORDER BY c.client_rs";
         $stmt=$conn->prepare($sql);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);

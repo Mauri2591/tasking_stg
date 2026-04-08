@@ -2358,7 +2358,7 @@ TXT;
                 $badges_faltantes .= '<span class="badge ' . $clase . '">' . $sector . '</span> ';
             }
             $sub_array[] = $badges_faltantes;
-
+            $sub_array[] = '<p class="text-center align-item-center"><span class="badge bg-light border border-dark text-dark fs-11 fw-bold">' . date('Y', strtotime($row['fech_crea'])) . '</span></p>';
             $data[] = $sub_array;
         }
         $results = array(
