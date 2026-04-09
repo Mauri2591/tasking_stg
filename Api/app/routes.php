@@ -739,7 +739,7 @@ return function (App $app) {
                 'ids' => $row['ids_usuarios_asignados'] ? explode(',', $row['ids_usuarios_asignados']) : [],
                 'nombres' => $row['nombres_usuarios_asignados'] ? explode(',', $row['nombres_usuarios_asignados']) : [],
                 'correos' => $row['correo_usuario'] ? explode(',', $row['correo_usuario']) : []
-                ];
+            ];
 
             // Producto
             $row['producto'] = [
@@ -799,7 +799,9 @@ return function (App $app) {
 
 
     // ******************   INICIO TIMASUMMARY ***********************
-    $app->get('/cargasTimesummary', function (Request $request, Response $response) use ($app) {
+
+    //Tareas de usuarios
+    $app->get('/cargas-tareas', function (Request $request, Response $response) use ($app) {
 
         $apiKeyPlana = $request->getHeaderLine('X-API-KEY');
         if (!$apiKeyPlana) {
@@ -889,6 +891,68 @@ return function (App $app) {
             $stmt = $pdo->prepare($sql);
             $stmt->bindValue(':sector_id', $sector_id, PDO::PARAM_INT);
         }
+        $stmt->execute();
+        $response->getBody()->write(
+            json_encode($stmt->fetchAll(PDO::FETCH_ASSOC), JSON_UNESCAPED_UNICODE)
+        );
+        return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+    });
+
+    //Cross-Sell
+    $app->get('/cross-sell', function (Request $request, Response $response) use ($app) {
+
+        $apiKeyPlana = $request->getHeaderLine('X-API-KEY');
+        if (!$apiKeyPlana) {
+            $response->getBody()->write(json_encode(["error" => "API Key requerida"]));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(401);
+        }
+
+        $pdo = $app->getContainer()->get(PDO::class);
+
+        $keys = $pdo->query("SELECT api_key, sector_id FROM api_keys WHERE est = 1")
+            ->fetchAll(PDO::FETCH_ASSOC);
+
+        $sector_id = null;
+        foreach ($keys as $row) {
+            if (hash_equals(Openssl::get_ssl_decrypt($row['api_key']), $apiKeyPlana)) {
+                $sector_id = (int)$row['sector_id'];
+                break;
+            }
+        }
+
+        if (!$sector_id) {
+            $response->getBody()->write(json_encode(["error" => "API Key inválida"]));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(403);
+        }
+        $sql = "SELECT 
+            c.client_rs AS cliente,
+            c.client_cuit AS cuit,
+            pg.fech_crea AS fecha,
+            GROUP_CONCAT(DISTINCT s.sector_nombre ORDER BY s.sector_nombre SEPARATOR ', ') AS sectores-contratados,
+            GROUP_CONCAT(DISTINCT sf.sector_nombre ORDER BY sf.sector_nombre SEPARATOR ', ') AS sectores-faltantes
+            FROM clientes c
+            INNER JOIN proyectos p ON p.client_id = c.client_id
+            INNER JOIN proyecto_cantidad_servicios pcs ON pcs.proy_id = p.proy_id
+            INNER JOIN proyecto_gestionado pg ON pg.id_proyecto_cantidad_servicios = pcs.id
+            INNER JOIN sectores s ON s.sector_id = pg.sector_id
+            INNER JOIN sectores sf ON sf.sector_id IN (1,2,3)
+                AND sf.sector_id NOT IN (
+                    SELECT DISTINCT pg2.sector_id
+                    FROM proyecto_gestionado pg2
+                    INNER JOIN proyecto_cantidad_servicios pcs2 ON pcs2.id = pg2.id_proyecto_cantidad_servicios
+                    INNER JOIN proyectos p2 ON p2.proy_id = pcs2.proy_id
+                    WHERE p2.client_id = c.client_id
+                    AND pg2.estados_id IN (1,2,3,4,14)
+                    AND pg2.sector_id IN (1,2,3)
+                    AND YEAR(pg2.fech_crea) = YEAR(CURDATE())
+                )
+            WHERE pg.estados_id IN (1,2,3,4,14)
+            AND pg.sector_id IN (1,2,3)
+            AND YEAR(pg.fech_crea) = YEAR(CURDATE())
+            GROUP BY c.client_id, c.client_rs
+            HAVING COUNT(DISTINCT pg.sector_id) < 3
+            ORDER BY c.client_rs";
+        $stmt = $pdo->prepare($sql);
         $stmt->execute();
         $response->getBody()->write(
             json_encode($stmt->fetchAll(PDO::FETCH_ASSOC), JSON_UNESCAPED_UNICODE)
