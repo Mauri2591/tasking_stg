@@ -928,8 +928,8 @@ return function (App $app) {
             c.client_rs AS cliente,
             c.client_cuit AS cuit,
             pg.fech_crea AS fecha,
-            GROUP_CONCAT(DISTINCT s.sector_nombre ORDER BY s.sector_nombre SEPARATOR ', ') AS sectores-contratados,
-            GROUP_CONCAT(DISTINCT sf.sector_nombre ORDER BY sf.sector_nombre SEPARATOR ', ') AS sectores-faltantes
+            GROUP_CONCAT(DISTINCT s.sector_nombre ORDER BY s.sector_nombre SEPARATOR ', ') AS sectores_contratados,
+            GROUP_CONCAT(DISTINCT sf.sector_nombre ORDER BY sf.sector_nombre SEPARATOR ', ') AS sectores_faltantes
             FROM clientes c
             INNER JOIN proyectos p ON p.client_id = c.client_id
             INNER JOIN proyecto_cantidad_servicios pcs ON pcs.proy_id = p.proy_id
