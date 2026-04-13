@@ -894,7 +894,7 @@ if (isset($_SESSION['usu_id'])) {
                     return;
                 }
 
-                if (validar_usu_asignado) {
+                if (validar_usu_asignado || sector_usu_id == 4) {
                     $.ajax({
                         type: "POST",
                         url: "../../../../../Controller/ctrProyectos.php?proy=insert_descripciones_proyecto",
