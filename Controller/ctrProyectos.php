@@ -654,7 +654,7 @@ switch ($_GET['proy']) {
             $sub_array[] = '<span class="badge bg-light text-dark">' . $row['cat_nom'] . '</span>';
             $sub_array[] = '<p class="text-center py-0"><span class="badge border border-dark bg-primary fw-bold fs-10 text-light">' . $row['recurrencias_total'] . '</span></p>';
             $sub_array[] = '<p class="text-center py-0"><span class="badge border border-dark bg-success fw-bold fs-10 text-light">' . $row['recurrencias_utilizadas'] . '</span></p>';
-            $sub_array[] = $row['estado_recurrencia'] == "SI_TOMADO" ? '<span type="button" onclick="gestionar_proy_recurrente(' . $row['id_proyecto_cantidad_servicios'] . "," . $row['conteo_id_recurrencia'] . ')" data-placement="top" title="Gestionar Recurrente"><i class="ri-send-plane-fill text-primary fs-16"></i></span>' : '<span type="button" disabled data-placement="top" title="Inhabilitado. Debe actualizar en Borradores un proyecto anterior a este"><i style="color:gray; text:white" class="ri-send-plane-fill fs-16"></i></span>';
+            $sub_array[] = $row['estado_recurrencia'] == "SI_TOMADO" ? '<span type="button" onclick="gestionar_proy_recurrente(' . $row['id_proyecto_cantidad_servicios'] . "," . $row['conteo_id_recurrencia'] . ')" data-placement="top" title="Gestionar Recurrente"><i class="ri-send-plane-fill text-primary fs-16"></i></span>' : '<span type="button" disabled data-placement="top" title="Inhabilitado. Debe actualizar en Borradores un proyecto anterior a este"><i style="color:BFBFBF; text:white" class="ri-send-plane-fill fs-16"></i></span>';
             $data[] = $sub_array;
         }
         $results = array(
