@@ -409,7 +409,7 @@ if (isset($_SESSION['usu_id'])) {
             "<?php echo isset($_SESSION['usu_id']) ? $_SESSION['usu_id'] : "" ?>";
 
         var habilitar_envio_correo = true; // ACA HABILITO CUANDO ME DEN LA CUENTA PARA ENVÍO DE EMAIL
-
+        var validar_usu_asignado = false;
 
         document.addEventListener("DOMContentLoaded", function() {
 
@@ -522,6 +522,7 @@ if (isset($_SESSION['usu_id'])) {
                         // Usuario asignado puede escribir si el estado está abierto
                         if (elem.usu_asignado == session_usu_id) {
                             mostrar = true;
+                            validar_usu_asignado = true;
                         }
 
                     });
@@ -869,7 +870,7 @@ if (isset($_SESSION['usu_id'])) {
                 const spinner = document.getElementById("btn_spinner_guardar");
                 const textoBtn = document.getElementById("btn_texto_guardar");
 
-                // 🔹 Activar siempre el spinner y "Guardando"
+                // Activar siempre el spinner y "Guardando"
                 textoBtn.textContent = "Guardando";
                 spinner.classList.remove("d-none");
                 btn.disabled = true;
@@ -886,103 +887,116 @@ if (isset($_SESSION['usu_id'])) {
                         showConfirmButton: false
                     });
 
-                    // 🔹 IMPORTANTE: Restaurar el botón si no hay descripción
+                    // IMPORTANTE: Restaurar el botón si no hay descripción
                     spinner.classList.add("d-none");
                     textoBtn.textContent = "Guardar";
                     btn.disabled = false;
                     return;
                 }
 
-                $.ajax({
-                    type: "POST",
-                    url: "../../../../../Controller/ctrProyectos.php?proy=insert_descripciones_proyecto",
-                    data: data,
-                    processData: false,
-                    contentType: false,
-                    success: function(response) {
-                        const btn = document.getElementById("btn_guardar_descripcion");
-                        const spinner = document.getElementById("btn_spinner_guardar");
-                        const textoBtn = document.getElementById("btn_texto_guardar");
+                if (validar_usu_asignado) {
+                    $.ajax({
+                        type: "POST",
+                        url: "../../../../../Controller/ctrProyectos.php?proy=insert_descripciones_proyecto",
+                        data: data,
+                        processData: false,
+                        contentType: false,
+                        success: function(response) {
+                            const btn = document.getElementById("btn_guardar_descripcion");
+                            const spinner = document.getElementById("btn_spinner_guardar");
+                            const textoBtn = document.getElementById("btn_texto_guardar");
 
-                        // Activar spinner y texto "Guardando"
-                        textoBtn.textContent = "Guardando";
-                        spinner.classList.remove("d-none");
-                        btn.disabled = true;
+                            // Activar spinner y texto "Guardando"
+                            textoBtn.textContent = "Guardando";
+                            spinner.classList.remove("d-none");
+                            btn.disabled = true;
 
-                        let json;
-                        try {
-                            json = typeof response === 'string' ? JSON.parse(response) :
-                                response;
-                        } catch (e) {
-                            console.error("Respuesta inválida del servidor:", response);
-                            return;
-                        }
+                            let json;
+                            try {
+                                json = typeof response === 'string' ? JSON.parse(response) :
+                                    response;
+                            } catch (e) {
+                                console.error("Respuesta inválida del servidor:", response);
+                                return;
+                            }
 
-                        // ⚠️ Caso: archivos inválidos pero nota guardada
-                        if (json.status === "error" && json.errores) {
-                            // Mostrar alerta HTML de error MIME
-                            let htmlErrores =
-                                `<div class="alert alert-warning text-center" role="alert"><strong>Error:</strong><br>`;
-                            json.errores.forEach(err => {
-                                htmlErrores += `- ${err}<br>`;
+                            // Caso: archivos inválidos pero nota guardada
+                            if (json.status === "error" && json.errores) {
+                                // Mostrar alerta HTML de error MIME
+                                let htmlErrores =
+                                    `<div class="alert alert-warning text-center" role="alert"><strong>Error:</strong><br>`;
+                                json.errores.forEach(err => {
+                                    htmlErrores += `- ${err}<br>`;
+                                });
+                                htmlErrores += `</div>`;
+                                $("#cont_mje_proy_archivo").html(htmlErrores).show();
+                                $("#documento").val("");
+
+                                // ⏱ Ocultar error después de 1.5s, luego mostrar Swal, luego recargar
+                                setTimeout(() => {
+                                    $("#cont_mje_proy_archivo").fadeOut();
+
+                                    Swal.fire({
+                                        icon: 'info',
+                                        title: "Guardado parcial",
+                                        text: "La nota fue guardada, pero algunos archivos no se subieron.",
+                                        timer: 2000,
+                                        showConfirmButton: false
+                                    });
+
+                                    // ⏱ Recargar luego del Swal
+                                    setTimeout(() => {
+                                        location.reload();
+                                    }, 2000);
+                                }, 1500);
+
+                                return;
+                            }
+
+                            // ✅ Todo OK
+                            Swal.fire({
+                                icon: 'success',
+                                title: "Bien!",
+                                text: json.mensaje,
+                                timer: 1100,
+                                showConfirmButton: false
                             });
-                            htmlErrores += `</div>`;
-                            $("#cont_mje_proy_archivo").html(htmlErrores).show();
-                            $("#documento").val("");
 
-                            // ⏱ Ocultar error después de 1.5s, luego mostrar Swal, luego recargar
+                            $("#captura_imagen").val('');
+                            $('#descripcion_proyecto').summernote('reset');
+
+                            setTimeout(() => {
+                                location.reload();
+                            }, 1100);
+                        },
+                        error: function() {
+                            let htmlmje = `<div id="extension_no_permitida" class="alert alert-warning text-center" role="alert">
+                                            <a class="alert-link">Error! <br></a>Extensión no permitida
+                                        </div>`;
+                            $("#cont_mje_proy_archivo").html(htmlmje).show();
+                            $("#documento").val("");
                             setTimeout(() => {
                                 $("#cont_mje_proy_archivo").fadeOut();
+                            }, 2000);
 
-                                Swal.fire({
-                                    icon: 'info',
-                                    title: "Guardado parcial",
-                                    text: "La nota fue guardada, pero algunos archivos no se subieron.",
-                                    timer: 2000,
-                                    showConfirmButton: false
-                                });
-
-                                // ⏱ Recargar luego del Swal
-                                setTimeout(() => {
-                                    location.reload();
-                                }, 2000);
-                            }, 1500);
-
-                            return;
+                            // En error también dejamos "Guardando" hasta el reload
+                            setTimeout(() => {
+                                location.reload();
+                            }, 2000);
                         }
-
-                        // ✅ Todo OK
-                        Swal.fire({
-                            icon: 'success',
-                            title: "Bien!",
-                            text: json.mensaje,
-                            timer: 1100,
-                            showConfirmButton: false
-                        });
-
-                        $("#captura_imagen").val('');
-                        $('#descripcion_proyecto').summernote('reset');
-
-                        setTimeout(() => {
-                            location.reload();
-                        }, 1100);
-                    },
-                    error: function() {
-                        let htmlmje = `<div id="extension_no_permitida" class="alert alert-warning text-center" role="alert">
-                <a class="alert-link">Error! <br></a>Extensión no permitida
-            </div>`;
-                        $("#cont_mje_proy_archivo").html(htmlmje).show();
-                        $("#documento").val("");
-                        setTimeout(() => {
-                            $("#cont_mje_proy_archivo").fadeOut();
-                        }, 2000);
-
-                        // En error también dejamos "Guardando" hasta el reload
-                        setTimeout(() => {
-                            location.reload();
-                        }, 2000);
-                    }
-                });
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: "Error!",
+                        text: "No tiene permisos para realizar esta accion",
+                        timer: 1100,
+                        showConfirmButton: false
+                    });
+                    setTimeout(() => {
+                        location.reload();
+                    }, 2000);
+                }
             });
 
             function enviarCorreoFinalizacion(id_proyecto_gestionado) {
