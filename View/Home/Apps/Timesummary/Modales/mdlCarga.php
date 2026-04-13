@@ -69,7 +69,7 @@
 
         </section>
 
-        <div id="validar_periodo" class="alert alert-warning fs-14" style="display: none;" role="alert">
+        <div id="validar_periodo" class="alert alert-warning fs-14" style="display: none; justify-content: center;" role="alert">
           Vas a guardar una tarea en diferente periodo
         </div>
 
