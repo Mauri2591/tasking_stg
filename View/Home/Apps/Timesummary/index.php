@@ -111,6 +111,13 @@ if (isset($_SESSION['usu_id'])) {
     var URL = "<?php echo URL ?>";
     let huboUpdate = false;
 
+    function toLocalDateStr(date) {
+        const y = date.getFullYear();
+        const m = String(date.getMonth() + 1).padStart(2, '0');
+        const d = String(date.getDate()).padStart(2, '0');
+        return `${y}-${m}-${d}`;
+    }
+
     document.addEventListener('DOMContentLoaded', function() {
         var tabla;
         var calendarEl = document.getElementById('calendar');
@@ -513,7 +520,7 @@ if (isset($_SESSION['usu_id'])) {
                     let fin = evento.end;
 
                     return (
-                        inicio.toISOString().split("T")[0] === NUEVA_FECHA &&
+                        toLocalDateStr(inicio) === NUEVA_FECHA && 
                         (
                             (NUEVO_INICIO >= inicio && NUEVO_INICIO < fin) ||
                             (NUEVO_FIN > inicio && NUEVO_FIN <= fin) ||
