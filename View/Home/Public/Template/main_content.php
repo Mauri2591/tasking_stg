@@ -261,6 +261,21 @@
                                 </div>
                             </li>
 
+                             <li class="nav-item">
+                                        <a class="nav-link collapsed" href="#sidebarAuditoria" data-bs-toggle="collapse"
+                                            role="button" aria-expanded="false" aria-controls="sidebarAuditoria"
+                                            data-key="t-email">Auditoria</a>
+                                        <div class="menu-dropdown collapse" id="sidebarAuditoria">
+                                            <ul class="nav nav-sm flex-column">
+                                                <li class="nav-item">
+                                                    <a href="<?php echo URL . "View/Home/Apps/Auditoria/"; ?>"
+                                                        class="nav-link" data-key="t-mailbox">Registro de Sesiones</a>
+                                                </li>
+                                            </ul>
+
+                                        </div>
+                                    </li>
+
                         </ul>
                     <?php elseif (isset($_SESSION) && $_SESSION['rol_id'] == 2): ?>
                         <?php switch ($_SESSION['sector_id']) {
@@ -524,6 +539,7 @@
                                             </li>
                                         </ul>
                                     </div>
+                                    
                                 </li>
                             <?php
                                 break;

@@ -16,7 +16,7 @@ class Login extends Conexion
     public function audit_logout($usu_id, $sector_id,$logout)
     {   
         $conn = parent::get_conexion();
-        $sql = "INSERT INTO audit_logout (usu_id,sector_id,logout) VALUES(:usu_id,:sector_id,:logout)";
+        $sql = "INSERT INTO audit_login (usu_id,sector_id,logout) VALUES(:usu_id,:sector_id,:logout)";
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(':usu_id', $usu_id, PDO::PARAM_INT);
         $stmt->bindValue(':sector_id', $sector_id, PDO::PARAM_INT);
