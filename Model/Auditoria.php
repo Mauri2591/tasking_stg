@@ -5,7 +5,7 @@ class Auditoria extends Conexion
     public function get_audit_sesiones()
     {
         $conn = parent::get_conexion();
-        $conn->exec("SET time_zone = 'America/Argentina/Buenos_Aires'");            
+        $conn->exec("SET time_zone = '-03:00'");          
         $sql = "SELECT 
                 l.id,
                 CASE 
