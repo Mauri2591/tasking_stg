@@ -9,8 +9,8 @@ switch ($_GET['case']) {
         $data = array();
         foreach ($datos as $row) {
             $sub_array = array();
-            $sub_array[] = $row['usu_correo'];
-            $sub_array[] = $row['sector_nombre'];
+            $sub_array[] = strtolower($row['usu_correo']);
+            $sub_array[] = strtoupper($row['sector_nombre']);
             $sub_array[] = $row['fecha'];
             $sub_array[] = $row['evento'] == "LOGIN" 
                 ? '<span><span class="badge bg-success text-light">Login</span> <i class="fs-18 text-success ri-login-circle-fill"></i></span>' 
