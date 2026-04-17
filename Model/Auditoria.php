@@ -1,10 +1,12 @@
 <?php
+date_default_timezone_set('America/Argentina/Buenos_Aires');
 class Auditoria extends Conexion
 {
     public function get_audit_sesiones()
     {
         $conn = parent::get_conexion();
-            $sql = "SELECT 
+        $conn->exec("SET time_zone = 'America/Argentina/Buenos_Aires'");            
+        $sql = "SELECT 
                 l.id,
                 CASE 
                     WHEN l.login = 'SI' THEN 'LOGIN'
