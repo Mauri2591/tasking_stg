@@ -2,6 +2,27 @@
 require_once __DIR__ . "/../Config/Config.php";
 class Login extends Conexion
 {
+
+    public function audit_login($usu_id, $sector_id,$login)
+    {   
+        $conn = parent::get_conexion();
+        $sql = "INSERT INTO audit_login (usu_id,sector_id,login) VALUES(:usu_id,:sector_id,:login)";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue(':usu_id', $usu_id, PDO::PARAM_INT);
+        $stmt->bindValue(':sector_id', $sector_id, PDO::PARAM_INT);
+        $stmt->bindValue(':login', $login, PDO::PARAM_STR);
+        $stmt->execute();
+    }
+    public function audit_logout($usu_id, $sector_id,$logout)
+    {   
+        $conn = parent::get_conexion();
+        $sql = "INSERT INTO audit_logout (usu_id,sector_id,logout) VALUES(:usu_id,:sector_id,:logout)";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue(':usu_id', $usu_id, PDO::PARAM_INT);
+        $stmt->bindValue(':sector_id', $sector_id, PDO::PARAM_INT);
+        $stmt->bindValue(':logout', $logout, PDO::PARAM_STR);
+        $stmt->execute();
+    }
     public function set_login($usu_correo, $usu_pass)
     {
         $conn = parent::get_conexion();
@@ -29,6 +50,7 @@ class Login extends Conexion
                     $_SESSION['sector_id'] = $resul['sector_id'];
                     $_SESSION['sector_nombre'] = $resul['sector_nombre'];
                     $_SESSION['bienvenido'] = "Bienvenido " . $resul['usu_nom'];
+                    $this->audit_login($_SESSION['usu_id'], $_SESSION['sector_id'],"SI"); //Inserto en tabla audit el login
                     header("Location:" . URL . "View/Home/");
                     exit;
                 } else {
