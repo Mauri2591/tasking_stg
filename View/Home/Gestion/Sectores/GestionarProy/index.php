@@ -1043,8 +1043,14 @@ if (isset($_SESSION['usu_id'])) {
                         estados_id: 3
                     }
                 );
-            }
 
+                $.post(
+                    "../../../../../Controller/ctrAuditoria.php?case=insert_audit_estados_proyecto", {
+                        id_proyecto_gestionado: id,
+                        estados_id: 3
+                    }
+                );
+            }
 
             function finalizar_proyecto(id_proyecto_gestionado) {
                 btn_finalizar_proyecto.addEventListener("click", function() {
@@ -1057,7 +1063,6 @@ if (isset($_SESSION['usu_id'])) {
                     }).then((result) => {
 
                         if (!result.isConfirmed) return;
-
                         $.post("../../../../../Controller/ctrProyectos.php?proy=update_proyecto_DesarrolloTasking", {
                             id_proyecto_gestionado
                         });
@@ -1091,7 +1096,6 @@ if (isset($_SESSION['usu_id'])) {
                                                     confirmButtonText: 'Ok'
                                                 }).then(() => location.reload());
                                                 console.log(resp.error);
-
                                             }
                                         })
                                         .fail(function() {

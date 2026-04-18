@@ -188,7 +188,12 @@ function cambiar_estado_proy_desde_calidad_a_borrador(id_proyecto_gestionado) {
                 },
                 "json"
             );
-
+            $.post(
+                "../../../../../Controller/ctrAuditoria.php?case=insert_audit_estados_proyecto", {
+                    id_proyecto_gestionado: id_proyecto_gestionado,
+                    estados_id: 14
+                }
+            );
             setTimeout(() => {
                 $('#table_proyectos_nuevos_soc').DataTable().ajax.reload(null, false);
                 $('#table_proyectos_borrador').DataTable().ajax.reload(null, false);
@@ -222,6 +227,12 @@ function cambiar_estado_proy_desde_calidad_a_abierto(id_proyecto_gestionado) {
                 },
                 "json"
             );
+            $.post(
+                "../../../../../Controller/ctrAuditoria.php?case=insert_audit_estados_proyecto", {
+                    id_proyecto_gestionado: id_proyecto_gestionado,
+                    estados_id: 2
+                }
+            );
             setTimeout(() => {
                 $('#table_proyectos_nuevos_soc').DataTable().ajax.reload(null, false);
                 $('#table_proyectos_abiertos_soc').DataTable().ajax.reload(null, false);
@@ -254,6 +265,12 @@ function cerrar_proyecto(id_proyecto_gestionado) {
 
                 },
                 "json"
+            );
+            $.post(
+                "../../../../../Controller/ctrAuditoria.php?case=insert_audit_estados_proyecto", {
+                    id_proyecto_gestionado: id_proyecto_gestionado,
+                    estados_id: 4
+                }
             );
             Swal.fire({
                 icon: "success",

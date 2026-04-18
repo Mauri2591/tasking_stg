@@ -1128,6 +1128,13 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
                         "json"
                     );
 
+                    $.post(
+                        "../../../../../Controller/ctrAuditoria.php?case=insert_audit_estados_proyecto", {
+                            id_proyecto_gestionado: $("#id_proyecto_gestionado").val(),
+                            estados_id: 1
+                        }
+                    );
+
                     setTimeout(() => {
                         if ($.fn.DataTable.isDataTable('#table_proyectos_borrador')) {
                             $('#table_proyectos_borrador').DataTable().ajax.reload(null, false);
@@ -1202,6 +1209,13 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
                                 showConfirmButton: false,
                                 timer: 1500
                             });
+
+                            $.post(
+                                "../../../../../Controller/ctrAuditoria.php?case=insert_audit_estados_proyecto", {
+                                    id_proyecto_gestionado: dataForm.get('id_proyecto_gestionado'),
+                                    estados_id: 18
+                                }
+                            );
 
                             setTimeout(() => {
                                 VALIDAR_SI_HAY_FECHA_INICIO = true;
@@ -1585,7 +1599,7 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
                 setTimeout(() => {
                     $('#table_cross_sell_sectores').DataTable().ajax.reload(null, false);
                 }, 500)
-                
+
             },
             error: function (error) {
                 let htmlmje = `<div id="extension_no_permitida" class="alert alert-warning text-center" role="alert">
@@ -2225,6 +2239,14 @@ function cerrar_proyecto(id_proyecto_gestionado) {
                 },
                 "json"
             );
+
+            $.post(
+                "../../../../../Controller/ctrAuditoria.php?case=insert_audit_estados_proyecto", {
+                    id_proyecto_gestionado: id_proyecto_gestionado,
+                    estados_id: 4
+                }
+            );
+
             setTimeout(() => {
                 if ($.fn.DataTable.isDataTable('#table_proyectos_realizados')) {
                     $('#table_proyectos_realizados').DataTable().ajax.reload(null, false);
@@ -2311,6 +2333,14 @@ document.getElementById("btn_eliminar_proyecto").addEventListener("click", (e) =
                     },
                     "json"
                 );
+
+                $.post(
+                    "../../../../../Controller/ctrAuditoria.php?case=insert_audit_estados_proyecto", {
+                        id_proyecto_gestionado: ID_PROYECTO_GESTIONADO,
+                        estados_id: 16
+                    }
+                );
+
                 Swal.fire({
                     icon: "success",
                     title: "Bien",
@@ -2359,6 +2389,13 @@ document.getElementById("btn_finalizar_estado_proyecto").addEventListener("click
 
                 },
                 "json"
+            );
+
+            $.post(
+                "../../../../../Controller/ctrAuditoria.php?case=insert_audit_estados_proyecto", {
+                    id_proyecto_gestionado: ID_PROYECTO_GESTIONADO,
+                    estados_id: 15
+                }
             );
 
             Swal.fire({

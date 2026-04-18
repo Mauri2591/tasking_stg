@@ -24,4 +24,16 @@ class Auditoria extends Conexion
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+     public function insert_audit_estados_proyecto(string $id_proyecto_gestionado, int $estados_id, int $usu_id, int $sector_id)
+    {
+        $conn = parent::get_conexion();
+        $sql = "INSERT INTO audit_estados_proyecto (id_proyecto_gestionado,estados_id,usu_id,sector_id) VALUES (:id_proyecto_gestionado,:estados_id,:usu_id,:sector_id)";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue(":id_proyecto_gestionado", $id_proyecto_gestionado, PDO::PARAM_INT);
+        $stmt->bindValue(":estados_id", $estados_id, PDO::PARAM_INT);
+        $stmt->bindValue(":usu_id", $usu_id, PDO::PARAM_INT);
+        $stmt->bindValue(":sector_id", $sector_id, PDO::PARAM_INT);
+        $stmt->execute();
+    }
 }
