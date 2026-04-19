@@ -16,7 +16,7 @@ if (isset($_SESSION['usu_id'])) {
             <div class="row">
                 <div class="col-12">
                     <div class="page-title-box d-sm-flex align-items-center justify-content-between bg-light bg-light">
-                        <span class="fs-12 badge bg-primary text-light">Auditoria de Sessiones</span>
+                        <span class="fs-12 badge bg-primary text-light">Logs Sesiones</span>
 
                     </div>
                 </div>
@@ -24,11 +24,10 @@ if (isset($_SESSION['usu_id'])) {
             <!-- end page title -->
         </div>
 
-
         <div class="col-xl-12">
             <div class="card crm-widget">
                 <div class="card-body p-0">
-                    <table id="tablaUsuariosSesiones">
+                    <table id="tablaUsuariosSesiones" class="table table-bordered table-hover w-100">
                         <thead>
                             <tr>
                                 <th style="width: 40%; text-align: center;">Usuario</th>
@@ -55,7 +54,6 @@ if (isset($_SESSION['usu_id'])) {
 <script>
     var tabla;
     var URL = "<?php echo URL ?>";
-
     document.addEventListener("DOMContentLoaded", function() {
         tabla = $("#tablaUsuariosSesiones").dataTable({
             "ajax": {

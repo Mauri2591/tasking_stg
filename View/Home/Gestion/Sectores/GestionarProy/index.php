@@ -27,6 +27,7 @@ if (isset($_SESSION['usu_id'])) {
             <?php
             include_once __DIR__ . "/../Modales/mdlAgregarUsuarioProy.php";
             include_once __DIR__ . "/../Modales/mdlPipeline.php";
+            include_once __DIR__ . "/../Modales/mdlLogsProyectos.php";
             ?>
 
             <!-- start page title -->
@@ -208,6 +209,12 @@ if (isset($_SESSION['usu_id'])) {
                                                 <span id="proy_recurrencia" style="display: none; color:orangered" class="badge ml-1 bg-light"></span>
                                                 <span id="cont_dimensionamiento" class="badge mx-1 text-primary bg-light fs-10">Horas: <span class="fw-bold" id="dimensionamiento"></span></span>
                                                 <span id="workshop" style="display: none;" class="badge mx-1 text-light bg-info border border-light">workshop</span>
+                                            </div>
+
+                                            <div style="display: flex; justify-content: end; align-items: center; margin-top: 0; margin-bottom: .2rem;">
+                                                <span type="button" onclick="verLogs(<?php echo Openssl::get_ssl_decrypt($_GET['pg']) ?>)" title="Ver historial del proyecto" style="background-color: #475569; display: inline-flex; align-items: center; gap: 4px;" class="badge border border-light">
+                                                    Logs <i class="ri-history-line fs-14"></i>
+                                                </span>
                                             </div>
 
                                             <div class="card-body p-0">
@@ -1354,6 +1361,83 @@ if (isset($_SESSION['usu_id'])) {
                 toast.success('Successfully toasted!')
             }).catch(function(error) {
                 console.error("Error al copiar: ", error);
+            });
+        }
+
+        function verLogs(id_proyecto_gestionado) {
+            $("#ModalVerLogsProyectos").modal("show")
+            tabla = $("#tablaAuditoriaProyectosPorId").dataTable({
+                "ajax": {
+                    url: URL + "Controller/ctrAuditoria.php?case=get_auditoria_proyectos_x_id",
+                    data:{
+                        id:id_proyecto_gestionado
+                    },
+                    type: "post",
+                    dataType: "json",
+                    error: function(e) {}
+                },
+                "order": [
+                    [7, "asc"]
+                ],
+                "bDestroy": true,
+                "responsive": false,
+                "bInfo": true,
+                "iDisplayLength": 10,
+                "autoWidth": false,
+                "columnDefs": [{
+                        "className": "text-center",
+                        "targets": "_all"
+                    },
+                    {
+                         "targets": 0,
+                        "width": "3%"
+                    },
+                    {
+                        "targets": 1,
+                        "width": "40%"
+                    },
+                    {
+                        "targets": 2,
+                        "width": "10%"
+                    },
+                    {
+                        "targets": 3,
+                        "width": "10%"
+                    },
+                    {
+                        "targets": 4,
+                        "width": "12%"
+                    },
+                    {
+                        "targets": 5,
+                        "width": "15%"
+                    },
+                    {
+                        "targets": 6,
+                        "width": "15%"
+                    },
+                    {
+                        "targets": 7,
+                        "width": "8%"
+                    }
+                ],
+                "language": {
+                    "sProcessing": "Procesando..",
+                    "sLengthMenu": "Mostrar _MENU_ registros",
+                    "sZeroRecords": "No se encontraron resultados..",
+                    "sEmptyTable": "Ninguna tarea disponible en esta tabla",
+                    "sInfo": "Mostrando un total de _TOTAL_ registros",
+                    "sInfoEmpty": "Mostrando un total de 0 registros",
+                    "sInfoFiltered": "(Filtrado de un total de _MAX_ registros)",
+                    "sSearch": "Buscar: ",
+                    "sLoadingRecords": "Cargando",
+                    "oPaginate": {
+                        "sFirst": "Primero",
+                        "sLast": "Último",
+                        "sNext": "Siguiente",
+                        "sPrevious": "Anterior"
+                    }
+                }
             });
         }
     </script>

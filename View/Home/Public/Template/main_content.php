@@ -47,16 +47,16 @@
                     </div>
 
                     <div class="dropdown ms-sm-3 header-item topbar-user">
-                            <button style="background-color: #eaeaea; border: .1rem solid #e0e0e0;" type="button" class="btn px-2 py-0" id="page-header-user-dropdown" data-bs-toggle="dropdown"
-                                aria-haspopup="true" aria-expanded="false">
-                                <span class="d-flex align-items-center">
-                                    <i class=" ri-user-2-fill fs-20 text-info"></i>
-                                    <span class="text-start ms-xl-2">
-                                        <span
-                                            class="d-none d-xl-inline-block ms-1 fw-medium user-name-text"><?php echo $_SESSION['usu_nom'] ?></span>
-                                    </span>
+                        <button style="background-color: #eaeaea; border: .1rem solid #e0e0e0;" type="button" class="btn px-2 py-0" id="page-header-user-dropdown" data-bs-toggle="dropdown"
+                            aria-haspopup="true" aria-expanded="false">
+                            <span class="d-flex align-items-center">
+                                <i class=" ri-user-2-fill fs-20 text-info"></i>
+                                <span class="text-start ms-xl-2">
+                                    <span
+                                        class="d-none d-xl-inline-block ms-1 fw-medium user-name-text"><?php echo $_SESSION['usu_nom'] ?></span>
                                 </span>
-                            </button>
+                            </span>
+                        </button>
 
                         <div class="dropdown-menu dropdown-menu-end">
                             <!-- item-->
@@ -261,25 +261,25 @@
                                 </div>
                             </li>
 
-                             <li class="nav-item">
-                                        <a class="nav-link collapsed" href="#sidebarAuditoria" data-bs-toggle="collapse"
-                                            role="button" aria-expanded="false" aria-controls="sidebarAuditoria"
-                                            data-key="t-email">Auditoria</a>
-                                        <div class="menu-dropdown collapse" id="sidebarAuditoria">
-                                            <ul class="nav nav-sm flex-column">
-                                                <li class="nav-item">
-                                                    <a href="<?php echo URL . "View/Home/Apps/Auditoria/sesiones.php"; ?>"
-                                                        class="nav-link" data-key="t-mailbox">Logs de Sesiones</a>
-                                                </li>
-                                                <li class="nav-item">
-                                                    <a href="<?php echo URL . "View/Home/Apps/Auditoria/proyectos.php"; ?>"
-                                                        class="nav-link" data-key="t-mailbox">Logs de Proyectos</a>
-                                                </li>
-                                            </ul>
-
-                                        </div>
-                                    </li>
-
+                            <?php if ($_SESSION['rol_id'] == 1): ?>
+                                <li class="nav-item">
+                                    <a class="nav-link collapsed" href="#sidebarAuditoria" data-bs-toggle="collapse"
+                                        role="button" aria-expanded="false" aria-controls="sidebarAuditoria"
+                                        data-key="t-email">Auditoria</a>
+                                    <div class="menu-dropdown collapse" id="sidebarAuditoria">
+                                        <ul class="nav nav-sm flex-column">
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Apps/Auditoria/sesiones.php"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Logs de Sesiones</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Apps/Auditoria/proyectos.php"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Logs de Proyectos</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </li>
+                            <?php endif; ?>
                         </ul>
                     <?php elseif (isset($_SESSION) && $_SESSION['rol_id'] == 2): ?>
                         <?php switch ($_SESSION['sector_id']) {
@@ -543,7 +543,7 @@
                                             </li>
                                         </ul>
                                     </div>
-                                    
+
                                 </li>
                             <?php
                                 break;

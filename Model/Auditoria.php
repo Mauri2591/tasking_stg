@@ -56,4 +56,26 @@ class Auditoria extends Conexion
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    public function get_auditoria_proyectos_x_id($id)
+    {
+        $conn = parent::get_conexion();
+        $sql = "SELECT audit_estados_proyecto.id AS id_audit_estados_proyecto, 
+            audit_estados_proyecto.id_proyecto_gestionado, 
+            DATE_FORMAT(audit_estados_proyecto.fecha, '%d-%m-%Y %H:%i:%s') AS fecha, 
+            tm_usuario.usu_correo, tm_usuario.est AS estado_usuario, sectores.sector_nombre, 
+            tm_estados.estados_nombre AS evento, tm_estados.catColor AS color_estado, 
+            tm_estados.icono AS icono,
+            proyecto_gestionado.titulo, proyecto_gestionado.refProy FROM audit_estados_proyecto 
+            INNER JOIN tm_usuario ON tm_usuario.usu_id=audit_estados_proyecto.usu_id 
+            INNER JOIN sectores ON sectores.sector_id=audit_estados_proyecto.sector_id 
+            INNER JOIN tm_estados ON tm_estados.estados_id=audit_estados_proyecto.estados_id
+            LEFT JOIN proyecto_gestionado ON proyecto_gestionado.id=audit_estados_proyecto.id_proyecto_gestionado
+            WHERE proyecto_gestionado.id = :id
+            ORDER BY audit_estados_proyecto.fecha DESC";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue(":id", $id, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }

@@ -6,9 +6,19 @@ if (isset($_SESSION['usu_id'])) {
     Headers::get_cors();
     include_once __DIR__ . "/../../Public/Template/head.php";
     include_once __DIR__ . "/../../Public/Template/main_content.php";
-
-
 ?>
+    <style>
+        #tablaAuditoriaProyectos {
+            table-layout: fixed;
+            width: 100% !important;
+        }
+
+        #tablaAuditoriaProyectos td {
+            word-wrap: break-word;
+            word-break: break-word;
+            white-space: normal;
+        }
+    </style>
     <div class="page-content">
         <div class="container-fluid">
 
@@ -16,7 +26,7 @@ if (isset($_SESSION['usu_id'])) {
             <div class="row">
                 <div class="col-12">
                     <div class="page-title-box d-sm-flex align-items-center justify-content-between bg-light bg-light">
-                        <span class="fs-12 badge bg-primary text-light">Auditoria de Proyectos</span>
+                        <span class="fs-12 badge bg-primary text-light">Logs Proyectos</span>
 
                     </div>
                 </div>
@@ -28,16 +38,16 @@ if (isset($_SESSION['usu_id'])) {
         <div class="col-xl-12">
             <div class="card crm-widget">
                 <div class="card-body p-0">
-                    <table id="tablaAuditoriaProyectos">
+                    <table id="tablaAuditoriaProyectos" class="table table-hover table-bordered w-100">
                         <thead>
                             <tr>
-                                <th style="width: 40%; text-align: center;">Titulo</th>
-                                <th style="width: 5%; text-align: center;">Ref</th>
-                                <th style="width: 5%; text-align: center;">Usuario</th>
-                                <th style="width: 15%; text-align: center;">Sector</th>
-                                <th style="width: 15%; text-align: center;">Evento</th>
-                                <th style="width: 15%; text-align: center;">Fecha</th>
-                                <th style="width: 10%; text-align: center;">Estado Usuario</th>
+                                <th>Titulo</th>
+                                <th>Referencia</th>
+                                <th>Usuario</th>
+                                <th>Sector</th>
+                                <th>Evento</th>
+                                <th>Fecha</th>
+                                <th>Estado Usuario</th>
                             </tr>
                         </thead>
                     </table>
@@ -57,7 +67,6 @@ if (isset($_SESSION['usu_id'])) {
 <script>
     var tabla;
     var URL = "<?php echo URL ?>";
-
     document.addEventListener("DOMContentLoaded", function() {
         tabla = $("#tablaAuditoriaProyectos").dataTable({
             "ajax": {
@@ -66,20 +75,47 @@ if (isset($_SESSION['usu_id'])) {
                 dataType: "json",
                 error: function(e) {}
             },
-
             "order": [
                 [5, "desc"]
             ],
-
             "bDestroy": true,
-            "responsive": true,
+            "responsive": false,
             "bInfo": true,
             "iDisplayLength": 10,
             "autoWidth": false,
             "columnDefs": [{
-                "className": "text-center",
-                "targets": "_all"
-            }],
+                    "className": "text-center",
+                    "targets": "_all"
+                },
+                {
+                    "targets": 0,
+                    "width": "40%"
+                },
+                {
+                    "targets": 1,
+                    "width": "10%"
+                },
+                {
+                    "targets": 2,
+                    "width": "10%"
+                },
+                {
+                    "targets": 3,
+                    "width": "15%"
+                },
+                {
+                    "targets": 4,
+                    "width": "12%"
+                },
+                {
+                    "targets": 5,
+                    "width": "8%"
+                },
+                {
+                    "targets": 6,
+                    "width": "8%"
+                }
+            ],
             "language": {
                 "sProcessing": "Procesando..",
                 "sLengthMenu": "Mostrar _MENU_ registros",
