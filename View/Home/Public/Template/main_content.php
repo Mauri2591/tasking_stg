@@ -269,12 +269,12 @@
                                     <div class="menu-dropdown collapse" id="sidebarAuditoria">
                                         <ul class="nav nav-sm flex-column">
                                             <li class="nav-item">
-                                                <a href="<?php echo URL . "View/Home/Apps/Auditoria/sesiones.php"; ?>"
-                                                    class="nav-link" data-key="t-mailbox">Sesiones</a>
-                                            </li>
-                                            <li class="nav-item">
                                                 <a href="<?php echo URL . "View/Home/Apps/Auditoria/proyectos.php"; ?>"
                                                     class="nav-link" data-key="t-mailbox">Proyectos</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Apps/Auditoria/sesiones.php"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Sesiones</a>
                                             </li>
                                         </ul>
                                     </div>
