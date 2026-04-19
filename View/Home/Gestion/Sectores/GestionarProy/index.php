@@ -206,8 +206,11 @@ if (isset($_SESSION['usu_id'])) {
                                                     <span id="fech_fin" class="text-dark"></span>
                                                 </span>
                                                 <span id="rechequeo" style="display: none; color:orangered" class="badge ml-1 bg-light"></span>
-                                                <span id="proy_recurrencia" style="display: none; color:orangered" class="badge ml-1 bg-light"></span>
                                                 <span id="cont_dimensionamiento" class="badge mx-1 text-primary bg-light fs-10">Horas: <span class="fw-bold" id="dimensionamiento"></span></span>
+                                            </div>
+
+                                            <div style="display: flex; margin-top: .2rem; margin-bottom: .2rem;">
+                                                <span id="proy_recurrencia" style="display: none; color:orangered" class="badge ml-1 bg-light"></span>
                                                 <span id="workshop" style="display: none;" class="badge mx-1 text-light bg-info border border-light">workshop</span>
                                             </div>
 
@@ -1369,8 +1372,8 @@ if (isset($_SESSION['usu_id'])) {
             tabla = $("#tablaAuditoriaProyectosPorId").dataTable({
                 "ajax": {
                     url: URL + "Controller/ctrAuditoria.php?case=get_auditoria_proyectos_x_id",
-                    data:{
-                        id:id_proyecto_gestionado
+                    data: {
+                        id: id_proyecto_gestionado
                     },
                     type: "post",
                     dataType: "json",
@@ -1389,7 +1392,7 @@ if (isset($_SESSION['usu_id'])) {
                         "targets": "_all"
                     },
                     {
-                         "targets": 0,
+                        "targets": 0,
                         "width": "3%"
                     },
                     {
