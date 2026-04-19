@@ -207,10 +207,11 @@ if (isset($_SESSION['usu_id'])) {
                                                 </span>
                                                 <span id="rechequeo" style="display: none; color:orangered" class="badge ml-1 bg-light"></span>
                                                 <span id="cont_dimensionamiento" class="badge mx-1 text-primary bg-light fs-10">Horas: <span class="fw-bold" id="dimensionamiento"></span></span>
+                                                                                            <span id="proy_recurrencia" style="display: none; color:orangered" class="badge ml-1 bg-light"></span>
+
                                             </div>
 
                                             <div style="display: flex; margin-top: .2rem; margin-bottom: .2rem;">
-                                                <span id="proy_recurrencia" style="display: none; color:orangered" class="badge ml-1 bg-light"></span>
                                                 <span id="workshop" style="display: none;" class="badge mx-1 text-light bg-info border border-light">workshop</span>
                                             </div>
 
