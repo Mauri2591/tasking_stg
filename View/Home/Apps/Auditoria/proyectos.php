@@ -89,7 +89,7 @@ if (isset($_SESSION['usu_id'])) {
                 },
                 {
                     "targets": 0,
-                    "width": "40%"
+                    "width": "25%"
                 },
                 {
                     "targets": 1,
@@ -97,7 +97,7 @@ if (isset($_SESSION['usu_id'])) {
                 },
                 {
                     "targets": 2,
-                    "width": "10%"
+                    "width": "15%"
                 },
                 {
                     "targets": 3,
