@@ -391,6 +391,11 @@ $(document).ready(function () {
         }
     });
 
+    document.getElementById('usuarios_sector').addEventListener('change', function () {
+        const checks = document.querySelectorAll('#combo_usuario_x_sector input[type="checkbox"]');
+        checks.forEach(check => check.checked = this.checked);
+    });
+
     document.getElementById("btn_rechequeo").addEventListener("click", () => {
         $("#ModalRechequeo").modal("show");
         tabla = $("#table_para_rechequeo").dataTable({
