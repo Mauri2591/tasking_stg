@@ -249,7 +249,7 @@ function cambiar_a_borrador(id_proyecto_gestionado) {
                 },
                 "json"
             );
-             $.post(
+            $.post(
                 "../../../../../../Controller/ctrAuditoria.php?case=insert_audit_estados_proyecto", {
                     id_proyecto_gestionado: id_proyecto_gestionado,
                     estados_id: 14
@@ -295,6 +295,12 @@ function cambiar_a_abierto(id_proyecto_gestionado) {
 
                 },
                 "json"
+            );
+            $.post(
+                "../../../../../../Controller/ctrAuditoria.php?case=insert_audit_estados_proyecto", {
+                    id_proyecto_gestionado: id_proyecto_gestionado,
+                    estados_id: 2
+                }
             );
             Swal.fire({
                 icon: "success",
@@ -394,6 +400,12 @@ function cambiar_a_nuevo(id_proyecto_gestionado) {
                 },
                 "json"
             );
+            $.post(
+                "../../../../../../Controller/ctrAuditoria.php?case=insert_audit_estados_proyecto", {
+                    id_proyecto_gestionado: id_proyecto_gestionado,
+                    estados_id: 1
+                }
+            );
             Swal.fire({
                 icon: "success",
                 title: "Bien",
@@ -437,7 +449,7 @@ function cambiar_a_realizado(id_proyecto_gestionado) {
                 showConfirmButton: false
             });
 
-              setTimeout(() => {
+            setTimeout(() => {
                 if ($.fn.DataTable.isDataTable('#table_proyectos_realizados_sase_mitigacion_ddos')) {
                     $('#table_proyectos_realizados_sase_mitigacion_ddos').DataTable().ajax.reload(null, false);
                     $('#table_proyectos_abiertos_sase_mitigacion_ddos').DataTable().ajax.reload(null, false);

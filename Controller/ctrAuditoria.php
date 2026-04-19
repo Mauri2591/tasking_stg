@@ -28,7 +28,41 @@ switch ($_GET['case']) {
         break;
 
     case 'insert_audit_estados_proyecto':
-        $audit->insert_audit_estados_proyecto($_POST['id_proyecto_gestionado'],$_POST['estados_id'],$_SESSION['usu_id'],$_SESSION['sector_id']);
+        $audit->insert_audit_estados_proyecto($_POST['id_proyecto_gestionado'], $_POST['estados_id'], $_SESSION['usu_id'], $_SESSION['sector_id']);
+        break;
+
+    case 'get_auditoria_proyectos':
+        $datos = $audit->get_auditoria_proyectos();
+        $data = array();
+        foreach ($datos as $row) {
+            $sub_array = array();
+            $sub_array[] = strtoupper($row['titulo']);
+            $sub_array[] = strtoupper($row['refProy']);
+            $sub_array[] = strtolower($row['usu_correo']);
+            $sub_array[] = strtoupper($row['sector_nombre']);
+
+            $color  = !empty($row['color_estado']) ? $row['color_estado'] : '#F59E0B';
+            $icono  = !empty($row['icono'])        ? trim($row['icono'])   : 'ri-chat-new-fill';
+            $evento = htmlspecialchars($row['evento']);
+
+            $sub_array[] = '<span class="badge" style="background-color:' . $color . ';color:#fff;">'
+                . $evento
+                . '</span>' . '<i class="' . $icono . '" style="margin-right:4px; font-size:1rem; color:' . $color . '"></i>';
+
+            $sub_array[] = $row['fecha'];
+            $sub_array[] = $row['estado_usuario'] == 1
+                ? '<span class="badge bg-info text-light"><i class="ri-user-follow-fill" style="margin-right:4px;"></i>Activo</span>'
+                : '<span class="badge" style="background-color:#475569;color:#fff;"><i class="ri-user-unfollow-fill" style="margin-right:4px;"></i>Inactivo</span>';
+
+            $data[] = $sub_array;
+        }
+        $results = array(
+            "sEcho"                => 1,
+            "iTotalRecords"        => count($data),
+            "iTotalDisplayRecords" => count($data),
+            "aaData"               => $data
+        );
+        echo json_encode($results);
         break;
 
     default:

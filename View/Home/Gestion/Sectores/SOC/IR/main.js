@@ -250,7 +250,7 @@ function cambiar_a_borrador(id_proyecto_gestionado) {
                 },
                 "json"
             );
-             $.post(
+            $.post(
                 "../../../../../../Controller/ctrAuditoria.php?case=insert_audit_estados_proyecto", {
                     id_proyecto_gestionado: id_proyecto_gestionado,
                     estados_id: 14
@@ -303,6 +303,12 @@ function cambiar_a_abierto(id_proyecto_gestionado) {
                 },
                 "json"
             );
+            $.post(
+                "../../../../../../Controller/ctrAuditoria.php?case=insert_audit_estados_proyecto", {
+                    id_proyecto_gestionado: id_proyecto_gestionado,
+                    estados_id: 2
+                }
+            );
             Swal.fire({
                 icon: "success",
                 title: "Bien",
@@ -346,7 +352,7 @@ function asignar_proyecto(id_proyecto_gestionado) {
                 timer: 1300
             });
 
-             setTimeout(() => {
+            setTimeout(() => {
                 if ($.fn.DataTable.isDataTable('#table_proyectos_nuevos_soc_incident_response')) {
                     $('#table_proyectos_nuevos_soc_incident_response').DataTable().ajax.reload(null, false);
                     $('#table_proyectos_abiertos_soc_incident_response').DataTable().ajax.reload(null, false);
@@ -402,6 +408,12 @@ function cambiar_a_nuevo(id_proyecto_gestionado) {
 
                 },
                 "json"
+            );
+            $.post(
+                "../../../../../../Controller/ctrAuditoria.php?case=insert_audit_estados_proyecto", {
+                    id_proyecto_gestionado: id_proyecto_gestionado,
+                    estados_id: 1
+                }
             );
             Swal.fire({
                 icon: "success",

@@ -5,7 +5,7 @@ class Auditoria extends Conexion
     public function get_audit_sesiones()
     {
         $conn = parent::get_conexion();
-        $conn->exec("SET time_zone = '-03:00'");          
+        $conn->exec("SET time_zone = '-03:00'");
         $sql = "SELECT 
                 l.id,
                 CASE 
@@ -25,7 +25,7 @@ class Auditoria extends Conexion
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-     public function insert_audit_estados_proyecto(string $id_proyecto_gestionado, int $estados_id, int $usu_id, int $sector_id)
+    public function insert_audit_estados_proyecto(string $id_proyecto_gestionado, int $estados_id, int $usu_id, int $sector_id)
     {
         $conn = parent::get_conexion();
         $sql = "INSERT INTO audit_estados_proyecto (id_proyecto_gestionado,estados_id,usu_id,sector_id) VALUES (:id_proyecto_gestionado,:estados_id,:usu_id,:sector_id)";
@@ -35,5 +35,25 @@ class Auditoria extends Conexion
         $stmt->bindValue(":usu_id", $usu_id, PDO::PARAM_INT);
         $stmt->bindValue(":sector_id", $sector_id, PDO::PARAM_INT);
         $stmt->execute();
+    }
+
+    public function get_auditoria_proyectos()
+    {
+        $conn = parent::get_conexion();
+        $sql = "SELECT audit_estados_proyecto.id AS id_audit_estados_proyecto, 
+        audit_estados_proyecto.id_proyecto_gestionado, 
+        DATE_FORMAT(audit_estados_proyecto.fecha, '%d-%m-%Y %H:%i:%s') AS fecha, 
+        tm_usuario.usu_correo, tm_usuario.est AS estado_usuario, sectores.sector_nombre, 
+        tm_estados.estados_nombre AS evento, tm_estados.catColor AS color_estado, 
+        tm_estados.icono AS icono,
+        proyecto_gestionado.titulo, proyecto_gestionado.refProy FROM audit_estados_proyecto 
+        INNER JOIN tm_usuario ON tm_usuario.usu_id=audit_estados_proyecto.usu_id 
+        INNER JOIN sectores ON sectores.sector_id=audit_estados_proyecto.sector_id 
+        INNER JOIN tm_estados ON tm_estados.estados_id=audit_estados_proyecto.estados_id
+        LEFT JOIN proyecto_gestionado ON proyecto_gestionado.id=audit_estados_proyecto.id_proyecto_gestionado
+        ORDER BY audit_estados_proyecto.fecha DESC";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }

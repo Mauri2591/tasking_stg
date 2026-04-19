@@ -16,7 +16,7 @@ if (isset($_SESSION['usu_id'])) {
             <div class="row">
                 <div class="col-12">
                     <div class="page-title-box d-sm-flex align-items-center justify-content-between bg-light bg-light">
-                        <span class="fs-12 badge bg-primary text-light">Registro de Sessiones</span>
+                        <span class="fs-12 badge bg-primary text-light">Auditoria de Sessiones</span>
 
                     </div>
                 </div>

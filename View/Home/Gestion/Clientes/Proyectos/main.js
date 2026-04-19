@@ -1131,7 +1131,7 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
                     $.post(
                         "../../../../../Controller/ctrAuditoria.php?case=insert_audit_estados_proyecto", {
                             id_proyecto_gestionado: $("#id_proyecto_gestionado").val(),
-                            estados_id: 1
+                            estados_id: 2
                         }
                     );
 
@@ -2043,12 +2043,12 @@ function cambiar_a_borrador(id_proyecto_gestionado) {
                 "json"
             );
 
-             $.post(
-                    "../../../../../Controller/ctrAuditoria.php?case=insert_audit_estados_proyecto", {
-                        id_proyecto_gestionado: id_proyecto_gestionado,
-                        estados_id: 14
-                    }
-                );
+            $.post(
+                "../../../../../Controller/ctrAuditoria.php?case=insert_audit_estados_proyecto", {
+                    id_proyecto_gestionado: id_proyecto_gestionado,
+                    estados_id: 14
+                }
+            );
 
             setTimeout(() => {
                 if ($.fn.DataTable.isDataTable('#table_proyectos_borrador')) {
@@ -2164,6 +2164,12 @@ function cambiar_proy_a_borrador(id_proyecto_gestionado) {
                 },
                 "json"
             );
+            $.post(
+                "../../../../../Controller/ctrAuditoria.php?case=insert_audit_estados_proyecto", {
+                    id_proyecto_gestionado: id_proyecto_gestionado,
+                    estados_id: 14
+                }
+            );
             Swal.fire({
                 icon: "success",
                 title: "Bien",
@@ -2202,6 +2208,12 @@ function cambiar_proy_a_nuevo(id_proyecto_gestionado) {
 
                 },
                 "json"
+            );
+            $.post(
+                "../../../../../Controller/ctrAuditoria.php?case=insert_audit_estados_proyecto", {
+                    id_proyecto_gestionado: id_proyecto_gestionado,
+                    estados_id: 1
+                }
             );
             Swal.fire({
                 icon: "success",

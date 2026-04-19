@@ -298,7 +298,12 @@ function cambiar_a_abierto(id_proyecto_gestionado) {
                 },
                 "json"
             );
-
+            $.post(
+                "../../../../../../Controller/ctrAuditoria.php?case=insert_audit_estados_proyecto", {
+                    id_proyecto_gestionado: id_proyecto_gestionado,
+                    estados_id: 2
+                }
+            );
             setTimeout(() => {
                 if ($.fn.DataTable.isDataTable('#table_proyectos_abiertos_eh_servicios_profesionales')) {
                     $('#table_proyectos_abiertos_eh_servicios_profesionales').DataTable().ajax.reload(null, false);
@@ -398,6 +403,12 @@ function cambiar_a_nuevo(id_proyecto_gestionado) {
 
                 },
                 "json"
+            );
+            $.post(
+                "../../../../../../Controller/ctrAuditoria.php?case=insert_audit_estados_proyecto", {
+                    id_proyecto_gestionado: id_proyecto_gestionado,
+                    estados_id: 1
+                }
             );
             Swal.fire({
                 icon: "success",

@@ -249,12 +249,12 @@ function cambiar_a_borrador(id_proyecto_gestionado) {
                 },
                 "json"
             );
-             $.post(
-                    "../../../../../../Controller/ctrAuditoria.php?case=insert_audit_estados_proyecto", {
-                        id_proyecto_gestionado: id_proyecto_gestionado,
-                        estados_id: 14
-                    }
-                );
+            $.post(
+                "../../../../../../Controller/ctrAuditoria.php?case=insert_audit_estados_proyecto", {
+                    id_proyecto_gestionado: id_proyecto_gestionado,
+                    estados_id: 14
+                }
+            );
             setTimeout(() => {
                 $('#table_proyectos_nuevos_eh_pentest').DataTable().ajax.reload(null, false);
                 $('#table_proyectos_borrador').DataTable().ajax.reload(null, false);
@@ -289,6 +289,12 @@ function cambiar_a_abierto(id_proyecto_gestionado) {
 
                 },
                 "json"
+            );
+            $.post(
+                "../../../../../../Controller/ctrAuditoria.php?case=insert_audit_estados_proyecto", {
+                    id_proyecto_gestionado: id_proyecto_gestionado,
+                    estados_id: 2
+                }
             );
             Swal.fire({
                 icon: "success",
@@ -386,6 +392,12 @@ function cambiar_a_nuevo(id_proyecto_gestionado) {
 
                 },
                 "json"
+            );
+            $.post(
+                "../../../../../../Controller/ctrAuditoria.php?case=insert_audit_estados_proyecto", {
+                    id_proyecto_gestionado: id_proyecto_gestionado,
+                    estados_id: 1
+                }
             );
             Swal.fire({
                 icon: "success",
