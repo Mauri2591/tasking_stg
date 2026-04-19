@@ -217,7 +217,7 @@ if (isset($_SESSION['usu_id'])) {
 
                                             <div style="display: flex; justify-content: end; align-items: center; margin-top: 0; margin-bottom: .2rem;">
                                                 <span type="button" onclick="verLogs(<?php echo Openssl::get_ssl_decrypt($_GET['pg']) ?>)" style="background-color: #475569; display: inline-flex; align-items: center; gap: 4px;" class="badge border border-light">
-                                                    Logs <i class="ri-history-line fs-14"></i>
+                                                    Ver Logs <i class="ri-history-line fs-14"></i>
                                                 </span>
                                             </div>
 
