@@ -1131,7 +1131,7 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
                     $.post(
                         "../../../../../Controller/ctrAuditoria.php?case=insert_audit_estados_proyecto", {
                             id_proyecto_gestionado: $("#id_proyecto_gestionado").val(),
-                            estados_id: 2
+                            estados_id: 1
                         }
                     );
 
