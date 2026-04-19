@@ -338,13 +338,19 @@ function asignar_proyecto(id_proyecto_gestionado) {
         showCancelButton: true
     }).then((result) => {
         if (result.isConfirmed) {
-            $.post("../../../../../Controller/ctrProyectos.php?proy=tomar_proyecto", {
+            $.post("../../../../../../Controller/ctrProyectos.php?proy=tomar_proyecto", {
                     id_proyecto_gestionado: id_proyecto_gestionado
                 },
                 function (data, textStatus, jqXHR) {
 
                 },
                 "json"
+            );
+            $.post(
+                "../../../../../../Controller/ctrAuditoria.php?case=insert_audit_estados_proyecto", {
+                    id_proyecto_gestionado: id_proyecto_gestionado,
+                    estados_id: 19
+                }
             );
             Swal.fire({
                 icon: "success",

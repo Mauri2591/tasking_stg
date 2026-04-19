@@ -323,6 +323,12 @@ function asignar_proyecto(id_proyecto_gestionado) {
                 },
                 "json"
             );
+            $.post(
+                "../../../../../../Controller/ctrAuditoria.php?case=insert_audit_estados_proyecto", {
+                    id_proyecto_gestionado: id_proyecto_gestionado,
+                    estados_id: 19
+                }
+            );
             Swal.fire({
                 icon: "success",
                 title: "Proyecto tomado correctamente",

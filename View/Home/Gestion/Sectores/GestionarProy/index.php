@@ -1217,6 +1217,13 @@ if (isset($_SESSION['usu_id'])) {
                 "json"
             );
 
+              $.post(
+                "../../../../../Controller/ctrAuditoria.php?case=insert_audit_estados_proyecto", {
+                    id_proyecto_gestionado: id_proyecto_gestionado,
+                    estados_id: 20
+                }
+            );
+
             setTimeout(() => {
                 $("#ModalAgregarUsuarioProy").modal("hide");
             }, 1000);
@@ -1398,7 +1405,7 @@ if (isset($_SESSION['usu_id'])) {
                     },
                     {
                         "targets": 1,
-                        "width": "40%"
+                        "width": "35%"
                     },
                     {
                         "targets": 2,
@@ -1410,11 +1417,11 @@ if (isset($_SESSION['usu_id'])) {
                     },
                     {
                         "targets": 4,
-                        "width": "12%"
+                        "width": "10%"
                     },
                     {
                         "targets": 5,
-                        "width": "15%"
+                        "width": "20%"
                     },
                     {
                         "targets": 6,
@@ -1422,7 +1429,7 @@ if (isset($_SESSION['usu_id'])) {
                     },
                     {
                         "targets": 7,
-                        "width": "8%"
+                        "width": "5%"
                     }
                 ],
                 "language": {

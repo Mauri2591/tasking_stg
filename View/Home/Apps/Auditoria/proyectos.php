@@ -101,11 +101,11 @@ if (isset($_SESSION['usu_id'])) {
                 },
                 {
                     "targets": 3,
-                    "width": "15%"
+                    "width": "10%"
                 },
                 {
                     "targets": 4,
-                    "width": "12%"
+                    "width": "15%"
                 },
                 {
                     "targets": 5,
