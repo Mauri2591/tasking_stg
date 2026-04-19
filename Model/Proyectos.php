@@ -1928,7 +1928,7 @@ WHERE
             ON tm_usuario.sector_id = sectores.sector_id
         WHERE tm_usuario.sector_id = ?
           AND sectores.sector_nombre IS NOT NULL
-          AND tm_usuario.usu_id != 82
+          AND tm_usuario.usu_id NOT IN(82,102,103,104)
           AND tm_usuario.usu_id != ?
           AND tm_usuario.est = 1";
 
