@@ -1908,7 +1908,7 @@ WHERE
         LEFT JOIN sectores 
             ON tm_usuario.sector_id = sectores.sector_id
         WHERE sectores.sector_nombre IS NOT NULL
-          AND tm_usuario.usu_id != 82
+          AND tm_usuario.usu_id NOT IN (82,105) /*usuarios dev, Test Mau Soc*/ 
           AND tm_usuario.usu_id != ?
           AND tm_usuario.est = 1";
             $stmt = $conn->prepare($sql);
