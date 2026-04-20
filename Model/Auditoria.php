@@ -72,7 +72,7 @@ class Auditoria extends Conexion
         $sql = "SELECT audit_estados_proyecto.id AS id_audit_estados_proyecto, 
         audit_estados_proyecto.id_proyecto_gestionado, 
         DATE_FORMAT(audit_estados_proyecto.fecha, '%d-%m-%Y %H:%i:%s') AS fecha, 
-        tm_usuario.usu_correo, tm_usuario.est, sectores.sector_nombre, 
+        UPPER(tm_usuario.usu_correo), tm_usuario.est, sectores.sector_nombre, 
         tm_estados.estados_nombre AS evento, tm_estados.catColor AS color_estado, 
         tm_estados.icono AS icono,
         proyecto_gestionado.titulo, proyecto_gestionado.refProy FROM audit_estados_proyecto 
@@ -94,7 +94,7 @@ class Auditoria extends Conexion
         audit_estados_proyecto.id AS id_audit_estados_proyecto, 
         audit_estados_proyecto.id_proyecto_gestionado, 
         DATE_FORMAT(audit_estados_proyecto.fecha, '%d-%m-%Y %H:%i:%s') AS fecha, 
-        tm_usuario.usu_correo, 
+        UPPER(tm_usuario.usu_correo), 
         tm_usuario.est,
         sectores.sector_nombre, 
         tm_estados.estados_nombre AS evento, 
@@ -123,7 +123,7 @@ class Auditoria extends Conexion
         $sql = "SELECT audit_estados_proyecto.id AS id_audit_estados_proyecto, 
             audit_estados_proyecto.id_proyecto_gestionado, 
             DATE_FORMAT(audit_estados_proyecto.fecha, '%d-%m-%Y %H:%i:%s') AS fecha, 
-            tm_usuario.usu_correo, tm_usuario.est, sectores.sector_nombre, 
+            UPPER(tm_usuario.usu_correo), tm_usuario.est, sectores.sector_nombre, 
             tm_estados.estados_nombre AS evento, tm_estados.catColor AS color_estado, 
             tm_estados.icono AS icono,
             proyecto_gestionado.titulo, proyecto_gestionado.refProy FROM audit_estados_proyecto 
