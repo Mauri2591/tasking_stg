@@ -965,6 +965,7 @@ class Reportes
             $logo_data   = file_get_contents($logo_path);
             $logo_base64 = 'data:image/gif;base64,' . base64_encode($logo_data);
         }
+
         $filas = '';
         foreach ($datos as $row) {
             $color_evento = !empty($row['color_estado']) ? $row['color_estado'] : '#6c757d';
