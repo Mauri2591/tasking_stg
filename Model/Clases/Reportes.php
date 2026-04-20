@@ -808,8 +808,8 @@ class Reportes
                     <td>{$row['id']}</td>
                     <td><strong>{$evento}</strong></td>
                     <td>{$row['fecha']}</td>
-                    <td>{$row['usu_correo']}</td>
-                    <td style='text-align:center'>{$estado_badge}</td>
+<td>" . strtoupper($row['usu_correo']) . "</td>                    
+<td style='text-align:center'>{$estado_badge}</td>
                     <td>{$row['sector_nombre']}</td>
                 </tr>";
         }
@@ -984,8 +984,8 @@ class Reportes
                 </span>
             </td>
             <td>{$row['fecha']}</td>
-            <td>{$row['usu_correo']}</td>
-            <td style='text-align:center'>{$estado_badge}</td>
+<td>" . strtoupper($row['usu_correo']) . "</td>            
+<td style='text-align:center'>{$estado_badge}</td>
             <td>{$row['sector_nombre']}</td>
         </tr>";
         }
