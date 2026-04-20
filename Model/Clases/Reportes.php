@@ -808,7 +808,7 @@ class Reportes
                     <td>{$row['id']}</td>
                     <td><strong>{$evento}</strong></td>
                     <td>{$row['fecha']}</td>
-                    <td>{$row['usu_correo']}</td>
+                    <td>" . strtoupper($row['usu_correo']) . "</td>                    
                     <td style='text-align:center'>{$estado_badge}</td>
                     <td>{$row['sector_nombre']}</td>
                 </tr>";
@@ -965,7 +965,6 @@ class Reportes
             $logo_data   = file_get_contents($logo_path);
             $logo_base64 = 'data:image/gif;base64,' . base64_encode($logo_data);
         }
-
         $filas = '';
         foreach ($datos as $row) {
             $color_evento = !empty($row['color_estado']) ? $row['color_estado'] : '#6c757d';
@@ -984,7 +983,7 @@ class Reportes
                 </span>
             </td>
             <td>{$row['fecha']}</td>
-            <td>{$row['usu_correo']}</td>
+            <td>" . strtoupper($row['usu_correo']) . "</td>            
             <td style='text-align:center'>{$estado_badge}</td>
             <td>{$row['sector_nombre']}</td>
         </tr>";
