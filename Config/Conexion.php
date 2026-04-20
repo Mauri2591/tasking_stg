@@ -1,4 +1,5 @@
 <?php
+session_name('tasking_stg');
 session_start();
 require_once __DIR__ . '/../vendor/autoload.php';
 
