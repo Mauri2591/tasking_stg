@@ -15,7 +15,7 @@ switch ($_GET['case']) {
             $sub_array[] = $row['evento'] == "LOGIN"
                 ? '<span><span class="badge bg-success text-light">Login</span> <i class="fs-18 text-success ri-login-circle-fill"></i></span>'
                 : '<span><span class="badge bg-warning text-light">Logout</span> <i class="fs-18 text-warning ri-logout-circle-fill"></i></span>';
-            $sub_array[] = $row['estado_usuario'] == 1 ? '<span class="bg-info text-light badge">Activo</span>' : '<span class="badge" style="background-color:gray;color:#fff">Inactivo</span>';
+            $sub_array[] = $row['est'] == 1 ? '<span class="bg-info text-light badge">Activo</span>' : '<span class="badge" style="background-color:gray;color:#fff">Inactivo</span>';
             $data[] = $sub_array;
         }
         $results = array(
@@ -50,7 +50,7 @@ switch ($_GET['case']) {
                 . '</span>' . '<i class="' . $icono . '" style="margin-right:4px; font-size:1rem; color:' . $color . '"></i>';
 
             $sub_array[] = $row['fecha'];
-            $sub_array[] = $row['estado_usuario'] == 1
+            $sub_array[] = $row['est'] == 1
                 ? '<span class="badge bg-info text-light"><i class="ri-user-follow-fill" style="margin-right:4px;"></i>Activo</span>'
                 : '<span class="badge" style="background-color:#475569;color:#fff;"><i class="ri-user-unfollow-fill" style="margin-right:4px;"></i>Inactivo</span>';
 
@@ -86,7 +86,7 @@ switch ($_GET['case']) {
                 . '</span>' . '<i class="' . $icono . '" style="margin-right:4px; font-size:1rem; color:' . $color . '"></i>';
 
             $sub_array[] = $row['fecha'];
-            $sub_array[] = $row['estado_usuario'] == 1
+            $sub_array[] = $row['est'] == 1
                 ? '<span class="badge bg-info text-light"><i class="ri-user-follow-fill" style="margin-right:4px;"></i>Activo</span>'
                 : '<span class="badge" style="background-color:#475569;color:#fff;"><i class="ri-user-unfollow-fill" style="margin-right:4px;"></i>Inactivo</span>';
 

@@ -26,6 +26,9 @@ if (isset($_SESSION['usu_id'])) {
 
         <div class="col-xl-12">
             <div class="card crm-widget">
+                <div style="display: flex; justify-content: end; height: 1.5rem; margin: .5rem;">
+                    <span class="mb-4"><span class="badge bg-primary fs-12">Reporte Logs Sesiones</span><i onclick="mdlReportePdfSesiones()" class="ri-file-pdf-fill text-danger fs-22" type="button" title="Descargar documento PDF"></i></span>
+                </div>
                 <div class="card-body p-0">
                     <table id="tablaUsuariosSesiones" class="table table-bordered table-hover w-100">
                         <thead>
@@ -42,7 +45,7 @@ if (isset($_SESSION['usu_id'])) {
             </div>
         </div>
     </div>
-
+<?php include_once __DIR__."/Modals/mdlSesiones.php"; ?>
     <?php
     include_once __DIR__ . "/../../Public/Template/footer.php";
     ?>
@@ -94,5 +97,10 @@ if (isset($_SESSION['usu_id'])) {
                 }
             }
         });
-    })
+    });
+
+    function mdlReportePdfSesiones() {
+        $("#ModalDescargarPdfSesiones").modal("show");
+        // window.location.href= URL+"Controller/ctrReportes.php?case=get_audit_sesiones_x_fecha&"+'desde='+'2026-04-10&'+'hasta='+'2026-04-20'
+    }
 </script>

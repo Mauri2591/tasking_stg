@@ -4,11 +4,13 @@ require_once __DIR__ . "/../Config/Config.php";
 require_once __DIR__ . "/../Model/Proyectos.php";
 require_once __DIR__ . "/../Model/Clases/Reportes.php";
 require_once __DIR__ . "/../Model/Timesummary.php";
+require_once __DIR__ . "/../Model/Auditoria.php";
 
-// Instanciamos las clases una sola vez
+// Instancio las clases una sola vez
 $reporte = new Reportes();
 $proyecto = new Proyectos();
 $timesummary = new Timesummary();
+$audit = new Auditoria();
 
 switch ($_GET['case'] ?? null) {
 
@@ -50,7 +52,7 @@ switch ($_GET['case'] ?? null) {
         break;
 
     case 'reporteExcelProyectosCrossSell':
-        $data=$proyecto->getClientesConSectorSinContratar();
+        $data = $proyecto->getClientesConSectorSinContratar();
         Reportes::reporteExcelProyectosCrossSell($data);
         break;
 
@@ -93,6 +95,42 @@ switch ($_GET['case'] ?? null) {
         if (isset($_POST['generarReporteXlsx'])) {
             Reportes::getDatosReporteSinFiltroXlsx($data, $nombreReporte);
             exit;
+        }
+        break;
+
+    case 'get_audit_sesiones_x_fecha':
+        $desde = $_GET['desde'] ?? '';
+        $hasta_formateado = $_GET['hasta'] ?? '';
+
+        if (!empty($desde) && !empty($hasta_formateado)) {
+            // Con filtro de fechas
+            $hasta = date('Y-m-d', strtotime($hasta_formateado . ' +1 day'));
+            $desde_display = date('d-m-Y', strtotime($desde));
+            $hasta_display = date('d-m-Y', strtotime($hasta_formateado));
+
+            $datos = $audit->get_audit_sesiones_x_fecha($desde, $hasta);
+            Reportes::get_audit_sesiones_x_fecha($datos, $desde_display, $hasta_display);
+        } else {
+            // Sin filtro — trae todos
+            $datos = $audit->get_audit_sesiones(); // tu método sin filtro
+            Reportes::get_audit_sesiones_x_fecha($datos, 'Todos', 'los registros');
+        }
+        break;
+
+    case 'get_audit_proyectos_x_fecha':
+        $desde = $_GET['desde'] ?? '';
+        $hasta_formateado = $_GET['hasta'] ?? '';
+
+        if (!empty($desde) && !empty($hasta_formateado)) {
+            $hasta = date('Y-m-d', strtotime($hasta_formateado . ' +1 day'));
+            $desde_display = date('d-m-Y', strtotime($desde));
+            $hasta_display = date('d-m-Y', strtotime($hasta_formateado));
+
+            $datos = $audit->get_auditoria_proyectos_x_fecha($desde, $hasta);
+            Reportes::get_audit_proyectos_x_fecha($datos, $desde_display, $hasta_display);
+        } else {
+            $datos = $audit->get_auditoria_proyectos();
+            Reportes::get_audit_proyectos_x_fecha($datos, 'Todos', 'los registros');
         }
         break;
 

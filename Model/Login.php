@@ -46,6 +46,7 @@ class Login extends Conexion
                     session_regenerate_id();
                     $_SESSION['usu_id'] = $resul['usu_id'];
                     $_SESSION['usu_nom'] = $resul['usu_nom'];
+                    $_SESSION['usu_correo'] = $resul['usu_correo'];
                     $_SESSION['rol_id'] = $resul['rol_id'];
                     $_SESSION['sector_id'] = $resul['sector_id'];
                     $_SESSION['sector_nombre'] = $resul['sector_nombre'];
