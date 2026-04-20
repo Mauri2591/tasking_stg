@@ -386,7 +386,7 @@ switch ($_GET['proy']) {
                 : "badge bg-light text-dark";
             $sub_array[] = '<span class="' . $clase . '">' . $row['prioridad'] . '</span>';
 
-            $sub_array[] = $row['client_rs'];
+            $sub_array[] = strtoupper($row['client_rs']);
             $sub_array[] = $_SESSION['sector_id'] == "4" ? '<span class="badge bg-light text-dark" title="Asignarme como PM" type="button" onclick="asignarPm(' . $row['id_proyecto_gestionado'] . "," . $row['id_pm_calidad'] . ')">' . $row['creador_proy'] . '</span>' : '<span class="badge bg-light text-dark">' . $row['creador_proy'] . '</span>';
 
             if (!empty($row['posicion_recurrencia'])) {
