@@ -1420,6 +1420,7 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
     );
 
     document.getElementById("combo_sector_proy_nuevo").addEventListener("change", function () {
+        document.getElementById('usuarios_sector').checked = false;
         $.post("../../../../../Controller/ctrProyectos.php?proy=get_combo_categorias_x_sector", {
                 sector_id: this.value
             },
