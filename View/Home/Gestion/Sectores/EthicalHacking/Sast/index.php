@@ -224,4 +224,5 @@ if (isset($_SESSION['usu_id'])) {
 
 <?php } else {
     header("Location:" . URL);
+    exit;
 } ?>

@@ -103,6 +103,7 @@ if (isset($_SESSION['usu_id'])) {
     ?>
 <?php } else {
     header("Location:" . URL);
+    exit;
 }
 ?>
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.19/index.global.min.js'></script>

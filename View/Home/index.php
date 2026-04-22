@@ -404,4 +404,5 @@ document.addEventListener("DOMContentLoaded", () => {
 
 <?php } else {
     header("Location:" . URL);
+    exit;
 } ?>
