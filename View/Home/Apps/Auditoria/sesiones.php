@@ -50,7 +50,7 @@ if (isset($_SESSION['usu_id'])) {
     include_once __DIR__ . "/../../Public/Template/footer.php";
     ?>
 <?php } else {
-    header("Location:" . URL . "/View/Home/Logout.php");
+    header("Location:" . URL);
 }
 ?>
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.19/index.global.min.js'></script>

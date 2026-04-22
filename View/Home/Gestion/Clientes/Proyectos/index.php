@@ -370,7 +370,7 @@ if (isset($_SESSION['usu_id'])) {
     include_once __DIR__ . "/../../../Public/Template/footer.php";
     ?>
 <?php } else {
-    header("Location:" . URL . "/View/Home/Logout.php");
+    header("Location:" . URL);
 }
 ?>
 

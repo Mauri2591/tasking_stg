@@ -227,5 +227,5 @@ if (isset($_SESSION['usu_id'])) {
     <script src="main.js?sheet=<?php echo rand(); ?>"></script>
 
 <?php } else {
-    header("Location:" . URL . "/View/Home/Logout.php");
+    header("Location:" . URL);
 } ?>

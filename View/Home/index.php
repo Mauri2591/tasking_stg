@@ -403,5 +403,5 @@ document.addEventListener("DOMContentLoaded", () => {
     <?php endif; ?>
 
 <?php } else {
-    header("Location:" . URL . "/View/Home/Logout.php");
+    header("Location:" . URL);
 } ?>
