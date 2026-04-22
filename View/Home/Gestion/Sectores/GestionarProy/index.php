@@ -1093,12 +1093,6 @@ if (isset($_SESSION['usu_id'])) {
                                                 resp = JSON.parse(resp);
                                             }
                                             if (resp.status === 'OK') {
-                                                $.post(
-                                                    "../../../../../Controller/ctrAuditoria.php?case=insert_audit_estados_proyecto", {
-                                                        id_proyecto_gestionado: id_proyecto_gestionado,
-                                                        estados_id: 3
-                                                    }
-                                                );
                                                 Swal.fire({
                                                     icon: 'success',
                                                     title: 'Proyecto finalizado',
