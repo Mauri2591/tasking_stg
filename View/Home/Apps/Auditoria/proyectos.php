@@ -38,7 +38,7 @@ if (isset($_SESSION['usu_id'])) {
         <div class="col-xl-12">
             <div class="card crm-widget">
                 <div style="display: flex; justify-content: end; height: 1.5rem; margin:.5rem">
-                    <span class="mb-4"><span class="badge bg-primary fs-12">Reporte Logs Proyectos</span><i onclick="mdlRreportePdfProyectos()" class="ri-file-pdf-fill text-danger fs-22" type="button" title="Descargar documento"></i></span>
+                    <span class="mb-4"><span class="badge bg-primary fs-12">Reporte Logs Proyectos</span><i onclick="mdlRreportePdfProyectos()" class="ri-file-pdf-fill text-danger fs-22" type="button" title="Descargar documento PDF"></i></span>
                 </div>
                 <div class="card-body p-0">
                     <table id="tablaAuditoriaProyectos" class="table table-hover table-bordered w-100">
