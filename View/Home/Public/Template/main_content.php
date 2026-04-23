@@ -120,14 +120,15 @@
             <div class="container-fluid">
                 <div id="two-column-menu">
                 </div>
-                <ul class="navbar-nav" id="navbar-nav">
+                <ul class="navbar-nav mt-2" id="navbar-nav">
                     <?php if (isset($_SESSION) && $_SESSION['rol_id'] == 1): ?>
                         <ul class="navbar-nav" id="navbar-nav">
-                            <li class="menu-title"><span data-key="t-menu">Menu</span></li>
+                            <li class="menu-title"><i class="ri-more-fill"></i> <span data-key="t-pages">Proyectos</span>
+                            </li>
                             <li class="nav-item">
                                 <a class="nav-link menu-link" href="#sidebarApps" data-bs-toggle="collapse" role="button"
                                     aria-expanded="false" aria-controls="sidebarApps">
-                                    <i class="ri-settings-3-line"></i> <span data-key="t-apps">Gestion</span>
+                                    <span data-key="t-apps">Gestion</span>
                                 </a>
                                 <div class="collapse menu-dropdown" id="sidebarApps">
                                     <ul class="nav nav-sm flex-column">
@@ -150,8 +151,6 @@
 
                                     </ul>
                                 </div>
-                            </li>
-                            <li class="menu-title"><i class="ri-more-fill"></i> <span data-key="t-pages">Proyectos</span>
                             </li>
 
                             <li class="nav-item">
@@ -240,7 +239,6 @@
                                     </ul>
                                 </div>
                             </li>
-
                             <li class="menu-title"><i class="ri-more-fill"></i> <span data-key="t-pages">Apps</span>
                             </li>
                             <li class="nav-item">
