@@ -1053,7 +1053,7 @@ class Reportes
             <thead>
                 <tr>
                     <th>#</th>
-                    <th>Ref</th>
+                    <th>Referencia</th>
                     <th>Proyecto</th>
                     <th>Estado</th>
                     <th>Fecha y Hora</th>
