@@ -120,7 +120,7 @@
             <div class="container-fluid">
                 <div id="two-column-menu">
                 </div>
-                <ul class="navbar-nav mt-2" id="navbar-nav">
+                <ul class="navbar-nav mt-3" id="navbar-nav">
                     <?php if (isset($_SESSION) && $_SESSION['rol_id'] == 1): ?>
                         <ul class="navbar-nav" id="navbar-nav">
                             <li class="menu-title"><i class="ri-more-fill"></i> <span data-key="t-pages">Proyectos</span>
