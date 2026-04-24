@@ -897,7 +897,9 @@ class Reportes
                                 " . ($logo_base64 ? "<img src='{$logo_base64}' alt='Logo'>" : '') . "
                             </div>
                             <div class='header-title'>
-<h1 style='font-family: Helvetica, Arial, sans-serif; font-size:18px; text-align:center; letter-spacing:1px;'>Logs de Sesiones</h1>                        </div>
+                                <h1 style='font-size:2rem;text-align:center'>Logs de Sesiones</h1>
+                            </div>
+                        </div>
                         <div class='header-meta'>
                         {$periodo}
                         <p>Fecha de emisión: <strong>{$fecha_emision}</strong></p>
@@ -1034,7 +1036,8 @@ class Reportes
             " . ($logo_base64 ? "<img src='{$logo_base64}' alt='Logo'>" : '') . "
         </div>
             <div class='header-title'>
-<h1 style='font-family: Helvetica, Arial, sans-serif; font-size:18px; text-align:center; letter-spacing:1px;'>Logs de Proyectos</h1></div>
+                <h1 style='font-size:2rem;text-align:center'>Logs de Proyectos</h1>
+            </div>
         </div>
         <div class='header-meta'>
             {$periodo}
