@@ -950,14 +950,11 @@ class Reportes
         $options = new Options();
         $options->set('isHtml5ParserEnabled', true);
         $dompdf = new Dompdf($options);
-
         $fecha_emision  = date('d-m-Y H:i:s');
         $usuario_sesion = $_SESSION['usu_correo'] ?? 'No identificado';
-
         $periodo = ($desde === 'Todos')
             ? '<p>Período: <strong>Todos los registros</strong></p>'
             : "<p>Período: <strong>{$desde}</strong> al <strong>{$hasta}</strong></p>";
-
         // ── Logo ──────────────────────────────────────────────────────────
         $logo_path   = BASE_PATH . 'View/Home/Public/assets/img/logo.gif';
         $logo_base64 = '';
@@ -965,128 +962,125 @@ class Reportes
             $logo_data   = file_get_contents($logo_path);
             $logo_base64 = 'data:image/gif;base64,' . base64_encode($logo_data);
         }
-
         $filas = '';
         foreach ($datos as $row) {
             $color_evento = !empty($row['color_estado']) ? $row['color_estado'] : '#6c757d';
             $estado_badge = $row['est'] == 1
                 ? '<span style="background:#299cdb;color:#fff;padding:2px 8px;border-radius:4px;font-size:11px;">Activo</span>'
                 : '<span style="background:#808080;color:#fff;padding:2px 8px;border-radius:4px;font-size:11px;">Inactivo</span>';
-
+            // ── Separar fecha y hora ──────────────────────────────────────
+            $fecha_parts = explode(' ', $row['fecha']);
+            $fecha_fmt   = $fecha_parts[0] ?? $row['fecha'];
+            $hora_fmt    = $fecha_parts[1] ?? '';
             $filas .= "
-        <tr>
-            <td>{$row['id_audit_estados_proyecto']}</td>
-            <td>{$row['refProy']}</td>
-            <td>{$row['titulo']}</td>
-            <td>
-                <span style='background:{$color_evento};color:#fff;padding:2px 8px;border-radius:4px;font-size:11px;'>
-                    {$row['evento']}
-                </span>
-            </td>
-            <td>{$row['fecha']}</td>
-            <td>" . strtolower($row['usu_correo']) . "</td>            
-            <td style='text-align:center'>{$estado_badge}</td>
-            <td>{$row['sector_nombre']}</td>
-        </tr>";
+    <tr>
+        <td>{$row['id_audit_estados_proyecto']}</td>
+        <td>{$row['refProy']}</td>
+        <td>{$row['titulo']}</td>
+        <td>
+            <span style='background:{$color_evento};color:#fff;padding:2px 8px;border-radius:4px;font-size:11px;'>
+                {$row['evento']}
+            </span>
+        </td>
+        <td style='white-space:nowrap'>{$fecha_fmt}<br>{$hora_fmt}</td>
+        <td>" . strtolower($row['usu_correo']) . "</td>            
+        <td style='text-align:center'>{$estado_badge}</td>
+        <td>{$row['sector_nombre']}</td>
+    </tr>";
         }
-
         $total = count($datos);
-
         $html = "
-    <!DOCTYPE html>
-    <html lang='es'>
-    <head>
-        <meta charset='UTF-8'>
-        <style>
-            * { margin: 0; padding: 0; box-sizing: border-box; }
-            body { font-family: Arial, sans-serif; font-size: 11px; color: #333; }
+<!DOCTYPE html>
+<html lang='es'>
+<head>
+    <meta charset='UTF-8'>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; font-size: 11px; color: #333; }
 
-            .header {
-                width: 100%;
-                border-bottom: 3px solid #405189;
-                padding-bottom: 14px;
-                margin-bottom: 20px;
-            }
-            .header-top { display: table; width: 100%; margin-bottom: 10px; }
-            .header-logo { display: table-cell; vertical-align: middle; width: 100px; }
-            .header-title { display: table-cell; vertical-align: middle; padding-left: 14px; }
-            .header-title h1 { font-size: 16px; color: #405189; margin: 0; }
-            .header-meta {
-                margin-top: 10px;
-                background-color: #f0f4ff;
-                border-left: 4px solid #405189;
-                padding: 8px 12px;
-            }
-            .header-meta p { font-size: 10px; color: #555; line-height: 2; margin: 0; }
-            .header-meta strong { color: #333; }
+        .header {
+            width: 100%;
+            border-bottom: 3px solid #405189;
+            padding-bottom: 14px;
+            margin-bottom: 20px;
+        }
+        .header-top { display: table; width: 100%; margin-bottom: 10px; }
+        .header-logo { display: table-cell; vertical-align: middle; width: 100px; }
+        .header-title { display: table-cell; vertical-align: middle; padding-left: 14px; }
+        .header-title h1 { font-size: 16px; color: #405189; margin: 0; }
+        .header-meta {
+            margin-top: 10px;
+            background-color: #f0f4ff;
+            border-left: 4px solid #405189;
+            padding: 8px 12px;
+        }
+        .header-meta p { font-size: 10px; color: #555; line-height: 2; margin: 0; }
+        .header-meta strong { color: #333; }
 
-            table { width: 100%; border-collapse: collapse; }
-            thead tr { background-color: #405189; color: #fff; }
-            thead th { padding: 7px 6px; text-align: left; font-size: 11px; }
-            tbody td { padding: 5px 6px; border-bottom: 1px solid #dee2e6; font-size: 11px; }
-            tbody td:last-child { white-space: nowrap; }
+        table { width: 100%; border-collapse: collapse; }
+        thead tr { background-color: #405189; color: #fff; }
+        thead th { padding: 7px 6px; text-align: left; font-size: 11px; }
+        tbody td { padding: 5px 6px; border-bottom: 1px solid #dee2e6; font-size: 11px; }
+        tbody td:last-child { white-space: nowrap; }
 
-            .total  { margin-top: 12px; font-size: 11px; font-weight: bold; }
-            .footer { margin-top: 8px; font-size: 10px; color: #888; border-top: 1px solid #dee2e6; padding-top: 8px; }
-            .footer table { width: 100%; }
-            .footer td { border: none; padding: 0; font-size: 10px; color: #888; text-align: center; }
-        </style>
-    </head>
-    <body>
-        <div class='header'>
-            <div class='header-top'>
-              <div class='header-logo'>
-                " . ($logo_base64 ? "<img src='{$logo_base64}' alt='Logo'>" : '') . "
-            </div>
-                <div class='header-title'>
-                    <h1 style='text-align:center'>Reporte de Auditoría — Log de Proyectos</h1>
-                </div>
-            </div>
-            <div class='header-meta'>
-                {$periodo}
-                <p>Fecha de emisión: <strong>{$fecha_emision}</strong></p>
-                <p>Generado por: <strong>{$usuario_sesion}</strong></p>
+        .total  { margin-top: 12px; font-size: 11px; font-weight: bold; }
+        .footer { margin-top: 8px; font-size: 10px; color: #888; border-top: 1px solid #dee2e6; padding-top: 8px; }
+        .footer table { width: 100%; }
+        .footer td { border: none; padding: 0; font-size: 10px; color: #888; text-align: center; }
+    </style>
+</head>
+<body>
+    <div class='header'>
+        <div class='header-top'>
+          <div class='header-logo'>
+            " . ($logo_base64 ? "<img src='{$logo_base64}' alt='Logo'>" : '') . "
+        </div>
+            <div class='header-title'>
+                <h1 style='text-align:center'>Reporte de Auditoría — Log de Proyectos</h1>
             </div>
         </div>
+        <div class='header-meta'>
+            {$periodo}
+            <p>Fecha de emisión: <strong>{$fecha_emision}</strong></p>
+            <p>Generado por: <strong>{$usuario_sesion}</strong></p>
+        </div>
+    </div>
 
+    <table>
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Referencia</th>
+                <th>Proyecto</th>
+                <th>Estado</th>
+                <th>Fecha y Hora</th>
+                <th>Usuario</th>
+                <th style='text-align:center'>Est. Usuario</th>
+                <th>Sector</th>
+            </tr>
+        </thead>
+        <tbody>
+            {$filas}
+        </tbody>
+    </table>
+
+    <p class='total'>Total de registros: {$total}</p>
+
+    <div class='footer'>
         <table>
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Referencia</th>
-                    <th>Proyecto</th>
-                    <th>Estado</th>
-                    <th>Fecha y Hora</th>
-                    <th>Usuario</th>
-                    <th style='text-align:center'>Est. Usuario</th>
-                    <th>Sector</th>
-                </tr>
-            </thead>
-            <tbody>
-                {$filas}
-            </tbody>
+            <tr>
+                <td>Documento generado por Tasking — Herramienta de uso interno</td>
+            </tr>
         </table>
-
-        <p class='total'>Total de registros: {$total}</p>
-
-        <div class='footer'>
-            <table>
-                <tr>
-                    <td>Documento generado por Tasking — Herramienta de uso interno</td>
-                </tr>
-            </table>
-        </div>
-    </body>
-    </html>";
-
+    </div>
+</body>
+</html>";
         $dompdf->loadHtml($html);
         $dompdf->setPaper('A4', 'portrait');
         $dompdf->render();
-
         $nombre_archivo = ($desde === 'Todos')
             ? 'audit_proyectos_completo.pdf'
             : "audit_proyectos_{$desde}_{$hasta}.pdf";
-
         $dompdf->stream($nombre_archivo, ['Attachment' => true]);
         exit;
     }
