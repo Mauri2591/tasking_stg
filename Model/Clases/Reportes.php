@@ -897,7 +897,7 @@ class Reportes
                                 " . ($logo_base64 ? "<img src='{$logo_base64}' alt='Logo'>" : '') . "
                             </div>
                             <div class='header-title'>
-                                <h1 style='font-size:2rem;text-align:center'>Logs de Sesiones</h1>
+                                <h1 style='font-weight;font-size:2rem;text-align:center'>Logs de Sesiones</h1>
                             </div>
                         </div>
                         <div class='header-meta'>
@@ -1036,7 +1036,7 @@ class Reportes
             " . ($logo_base64 ? "<img src='{$logo_base64}' alt='Logo'>" : '') . "
         </div>
             <div class='header-title'>
-                <h1 style='font-size:2rem;text-align:center'>Logs de Proyectos</h1>
+                <h1 style='font-weight:bold;font-size:2rem;text-align:center'>Logs de Proyectos</h1>
             </div>
         </div>
         <div class='header-meta'>
