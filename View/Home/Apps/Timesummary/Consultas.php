@@ -58,19 +58,16 @@ if (isset($_SESSION['usu_id'])) {
         <div class="col-lg-12">
             <div class="card-body d-flex bg-light p-0">
                 <div class="col-lg-12">
-
                     <?php if ($_SESSION['sector_id'] == "4"): ?>
                         <div class="card-body">
-
                             <div style="display: flex; justify-content: end;">
-                                <div class="btn-group-vertical" role="group" aria-label="Vertical button group">
+                                <div class="btn-group-vertical" role="group">
                                     <div class="btn-group" role="group">
                                         <button id="btnGroupVerticalDrop1" type="button"
                                             class="btn btn-primary text-light py-0 px-2 dropdown-toggle"
                                             data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                             Reportes
                                         </button>
-
                                         <div class="dropdown-menu py-1" aria-labelledby="btnGroupVerticalDrop1">
                                             <a onclick="mdlDeReporteDocx()" class="dropdown-item" href="#"><i title="Descargar Docx" class="fs-22 text-secondary ri-file-word-fill"></i></a>
                                             <a onclick="mdlDeReporteXlsx()" class="dropdown-item" href="#"><i title="Descargar Xlsx" class="fs-22 text-success ri-file-excel-fill"></i></a>
@@ -79,15 +76,13 @@ if (isset($_SESSION['usu_id'])) {
                                 </div>
                             </div>
 
-                            <ul id="tab_sectores" class="nav nav-pills arrow-navtabs nav-success py-0 px-1 mb-3" role="tablist">
+                            <!-- TAB SECTORES: solo para sector_id == 4 -->
+                            <ul id="tab_sectores" class="nav nav-pills arrow-navtabs nav-success py-0 px-1 mb-3" role="tablist"></ul>
 
-                            </ul>
                             <div class="tab-content text-muted">
                                 <div class="tab-pane active" id="tab_nuevos" role="tabpanel">
                                     <div class="card card-body">
-                                        <ul id="tab_usuarios_x_sector" class="nav nav-pills arrow-navtabs nav-success py-0 px-1 mb-3" role="tablist">
-                                        </ul>
-
+                                        <ul id="tab_usuarios_x_sector" class="nav nav-pills arrow-navtabs nav-success py-0 px-1 mb-3" role="tablist"></ul>
                                         <table style="text-align: center;" id="table_tareas_usuarios">
                                             <thead>
                                                 <tr>
@@ -107,6 +102,49 @@ if (isset($_SESSION['usu_id'])) {
                                 </div>
                             </div>
                         </div>
+
+                    <?php elseif ($_SESSION['sector_id'] != 4 && $_SESSION['lider'] == "SI"): ?>
+                        <div class="card-body">
+                            <div style="display: flex; justify-content: end;">
+                                <div class="btn-group-vertical" role="group">
+                                    <div class="btn-group" role="group">
+                                        <button id="btnGroupVerticalDrop1" type="button"
+                                            class="btn btn-primary text-light my-2 py-0 px-2 dropdown-toggle"
+                                            data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            Reportes
+                                        </button>
+                                        <div class="dropdown-menu py-1" aria-labelledby="btnGroupVerticalDrop1">
+                                            <a onclick="mdlDeReporteXlsx()" class="dropdown-item" href="#"><i title="Descargar Xlsx" class="fs-22 text-success ri-file-excel-fill"></i></a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- SIN tab_sectores: el lider ve solo su sector directo -->
+                            <div class="tab-content text-muted">
+                                <div class="tab-pane active" id="tab_nuevos" role="tabpanel">
+                                    <div class="card card-body">
+                                        <ul id="tab_usuarios_x_sector" class="nav nav-pills arrow-navtabs nav-success py-0 px-1 mb-3" role="tablist"></ul>
+                                        <table style="text-align: center;" id="table_tareas_usuarios">
+                                            <thead>
+                                                <tr>
+                                                    <th style="width: 10%;text-align: center;">CLIENTE</th>
+                                                    <th style="width: 10%;text-align: center;">REF</th>
+                                                    <th style="width: 20%;text-align: center;">PRODUCTO</th>
+                                                    <th style="width: 10%;text-align: center;">TAREA</th>
+                                                    <th style="width: 10%;text-align: center;">FECHA</th>
+                                                    <th style="width: 10%;text-align: center;">INICIO</th>
+                                                    <th style="width: 10%;text-align: center;">FIN</th>
+                                                    <th style="width: 20%;text-align: center;">CONSUMIDAS</th>
+                                                    <th style="width: 40%;text-align: center;">DESCRIPCION</th>
+                                                </tr>
+                                            </thead>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                     <?php else: ?>
                         <div class="card-body">
                             <div class="tab-content text-muted">
@@ -284,24 +322,21 @@ if (isset($_SESSION['usu_id'])) {
                     }
                 }
             });
+            // $.post("../../../../Controller/ctrTimesummary.php?accion=get_sectores", function(data) {
+            //     $("#tab_sectores").html(data);
+            //     let tabActivo = $("#tab_sectores .nav-link.active");
+            //     let sectorId = tabActivo.data("sector-id");
+            //     cargarUsuarios(sectorId);
+            // });
+            // $("#tab_sectores").on("click", ".nav-link", function(e) {
+            //     e.preventDefault();
+            //     $("#tab_sectores .nav-link").removeClass("active");
+            //     $(this).addClass("active");
+            //     let sectorId = $(this).data("sector-id");
+            //     cargarUsuarios(sectorId);
+            // });
 
-
-            $.post("../../../../Controller/ctrTimesummary.php?accion=get_sectores", function(data) {
-                $("#tab_sectores").html(data);
-
-                let tabActivo = $("#tab_sectores .nav-link.active");
-                let sectorId = tabActivo.data("sector-id");
-                cargarUsuarios(sectorId);
-            });
-
-            $("#tab_sectores").on("click", ".nav-link", function(e) {
-                e.preventDefault();
-                $("#tab_sectores .nav-link").removeClass("active");
-                $(this).addClass("active");
-                let sectorId = $(this).data("sector-id");
-                cargarUsuarios(sectorId);
-            });
-
+            //VA DESPUÉS DE INICIALIZAR LAS TABLAS
             function cargarUsuarios(sectorId) {
                 $.post("../../../../Controller/ctrTimesummary.php?accion=get_usuarios_por_sector", {
                         sector_id: sectorId
@@ -312,12 +347,34 @@ if (isset($_SESSION['usu_id'])) {
                         if (primerUsuario.length > 0) {
                             let usu_id = primerUsuario.attr("onclick").match(/\d+/)[0];
                             window.usu_id = usu_id;
+
+                            // Marcar el primero como activo visualmente
+                            primerUsuario.addClass("active");
+
                             $("#table_tareas_usuarios").DataTable().ajax.reload();
                         }
                     },
-                    "html"
-                );
+                    "html");
             }
+
+            <?php if ($_SESSION['sector_id'] == "4"): ?>
+                $.post("../../../../Controller/ctrTimesummary.php?accion=get_sectores", function(data) {
+                    $("#tab_sectores").html(data);
+                    let sectorId = $("#tab_sectores .nav-link.active").data("sector-id");
+                    cargarUsuarios(sectorId);
+                });
+
+                $("#tab_sectores").on("click", ".nav-link", function(e) {
+                    e.preventDefault();
+                    $("#tab_sectores .nav-link").removeClass("active");
+                    $(this).addClass("active");
+                    cargarUsuarios($(this).data("sector-id"));
+                });
+
+            <?php elseif ($_SESSION['lider'] == "SI"): ?>
+                // Lider: carga directo los usuarios de su sector_id
+                cargarUsuarios(<?php echo (int)$_SESSION['sector_id']; ?>);
+            <?php endif; ?>
 
         });
 

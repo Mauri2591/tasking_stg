@@ -63,27 +63,25 @@ switch ($_GET['case'] ?? null) {
         $idClienteDocx = $_POST['hiddenIdClienteDocx'] ?? null;
         $idClienteXlsx = $_POST['hiddenIdClienteXlsx'] ?? null;
 
-        // Normalizar cliente (puede venir de Docx o Xlsx)
         $idCliente = $idClienteDocx ?: $idClienteXlsx;
 
-        // FECHAS + CLIENTE (más específica)
+        // Se define UNA SOLA VEZ antes de todos los if
+        $sector_id = null;
+        if ($_SESSION['lider'] == "SI" && $_SESSION['sector_id'] != "4") {
+            $sector_id = $_SESSION['sector_id'];
+        }
+
         if ((!empty($fechaDesde) || !empty($fechaHasta)) && !empty($idCliente)) {
-            $data = $timesummary->getReportePorFechasYCliente($idCliente, $fechaDesde, $fechaHasta);
+            $data = $timesummary->getReportePorFechasYCliente($idCliente, $fechaDesde, $fechaHasta, $sector_id);
             $nombreReporte = "Timesummary";
-        }
-        // SOLO FECHAS
-        else if (!empty($fechaDesde) || !empty($fechaHasta)) {
-            $data = $timesummary->getDatosReporteConFiltroFechas($fechaDesde, $fechaHasta);
+        } else if (!empty($fechaDesde) || !empty($fechaHasta)) {
+            $data = $timesummary->getDatosReporteConFiltroFechas($fechaDesde, $fechaHasta, $sector_id);
             $nombreReporte = "Timesummary";
-        }
-        // SOLO CLIENTE
-        else if (!empty($idCliente)) {
-            $data = $timesummary->getDatosReporteConFiltroPoriDCliente($idCliente);
+        } else if (!empty($idCliente)) {
+            $data = $timesummary->getDatosReporteConFiltroPoriDCliente($idCliente, $sector_id);
             $nombreReporte = "Timesummary";
-        }
-        // 4SIN FILTROS
-        else {
-            $data = $timesummary->getDatosReporteSinFiltro();
+        } else {
+            $data = $timesummary->getDatosReporteSinFiltro($sector_id);
             $nombreReporte = "Timesummary";
         }
 

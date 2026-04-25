@@ -5,7 +5,6 @@ if (isset($_SESSION['usu_id'])) {
     require_once __DIR__ . "/../../Config/Config.php";
     require_once __DIR__ . "/../../Model/Clases/Headers.php";
 ?>
-
     <?php
     include_once __DIR__ . "/Public/Template/head.php";
     ?>
@@ -60,8 +59,7 @@ if (isset($_SESSION['usu_id'])) {
             </div>
             <!-- end page title -->
         </div>
-
-
+        
         <div class="col-xl-12">
             <div class="card crm-widget">
                 <div class="card-body p-0">
@@ -117,7 +115,6 @@ if (isset($_SESSION['usu_id'])) {
     <?php
     include_once __DIR__ . "/Public/Template/footer.php";
     ?>
-
 <script>
 document.addEventListener("DOMContentLoaded", () => {
   const el = document.getElementById("text_bienvenido");

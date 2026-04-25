@@ -366,6 +366,25 @@
                                         </ul>
                                     </div>
                                 </li>
+                                <?php if ($_SESSION['lider'] == "SI"): ?>
+                                    <li class="nav-item">
+                                        <a class="nav-link collapsed" href="#sidebarAuditoria" data-bs-toggle="collapse"
+                                            role="button" aria-expanded="false" aria-controls="sidebarAuditoria"
+                                            data-key="t-email">Auditoria</a>
+                                        <div class="menu-dropdown collapse" id="sidebarAuditoria">
+                                            <ul class="nav nav-sm flex-column">
+                                                <li class="nav-item">
+                                                    <a href="<?php echo URL . "View/Home/Apps/Auditoria/proyectos.php"; ?>"
+                                                        class="nav-link" data-key="t-mailbox">Proyectos</a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a href="<?php echo URL . "View/Home/Apps/Auditoria/sesiones.php"; ?>"
+                                                        class="nav-link" data-key="t-mailbox">Sesiones</a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </li>
+                                <?php endif; ?>
                             <?php
                                 break;
                             case '2':
@@ -431,6 +450,25 @@
                                         </ul>
                                     </div>
                                 </li>
+                                <?php if ($_SESSION['lider'] == "SI"): ?>
+                                    <li class="nav-item">
+                                        <a class="nav-link collapsed" href="#sidebarAuditoria" data-bs-toggle="collapse"
+                                            role="button" aria-expanded="false" aria-controls="sidebarAuditoria"
+                                            data-key="t-email">Auditoria</a>
+                                        <div class="menu-dropdown collapse" id="sidebarAuditoria">
+                                            <ul class="nav nav-sm flex-column">
+                                                <li class="nav-item">
+                                                    <a href="<?php echo URL . "View/Home/Apps/Auditoria/proyectos.php"; ?>"
+                                                        class="nav-link" data-key="t-mailbox">Proyectos</a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a href="<?php echo URL . "View/Home/Apps/Auditoria/sesiones.php"; ?>"
+                                                        class="nav-link" data-key="t-mailbox">Sesiones</a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </li>
+                                <?php endif; ?>
                             <?php
                                 break;
                             case '3':
@@ -541,8 +579,26 @@
                                             </li>
                                         </ul>
                                     </div>
-
                                 </li>
+                                <?php if ($_SESSION['lider'] == "SI"): ?>
+                                    <li class="nav-item">
+                                        <a class="nav-link collapsed" href="#sidebarAuditoria" data-bs-toggle="collapse"
+                                            role="button" aria-expanded="false" aria-controls="sidebarAuditoria"
+                                            data-key="t-email">Auditoria</a>
+                                        <div class="menu-dropdown collapse" id="sidebarAuditoria">
+                                            <ul class="nav nav-sm flex-column">
+                                                <li class="nav-item">
+                                                    <a href="<?php echo URL . "View/Home/Apps/Auditoria/proyectos.php"; ?>"
+                                                        class="nav-link" data-key="t-mailbox">Proyectos</a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a href="<?php echo URL . "View/Home/Apps/Auditoria/sesiones.php"; ?>"
+                                                        class="nav-link" data-key="t-mailbox">Sesiones</a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </li>
+                                <?php endif; ?>
                             <?php
                                 break;
                             case '4':
@@ -606,7 +662,6 @@
                                         </div>
                                     </li>
                                 </ul>
-
                         <?php
                                 break;
                         } ?>
