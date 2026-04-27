@@ -814,8 +814,6 @@ class Reportes
                 </tr>";
         }
 
-        $total = count($datos);
-
         $html = "
             <!DOCTYPE html>
             <html lang='es'>
@@ -924,8 +922,6 @@ class Reportes
                     </tbody>
                 </table>
 
-                <p class='total'>Total de registros: {$total}</p>
-
                 <!-- PIE DE PÁGINA -->
                 <div class='footer'>
                     <table style='text-align:center'>
@@ -988,7 +984,6 @@ class Reportes
         <td>{$row['sector_nombre']}</td>
     </tr>";
         }
-        $total = count($datos);
         $html = "
 <!DOCTYPE html>
 <html lang='es'>
@@ -1063,8 +1058,6 @@ class Reportes
             {$filas}
         </tbody>
     </table>
-
-    <p class='total'>Total de registros: {$total}</p>
 
     <div class='footer'>
         <table>
