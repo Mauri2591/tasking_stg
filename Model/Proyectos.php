@@ -1974,7 +1974,8 @@ WHERE
     public function get_datos_proyecto_gestionado($id)
     {
         $conn = parent::get_conexion();
-        $sql = "SELECT proyecto_gestionado.*, proyecto_recurrencia.posicion_recurrencia, 
+        $sql = "SELECT proyecto_gestionado.*, DATE_FORMAT(proyecto_gestionado.fech_inicio, '%d-%m-%Y') AS fech_inicio, DATE_FORMAT(proyecto_gestionado.fech_fin, '%d-%m-%Y') AS fech_fin, 
+        proyecto_recurrencia.posicion_recurrencia, 
         tm_categoria.cat_nom, tm_subcategoria.cats_nom, if(proyecto_rechequeo.id, 'SI','NO') AS rechequeo, 
         if(workshop.est = 1,'SI','NO') AS workshop, dimensionamiento.hs_dimensionadas AS dimensionamiento, tm_estados.estados_nombre AS estado FROM proyecto_gestionado 
         LEFT JOIN tm_categoria ON proyecto_gestionado.cat_id = tm_categoria.cat_id 

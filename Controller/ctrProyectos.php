@@ -1721,8 +1721,7 @@ switch ($_GET['proy']) {
         $datos = $proyecto->get_datos_usuario_finalizador_proyecto($_POST['id_proyecto_gestionado']);
         if ($datos == true) {
             ?>
-            <span>Finalizado el <?php echo $datos->fecha_cierre_proyecto; ?></span>
-            <span>por <?php echo $datos->usu_nom; ?></span>
+            <span>Finalizado el <?php echo date('d-m-Y', strtotime($datos->fecha_cierre_proyecto)); ?></span>            <span>por <?php echo $datos->usu_nom; ?></span>
             <span>de <?php echo $datos->sector_nombre; ?></span>
         <?php
         }
