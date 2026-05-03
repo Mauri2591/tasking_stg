@@ -3,7 +3,7 @@
     <div class="modal fade" id="mdlHistorialTimesummary" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content">
-                <div class="modal-header">
+                <div class="modal-header p-0">
                     <h5>Historial de tareas</h5>
                 </div>
                 <div class="modal-body">
@@ -37,7 +37,7 @@
     <div class="modal fade" id="mdlHistorialTimesummary" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content">
-                <div class="modal-header">
+                <div class="modal-header p-0">
                     <h5>Historial de tareas</h5>
                 </div>
                 <div class="modal-body">
