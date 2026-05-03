@@ -8,7 +8,7 @@ $(document).ready(function () {
     let CATEGORIA_ID = null;
     let TITULO_EDITADO_MANUAL = false;
 
-    tabla = $("#table_proyectos_borrador").dataTable({
+    tabla = $("#table_proyectos_borrador").DataTable({
         "aProcessing": true,
         "aServerSide": true,
         dom: 'Bfrtip',
@@ -64,7 +64,7 @@ $(document).ready(function () {
         }
     });
 
-    tabla = $("#table_proyectos_total").dataTable({
+    tabla = $("#table_proyectos_total").DataTable({
         "aProcessing": true,
         "aServerSide": true,
         dom: 'Bfrtip',
@@ -120,7 +120,7 @@ $(document).ready(function () {
         }
     });
 
-    tabla = $("#table_proyectos_total_calidad").dataTable({
+    tabla = $("#table_proyectos_total_calidad").DataTable({
         "aProcessing": true,
         "aServerSide": true,
         "ordering": true, // ✅ respetar el ORDER BY del SQL
@@ -175,7 +175,7 @@ $(document).ready(function () {
         }
     });
 
-    tabla = $("#table_proyectos_realizados").dataTable({
+    tabla = $("#table_proyectos_realizados").DataTable({
         "aProcessing": true,
         "aServerSide": true,
         "ordering": true, // ✅ respetar el ORDER BY del SQL
@@ -230,7 +230,7 @@ $(document).ready(function () {
         }
     });
 
-    tabla = $("#table_cross_sell_sectores").dataTable({
+    tabla = $("#table_cross_sell_sectores").DataTable({
         "aProcessing": true,
         "aServerSide": true,
         "ordering": true, // ✅ respetar el ORDER BY del SQL
@@ -285,7 +285,7 @@ $(document).ready(function () {
         }
     });
 
-    tabla = $("#table_proyectos_en_proceso").dataTable({
+    tabla = $("#table_proyectos_en_proceso").DataTable({
         "aProcessing": true,
         "aServerSide": true,
         "ordering": true, // ✅ respetar el ORDER BY del SQL
@@ -338,7 +338,7 @@ $(document).ready(function () {
         }
     });
 
-    tabla = $("#table_proyectos_recurrencia").dataTable({
+    tabla = $("#table_proyectos_recurrencia").DataTable({
         "aProcessing": true,
         "aServerSide": true,
         "ordering": true, // ✅ respetar el ORDER BY del SQL
@@ -398,7 +398,7 @@ $(document).ready(function () {
 
     document.getElementById("btn_rechequeo").addEventListener("click", () => {
         $("#ModalRechequeo").modal("show");
-        tabla = $("#table_para_rechequeo").dataTable({
+        tabla = $("#table_para_rechequeo").DataTable({
             "aProcessing": true,
             "aServerSide": true,
             "ordering": true, // ✅ respetar el ORDER BY del SQL
@@ -1784,7 +1784,7 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
 
 function consultar_activos_borrdor(proy_id, numero_proyecto) {
     $("#ModalConsultarActivos").modal("show")
-    tabla = $("#table_container_activos_proy_creado").dataTable({
+    tabla = $("#table_container_activos_proy_creado").DataTable({
         "aProcessing": true,
         "aServerSide": true,
         "paging": false, // 👈 Esto elimina la paginación
@@ -2455,7 +2455,7 @@ function verProyPorIdCliente(client_id) {
         "json"
     );
 
-    tabla = $("#tablelHistorialProyectosCalidad").dataTable({
+    tabla = $("#tablelHistorialProyectosCalidad").DataTable({
         "aProcessing": true,
         "aServerSide": true,
         "paging": false, // 👈 Esto elimina la paginación
