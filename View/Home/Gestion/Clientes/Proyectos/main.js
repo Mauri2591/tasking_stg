@@ -2441,123 +2441,67 @@ document.getElementById("btn_finalizar_estado_proyecto").addEventListener("click
     })
 })
 
-function verProyPorIdCliente(client_id) {
-    $("#mostrar_historico").prop("checked", false);
-    $("#ModalHistorialProyectosCalidad").modal("show");
-    $("#inputHiddenIdCliente").val(client_id)
-    $.post("../../../../../Controller/ctrProyectos.php?proy=get_nombre_proyectos_total_x_client_id", {
-            client_id: client_id
-        },
-        function (data, textStatus, jqXHR) {
-            $("#idCliente").text(data[0].cliente)
-
-        },
-        "json"
-    );
-
-    //Destruir antes de inicializar
+function initTablaHistorial(client_id, mostrar) {
     if ($.fn.DataTable.isDataTable('#tablelHistorialProyectosCalidad')) {
         $('#tablelHistorialProyectosCalidad').DataTable().destroy();
     }
 
     tabla = $("#tablelHistorialProyectosCalidad").DataTable({
-        "aProcessing": true,
-        "aServerSide": false,
-        "paging": true, // Esto elimina la paginación
-        "searching": true,
-        "lengthChange": false,
-        "colReorder": true,
+        processing: true,
+        serverSide: false,
+        paging: true,
+        searching: true,
+        lengthChange: false,
+        colReorder: true,
+        responsive: true,
+        autoWidth: false,
         dom: 'frtip',
-        "ajax": {
+        ajax: {
             url: "../../../../../Controller/ctrProyectos.php?proy=get_proyectos_total_x_client_id",
-            type: "post",
+            type: "POST",
             dataType: "json",
+            dataSrc: "aaData",
             data: {
-                client_id: client_id
+                client_id: client_id,
+                mostrar_historico: mostrar
             },
-            error: function (e) {
-                console.log(e.responseText);
-            }
+            error: function (e) { console.log(e.responseText); }
         },
-        "order": [
-            [0, "desc"]
-        ],
-        "bDestroy": true,
-        "responsive": true,
-        "bInfo": true,
-        "autoWidth": false,
-        "language": {
-            "sProcessing": "Procesando..",
-            "sLengthMenu": "Mostrar _MENU_ registros",
-            "sZeroRecords": "No se encontraron resultados..",
-            "sEmptyTable": "Ninguna tarea disponible en esta tabla",
-            "sInfo": "",
-            "sInfoEmpty": "",
-            "sInfoFiltered": "(Filtrado de un total de _MAX_ registros)",
-            "sInfoPostFix": "",
-            "sSearch": "Buscar: ",
-            "sUrl": "",
-            "sInfoThousands": ",",
-            "sLoadingRecords": "",
-            "oPaginate": {
-                "sFirst": "Primero",
-                "sLast": "Último",
-                "sNext": "Siguiente",
-                "sPrevious": "Anterior"
-            },
-            "oAria": {
-                "sSortAscending": ":Activar para ordenar la columna de manera ascendiente",
-                "sSortDescending": ":Activar para ordenar la columna de manera descendiente"
+        order: [[0, "desc"]],
+        language: {
+            sProcessing: "Procesando..",
+            sLengthMenu: "Mostrar _MENU_ registros",
+            sZeroRecords: "No se encontraron resultados..",
+            sEmptyTable: "Ninguna tarea disponible en esta tabla",
+            sInfo: "",
+            sInfoEmpty: "",
+            sInfoFiltered: "(Filtrado de un total de _MAX_ registros)",
+            sSearch: "Buscar: ",
+            oPaginate: {
+                sFirst: "Primero",
+                sLast: "Último",
+                sNext: "Siguiente",
+                sPrevious: "Anterior"
             }
         }
     });
+}
 
-    $("#mostrar_historico").off("change").on("change",function () {
-        let mostrar = $(this).is(":checked") ? 1 : 0;
-        tabla = $("#tablelHistorialProyectosCalidad").DataTable({
-            processing: true,
-            serverSide: false,
-            paging: false,
-            searching: true,
-            lengthChange: false,
-            colReorder: true,
-            destroy: true,
-            responsive: true,
-            autoWidth: false,
-            info: true,
-            dom: 'frtip',
-            ajax: {
-                url: "../../../../../Controller/ctrProyectos.php?proy=get_proyectos_total_x_client_id",
-                type: "POST",
-                dataType: "json",
-                data: {
-                    client_id: client_id,
-                    mostrar_historico: mostrar
-                },
-                error: function (e) {
-                    console.log(e.responseText);
-                }
-            },
-            order: [
-                [0, "desc"]
-            ],
-            language: {
-                sProcessing: "Procesando..",
-                sLengthMenu: "Mostrar _MENU_ registros",
-                sZeroRecords: "No se encontraron resultados..",
-                sEmptyTable: "Ninguna tarea disponible en esta tabla",
-                sInfo: "",
-                sInfoEmpty: "",
-                sInfoFiltered: "(Filtrado de un total de _MAX_ registros)",
-                sSearch: "Buscar: ",
-                oPaginate: {
-                    sFirst: "Primero",
-                    sLast: "Último",
-                    sNext: "Siguiente",
-                    sPrevious: "Anterior"
-                }
-            }
-        });
+function verProyPorIdCliente(client_id) {
+    $("#mostrar_historico").prop("checked", false);
+    $("#ModalHistorialProyectosCalidad").modal("show");
+    $("#inputHiddenIdCliente").val(client_id);
+
+    $.post("../../../../../Controller/ctrProyectos.php?proy=get_nombre_proyectos_total_x_client_id", {
+        client_id: client_id
+    }, function (data) {
+        $("#idCliente").text(data[0].cliente);
+    }, "json");
+
+    initTablaHistorial(client_id, 0);
+
+    $("#mostrar_historico").off("change").on("change", function () {
+        initTablaHistorial(client_id, $(this).is(":checked") ? 1 : 0);
     });
 }
 
