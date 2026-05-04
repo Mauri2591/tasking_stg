@@ -160,7 +160,7 @@
                                 </div>
 
                                 <div class="col-sm-3">
-                                    <label for="usuarios"><span class="badge bg-light fs-10 mb-1 text-dark">Usuarios <input type="checkbox" name="usuarios_sector" id="usuarios_sector">
+                                    <label for="usuarios_sector"><span class="badge bg-light fs-10 mb-1 text-dark">Usuarios <input type="checkbox" name="usuarios_sector" id="usuarios_sector" title="Seleccionar todos los usuarios">
                                         </span></label>
                                     <div style="height: 100px; overflow-y: scroll;">
                                         <div class="form-check" id="combo_usuario_x_sector">
