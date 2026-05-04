@@ -2507,12 +2507,12 @@ function verProyPorIdCliente(client_id) {
         }
     });
 
-    $("#mostrar_historico").change(function () {
+    $("#mostrar_historico").off("change").on("change",function () {
         let mostrar = $(this).is(":checked") ? 1 : 0;
         tabla = $("#tablelHistorialProyectosCalidad").DataTable({
             processing: true,
             serverSide: false,
-            paging: true,
+            paging: false,
             searching: true,
             lengthChange: false,
             colReorder: true,
