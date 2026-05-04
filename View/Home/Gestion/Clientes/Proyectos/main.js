@@ -2455,9 +2455,14 @@ function verProyPorIdCliente(client_id) {
         "json"
     );
 
+    //Destruir antes de inicializar
+    if ($.fn.DataTable.isDataTable('#tablelHistorialProyectosCalidad')) {
+        $('#tablelHistorialProyectosCalidad').DataTable().destroy();
+    }
+
     tabla = $("#tablelHistorialProyectosCalidad").DataTable({
         "aProcessing": true,
-        "aServerSide": true,
+        "aServerSide": false,
         "paging": true, // Esto elimina la paginación
         "searching": true,
         "lengthChange": false,
