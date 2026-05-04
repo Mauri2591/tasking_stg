@@ -2458,17 +2458,11 @@ function verProyPorIdCliente(client_id) {
     tabla = $("#tablelHistorialProyectosCalidad").DataTable({
         "aProcessing": true,
         "aServerSide": true,
-        "paging": false, // 👈 Esto elimina la paginación
+        "paging": true, // Esto elimina la paginación
         "searching": true,
         "lengthChange": false,
         "colReorder": true,
-        dom: 'Bfrtip',
-        buttons: [
-            'copyHtml5',
-            'excelHtml5',
-            'csvHtml5',
-            'pdfHtml5'
-        ],
+        dom: 'frtip',
         "ajax": {
             url: "../../../../../Controller/ctrProyectos.php?proy=get_proyectos_total_x_client_id",
             type: "post",
@@ -2517,8 +2511,8 @@ function verProyPorIdCliente(client_id) {
         let mostrar = $(this).is(":checked") ? 1 : 0;
         tabla = $("#tablelHistorialProyectosCalidad").DataTable({
             processing: true,
-            serverSide: true,
-            paging: false,
+            serverSide: false,
+            paging: true,
             searching: true,
             lengthChange: false,
             colReorder: true,
@@ -2526,13 +2520,7 @@ function verProyPorIdCliente(client_id) {
             responsive: true,
             autoWidth: false,
             info: true,
-            dom: 'Bfrtip',
-            buttons: [
-                'copyHtml5',
-                'excelHtml5',
-                'csvHtml5',
-                'pdfHtml5'
-            ],
+            dom: 'frtip',
             ajax: {
                 url: "../../../../../Controller/ctrProyectos.php?proy=get_proyectos_total_x_client_id",
                 type: "POST",
