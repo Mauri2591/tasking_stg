@@ -7,6 +7,9 @@ $dotenv = Dotenv::createImmutable(__DIR__ . '/../');
 $dotenv->load();
 
 session_name($_ENV['COOKIE_SESSION']);
+ini_set('session.cookie_httponly', 1);      // Bloquea acceso desde JS
+// ini_set('session.cookie_secure', 1);        // Solo HTTPS
+ini_set('session.cookie_samesite', 'Strict'); // Protege contra CSRF
 session_start();
 
 class Conexion
