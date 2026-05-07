@@ -30,7 +30,7 @@
                     </div>
 
                     <div class="input-group input-group-sm mt-2 align-items-center">
-                        <div class="form-check form-switch me-2">
+                        <div class="form-check form-switch me-1">
                             <input class="form-check-input" type="checkbox" id="checkResetClave">
                         </div>
                         <span class="input-group-text flex-shrink-0" id="inputGroup-sizing-sm">
@@ -39,9 +39,14 @@
 
                         <input id="usu_pass_editar" disabled name="usu_pass_editar" type="password" class="form-control" aria-describedby="inputGroup-sizing-sm">
                     </div>
+
+                    <div class="input-group input-group-sm mt-1 align-items-center">
+                        <span class="input-group-text flex-shrink-0" id="basic-addon1">Estado</span>
                         <select id="editar_estado_usuario" class="form-select form-select-sm mt-2 mb-2" aria-label="Default select example">
 
                         </select>
+                    </div>
+
                     <div>
                         <button type="button" onclick="boton_editar_usuario()"
                             class="mt-3 btn btn-primary waves-effect waves-success btn-sm"
