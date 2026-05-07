@@ -2465,7 +2465,11 @@ function initTablaHistorial(client_id, mostrar) {
                 client_id: client_id,
                 mostrar_historico: mostrar
             },
-            error: function (e) { console.log(e.responseText); }
+            error: function (e) { 
+                console.log("response: "+e.responseText); 
+                console.log("status" +e.status);
+                
+            }
         },
         order: [[0, "desc"]],
         language: {
