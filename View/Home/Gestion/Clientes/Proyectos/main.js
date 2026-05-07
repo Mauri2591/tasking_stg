@@ -2535,9 +2535,7 @@ function crearRechequeo(id) {
             id: id
         },
         function (data) {
-            console.log("Datos recibidos:", data);
-
-            let ID_ORIGINAL = data.id; // el proyecto que clickeaste
+            let ID_ORIGINAL = data.id;
             let POSICION_RECURRENCIA = data.posicion_recurrencia;
 
             Swal.fire({
@@ -2548,55 +2546,79 @@ function crearRechequeo(id) {
                 cancelButtonText: "Cancelar"
             }).then((result) => {
                 if (result.isConfirmed) {
-                    // Limpieza de datos innecesarios
-                    delete data.id;
-                    delete data.fech_crea;
-                    delete data.est;
-                    delete data.fech_inicio;
-                    delete data.fech_fin;
-                    delete data.recurrencia;
+                    Swal.fire({
+                        icon: "question",
+                        title: "Tipo de Retest",
+                        text: "¿Qué tipo de Retest desea crear?",
+                        showCancelButton: true,
+                        confirmButtonText: "Retest Completo",
+                        cancelButtonText: "Retest sobre Hallazgos",
+                        confirmButtonColor: "#3085d6",
+                        cancelButtonColor: "#f39c12",
+                    }).then((tipoResult) => {
 
-                    if (data.id_proyecto_recurrencia === null) data.id_proyecto_recurrencia = 0;
-                    if (data.archivo === null) data.archivo = "";
+                        let tipo_rechequeo = "";
 
-                    // Agregamos lo que el backend necesita
-                    data.id_proyecto_gestionado = ID_ORIGINAL;
-                    data.posicion_recurrencia = POSICION_RECURRENCIA;
-                    data.id_proyecto_gestionado_origen = id;
+                        if (tipoResult.isConfirmed) {
+                            tipo_rechequeo = "COMPLETO";
+                        } else if (tipoResult.isDismissed && tipoResult.dismiss === Swal.DismissReason.cancel) {
+                            tipo_rechequeo = "HALLAZGOS";
+                        } else {
+                            return;
+                        }
 
-                    // 🚀 Insertamos el rechequeo
-                    $.post(
-                        "../../../../../Controller/ctrProyectos.php?proy=insert_rechequeo",
-                        data,
-                        function (resp) {
-                            console.log("Respuesta insert:", resp);
-                            if (resp.status === "success") {
-                                Swal.fire({
-                                    icon: "success",
-                                    title: "Bien",
-                                    text: "Retest creado correctamente",
-                                    timer: 1500,
-                                    showConfirmButton: false
-                                });
+                        console.log("Tipo seleccionado:", tipo_rechequeo);
 
-                                // Refrescar tablas
-                                setTimeout(() => {
-                                    if ($.fn.DataTable.isDataTable('#tablelHistorialProyectosCalidad')) {
-                                        $('#tablelHistorialProyectosCalidad').DataTable().ajax.reload(null, false);
-                                        $("#table_proyectos_total_calidad").DataTable().ajax.reload(null, false);
-                                        $('#table_proyectos_borrador').DataTable().ajax.reload(null, false);
-                                    }
-                                }, 1000);
-                            } else {
-                                Swal.fire({
-                                    icon: "error",
-                                    title: "Error",
-                                    text: resp.msg
-                                });
-                            }
-                        },
-                        "json"
-                    );
+                        // Limpieza de datos innecesarios
+                        delete data.id;
+                        delete data.fech_crea;
+                        delete data.est;
+                        delete data.fech_inicio;
+                        delete data.fech_fin;
+                        delete data.recurrencia;
+
+                        if (data.id_proyecto_recurrencia === null) data.id_proyecto_recurrencia = 0;
+                        if (data.archivo === null) data.archivo = "";
+
+                        // Agregamos lo que el backend necesita
+                        data.id_proyecto_gestionado = ID_ORIGINAL;
+                        data.posicion_recurrencia = POSICION_RECURRENCIA;
+                        data.id_proyecto_gestionado_origen = id;
+                        data.tipo_rechequeo = tipo_rechequeo;
+
+                        // Inserto el rechequeo
+                        $.post(
+                            "../../../../../Controller/ctrProyectos.php?proy=insert_rechequeo",
+                            data,
+                            function (resp) {
+                                console.log("Respuesta insert:", resp);
+                                if (resp.status === "success") {
+                                    Swal.fire({
+                                        icon: "success",
+                                        title: "Bien",
+                                        text: "Retest creado correctamente",
+                                        timer: 1500,
+                                        showConfirmButton: false
+                                    });
+
+                                    setTimeout(() => {
+                                        if ($.fn.DataTable.isDataTable('#tablelHistorialProyectosCalidad')) {
+                                            $('#tablelHistorialProyectosCalidad').DataTable().ajax.reload(null, false);
+                                            $("#table_proyectos_total_calidad").DataTable().ajax.reload(null, false);
+                                            $('#table_proyectos_borrador').DataTable().ajax.reload(null, false);
+                                        }
+                                    }, 1000);
+                                } else {
+                                    Swal.fire({
+                                        icon: "error",
+                                        title: "Error",
+                                        text: resp.msg
+                                    });
+                                }
+                            },
+                            "json"
+                        );
+                    });
                 }
             });
         },

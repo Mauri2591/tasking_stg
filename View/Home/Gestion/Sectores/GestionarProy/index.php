@@ -619,7 +619,7 @@ if (isset($_SESSION['usu_id'])) {
 
                     if (data.rechequeo == "SI") {
                         document.getElementById("rechequeo").style.display = "flex";
-                        $("#rechequeo").text("Retest");
+                        $("#rechequeo").text("Retest "+data.tipo_rechequeo);
                     } else {
                         document.getElementById("rechequeo").style.display = "none";
                     }

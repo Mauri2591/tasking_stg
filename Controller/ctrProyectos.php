@@ -2304,7 +2304,7 @@ TXT;
             );
 
             // 2️ Inserto en la tabla de relación
-            $proyecto->insert_proyecto_rechequeo($id_proyecto_gestionado, $_POST['id_proyecto_gestionado_origen']);
+            $proyecto->insert_proyecto_rechequeo($id_proyecto_gestionado, $_POST['id_proyecto_gestionado_origen'], $_POST['tipo_rechequeo']);
 
             // 3️ Inserto dimensionamiento
             $proyecto->insert_dimensionamiento_de_rechequeo($id_proyecto_gestionado, $dimensionamiento);
