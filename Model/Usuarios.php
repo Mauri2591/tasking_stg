@@ -13,7 +13,7 @@ class Usuarios extends Conexion
         FROM tm_usuario 
         INNER JOIN sectores ON tm_usuario.sector_id = sectores.sector_id
         WHERE usu_id NOT IN(82,104,105)
-        ORDER BY tm_usuario.est DESC";
+        ORDER BY tm_usuario.est ASC";
         $stmt = $conn->prepare($sql);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
