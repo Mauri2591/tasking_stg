@@ -12,7 +12,7 @@ class Usuarios extends Conexion
         sectores.sector_nombre AS sector 
         FROM tm_usuario 
         INNER JOIN sectores ON tm_usuario.sector_id = sectores.sector_id
-        WHERE usu_id NOT IN(36,82,104,105)
+        WHERE usu_id NOT IN(82,104,105)
         ORDER BY tm_usuario.est DESC";
         $stmt = $conn->prepare($sql);
         $stmt->execute();
