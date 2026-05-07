@@ -391,67 +391,71 @@ $(document).ready(function () {
         }
     });
 
-    document.getElementById('usuarios_sector').addEventListener('change', function () {
-        const checks = document.querySelectorAll('#combo_usuario_x_sector input[type="checkbox"]');
-        checks.forEach(check => check.checked = this.checked);
-    });
-
-    document.getElementById("btn_rechequeo").addEventListener("click", () => {
-        $("#ModalRechequeo").modal("show");
-        tabla = $("#table_para_rechequeo").DataTable({
-            "aProcessing": true,
-            "aServerSide": true,
-            "ordering": true, // ✅ respetar el ORDER BY del SQL
-            "lengthChange": false, // ✅ corregido el typo
-            dom: 'Bfrtip',
-            "searching": true,
-            lenghtChange: false,
-            colReorder: true,
-            buttons: [
-                'copyHtml5',
-                'excelHtml5',
-                'csvHtml5',
-                'pdfHtml5'
-            ],
-            "ajax": {
-                url: "../../../../../Controller/ctrProyectos.php?proy=get_proyectos_en_proceso_vista_calidad",
-                type: "post",
-                dataType: "json",
-                data: {},
-                error: function (e) {}
-            },
-            "bDestroy": true,
-            "responsive": true,
-            "bInfo": true,
-            "iDisplayLength": 9, //cantidad de tuplas o filas a mostrar
-            "autoWith": false,
-            "language": {
-                "sProcessing": "Procesando..",
-                "sLengthMenu": "Mostrar _MENU_ registros",
-                "sZeroRecords": "No se encontraron resultados..",
-                "sEmptyTable": "Ninguna tarea disponible en esta tabla",
-                "sInfo": "Mostrando un total de _TOTAL_ registros",
-                "sInfoEmpty": "Mostrando un total de 0 registros",
-                "sInfoFiltered": "(Filtrado de un total de _MAX_ registros)",
-                "sInfoPostFix": "",
-                "sSearch": "Buscar: ",
-                "sUrl": "",
-                "sInfoThousands": ",",
-                "sLoadingRecords": "Cargando",
-                "oPaginate": {
-                    "sFirst": "Primero",
-                    "sLast": "Ùltimo",
-                    "sNext": "Siguiente",
-                    "sPrevious": "Anterior"
-                },
-                "oAria": {
-                    "sSortAscending": ":Activar para ordenar la columna de manera ascendiente",
-                    "sSortDescending": ":Activar para ordenar la columna de manera descendiente"
-                }
-            }
+    const elUsuariosSector = document.getElementById('usuarios_sector');
+    if (elUsuariosSector) {
+        elUsuariosSector.addEventListener('change', function () {
+            const checks = document.querySelectorAll('#combo_usuario_x_sector input[type="checkbox"]');
+            checks.forEach(check => check.checked = this.checked);
         });
-    });
-
+    }
+    const elBtnRechequeo = document.getElementById("btn_rechequeo");
+    if (elBtnRechequeo) {
+        elBtnRechequeo.addEventListener("click", () => {
+            $("#ModalRechequeo").modal("show");
+            tabla = $("#table_para_rechequeo").DataTable({
+                "aProcessing": true,
+                "aServerSide": true,
+                "ordering": true, // ✅ respetar el ORDER BY del SQL
+                "lengthChange": false, // ✅ corregido el typo
+                dom: 'Bfrtip',
+                "searching": true,
+                lenghtChange: false,
+                colReorder: true,
+                buttons: [
+                    'copyHtml5',
+                    'excelHtml5',
+                    'csvHtml5',
+                    'pdfHtml5'
+                ],
+                "ajax": {
+                    url: "../../../../../Controller/ctrProyectos.php?proy=get_proyectos_en_proceso_vista_calidad",
+                    type: "post",
+                    dataType: "json",
+                    data: {},
+                    error: function (e) {}
+                },
+                "bDestroy": true,
+                "responsive": true,
+                "bInfo": true,
+                "iDisplayLength": 9, //cantidad de tuplas o filas a mostrar
+                "autoWith": false,
+                "language": {
+                    "sProcessing": "Procesando..",
+                    "sLengthMenu": "Mostrar _MENU_ registros",
+                    "sZeroRecords": "No se encontraron resultados..",
+                    "sEmptyTable": "Ninguna tarea disponible en esta tabla",
+                    "sInfo": "Mostrando un total de _TOTAL_ registros",
+                    "sInfoEmpty": "Mostrando un total de 0 registros",
+                    "sInfoFiltered": "(Filtrado de un total de _MAX_ registros)",
+                    "sInfoPostFix": "",
+                    "sSearch": "Buscar: ",
+                    "sUrl": "",
+                    "sInfoThousands": ",",
+                    "sLoadingRecords": "Cargando",
+                    "oPaginate": {
+                        "sFirst": "Primero",
+                        "sLast": "Ùltimo",
+                        "sNext": "Siguiente",
+                        "sPrevious": "Anterior"
+                    },
+                    "oAria": {
+                        "sSortAscending": ":Activar para ordenar la columna de manera ascendiente",
+                        "sSortDescending": ":Activar para ordenar la columna de manera descendiente"
+                    }
+                }
+            });
+        });
+    }
 });
 
 $("#combo_sector_proy_nuevo").change(function (e) {
@@ -1315,8 +1319,8 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
         }
     }, "json");
 
-
-    document.getElementById("client_refPro_proy_nuevo").focus();
+    const elRefPro = document.getElementById("client_refPro_proy_nuevo");
+    if (elRefPro) elRefPro.focus();
     $.post("../../../../../Controller/ctrProyectos.php?proy=get_combo_categorias_x_sector", {
             sector_id: 1
         },
@@ -1419,33 +1423,36 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
         "html"
     );
 
-    document.getElementById("combo_sector_proy_nuevo").addEventListener("change", function () {
-        document.getElementById('usuarios_sector').checked = false;
-        $.post("../../../../../Controller/ctrProyectos.php?proy=get_combo_categorias_x_sector", {
-                sector_id: this.value
-            },
-            function (data, textStatus, jqXHR) {
-                $("#combo_categoria_proy_nuevo").html(data)
-            },
-            "html"
-        );
-        $.post("../../../../../Controller/ctrProyectos.php?proy=get_combo_subcategorias_x_sector", {
-                sector_id: this.value
-            },
-            function (data, textStatus, jqXHR) {
-                $("#combo_subcategoria_proy_nuevo").html(data)
-            },
-            "html"
-        );
-        $.post("../../../../../Controller/ctrProyectos.php?proy=get_usuarios_x_sector", {
-                sector_id: this.value
-            },
-            function (data, textStatus, jqXHR) {
-                $("#combo_usuario_x_sector").html(data)
-            },
-            "html"
-        );
-    });
+    const elComboSector = document.getElementById("combo_sector_proy_nuevo");
+    if (elComboSector) {
+        elComboSector.addEventListener("change", function () {
+            document.getElementById('usuarios_sector').checked = false;
+            $.post("../../../../../Controller/ctrProyectos.php?proy=get_combo_categorias_x_sector", {
+                    sector_id: this.value
+                },
+                function (data, textStatus, jqXHR) {
+                    $("#combo_categoria_proy_nuevo").html(data)
+                },
+                "html"
+            );
+            $.post("../../../../../Controller/ctrProyectos.php?proy=get_combo_subcategorias_x_sector", {
+                    sector_id: this.value
+                },
+                function (data, textStatus, jqXHR) {
+                    $("#combo_subcategoria_proy_nuevo").html(data)
+                },
+                "html"
+            );
+            $.post("../../../../../Controller/ctrProyectos.php?proy=get_usuarios_x_sector", {
+                    sector_id: this.value
+                },
+                function (data, textStatus, jqXHR) {
+                    $("#combo_usuario_x_sector").html(data)
+                },
+                "html"
+            );
+        });
+    }
 
     function validarHost(tipo, host) {
         host = host.trim();
@@ -1701,24 +1708,27 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
     });
 
     //Comienza validacion de IPS en TEXTAREA
-    document.getElementById("ips_proy_nuevo_eh").addEventListener("input", function () {
-        const textarea = this;
-        if (textarea.value.trim() === "") {
-            document.getElementById("mje_ips_proy_nuevo_eh").innerHTML = "";
-            return;
-        }
-        const todasLasIps = textarea.value
-            .split(/[\s,]+/)
-            .map(ip => ip.trim())
-            .filter(ip => ip.length > 0);
-        textarea.value = todasLasIps.join('\n');
-        const ipsInvalidas = todasLasIps.filter(ip => !validarIP(ip));
-        if (ipsInvalidas.length > 0) {
-            mostrarMensajeIpInvalida(ipsInvalidas);
-        } else {
-            eliminarMensajeIpInvalida();
-        }
-    });
+    const elIps = document.getElementById("ips_proy_nuevo_eh");
+    if (elIps) {
+        elIps.addEventListener("input", function () {
+            const textarea = this;
+            if (textarea.value.trim() === "") {
+                document.getElementById("mje_ips_proy_nuevo_eh").innerHTML = "";
+                return;
+            }
+            const todasLasIps = textarea.value
+                .split(/[\s,]+/)
+                .map(ip => ip.trim())
+                .filter(ip => ip.length > 0);
+            textarea.value = todasLasIps.join('\n');
+            const ipsInvalidas = todasLasIps.filter(ip => !validarIP(ip));
+            if (ipsInvalidas.length > 0) {
+                mostrarMensajeIpInvalida(ipsInvalidas);
+            } else {
+                eliminarMensajeIpInvalida();
+            }
+        });
+    }
 
     function validarIP(ip) {
         const regexIP = /^(25[0-5]|2[0-4][0-9]|1?[0-9]{1,2})(\.(25[0-5]|2[0-4][0-9]|1?[0-9]{1,2})){3}$/;
@@ -1741,24 +1751,27 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
     //Finaliza validacion de IPS en TEXTAREA
 
     //Comienza validacion URLS en TEXTAREA
-    document.getElementById("urls_proy_nuevo_eh").addEventListener("input", function () {
-        const textarea = this;
-        if (textarea.value.trim() === "") {
-            document.getElementById("mje_urls_proy_nuevo_eh").innerHTML = "";
-            return;
-        }
-        const todasLasUrls = textarea.value
-            .split(/[\s,]+/)
-            .map(url => url.trim())
-            .filter(url => url.length > 0);
-        textarea.value = todasLasUrls.join('\n');
-        const urlsInvalidas = todasLasUrls.filter(url => !validarURL(url));
-        if (urlsInvalidas.length > 0) {
-            mostrarMensajeUrlInvalida(urlsInvalidas);
-        } else {
-            eliminarMensajeUrlInvalida();
-        }
-    });
+    const elUrls = document.getElementById("urls_proy_nuevo_eh");
+    if (elUrls) {
+        elUrls.addEventListener("input", function () {
+            const textarea = this;
+            if (textarea.value.trim() === "") {
+                document.getElementById("mje_urls_proy_nuevo_eh").innerHTML = "";
+                return;
+            }
+            const todasLasUrls = textarea.value
+                .split(/[\s,]+/)
+                .map(url => url.trim())
+                .filter(url => url.length > 0);
+            textarea.value = todasLasUrls.join('\n');
+            const urlsInvalidas = todasLasUrls.filter(url => !validarURL(url));
+            if (urlsInvalidas.length > 0) {
+                mostrarMensajeUrlInvalida(urlsInvalidas);
+            } else {
+                eliminarMensajeUrlInvalida();
+            }
+        });
+    } // cierra el if (elUrls)
 
     function validarURL(url) {
         return url.startsWith("http://") || url.startsWith("https://");
@@ -1777,9 +1790,8 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
     function eliminarMensajeUrlInvalida() {
         document.getElementById("mje_urls_proy_nuevo_eh").innerHTML = "";
     }
-    //Finaliza validacion URLS en TEXTAREA
-}
 
+} // cierra gestionar_proy_borrador
 
 
 function consultar_activos_borrdor(proy_id, numero_proyecto) {
@@ -2290,55 +2302,127 @@ function cerrar_proyecto(id_proyecto_gestionado) {
     })
 }
 
-document.getElementById("btn_eliminar_proyecto").addEventListener("click", (e) => {
-    const ID_PROYECTO_GESTIONADO = document.getElementById("mdl_id_proyecto_gestionado").value;
+const btnEliminar = document.getElementById("btn_eliminar_proyecto");
+if (btnEliminar) {
+    btnEliminar.addEventListener("click", (e) => {
+        const ID_PROYECTO_GESTIONADO = document.getElementById("mdl_id_proyecto_gestionado").value;
 
-    const ID_PROYECTO_CANTIDAD_SERVICIOS = document.getElementById("id_proyecto_cantidad_servicios").value;
-    e.preventDefault();
-    if (!ID_PROYECTO_GESTIONADO) {
+        const ID_PROYECTO_CANTIDAD_SERVICIOS = document.getElementById("id_proyecto_cantidad_servicios").value;
+        e.preventDefault();
+        if (!ID_PROYECTO_GESTIONADO) {
+            Swal.fire({
+                icon: "warning",
+                title: "Atencion",
+                text: "Desea eliminar este proyecto?",
+                showCancelButton: true,
+                showConfirmButton: true
+            }).then((resutl) => {
+                if (resutl.isConfirmed) {
+                    $.post("../../../../../Controller/ctrProyectos.php?proy=cambiar_estado_proyecto_cantidad_servicios", {
+                            id_proyecto_cantidad_servicios: ID_PROYECTO_CANTIDAD_SERVICIOS
+                        },
+                        function (data, textStatus, jqXHR) {
+
+                        },
+                        "json"
+                    );
+
+                    Swal.fire({
+                        icon: "success",
+                        title: "Bien",
+                        text: "Proyecto eliminado correctamente",
+                        timer: 1100,
+                        showCancelButton: false,
+                        showConfirmButton: false
+                    });
+                    setTimeout(() => {
+                        $("#ModalAltaProject").modal("hide");
+                        if ($.fn.DataTable.isDataTable('#table_proyectos_borrador')) {
+                            $('#table_proyectos_borrador').DataTable().ajax.reload(null, false);
+                            $('#table_proyectos_total_calidad').DataTable().ajax.reload(null, false);
+                        }
+                    }, 500);
+                }
+            })
+        } else {
+            Swal.fire({
+                icon: "warning",
+                title: "Atencion",
+                text: "Desea eliminar este proyecto?",
+                showCancelButton: true,
+                showConfirmButton: true
+            }).then((resutl) => {
+                if (resutl.isConfirmed) {
+
+                    $.post("../../../../../Controller/ctrProyectos.php?proy=inhabilitar_proyectos_DesarrolloTasking", {
+                            id_proyecto_gestionado: ID_PROYECTO_GESTIONADO
+                        },
+                        function (data, textStatus, jqXHR) {
+
+                        },
+                        "json"
+                    );
+
+                    $.post("../../../../../Controller/ctrProyectos.php?proy=cambiar_a_eliminado_proyecto_gestionado", {
+                            id: ID_PROYECTO_GESTIONADO,
+                            estados_id: 16
+                        },
+                        function (data, textStatus, jqXHR) {
+
+                        },
+                        "json"
+                    );
+
+                    $.post(
+                        "../../../../../Controller/ctrAuditoria.php?case=insert_audit_estados_proyecto", {
+                            id_proyecto_gestionado: ID_PROYECTO_GESTIONADO,
+                            estados_id: 16
+                        }
+                    );
+
+                    Swal.fire({
+                        icon: "success",
+                        title: "Bien",
+                        text: "Proyecto eliminado correctamente",
+                        timer: 1100,
+                        showCancelButton: false,
+                        showConfirmButton: false
+                    });
+                    setTimeout(() => {
+                        $("#ModalAltaProject").modal("hide");
+                        if ($.fn.DataTable.isDataTable('#table_proyectos_borrador')) {
+                            $('#table_proyectos_borrador').DataTable().ajax.reload(null, false);
+                        }
+                    }, 500);
+                }
+            })
+        }
+    })
+}
+
+const btnFinalizar = document.getElementById("btn_finalizar_estado_proyecto");
+if (btnFinalizar) {
+    btnFinalizar.addEventListener("click", (e) => {
+        const ID_PROYECTO_GESTIONADO = document.getElementById("mdl_id_proyecto_gestionado").value;
+        const ID_PROYECTO_CANTIDAD_SERVICIOS = document.getElementById("id_proyecto_cantidad_servicios").value;
+        e.preventDefault();
         Swal.fire({
             icon: "warning",
             title: "Atencion",
-            text: "Desea eliminar este proyecto?",
+            text: "Desea finalizar sin implementar este proyecto?",
             showCancelButton: true,
             showConfirmButton: true
         }).then((resutl) => {
             if (resutl.isConfirmed) {
-                $.post("../../../../../Controller/ctrProyectos.php?proy=cambiar_estado_proyecto_cantidad_servicios", {
-                        id_proyecto_cantidad_servicios: ID_PROYECTO_CANTIDAD_SERVICIOS
+                $.post("../../../../../Controller/ctrProyectos.php?proy=cambiar_a_eliminado_proyecto_gestionado", {
+                        id: ID_PROYECTO_GESTIONADO,
+                        estados_id: 15
                     },
                     function (data, textStatus, jqXHR) {
 
                     },
                     "json"
                 );
-
-                Swal.fire({
-                    icon: "success",
-                    title: "Bien",
-                    text: "Proyecto eliminado correctamente",
-                    timer: 1100,
-                    showCancelButton: false,
-                    showConfirmButton: false
-                });
-                setTimeout(() => {
-                    $("#ModalAltaProject").modal("hide");
-                    if ($.fn.DataTable.isDataTable('#table_proyectos_borrador')) {
-                        $('#table_proyectos_borrador').DataTable().ajax.reload(null, false);
-                        $('#table_proyectos_total_calidad').DataTable().ajax.reload(null, false);
-                    }
-                }, 500);
-            }
-        })
-    } else {
-        Swal.fire({
-            icon: "warning",
-            title: "Atencion",
-            text: "Desea eliminar este proyecto?",
-            showCancelButton: true,
-            showConfirmButton: true
-        }).then((resutl) => {
-            if (resutl.isConfirmed) {
 
                 $.post("../../../../../Controller/ctrProyectos.php?proy=inhabilitar_proyectos_DesarrolloTasking", {
                         id_proyecto_gestionado: ID_PROYECTO_GESTIONADO
@@ -2349,20 +2433,10 @@ document.getElementById("btn_eliminar_proyecto").addEventListener("click", (e) =
                     "json"
                 );
 
-                $.post("../../../../../Controller/ctrProyectos.php?proy=cambiar_a_eliminado_proyecto_gestionado", {
-                        id: ID_PROYECTO_GESTIONADO,
-                        estados_id: 16
-                    },
-                    function (data, textStatus, jqXHR) {
-
-                    },
-                    "json"
-                );
-
                 $.post(
                     "../../../../../Controller/ctrAuditoria.php?case=insert_audit_estados_proyecto", {
                         id_proyecto_gestionado: ID_PROYECTO_GESTIONADO,
-                        estados_id: 16
+                        estados_id: 15
                     }
                 );
 
@@ -2382,64 +2456,8 @@ document.getElementById("btn_eliminar_proyecto").addEventListener("click", (e) =
                 }, 500);
             }
         })
-    }
-})
-
-document.getElementById("btn_finalizar_estado_proyecto").addEventListener("click", (e) => {
-    const ID_PROYECTO_GESTIONADO = document.getElementById("mdl_id_proyecto_gestionado").value;
-    const ID_PROYECTO_CANTIDAD_SERVICIOS = document.getElementById("id_proyecto_cantidad_servicios").value;
-    e.preventDefault();
-    Swal.fire({
-        icon: "warning",
-        title: "Atencion",
-        text: "Desea finalizar sin implementar este proyecto?",
-        showCancelButton: true,
-        showConfirmButton: true
-    }).then((resutl) => {
-        if (resutl.isConfirmed) {
-            $.post("../../../../../Controller/ctrProyectos.php?proy=cambiar_a_eliminado_proyecto_gestionado", {
-                    id: ID_PROYECTO_GESTIONADO,
-                    estados_id: 15
-                },
-                function (data, textStatus, jqXHR) {
-
-                },
-                "json"
-            );
-
-            $.post("../../../../../Controller/ctrProyectos.php?proy=inhabilitar_proyectos_DesarrolloTasking", {
-                    id_proyecto_gestionado: ID_PROYECTO_GESTIONADO
-                },
-                function (data, textStatus, jqXHR) {
-
-                },
-                "json"
-            );
-
-            $.post(
-                "../../../../../Controller/ctrAuditoria.php?case=insert_audit_estados_proyecto", {
-                    id_proyecto_gestionado: ID_PROYECTO_GESTIONADO,
-                    estados_id: 15
-                }
-            );
-
-            Swal.fire({
-                icon: "success",
-                title: "Bien",
-                text: "Proyecto eliminado correctamente",
-                timer: 1100,
-                showCancelButton: false,
-                showConfirmButton: false
-            });
-            setTimeout(() => {
-                $("#ModalAltaProject").modal("hide");
-                if ($.fn.DataTable.isDataTable('#table_proyectos_borrador')) {
-                    $('#table_proyectos_borrador').DataTable().ajax.reload(null, false);
-                }
-            }, 500);
-        }
     })
-})
+}
 
 function initTablaHistorial(client_id, mostrar) {
     if ($.fn.DataTable.isDataTable('#tablelHistorialProyectosCalidad')) {
@@ -2465,13 +2483,15 @@ function initTablaHistorial(client_id, mostrar) {
                 client_id: client_id,
                 mostrar_historico: mostrar
             },
-            error: function (e) { 
-                console.log("response: "+e.responseText); 
-                console.log("status" +e.status);
-                
+            error: function (e) {
+                console.log("response: " + e.responseText);
+                console.log("status" + e.status);
+
             }
         },
-        order: [[0, "desc"]],
+        order: [
+            [0, "desc"]
+        ],
         language: {
             sProcessing: "Procesando..",
             sLengthMenu: "Mostrar _MENU_ registros",
