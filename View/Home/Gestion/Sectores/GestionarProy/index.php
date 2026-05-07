@@ -207,7 +207,7 @@ if (isset($_SESSION['usu_id'])) {
                                                 </span>
                                                 <span id="rechequeo" style="display: none; color:orangered" class="badge ml-1 bg-light"></span>
                                                 <span id="cont_dimensionamiento" class="badge mx-1 text-primary bg-light fs-10">Horas: <span class="fw-bold" id="dimensionamiento"></span></span>
-                                                                                            <span id="proy_recurrencia" style="display: none; color:orangered" class="badge ml-1 bg-light"></span>
+                                                <span id="proy_recurrencia" style="display: none; color:orangered" class="badge ml-1 bg-light"></span>
 
                                             </div>
 
@@ -619,7 +619,11 @@ if (isset($_SESSION['usu_id'])) {
 
                     if (data.rechequeo == "SI") {
                         document.getElementById("rechequeo").style.display = "flex";
-                        $("#rechequeo").text("Retest "+data.tipo_rechequeo);
+                        if (data.tipo_rechequeo != null && data.tipo_rechequeo != "null" && data.tipo_rechequeo != "") {
+                            $("#rechequeo").text("Retest " + data.tipo_rechequeo);
+                        } else {
+                            $("#rechequeo").text("Retest");
+                        }
                     } else {
                         document.getElementById("rechequeo").style.display = "none";
                     }
@@ -1212,7 +1216,7 @@ if (isset($_SESSION['usu_id'])) {
                 "json"
             );
 
-              $.post(
+            $.post(
                 "../../../../../Controller/ctrAuditoria.php?case=insert_audit_estados_proyecto", {
                     id_proyecto_gestionado: id_proyecto_gestionado,
                     estados_id: 20
