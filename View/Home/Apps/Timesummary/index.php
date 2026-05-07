@@ -145,8 +145,6 @@ if (isset($_SESSION['usu_id'])) {
             selectMirror: true,
             dateClick: function(info) {
                 let FECHA = info.dateStr;
-                $("#mdlCarcaTimesummary").modal("show");
-                document.getElementById("validar_periodo").style.display = 'none';
                 $("#fechaSeleccionada").text(FECHA);
 
                 $.post(URL + "Controller/ctrTimesummary.php?accion=get_producto_proyectos", function(productosHTML) {
@@ -156,7 +154,7 @@ if (isset($_SESSION['usu_id'])) {
 
                         $("#id_proyecto_gestionado").html(proyectosHTML);
 
-                        if (sector_id != "4" || sector_id != 4) { // Valido si no es Calidad que el change cambie los productos
+                        if (sector_id != "4" && sector_id != 4) {
 
                             $("#id_proyecto_gestionado").off("change").on("change", function() {
                                 let idProyecto = this.value;
@@ -181,11 +179,8 @@ if (isset($_SESSION['usu_id'])) {
                                         document.getElementById("validar_periodo").style.display = 'none';
                                         if (resp.cat_id) {
 
-                                            let fechaSeleccionada = $("#fechaSeleccionada").text(); // SIEMPRE actual
-
                                             let partesFecha = FECHA.split('-');
                                             let mesCalendar = partesFecha[1];
-
                                             let mesInicio = null;
 
                                             if (resp.fecha_inicio) {
@@ -193,13 +188,8 @@ if (isset($_SESSION['usu_id'])) {
                                                 mesInicio = String(partesInicio[1]).padStart(2, '0');
                                             }
 
-                                            if (!resp.fecha_inicio) {
-                                                // 🔥 No tiene fecha → NO validar → NO alertar
+                                            if (!resp.fecha_inicio || mesCalendar === mesInicio) {
                                                 document.getElementById("validar_periodo").style.display = "none";
-
-                                            } else if (mesCalendar === mesInicio) {
-                                                document.getElementById("validar_periodo").style.display = "none";
-
                                             } else {
                                                 document.getElementById("validar_periodo").style.display = "flex";
                                             }
@@ -210,19 +200,21 @@ if (isset($_SESSION['usu_id'])) {
                                             $("#periodo").text(resp.periodo ? resp.periodo : 'No posee');
                                             $("#desde").text(resp.fecha_inicio ? resp.fecha_inicio : 'No posee');
                                             $("#hasta").text(resp.fecha_fin ? resp.fecha_fin : 'No posee');
+
                                         } else {
-                                            $("#dimensionamiento").text('No posee')
-                                            $("#referencia").text('No posee')
-                                            $("#periodo").text('No posee')
-                                            $("#desde").text('No posee')
-                                            $("#hasta").text('No posee')
+                                            $("#dimensionamiento").text('No posee');
+                                            $("#referencia").text('No posee');
+                                            $("#periodo").text('No posee');
+                                            $("#desde").text('No posee');
+                                            $("#hasta").text('No posee');
                                         }
                                     },
                                     "json"
                                 );
-
                             });
+
                         } else {
+
                             $("#id_proyecto_gestionado").off("change").on("change", function() {
                                 let idProyecto = this.value;
 
@@ -243,23 +235,44 @@ if (isset($_SESSION['usu_id'])) {
                                         id: idProyecto
                                     },
                                     function(resp) {
+                                        document.getElementById("validar_periodo").style.display = 'none';
                                         if (resp.cat_id) {
+
+                                            let partesFecha = FECHA.split('-');
+                                            let mesCalendar = partesFecha[1];
+                                            let mesInicio = null;
+
+                                            if (resp.fecha_inicio) {
+                                                let partesInicio = resp.fecha_inicio.split('-');
+                                                mesInicio = String(partesInicio[1]).padStart(2, '0');
+                                            }
+
+                                            if (!resp.fecha_inicio || mesCalendar === mesInicio) {
+                                                document.getElementById("validar_periodo").style.display = "none";
+                                            } else {
+                                                document.getElementById("validar_periodo").style.display = "flex";
+                                            }
+
                                             $("#id_producto").val(resp.cat_id);
                                             $("#dimensionamiento").text(resp.dimensionamiento ? resp.dimensionamiento : '-');
                                             $("#referencia").text(resp.referencia ? resp.referencia : '-');
                                             $("#periodo").text(resp.periodo ? resp.periodo : '-');
+                                            $("#desde").text(resp.fecha_inicio ? resp.fecha_inicio : 'No posee');
+                                            $("#hasta").text(resp.fecha_fin ? resp.fecha_fin : 'No posee');
 
                                         } else {
-                                            $("#dimensionamiento").text('No posee')
-                                            $("#referencia").text('No posee')
-                                            $("#periodo").text('No posee')
+                                            $("#dimensionamiento").text('No posee');
+                                            $("#referencia").text('No posee');
+                                            $("#periodo").text('No posee');
+                                            $("#desde").text('No posee');
+                                            $("#hasta").text('No posee');
                                         }
                                     },
                                     "json"
                                 );
-
                             });
                         }
+
                         $("#id_proyecto_gestionado").trigger("change");
 
                     }, "html");
@@ -270,14 +283,6 @@ if (isset($_SESSION['usu_id'])) {
                     $("#id_tarea").html(data);
                 }, "html");
 
-                $.post(URL + "Controller/ctrTimesummary.php?accion=get_tareas_total",
-                    function(data, textStatus, jqXHR) {
-
-                        $("#id_tarea").html(data)
-                    },
-                    "html"
-                );
-
                 $("#btnGuardarTarea").off("click").on("click", function(e) {
                     e.preventDefault();
 
@@ -285,7 +290,6 @@ if (isset($_SESSION['usu_id'])) {
                     let horaDesde = $("#hora_desde").val();
                     let horaHasta = $("#hora_hasta").val();
 
-                    // Validaciones básicas
                     if (!FECHA || !horaDesde || !horaHasta) {
                         Swal.fire({
                             icon: "warning",
@@ -300,7 +304,6 @@ if (isset($_SESSION['usu_id'])) {
                     let nuevoInicio = new Date(`${FECHA}T${horaDesde}`);
                     let nuevoFin = new Date(`${FECHA}T${horaHasta}`);
 
-                    // Validar rango lógico
                     if (nuevoFin <= nuevoInicio) {
                         Swal.fire({
                             icon: "warning",
@@ -312,21 +315,12 @@ if (isset($_SESSION['usu_id'])) {
                         return;
                     }
 
-                    // 🔥 Buscar conflictos (versión robusta)
                     let existeConflicto = calendar.getEvents().some(evento => {
-
-                        if (!evento.start) return false; // 🔥 evita null
-
+                        if (!evento.start) return false;
                         let inicio = evento.start;
-                        let fin = evento.end || new Date(inicio.getTime() + 60 * 60 * 1000); // fallback 1h
-
+                        let fin = evento.end || new Date(inicio.getTime() + 60 * 60 * 1000);
                         let fechaEvento = inicio.toISOString().split("T")[0];
-
-                        return (
-                            fechaEvento === FECHA &&
-                            nuevoInicio < fin &&
-                            nuevoFin > inicio
-                        );
+                        return (fechaEvento === FECHA && nuevoInicio < fin && nuevoFin > inicio);
                     });
 
                     if (existeConflicto) {
@@ -341,8 +335,7 @@ if (isset($_SESSION['usu_id'])) {
                     }
 
                     let data = {
-                        id_proyecto_gestionado: $("#id_proyecto_gestionado").val() == "209" ?
-                            null : $("#id_proyecto_gestionado").val(),
+                        id_proyecto_gestionado: $("#id_proyecto_gestionado").val() == "209" ? null : $("#id_proyecto_gestionado").val(),
                         id_producto: $("#id_producto").val(),
                         id_tarea: $("#id_tarea").val(),
                         es_telecom: $("#id_proyecto_gestionado").val() == "209" ? "Telecom" : null,
@@ -358,7 +351,6 @@ if (isset($_SESSION['usu_id'])) {
                         url: URL + "Controller/ctrTimesummary.php?accion=insert_tarea",
                         data: data,
                         dataType: "json",
-
                         success: function(response) {
                             Swal.fire({
                                 icon: "success",
@@ -367,7 +359,6 @@ if (isset($_SESSION['usu_id'])) {
                                 timer: 1000,
                                 showConfirmButton: false
                             });
-
                             setTimeout(() => {
                                 calendar.refetchEvents();
                                 $("#mdlCarcaTimesummary").modal("hide");
@@ -375,7 +366,6 @@ if (isset($_SESSION['usu_id'])) {
                                 refrescarTablaTS();
                             }, 500);
                         },
-
                         error: function(error) {
                             Swal.fire({
                                 icon: "error",
@@ -388,6 +378,9 @@ if (isset($_SESSION['usu_id'])) {
                     });
                 });
 
+                // 🔥 Modal se abre AL FINAL, después de bindear todo
+                document.getElementById("validar_periodo").style.display = 'none';
+                $("#mdlCarcaTimesummary").modal("show");
             },
             eventClick: function(info) {
                 console.log(info);
