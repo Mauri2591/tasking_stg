@@ -1,5 +1,6 @@
 document.addEventListener("DOMContentLoaded", function () {
     var tabla;
+    const checkResetClave = document.getElementById("checkResetClave");
     tabla = $("#table_usuarios").dataTable({
         "aProcessing": true,
         "aServerSide": true,
@@ -55,7 +56,6 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         }
     });
-
     $.post("../../../../Controller/ctrUsuarios.php?usuarios=get_sectores",
         function (data, textStatus, jqXHR) {
             document.getElementById("combo_usuarios").innerHTML = data;
@@ -75,9 +75,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     $("#btnIngresarUsuario").on("click", function (e) {
         e.preventDefault();
-
         let formData = get_datos_ajax();
-
         $.ajax({
             type: "POST",
             url: "../../../../Controller/ctrUsuarios.php?usuarios=insert_usuario",
@@ -86,14 +84,12 @@ document.addEventListener("DOMContentLoaded", function () {
             processData: false,
             success: function () {
                 $('#table_usuarios').DataTable().ajax.reload();
-
                 Swal.fire({
                     icon: "success",
                     title: "Usuario creado correctamente",
                     timer: 1200,
                     showConfirmButton: false
                 });
-
                 document.getElementById("form_insert_usuario").reset();
             },
             error: function (xhr) {
@@ -102,8 +98,75 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 
-
-
-
-
+    if (checkResetClave) {
+        checkResetClave.addEventListener("change", function () {
+            if (this.checked) {
+                $("#usu_pass_editar").prop("disabled", false);
+            } else {
+                $("#usu_pass_editar").prop("disabled", true);
+            }
+        })
+    }
 })
+
+function editar_usuario(id) {
+    $.post("../../../../Controller/ctrUsuarios.php?usuarios=get_usuario_x_id_editar_desde_calidad", {
+            usu_id: id
+        },
+        function (data, textStatus, jqXHR) {
+            let option = '';
+            console.log(data);
+            checkResetClave.checked = false;
+            $("#usu_pass_editar").val('');
+            $("#usu_pass_editar").prop("disabled", true);
+
+            if (data.est == 1) {
+                option = `
+                <option selected value="1" class="bg-success text-light fw-bold">Activo</option>
+                <option value="0" style="background-color:gray" class="text-light fw-bold">Inactivo</option>
+            `;
+            } else {
+                option = `
+                <option selected value="0" style="background-color:gray" class="text-light fw-bold">Inactivo</option>
+                <option value="1" class="bg-success text-light fw-bold">Activo</option>
+            `;
+            }
+            $("#editar_estado_usuario").html(option)
+            $("#modal_editar_usuario").modal("show");
+            $("#usu_id_editar").val(id);
+            $("#usu_nom_editar").val(data.usu_nom);
+            $("#usu_correo_editar").val(data.usu_correo);
+            $("#usu_ape_editar").val(data.usu_ape);
+        },
+        "json"
+    );
+}
+
+function boton_editar_usuario() {
+    $.ajax({
+        type: "POST",
+        url: "../../../../Controller/ctrUsuarios.php?usuarios=editar_usuario_desde_calidad",
+        data: {
+            usu_id: $("#usu_id_editar").val(),
+            usu_nom: $("#usu_nom_editar").val(),
+            usu_ape: $("#usu_ape_editar").val(),
+            usu_correo: $("#usu_correo_editar").val(),
+            usu_pass: $("#usu_pass_editar").val(),
+            est: $("#editar_estado_usuario").val()
+
+        },
+        dataType: "json",
+        success: function (response) {
+            console.log(response);
+            Swal.fire({
+                icon: "success",
+                title: "Usuario editado correctamente",
+                timer: 1200,
+                showConfirmButton: false
+            }).then(() => {
+                $("#modal_editar_usuario").modal("hide");
+                $('#table_usuarios').DataTable().ajax.reload(null, false);
+            });
+        }
+    });
+}

@@ -25,7 +25,7 @@ switch ($_GET['cliente']) {
                 ? '<span class="badge bg-light text-dark" data-placement="top" title="' . $row['client_tel'] . '">' . substr($row['client_tel'], 0, 12) . '...</span>'
                 : '<span class="badge bg-light text-dark" data-placement="top" title="' . $row['client_tel'] . '">' . $row['client_tel'] . '</span>';
             $sub_array[] = '<span onclick=altaProject(' . $row['client_id'] . ') type="button" data-placement="top" data-bs-toggle="modal" data-bs-target="#ModalAltaProject"><i class="ri-send-plane-fill text-primary fs-18"></i></span>';
-            $sub_array[] = '<span onclick=editCliente(' . $row['client_id'] . ') type="button" data-placement="top" data-bs-toggle="modal" data-bs-target="#ModalUpdateCliente"><i class=" ri-edit-2-fill text-success fs-18"></i></span>';
+            $sub_array[] = '<span onclick=editCliente(' . $row['client_id'] . ') type="button" data-placement="top" data-bs-toggle="modal" data-bs-target="#ModalUpdateCliente"><i class=" ri-edit-2-fill text-secondary fs-18"></i></span>';
             $data[] = $sub_array;
         }
         $results = array(

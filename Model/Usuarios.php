@@ -12,6 +12,7 @@ class Usuarios extends Conexion
         sectores.sector_nombre AS sector 
         FROM tm_usuario 
         INNER JOIN sectores ON tm_usuario.sector_id = sectores.sector_id
+        WHERE usu_id NOT IN(36,82,104,105)
         ORDER BY tm_usuario.est DESC";
         $stmt = $conn->prepare($sql);
         $stmt->execute();
@@ -21,9 +22,9 @@ class Usuarios extends Conexion
     public function get_usuario_x_id($usu_id)
     {
         $conn = parent::get_conexion();
-        $sql = "SELECT usu_nom,usu_ape,usu_correo,usu_tel,sectores.sector_nombre 
+        $sql = "SELECT usu_nom,usu_ape,usu_correo,tm_usuario.est,usu_tel,sectores.sector_nombre 
         AS sector FROM tm_usuario INNER JOIN sectores ON tm_usuario.sector_id=sectores.sector_id 
-        WHERE usu_id=:usu_id AND tm_usuario.est= 1";
+        WHERE usu_id=:usu_id";
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(":usu_id", $usu_id, PDO::PARAM_INT);
         $stmt->execute();
@@ -70,6 +71,38 @@ class Usuarios extends Conexion
             $stmt->bindValue(":usu_pass", password_hash($usu_pass, PASSWORD_DEFAULT), PDO::PARAM_STR);
         }
         $stmt->execute();
+    }
+
+    public function editar_usuario_desde_calidad($usu_nom, $usu_ape, $usu_correo, $usu_id, $usu_pass, $est)
+    {
+        $conn = parent::get_conexion();
+        $conn->beginTransaction();
+        try {
+            if (!empty($usu_pass)) {
+                $sql = "UPDATE tm_usuario SET usu_nom=:usu_nom, usu_ape=:usu_ape, usu_correo=:usu_correo, usu_pass=:usu_pass, est=:est WHERE usu_id=:usu_id";
+                $stmt = $conn->prepare($sql);
+                $stmt->bindValue(":usu_nom", $usu_nom, PDO::PARAM_STR);
+                $stmt->bindValue(":usu_ape", $usu_ape, PDO::PARAM_STR);
+                $stmt->bindValue(":usu_correo", $usu_correo, PDO::PARAM_STR);
+                $stmt->bindValue(":usu_pass", password_hash($usu_pass,PASSWORD_DEFAULT), PDO::PARAM_STR);
+                $stmt->bindValue(":usu_id", $usu_id, PDO::PARAM_INT);
+                $stmt->bindValue(":est", $est, PDO::PARAM_INT);
+            } else {
+                $sql = "UPDATE tm_usuario SET usu_nom=:usu_nom, usu_ape=:usu_ape, usu_correo=:usu_correo, est=:est WHERE usu_id=:usu_id";
+                $stmt = $conn->prepare($sql);
+                $stmt->bindValue(":usu_nom", $usu_nom, PDO::PARAM_STR);
+                $stmt->bindValue(":usu_ape", $usu_ape, PDO::PARAM_STR);
+                $stmt->bindValue(":usu_correo", $usu_correo, PDO::PARAM_STR);
+                $stmt->bindValue(":usu_id", $usu_id, PDO::PARAM_INT);
+                $stmt->bindValue(":est", $est, PDO::PARAM_INT);
+            }
+            $stmt->execute();
+            $conn->commit();
+            return $stmt->rowCount();
+        } catch (\Throwable $e) {
+            $conn->rollBack();
+            echo "Error " . $e->getMessage();
+        }
     }
 
     public function insert_usuario(

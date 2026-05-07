@@ -14,6 +14,7 @@ switch ($_GET['usuarios']) {
             $sub_array[] = strtolower($row['usu_tel']);
             $sub_array[] = '<span class="badge badge-soft-primary ms-auto">' . strtoupper($row['sector']) . '</span>';
             $sub_array[] = strtolower($row['usuario_estado']);
+            $sub_array[] = '<i type="button" class="ri-ball-pen-fill text-secondary fs-16" onclick="editar_usuario(' . $row['usu_id'] . ')"></i>';
             $data[] = $sub_array;
         }
         $results = array(
@@ -27,6 +28,15 @@ switch ($_GET['usuarios']) {
 
     case 'get_usuario_x_id':
         echo json_encode($usuarios->get_usuario_x_id($_SESSION['usu_id']));
+        break;
+
+    case 'editar_usuario_desde_calidad':
+        $result=$usuarios->editar_usuario_desde_calidad($_POST['usu_nom'], $_POST['usu_ape'], $_POST['usu_correo'], $_POST['usu_id'], $_POST['usu_pass'], $_POST['est']);
+        echo json_encode($result);
+        break;
+
+    case 'get_usuario_x_id_editar_desde_calidad':
+        echo json_encode($usuarios->get_usuario_x_id($_POST['usu_id']));
         break;
 
     case 'editarPerfil':

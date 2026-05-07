@@ -129,6 +129,7 @@ if (isset($_SESSION['usu_id'])) {
                                     <th style="width: 30px;text-align: center;">TEL</th>
                                     <th style="width: 30px;text-align: center;">SECTOR</th>
                                     <th style="width: 30px;text-align: center;">ESTADO</th>
+                                    <th style="width: 30px;text-align: center;">EDITAR</th>
 
                                 </tr>
                             </thead>
@@ -139,12 +140,13 @@ if (isset($_SESSION['usu_id'])) {
                                     <td style="width: 30px;text-align: center;"></td>
                                     <td style="width: 30px;text-align: center;"></td>
                                     <td style="width: 30px;"></td>
+                                    <td style="width: 30px;"></td>
                                 </tr>
                             </tbody>
                         </table>
-                        <!-- <?php
-                                // include_once __DIR__ . "/Modals/ModalUpdateCliente.php";
-                                ?> -->
+                        <?php
+                                include_once __DIR__ . "/Modals/mdlEditarUsuario.php";
+                                ?> 
                     </div>
                 </div>
             </div>
