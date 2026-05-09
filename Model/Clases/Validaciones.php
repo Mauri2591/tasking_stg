@@ -25,7 +25,7 @@
                 return null;
             }
 
-            $extensiones_permitidas = ["jpeg", "jpg", "png", "txt", "doc", "docx", "pdf", "zip"];
+            $extensiones_permitidas = ["jpeg", "jpg", "png", "txt", "doc", "docx", "pdf", "zip", "xls", "xlsx"];
             $tipos_mime_permitidos = [
                 'image/jpeg',
                 'image/png',
@@ -34,7 +34,10 @@
                 'application/pdf',
                 'application/msword',
                 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-                'application/zip'
+                'application/zip',
+                'application/vnd.ms-excel',
+                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                'application/octet-stream'
             ];
 
             $extension = strtolower(pathinfo($data['name'], PATHINFO_EXTENSION));
@@ -89,12 +92,13 @@
             $extension = strtolower(pathinfo($data['name'], PATHINFO_EXTENSION));
             $mime_type = mime_content_type($data['tmp_name']);
 
-            // Excepción para DOCX
-            if ($extension === 'docx' && in_array($mime_type, ['application/zip', 'application/octet-stream'])) {
+            // Excepción para XLSX y DOCX
+            if (in_array($extension, ['docx', 'xlsx']) && in_array($mime_type, ['application/zip', 'application/octet-stream'])) {
                 // válido
             } elseif (!in_array($extension, $extensiones_permitidas) || !in_array($mime_type, $tipos_mime_permitidos)) {
-                self::$errores_archivos[] = "{$data['name']} - MIME no permitido: $mime_type";
-                return null;
+                http_response_code(400);
+                echo json_encode(["Status" => "Error", "Message" => "Archivo no permitido"]);
+                exit;
             }
 
             // Carpeta por hash
