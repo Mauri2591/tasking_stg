@@ -1997,26 +1997,38 @@ WHERE
     {
         $conn = parent::get_conexion();
 
-        $sql = "SELECT 
-                tm_categoria.cat_nom,
-                sectores.sector_nombre,
-                COUNT(pg.id) AS total
-            FROM proyecto_gestionado pg
-            INNER JOIN tm_categoria 
-                ON pg.cat_id = tm_categoria.cat_id
-            INNER JOIN sectores 
-                ON pg.sector_id = sectores.sector_id
-            WHERE pg.estados_id = 4";
-        //Si NO es Calidad (4), filtro por sector
         if ($sector_id != 4) {
-            $sql .= " AND pg.sector_id = :sector_id";
-        }
-        $sql .= " GROUP BY pg.cat_id, pg.sector_id
-              ORDER BY total DESC";
-        $stmt = $conn->prepare($sql);
-        if ($sector_id != 4) {
+            // Sector específico: sus proyectos cerrados + los de INCIDENT RESPONSE (cat_id=26)
+            $sql = "SELECT 
+                    tm_categoria.cat_nom,
+                    sectores.sector_nombre,
+                    COUNT(pg.id) AS total
+                FROM proyecto_gestionado pg
+                INNER JOIN tm_categoria ON pg.cat_id = tm_categoria.cat_id
+                INNER JOIN sectores ON pg.sector_id = sectores.sector_id
+                WHERE pg.estados_id = 4
+                AND (pg.sector_id = :sector_id OR pg.cat_id = 26)
+                GROUP BY pg.cat_id, pg.sector_id
+                ORDER BY total DESC";
+
+            $stmt = $conn->prepare($sql);
             $stmt->bindValue(':sector_id', $sector_id, PDO::PARAM_INT);
+        } else {
+            // Calidad ve todo
+            $sql = "SELECT 
+                    tm_categoria.cat_nom,
+                    sectores.sector_nombre,
+                    COUNT(pg.id) AS total
+                FROM proyecto_gestionado pg
+                INNER JOIN tm_categoria ON pg.cat_id = tm_categoria.cat_id
+                INNER JOIN sectores ON pg.sector_id = sectores.sector_id
+                WHERE pg.estados_id = 4
+                GROUP BY pg.cat_id, pg.sector_id
+                ORDER BY total DESC";
+
+            $stmt = $conn->prepare($sql);
         }
+
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -2024,26 +2036,12 @@ WHERE
     public function grafico_get_total_servicios_por_sector()
     {
         $conn = parent::get_conexion();
-        //         $sql = "SELECT 
-        //     sector_nombre,
-        //     COUNT(*) AS total
-        // FROM (
-        //     -- Proyectos actuales
-        //     SELECT 
-        //         s.sector_nombre
-        //     FROM proyecto_gestionado pg
-        //     LEFT JOIN sectores s ON pg.sector_id = s.sector_id
-        //     WHERE pg.estados_id = 4
-        //     UNION ALL
-        //     -- Proyectos antiguos
-        //     SELECT 
-        //         s.sector_nombre
-        //     FROM tm_ticket t
-        //     LEFT JOIN sectores s ON t.sector = s.sector_id
-        //     WHERE t.estados_id = 4
-        // ) AS sub
-        // GROUP BY sector_nombre";
-        $sql = "SELECT COUNT(proyecto_gestionado.id) AS total, sectores.sector_nombre AS sector_nombre FROM proyecto_gestionado INNER JOIN sectores ON proyecto_gestionado.sector_id=sectores.sector_id WHERE proyecto_gestionado.estados_id=4 GROUP BY sector_nombre";
+        $sql = "SELECT COUNT(proyecto_gestionado.id) AS total, 
+        sectores.sector_nombre AS sector_nombre 
+        FROM proyecto_gestionado INNER JOIN sectores 
+        ON proyecto_gestionado.sector_id=sectores.sector_id 
+        WHERE proyecto_gestionado.estados_id=4 
+        GROUP BY sector_nombre";
         $stmt = $conn->prepare($sql);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -2673,7 +2671,7 @@ WHERE pg.id_proyecto_cantidad_servicios = :id_proyecto_cantidad_servicios";
         $stmt->execute();
     }
 
-    public function insert_proyecto_rechequeo($id_proyecto_gestionado, $id_proyecto_gestionado_origen,$tipo_rechequeo)
+    public function insert_proyecto_rechequeo($id_proyecto_gestionado, $id_proyecto_gestionado_origen, $tipo_rechequeo)
     {
         $conn = parent::get_conexion();
         $sql = "INSERT INTO proyecto_rechequeo (id_proyecto_gestionado,id_proyecto_gestionado_origen, tipo_rechequeo) VALUES (:id_proyecto_gestionado,:id_proyecto_gestionado_origen, :tipo_rechequeo)";
@@ -2726,7 +2724,7 @@ WHERE pg.id_proyecto_cantidad_servicios = :id_proyecto_cantidad_servicios";
     public function getClientesConSectorSinContratar() // Clientes con al menos un sector sin contratar (EH, SOC, SASE)
     {
         $conn = parent::get_conexion();
-       $sql = "SELECT 
+        $sql = "SELECT 
     c.client_id,
     c.client_rs,
     c.client_cuit AS cuit,
@@ -2756,7 +2754,7 @@ WHERE pg.id_proyecto_cantidad_servicios = :id_proyecto_cantidad_servicios";
     GROUP BY c.client_id, c.client_rs
     HAVING COUNT(DISTINCT pg.sector_id) < 3
     ORDER BY c.client_rs";
-        $stmt=$conn->prepare($sql);
+        $stmt = $conn->prepare($sql);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
