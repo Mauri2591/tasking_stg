@@ -195,7 +195,7 @@
                                     <div class="col-sm-6">
                                         <span class="badge bg-light fs-10 mb-1 text-dark">Archivo</span>
                                         <input class="form-control form-control-sm" name="archivo"
-                                            accept=".jpg, .jpeg, .png, .doc, .docx, .txt, .pdf, .zip" id="archivo"
+                                            accept=".jpg, .jpeg, .png, .doc, .docx, .txt, .pdf, .zip, .xlsx" id="archivo"
                                             type="file">
                                     </div>
 
