@@ -797,20 +797,57 @@ if (isset($_SESSION['usu_id'])) {
                             $('#descripcion_proyecto').removeClass('d-none');
                         },
                         onPaste: function(e) {
-                            let clipboardData = (e.originalEvent || e).clipboardData || window
-                                .clipboardData;
-                            let pastedData = clipboardData.getData('text/html');
+                            e.preventDefault();
+                            let clipboardData = (e.originalEvent || e).clipboardData || window.clipboardData;
+                            let pastedHtml = clipboardData.getData('text/html');
+                            let textoPlano = clipboardData.getData('text/plain');
 
-                            if (pastedData && pastedData.includes('src="data:image')) {
-                                e.preventDefault();
-                                Swal.fire({
-                                    icon: 'warning',
-                                    title: "Error!",
-                                    text: "No se permiten capturas de pantalla desde este campo!",
-                                    showConfirmButton: false,
-                                    showCancelButton: false,
-                                    timer: 1300
+                            if (pastedHtml) {
+                                let tmp = document.createElement('div');
+                                tmp.innerHTML = pastedHtml;
+
+                                // Eliminar tags de Outlook
+                                tmp.querySelectorAll('style, meta, link, o\\:p, w\\:sdt').forEach(el => el.remove());
+
+                                // Eliminar atributos de formato
+                                tmp.querySelectorAll('*').forEach(function(el) {
+                                    el.removeAttribute('style');
+                                    el.removeAttribute('class');
+                                    el.removeAttribute('lang');
+                                    el.removeAttribute('align');
+                                    el.removeAttribute('valign');
+                                    el.removeAttribute('bgcolor');
+                                    el.removeAttribute('color');
+                                    el.removeAttribute('face');
+                                    el.removeAttribute('size');
                                 });
+
+                                // Reemplazar tablas (firmas de Outlook) por texto plano en un párrafo
+                                tmp.querySelectorAll('table').forEach(function(table) {
+                                    let texto = table.innerText.trim();
+                                    if (texto) {
+                                        let p = document.createElement('p');
+                                        p.textContent = texto;
+                                        table.replaceWith(p);
+                                    } else {
+                                        table.remove();
+                                    }
+                                });
+
+                                // Eliminar p y div vacíos o con solo espacios/nbsp
+                                tmp.querySelectorAll('p, div, span').forEach(function(el) {
+                                    let contenido = el.innerHTML.replace(/&nbsp;/gi, '').trim();
+                                    if (contenido === '') el.remove();
+                                });
+
+                                // Colapsar múltiples <br> consecutivos en uno solo
+                                tmp.innerHTML = tmp.innerHTML
+                                    .replace(/(&nbsp;|\s)+/g, ' ')
+                                    .replace(/(<br\s*\/?>\s*){2,}/gi, '<br>');
+
+                                document.execCommand('insertHTML', false, tmp.innerHTML);
+                            } else {
+                                document.execCommand('insertText', false, textoPlano);
                             }
                         },
                         onImageUpload: function() {
