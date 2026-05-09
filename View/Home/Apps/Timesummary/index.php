@@ -155,6 +155,7 @@ if (isset($_SESSION['usu_id'])) {
                         $("#id_proyecto_gestionado").html(proyectosHTML);
 
                         if (sector_id != "4" && sector_id != 4) {
+                            $("#id_producto").prop('disabled', false); // al abrir, 209 = libre
 
                             $("#id_proyecto_gestionado").off("change").on("change", function() {
                                 let idProyecto = this.value;
@@ -195,6 +196,8 @@ if (isset($_SESSION['usu_id'])) {
                                             }
 
                                             $("#id_producto").val(resp.cat_id);
+                                            $("#id_producto").prop('disabled', true); // viene predefinido, bloquear
+
                                             $("#dimensionamiento").text(resp.dimensionamiento ? resp.dimensionamiento : 'No posee');
                                             $("#referencia").text(resp.referencia ? resp.referencia : 'No posee');
                                             $("#periodo").text(resp.periodo ? resp.periodo : 'No posee');
@@ -202,6 +205,7 @@ if (isset($_SESSION['usu_id'])) {
                                             $("#hasta").text(resp.fecha_fin ? resp.fecha_fin : 'No posee');
 
                                         } else {
+                                            $("#id_producto").prop('disabled', false); // no hay predefinido, habilitar
                                             $("#dimensionamiento").text('No posee');
                                             $("#referencia").text('No posee');
                                             $("#periodo").text('No posee');
@@ -214,10 +218,10 @@ if (isset($_SESSION['usu_id'])) {
                             });
 
                         } else {
-
+                            $("#id_producto").prop('disabled', false); // al abrir, 209 = libre
+                           
                             $("#id_proyecto_gestionado").off("change").on("change", function() {
                                 let idProyecto = this.value;
-
                                 const selectedOption = this.options[this.selectedIndex];
                                 const idPmCalidad = selectedOption.getAttribute("data-pm") || "";
                                 $("#id_pm_calidad").val(idPmCalidad);
@@ -246,21 +250,21 @@ if (isset($_SESSION['usu_id'])) {
                                                 let partesInicio = resp.fecha_inicio.split('-');
                                                 mesInicio = String(partesInicio[1]).padStart(2, '0');
                                             }
-
                                             if (!resp.fecha_inicio || mesCalendar === mesInicio) {
                                                 document.getElementById("validar_periodo").style.display = "none";
                                             } else {
                                                 document.getElementById("validar_periodo").style.display = "flex";
                                             }
-
                                             $("#id_producto").val(resp.cat_id);
+                                            $("#id_producto").prop('disabled', true); // viene predefinido, bloquear
+
                                             $("#dimensionamiento").text(resp.dimensionamiento ? resp.dimensionamiento : '-');
                                             $("#referencia").text(resp.referencia ? resp.referencia : '-');
                                             $("#periodo").text(resp.periodo ? resp.periodo : '-');
                                             $("#desde").text(resp.fecha_inicio ? resp.fecha_inicio : 'No posee');
                                             $("#hasta").text(resp.fecha_fin ? resp.fecha_fin : 'No posee');
-
                                         } else {
+                                            $("#id_producto").prop('disabled', false); // no hay predefinido, habilitar
                                             $("#dimensionamiento").text('No posee');
                                             $("#referencia").text('No posee');
                                             $("#periodo").text('No posee');
@@ -272,9 +276,7 @@ if (isset($_SESSION['usu_id'])) {
                                 );
                             });
                         }
-
                         $("#id_proyecto_gestionado").trigger("change");
-
                     }, "html");
 
                 }, "html");
@@ -378,7 +380,7 @@ if (isset($_SESSION['usu_id'])) {
                     });
                 });
 
-                // 🔥 Modal se abre AL FINAL, después de bindear todo
+                // Modal se abre AL FINAL, después de bindear todo
                 document.getElementById("validar_periodo").style.display = 'none';
                 $("#mdlCarcaTimesummary").modal("show");
             },
