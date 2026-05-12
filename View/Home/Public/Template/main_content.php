@@ -19,17 +19,6 @@
                                         alt="logo telecom" height="17">
                                 </span>
                             </a>
-
-                            <!-- <a href="index.html" class="logo logo-light">
-                                <span class="logo-sm">
-                                    <img src="<?php echo URL ?>View/Home/Public/velzon/assets/images/logo-sm.png"
-                                        alt="" height="22">
-                                </span>
-                                <span class="logo-lg">
-                                    <img src="<?php echo URL ?>View/Home/Public/velzon/assets/images/logo-light.png"
-                                        alt="" height="17">
-                                </span>
-                            </a> -->
                         </div>
 
                         <button type="button"
@@ -63,16 +52,6 @@
                             <a class="dropdown-item" onclick="btnEditPerfil()" href="#"><i
                                     class="mdi mdi-account-circle text-muted fs-16 align-middle me-1"></i> <span
                                     class="align-middle">Mi Perfil</span></a>
-
-                            <!-- *********** Botones Mensajes y Tareas *************** -->
-                            <!-- <a class="dropdown-item" href="apps-chat.html"><i
-                                    class="mdi mdi-message-text-outline text-muted fs-16 align-middle me-1"></i>
-                                <span class="align-middle">Mensajes</span></a>
-                            <a class="dropdown-item" href="apps-tasks-kanban.html"><i
-                                    class="mdi mdi-calendar-check-outline text-muted fs-16 align-middle me-1"></i>
-                                <span class="align-middle">Tareas</span></a> -->
-                            <!-- *********** Botones Mensajes y Tareas *************** -->
-
                             <a class="dropdown-item" href="<?php echo URL . "View/Home/Logout.php" ?>"><i
                                     class=" ri-logout-box-line text-muted fs-16 align-middle me-1"></i>
                                 <span class="align-middle">Salir</span></a>
@@ -225,7 +204,7 @@
                                                 class="nav-link" data-key="t-mailbox">Proyecto no estandar</a>
                                         </li>
                                         <li class="nav-item">
-                                            <a href="<?php echo URL . "View/Home/Gestion/Sectores/CalidadYProcesos/DesarrolloInterno/"; ?>"
+                                            <a href="<?php echo URL . "View/Home/Gestion/Sectores/CalidadYProcesos/Desarrollo_Interno/"; ?>"
                                                 class="nav-link" data-key="t-mailbox">Desarrollo Interno</a>
                                         </li>
                                         <li class="nav-item">
@@ -677,7 +656,7 @@
                                                         class="nav-link" data-key="t-mailbox">Proyecto no estandar</a>
                                                 </li>
                                                 <li class="nav-item">
-                                                    <a href="<?php echo URL . "View/Home/Gestion/Sectores/CalidadYProcesos/DesarrolloInterno/"; ?>"
+                                                    <a href="<?php echo URL . "View/Home/Gestion/Sectores/CalidadYProcesos/Desarrollo_Interno/"; ?>"
                                                         class="nav-link" data-key="t-mailbox">Desarrollo Interno</a>
                                                 </li>
                                                 <li class="nav-item">
@@ -714,6 +693,60 @@
                                         </div>
                                     </li>
                                 </ul>
+                            <?php
+                            case '6':
+                            ?>
+                                <li class="nav-item">
+                                    <a href="#sidebarEmail" class="nav-link collapsed" data-bs-toggle="collapse" role="button"
+                                        aria-expanded="false" aria-controls="sidebarEmail" data-key="t-email">Productos</a>
+                                    <div class="menu-dropdown collapse" id="sidebarEmail">
+                                        <ul class="nav nav-sm flex-column">
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/Delivery/productoDelivery/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">productoDelivery</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </li>
+
+                                <li class="menu-title"><i class="ri-more-fill"></i> <span data-key="t-pages">Apps</span>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link collapsed" href="#sidebarTimesummary" data-bs-toggle="collapse"
+                                        role="button" aria-expanded="false" aria-controls="sidebarTimesummary"
+                                        data-key="t-email">Timesummary</a>
+                                    <div class="menu-dropdown collapse" id="sidebarTimesummary">
+                                        <ul class="nav nav-sm flex-column">
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Apps/Timesummary/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Calendario</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Apps/Timesummary/Consultas.php"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Consultas</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </li>
+                                <?php if ($_SESSION['lider'] == "SI"): ?>
+                                    <li class="nav-item">
+                                        <a class="nav-link collapsed" href="#sidebarAuditoria" data-bs-toggle="collapse"
+                                            role="button" aria-expanded="false" aria-controls="sidebarAuditoria"
+                                            data-key="t-email">Auditoria</a>
+                                        <div class="menu-dropdown collapse" id="sidebarAuditoria">
+                                            <ul class="nav nav-sm flex-column">
+                                                <li class="nav-item">
+                                                    <a href="<?php echo URL . "View/Home/Apps/Auditoria/proyectos.php"; ?>"
+                                                        class="nav-link" data-key="t-mailbox">Proyectos</a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a href="<?php echo URL . "View/Home/Apps/Auditoria/sesiones.php"; ?>"
+                                                        class="nav-link" data-key="t-mailbox">Sesiones</a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </li>
+                                <?php endif; ?>
                         <?php
                                 break;
                         } ?>
