@@ -467,6 +467,12 @@ if (isset($_SESSION['usu_id'])) {
                                 $("#contenedor_agentes").show();
                                 $("#contenedor_urls").show();
                                 break;
+
+                             case 6:
+                                $("#contenedor_ips").show();
+                                $("#contenedor_urls").show();
+                                $("#contenedor_otros").show();
+                                break;
                         }
                         // 🔥 mostrar recién cuando el layout ya está correcto
                         $("#contenedor_ips_y_descripcion").css("opacity", "1");
