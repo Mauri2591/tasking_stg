@@ -1,4 +1,5 @@
 .env
 tasking_stg.sql
+audit_login.sq
 apuntesMios.txt
 View/Home/Public/Uploads/
