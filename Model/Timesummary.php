@@ -570,7 +570,7 @@ class timesummary extends Conexion
         FROM tm_usuario 
         WHERE est = 1 
         AND sector_id = ? 
-        AND usu_id NOT IN (82,102,103,104)"; //que no traiga al usuario dev ni Zettler, ni Ari ni testMauricio
+        AND usu_id NOT IN (82,102,103,104,105,110)"; //que no traiga al usuario dev ni Zettler, ni Ari ni testMauricio
         $stmt = $conn->prepare($sql);
         $stmt->execute([$sector_id]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
