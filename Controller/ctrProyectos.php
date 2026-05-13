@@ -339,14 +339,17 @@ switch ($_GET['proy']) {
         echo json_encode($proyecto->get_sector_x_proy($_POST['id']));
         break;
 
-    case 'get_usuarios_x_sector_agregar_a_proy':
-        $data = $proyecto->get_usuarios_x_sector($_POST['sector_id']);
-        $htmlOption = '';
-        foreach ($data as $key => $val) {
-            $htmlOption .= '<option value="' . $val['usu_id'] . '">' . $val['usu_correo'] . '</option>';
-        }
-        echo $htmlOption;
-        break;
+case 'get_usuarios_x_sector_agregar_a_proy':
+    $sector_id = $_POST['sector_id'];
+    error_log("sector_id recibido: " . $sector_id); // 👈 log
+    $data = $proyecto->get_usuarios_x_sector($sector_id);
+    error_log("cantidad usuarios: " . count($data)); // 👈 log
+    $htmlOption = '';
+    foreach ($data as $key => $val) {
+        $htmlOption .= '<option value="' . $val['usu_id'] . '">' . $val['usu_correo'] . '</option>';
+    }
+    echo $htmlOption;
+    break;
 
     case 'insert_usuarios_proyecto_abierto':
         $proyecto->insert_usuarios_proyecto($_POST['id_proyecto_gestionado'], $_POST['usu_asignado']);

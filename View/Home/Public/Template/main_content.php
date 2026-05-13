@@ -143,12 +143,16 @@
                                         </li>
 
                                         <li class="nav-item">
-                                            <a href="<?php echo URL . "View/Home/Gestion/Sectores/SOC/"; ?>"
-                                                class="nav-link" data-key="t-mailbox">SOC</a>
+                                            <a href="<?php echo URL . "View/Home/Gestion/Sectores/Soc/"; ?>"
+                                                class="nav-link" data-key="t-mailbox">Soc</a>
                                         </li>
                                         <li class="nav-item">
-                                            <a href="<?php echo URL . "View/Home/Gestion/Sectores/SASE/"; ?>"
-                                                class="nav-link" data-key="t-mailbox">SASE</a>
+                                            <a href="<?php echo URL . "View/Home/Gestion/Sectores/Sase/"; ?>"
+                                                class="nav-link" data-key="t-mailbox">Sase</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="<?php echo URL . "View/Home/Gestion/Sectores/Delivery/"; ?>"
+                                                class="nav-link" data-key="t-mailbox">Delivery</a>
                                         </li>
                                     </ul>
                                 </div>
@@ -595,12 +599,16 @@
                                                 </li>
 
                                                 <li class="nav-item">
-                                                    <a href="<?php echo URL . "View/Home/Gestion/Sectores/SOC/"; ?>"
-                                                        class="nav-link" data-key="t-mailbox">SOC</a>
+                                                    <a href="<?php echo URL . "View/Home/Gestion/Sectores/Soc/"; ?>"
+                                                        class="nav-link" data-key="t-mailbox">Soc</a>
                                                 </li>
                                                 <li class="nav-item">
-                                                    <a href="<?php echo URL . "View/Home/Gestion/Sectores/SASE/"; ?>"
-                                                        class="nav-link" data-key="t-mailbox">SASE</a>
+                                                    <a href="<?php echo URL . "View/Home/Gestion/Sectores/Sase/"; ?>"
+                                                        class="nav-link" data-key="t-mailbox">Sase</a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a href="<?php echo URL . "View/Home/Gestion/Sectores/Delivery/"; ?>"
+                                                        class="nav-link" data-key="t-mailbox">Delivery</a>
                                                 </li>
                                             </ul>
                                         </div>
