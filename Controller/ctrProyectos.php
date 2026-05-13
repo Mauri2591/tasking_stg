@@ -794,7 +794,7 @@ case 'get_usuarios_x_sector_agregar_a_proy':
             "SASE" => "bg-info text-light",
             "CALIDAD Y PROCESOS" => "bg-light text-dark",
             "INCIDENT RESPONSE" => "bg-danger text-light",
-            "DELIVERY" => "style='background-color:#3A0047; color:#FFF;'"
+            "DELIVERY" => "style='background-color:#F88163; color:#FFF;'"
         );
         foreach ($datos as $row) {
             $sub_array = array();
@@ -950,7 +950,7 @@ case 'get_usuarios_x_sector_agregar_a_proy':
             "SASE" => "bg-info text-light",
             "CALIDAD Y PROCESOS" => "bg-light text-dark",
             "INCIDENT RESPONSE" => "bg-danger text-light",
-            "DELIVERY" => "style='background-color:#3A0047; color:#FFF;'"
+            "DELIVERY" => "style='background-color:#F88163; color:#FFF;'"
         );
         foreach ($datos as $row) {
             $sub_array = array();
@@ -1106,7 +1106,7 @@ case 'get_usuarios_x_sector_agregar_a_proy':
             "SASE" => "bg-info text-light",
             "CALIDAD Y PROCESOS" => "bg-light text-dark",
             "INCIDENT RESPONSE" => "bg-danger text-light",
-            "DELIVERY" => "style='background-color:#3A0047; color:#FFF;'"
+            "DELIVERY" => "style='background-color:#F88163; color:#FFF;'"
         );
 
         foreach ($datos as $row) {
@@ -1248,7 +1248,7 @@ case 'get_usuarios_x_sector_agregar_a_proy':
             "SASE" => "bg-info text-light",
             "CALIDAD Y PROCESOS" => "bg-light text-dark",
             "INCIDENT RESPONSE" => "bg-danger text-light",
-            "DELIVERY" => "style='background-color:#3A0047; color:#FFF;'"
+            "DELIVERY" => "style='background-color:#F88163; color:#FFF;'"
         );
         foreach ($datos as $row) {
             $sub_array = array();
@@ -1402,7 +1402,7 @@ case 'get_usuarios_x_sector_agregar_a_proy':
             "SASE" => "bg-info text-light",
             "CALIDAD Y PROCESOS" => "bg-light text-dark",
             "INCIDENT RESPONSE" => "bg-danger text-light",
-            "DELIVERY" => "style='background-color:#3A0047; color:#FFF;'"
+            "DELIVERY" => "style='background-color:#F88163; color:#FFF;'"
         );
 
         foreach ($datos as $row) {
@@ -1536,7 +1536,7 @@ case 'get_usuarios_x_sector_agregar_a_proy':
     case 'get_proyectos_nuevos_vista_calidad':
         $datos = $proyecto->get_proyectos_nuevos_vista_calidad($_POST['sector_id'], $_POST['estados_id']);
         $data = array();
-        $colores = array("ETHICAL HACKING" => "bg-warning text-dark", "SOC" => "bg-dark text-light", "SASE" => "bg-info text-light", "CALIDAD Y PROCESOS" => "bg-light text-dark", "INCIDENT RESPONSE" => "bg-danger text-light",     "DELIVERY" => "style='background-color:#3A0047; color:#FFF;'");
+        $colores = array("ETHICAL HACKING" => "bg-warning text-dark", "SOC" => "bg-dark text-light", "SASE" => "bg-info text-light", "CALIDAD Y PROCESOS" => "bg-light text-dark", "INCIDENT RESPONSE" => "bg-danger text-light",     "DELIVERY" => "style='background-color:#F88163; color:#FFF;'");
         foreach ($datos as $row) {
             $sub_array = array();
             $sub_array[] = $row['titulo'];
@@ -2156,7 +2156,7 @@ case 'get_usuarios_x_sector_agregar_a_proy':
             "SASE" => "bg-info text-light",
             "CALIDAD Y PROCESOS" => "bg-light text-dark",
             "INCIDENT RESPONSE" => "bg-danger text-light",
-            "DELIVERY" => "style='background-color:#3A0047; color:#FFF;'"
+            "DELIVERY" => "style='background-color:#F88163; color:#FFF;'"
         ];
 
         foreach ($datos as $key => $row) {

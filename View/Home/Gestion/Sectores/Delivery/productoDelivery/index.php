@@ -20,7 +20,7 @@ if (isset($_SESSION['usu_id'])) {
             <div class="row">
                 <div class="col-12">
                     <div class="page-title-box d-sm-flex align-items-center justify-content-between bg-light">
-                        <h4 class="mb-sm-0"><span class="badge" style='background-color:#3A0047; color:#FFF;'>DELIVERY</span><span class="badge mx-1" style='background-color:#3A0047; color:#FFF;'>PRODUCTO1</span>
+                        <h4 class="mb-sm-0"><span class="badge" style='background-color:#F88163; color:#FFF;'>DELIVERY</span><span class="badge mx-1" style='background-color:#F88163; color:#FFF;'>PRODUCTO1</span>
                         </h4>
                     </div>
                 </div>
