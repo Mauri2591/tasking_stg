@@ -41,7 +41,7 @@ AppFactory::setContainer($container);
 $app = AppFactory::create();
 
 // ⚙️ MUY IMPORTANTE: definir base path (por estar dentro de /tasking_stg/Api/public)
-$app->setBasePath('/tasking_stg/Api');
+$app->setBasePath($_ENV['API_BASE_PATH'] ?? '/tasking_stg/Api');
 
 $callableResolver = $app->getCallableResolver();
 
