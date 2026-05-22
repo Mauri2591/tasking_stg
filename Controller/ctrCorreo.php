@@ -2,7 +2,11 @@
 require_once __DIR__ . "/../Config/Conexion.php";
 require_once __DIR__ . "/../Config/Config.php";
 require_once __DIR__ . "/../Model/Correo.php";
+require_once __DIR__ . "/../Model/Auditoria.php";
+
 $correo = new Correo();
+$auditoria = new Auditoria();
+
 header('Content-Type: application/json; charset=utf-8');
 $case = $_GET['correo'] ?? '';
 
@@ -23,6 +27,26 @@ switch ($case) {
         ]);
         exit;
 
+case 'enviar_correo_cliente':
+    $id_proyecto_gestionado = isset($_POST['id_proyecto_gestionado']) ? (int)$_POST['id_proyecto_gestionado'] : 0;
+    $correo_destino         = $_POST['correo_destino'] ?? '';
+
+    if ($id_proyecto_gestionado <= 0) {
+        echo json_encode(['status' => 'ERROR', 'error' => 'ID inválido']);
+        exit;
+    }
+
+    if (!filter_var($correo_destino, FILTER_VALIDATE_EMAIL)) {
+        echo json_encode(['status' => 'ERROR', 'error' => 'Correo destino inválido']);
+        exit;
+    }
+
+    $result = $correo->enviarCorreoCliente($id_proyecto_gestionado, $correo_destino);
+    $auditoria->insert_audit_estados_proyecto($_POST['id_proyecto_gestionado'],21,$_SESSION['usu_id'],$_SESSION['sector_id']);
+    echo json_encode($result);
+    exit;
+
+        
     default:
         echo json_encode([
             'status' => 'ERROR',

@@ -58,34 +58,34 @@ class Correo extends Conexion
     }
 
     public function enviarCorreoProyectoFinalizado($id)
-{
-    $datos = $this->getDatosParaCorreo($id);
-    if (!$datos) {
-        return 'No se encontraron datos del proyecto';
-    }
-    $mail = new PHPMailer(true);
-    try {
-        $mail->isSMTP();
-        $mail->Host       = $_ENV['SMTP_HOST'];
-        $mail->SMTPAuth   = true;
-        $mail->Username   = $_ENV['SMTP_USER'];      // usuario de red
-        $mail->Password   = $_ENV['SMTP_PASS'];      // clave de red
-        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-        $mail->Port       = (int)$_ENV['SMTP_PORT'];
-        $mail->SMTPOptions = [
-            'ssl' => [
-                'verify_peer'       => false,
-                'verify_peer_name'  => false,
-                'allow_self_signed' => true,
-            ],
-        ];
-        $mail->CharSet = 'UTF-8';
-        // FROM correcto
-        $mail->setFrom('vulma-mssp@teco.com.ar', 'Tasking MSSP');
-        $mail->addAddress('mssp-calidad@personal.com.ar');
-        $mail->isHTML(true);
-        $mail->Subject = 'Proyecto finalizado - [CLIENTE] ' . $datos->cliente;
-        $mail->Body = "<p>Estimados,<br><br>
+    {
+        $datos = $this->getDatosParaCorreo($id);
+        if (!$datos) {
+            return 'No se encontraron datos del proyecto';
+        }
+        $mail = new PHPMailer(true);
+        try {
+            $mail->isSMTP();
+            $mail->Host       = $_ENV['SMTP_HOST'];
+            $mail->SMTPAuth   = true;
+            $mail->Username   = $_ENV['SMTP_USER'];      // usuario de red
+            $mail->Password   = $_ENV['SMTP_PASS'];      // clave de red
+            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+            $mail->Port       = (int)$_ENV['SMTP_PORT'];
+            $mail->SMTPOptions = [
+                'ssl' => [
+                    'verify_peer'       => false,
+                    'verify_peer_name'  => false,
+                    'allow_self_signed' => true,
+                ],
+            ];
+            $mail->CharSet = 'UTF-8';
+            // FROM correcto
+            $mail->setFrom('vulma-mssp@teco.com.ar', 'Tasking MSSP');
+            $mail->addAddress('mssp-calidad@personal.com.ar');
+            $mail->isHTML(true);
+            $mail->Subject = 'Proyecto finalizado - [CLIENTE] ' . $datos->cliente;
+            $mail->Body = "<p>Estimados,<br><br>
             El presente proyecto se encuentra finalizado correctamente.</p>
             <p><b>Título:</b> {$datos->titulo}</p>
             <p><b>Ref:</b> {$datos->refProy}</p>
@@ -96,11 +96,77 @@ class Correo extends Conexion
             <p>Los informes se encuentran cargados en <strong>Tasking_stg</strong>.</p>
             <br>
             <p>Saludos.</p>";
-        $mail->send();
-        return true;
-
-    } catch (Exception $e) {
-        return 'ERROR SMTP: ' . $mail->ErrorInfo;
+            $mail->send();
+            return true;
+        } catch (Exception $e) {
+            return 'ERROR SMTP: ' . $mail->ErrorInfo;
+        }
     }
-}
+
+     public function enviarCorreoCliente(int $id_proyecto_gestionado, string $correo_destino)
+    {
+        $conn = $this->get_conexion();
+        $sql  = "SELECT carpeta_documentos_proy, documento 
+             FROM descripciones_proyecto 
+             WHERE id_proyecto_gestionado = :id 
+             ORDER BY id DESC LIMIT 1";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue(':id', $id_proyecto_gestionado, PDO::PARAM_INT);
+        $stmt->execute();
+        $doc = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$doc || empty($doc['documento'])) {
+            $this->registrarEnvio($id_proyecto_gestionado, 'ERROR');  // ← acá
+            return 'Sin documentos para enviar';
+        }
+
+        $carpeta  = $doc['carpeta_documentos_proy'];
+        $archivos = array_filter(explode(',', $doc['documento']));
+        $clave    = strtoupper(bin2hex(random_bytes(6)));
+        $ruta_zip = sys_get_temp_dir() . '/informe_' . $id_proyecto_gestionado . '_' . uniqid() . '.zip';
+
+        $zip = new ZipArchive();
+        $zip->open($ruta_zip, ZipArchive::CREATE);
+        $zip->setPassword($clave);
+
+        $archivos_encontrados = 0;
+        foreach ($archivos as $archivo) {
+            $ruta_archivo = BASE_PATH . "View/Home/Public/Uploads/Proyectos/" . $carpeta . "/" . trim($archivo);
+            if (file_exists($ruta_archivo)) {
+                $zip->addFile($ruta_archivo, trim($archivo));
+                $zip->setEncryptionName(trim($archivo), ZipArchive::EM_AES_256);
+                $archivos_encontrados++;
+            }
+        }
+        $zip->close();
+
+        if ($archivos_encontrados === 0) {
+            $this->registrarEnvio($id_proyecto_gestionado, 'ERROR');  // ← acá
+            return 'No se encontraron archivos físicos en el servidor';
+        }
+
+        $this->registrarEnvio($id_proyecto_gestionado, 'OK');  // ← acá cuando todo sale bien
+
+        return [
+            'status' => 'OK_TEST',
+            'clave'  => $clave,
+            'zip'    => $ruta_zip,
+            'archivos_encontrados' => $archivos_encontrados
+        ];
+    }
+
+    private function registrarEnvio(int $id_proyecto_gestionado, string $status): void
+    {
+        $conn = $this->get_conexion();
+        $sql  = "INSERT INTO envio_correo_cliente (id_proyecto_gestionado, usu_crea, sector_id, status_envio, fech_crea) 
+             VALUES (:id, :usu, :sector, :status, now())";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue(':id',     $id_proyecto_gestionado,    PDO::PARAM_INT);
+        $stmt->bindValue(':usu',    (int)$_SESSION['usu_id'],   PDO::PARAM_INT);
+        $stmt->bindValue(':sector', (int)$_SESSION['sector_id'], PDO::PARAM_INT);
+        $stmt->bindValue(':status', $status,                     PDO::PARAM_STR);
+        $stmt->execute();
+    }
+
+    
 }

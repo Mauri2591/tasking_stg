@@ -8,6 +8,7 @@ require_once __DIR__ . "/../Model/Clases/Validaciones.php";
 require_once __DIR__ . "/../Model/Clases/Headers.php";
 require_once __DIR__ . "/../Model/Clases/Openssl.php";
 
+
 $conexion = new Conexion();
 
 $proyecto = new Proyectos();
@@ -278,6 +279,7 @@ switch ($_GET['proy']) {
             $_POST['titulo'],
             $_POST['descripcion'],
             $_POST['refProy'],
+            $_POST['correo_envio_cliente'],
             $_POST['recurrencia'],
             $_POST['fech_inicio'],
             $_POST['fech_fin'],
@@ -339,17 +341,17 @@ switch ($_GET['proy']) {
         echo json_encode($proyecto->get_sector_x_proy($_POST['id']));
         break;
 
-case 'get_usuarios_x_sector_agregar_a_proy':
-    $sector_id = $_POST['sector_id'];
-    error_log("sector_id recibido: " . $sector_id); // 👈 log
-    $data = $proyecto->get_usuarios_x_sector($sector_id);
-    error_log("cantidad usuarios: " . count($data)); // 👈 log
-    $htmlOption = '';
-    foreach ($data as $key => $val) {
-        $htmlOption .= '<option value="' . $val['usu_id'] . '">' . $val['usu_correo'] . '</option>';
-    }
-    echo $htmlOption;
-    break;
+    case 'get_usuarios_x_sector_agregar_a_proy':
+        $sector_id = $_POST['sector_id'];
+        error_log("sector_id recibido: " . $sector_id); // 👈 log
+        $data = $proyecto->get_usuarios_x_sector($sector_id);
+        error_log("cantidad usuarios: " . count($data)); // 👈 log
+        $htmlOption = '';
+        foreach ($data as $key => $val) {
+            $htmlOption .= '<option value="' . $val['usu_id'] . '">' . $val['usu_correo'] . '</option>';
+        }
+        echo $htmlOption;
+        break;
 
     case 'insert_usuarios_proyecto_abierto':
         $proyecto->insert_usuarios_proyecto($_POST['id_proyecto_gestionado'], $_POST['usu_asignado']);
@@ -543,6 +545,7 @@ case 'get_usuarios_x_sector_agregar_a_proy':
                 trim($_POST['titulo'] ?? ''),
                 trim($_POST['descripcion'] ?? ''),
                 trim($_POST['refProy'] ?? ''),
+                trim($_POST['correo_envio_cliente'] ?? ''),
                 ($_POST['recurrencia'] === '' ? null : (int) $_POST['recurrencia']),
                 $_POST['fech_inicio'] ?? null,
                 $_POST['fech_fin'] ?? null,
@@ -2532,6 +2535,25 @@ TXT;
         );
         echo json_encode($results);
         break;
+
+    case 'enviar_correo_cliente':
+        $id_proyecto_gestionado = isset($_POST['id_proyecto_gestionado']) ? (int)$_POST['id_proyecto_gestionado'] : 0;
+        $correo_destino         = $_POST['correo_destino'] ?? '';
+
+        if ($id_proyecto_gestionado <= 0) {
+            echo json_encode(['status' => 'ERROR', 'error' => 'ID inválido']);
+            exit;
+        }
+
+        if (!filter_var($correo_destino, FILTER_VALIDATE_EMAIL)) {
+            echo json_encode(['status' => 'ERROR', 'error' => 'Correo destino inválido']);
+            exit;
+        }
+
+        $result = $correo->enviarCorreoCliente($id_proyecto_gestionado, $correo_destino);
+        echo json_encode($result); // temporal para debug
+        exit;
+
 
     default:
         break;

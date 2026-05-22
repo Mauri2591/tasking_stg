@@ -741,6 +741,7 @@ ORDER BY id_proyecto_cantidad_servicios ASC";
         FROM dimensionamiento d
         WHERE d.id_proyecto_gestionado = pg.id
     ) AS hs_dimensionadas,
+    GROUP_CONCAT(ua.usu_asignado SEPARATOR ',') AS usu_id_asignado,  -- ← agregá esta línea
     tmc.cat_nom AS categoria
 FROM proyecto_cantidad_servicios pcs
 JOIN proyectos p 
@@ -1399,7 +1400,7 @@ ORDER BY id_proyecto_cantidad_servicios ASC";
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function insert_proyecto_gestionado(int $id_proyecto_cantidad_servicios, int $cat_id, int $cats_id, int $sector_id, int $usu_crea, string $prioridad_id, int $estados_id, string $titulo, string $descripcion, string $refProy, string $recurrencia, string $fech_inicio, string $fech_fin, string $fech_vantive, $archivo, $captura_imagen)
+    public function insert_proyecto_gestionado(int $id_proyecto_cantidad_servicios, int $cat_id, int $cats_id, int $sector_id, int $usu_crea, string $prioridad_id, int $estados_id, string $titulo, string $descripcion, string $refProy, string $correo_envio_cliente, string $recurrencia, string $fech_inicio, string $fech_fin, string $fech_vantive, $archivo, $captura_imagen)
     {
         $conn = parent::get_conexion();
         $sql = "INSERT INTO proyecto_gestionado (
@@ -1413,6 +1414,7 @@ ORDER BY id_proyecto_cantidad_servicios ASC";
             titulo,
             descripcion,
             refProy,
+            correo_envio_cliente,
             recurrencia,
             fech_inicio,
             fech_fin,
@@ -1420,7 +1422,7 @@ ORDER BY id_proyecto_cantidad_servicios ASC";
             archivo,
             captura_imagen,
             est
-        ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+        ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(1, $id_proyecto_cantidad_servicios, PDO::PARAM_INT);
@@ -1433,13 +1435,14 @@ ORDER BY id_proyecto_cantidad_servicios ASC";
         $stmt->bindValue(8, trim($titulo), PDO::PARAM_STR);
         $stmt->bindValue(9, trim($descripcion), PDO::PARAM_STR);
         $stmt->bindValue(10, trim($refProy), PDO::PARAM_STR);
-        $stmt->bindValue(11, $recurrencia, PDO::PARAM_STR);
-        $stmt->bindValue(12, $fech_inicio, is_null($fech_inicio) ? PDO::PARAM_NULL : PDO::PARAM_STR);
-        $stmt->bindValue(13, $fech_fin, is_null($fech_fin) ? PDO::PARAM_NULL : PDO::PARAM_STR);
-        $stmt->bindValue(14, $fech_vantive, is_null($fech_vantive) ? PDO::PARAM_NULL : PDO::PARAM_STR);
-        $stmt->bindValue(15, $archivo, PDO::PARAM_STR);
-        $stmt->bindValue(16, $captura_imagen, PDO::PARAM_STR);
-        $stmt->bindValue(17, 1, PDO::PARAM_INT); // est activo por defecto
+        $stmt->bindValue(11, trim($correo_envio_cliente), PDO::PARAM_STR);
+        $stmt->bindValue(12, $recurrencia, PDO::PARAM_STR);
+        $stmt->bindValue(13, $fech_inicio, is_null($fech_inicio) ? PDO::PARAM_NULL : PDO::PARAM_STR);
+        $stmt->bindValue(14, $fech_fin, is_null($fech_fin) ? PDO::PARAM_NULL : PDO::PARAM_STR);
+        $stmt->bindValue(15, $fech_vantive, is_null($fech_vantive) ? PDO::PARAM_NULL : PDO::PARAM_STR);
+        $stmt->bindValue(16, $archivo, PDO::PARAM_STR);
+        $stmt->bindValue(17, $captura_imagen, PDO::PARAM_STR);
+        $stmt->bindValue(18, 1, PDO::PARAM_INT); // est activo por defecto
         $stmt->execute();
         return $conn->lastInsertId();
     }
@@ -1554,6 +1557,7 @@ WHERE
         string $titulo,
         string $descripcion,
         string $refProy,
+        string $correo_envio_cliente,
         string $recurrencia,
         string $fech_inicio,
         string $fech_fin,
@@ -1569,6 +1573,7 @@ WHERE
                     titulo = :titulo,
                     descripcion = :descripcion,
                     refProy = :refProy,
+                    correo_envio_cliente = :correo_envio_cliente,
                     recurrencia = :recurrencia,
                     fech_inicio = :fech_inicio,
                     fech_fin = :fech_fin,
@@ -1586,6 +1591,7 @@ WHERE
             $stmt->bindValue(':titulo', trim($titulo), PDO::PARAM_STR);
             $stmt->bindValue(':descripcion', trim($descripcion), PDO::PARAM_STR);
             $stmt->bindValue(':refProy', trim($refProy), PDO::PARAM_STR);
+            $stmt->bindValue(':correo_envio_cliente', trim($correo_envio_cliente), PDO::PARAM_STR);
             $stmt->bindValue(':recurrencia', $recurrencia, PDO::PARAM_STR);
             $stmt->bindValue(':fech_inicio', $fech_inicio ?: null, PDO::PARAM_STR);
             $stmt->bindValue(':fech_fin', $fech_fin ?: null, PDO::PARAM_STR);
@@ -2757,5 +2763,95 @@ WHERE pg.id_proyecto_cantidad_servicios = :id_proyecto_cantidad_servicios";
         $stmt = $conn->prepare($sql);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function get_estado_proyecto_gestionado(int $id)
+    {
+        $conn = parent::get_conexion();
+        $sql = "SELECT proyecto_gestionado.estados_id FROM proyecto_gestionado WHERE proyecto_gestionado.id=:id";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue(":id", $id, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+        public function get_total_estados()
+    {
+        $conn = parent::get_conexion();
+        $sql = "SELECT tm_estados.estados_id, tm_estados.estados_nombre, tm_estados.CatColor, tm_estados.icono FROM tm_estados";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function insert_envio_correo_cliente(int $id_proyecto_gestionado, int $usu_crea, int $sector_id, string $status_envio)
+    {
+        $conn = parent::get_conexion();
+        $sql = "INSERT INTO envio_correo_cliente (id_proyecto_gestionado, usu_crea, sector_id, status_envio) 
+            VALUES (:id_proyecto_gestionado, :usu_crea, :sector_id, :status_envio)";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue(':id_proyecto_gestionado', $id_proyecto_gestionado, PDO::PARAM_INT);
+        $stmt->bindValue(':usu_crea', $usu_crea, PDO::PARAM_INT);
+        $stmt->bindValue(':sector_id', $sector_id, PDO::PARAM_INT);
+        $stmt->bindValue(':status_envio', $status_envio, PDO::PARAM_STR);
+        $stmt->execute();
+    }
+
+    public function get_datos_correo_enviado(int $id_proyecto_gestionado)
+    {
+        $conn = parent::get_conexion();
+        $sql = "SELECT tm_usuario.usu_correo, sectores.sector_nombre, envio_correo_cliente.status_envio,
+            DATE_FORMAT(envio_correo_cliente.fech_crea,'%d-%m-%Y %H:%i:%s') AS fech_crea 
+            FROM envio_correo_cliente 
+            INNER JOIN tm_usuario ON tm_usuario.usu_id = envio_correo_cliente.usu_crea 
+            INNER JOIN sectores ON sectores.sector_id = envio_correo_cliente.sector_id 
+            WHERE envio_correo_cliente.id_proyecto_gestionado = :id_proyecto_gestionado 
+            ORDER BY envio_correo_cliente.id DESC";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue(":id_proyecto_gestionado", $id_proyecto_gestionado, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+    public function get_validar_si_tiene_correos_enviados(int $id_proyecto_gestionado)
+    {
+        $conn = parent::get_conexion();
+        $sql = "SELECT COUNT(envio_correo_cliente.id) AS total 
+            FROM envio_correo_cliente 
+            WHERE envio_correo_cliente.id_proyecto_gestionado = :id_proyecto_gestionado";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue(":id_proyecto_gestionado", $id_proyecto_gestionado, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    public function get_documentos_para_envio_correo_cliente(int $id_proyecto_gestionado)
+    {
+        $conn = parent::get_conexion();
+        $sql = "SELECT descripciones_proyecto.id, 
+            descripciones_proyecto.carpeta_documentos_proy, 
+            descripciones_proyecto.documento, 
+            DATE_FORMAT(descripciones_proyecto.fech_crea, '%d-%m-%Y %H:%i') AS fech_crea 
+            FROM descripciones_proyecto 
+            WHERE descripciones_proyecto.id_proyecto_gestionado=:id_proyecto_gestionado 
+            ORDER BY descripciones_proyecto.id DESC LIMIT 1";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue(":id_proyecto_gestionado", $id_proyecto_gestionado, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+        public function get_datos_cliente_para_envio_correo($id)
+    {
+        $conn = parent::get_conexion();
+        $sql = "SELECT proyecto_gestionado.id, proyecto_gestionado.refProy,proyecto_gestionado.correo_envio_cliente, clientes.client_rs 
+        FROM proyecto_gestionado LEFT JOIN proyecto_cantidad_servicios 
+        ON proyecto_gestionado.id_proyecto_cantidad_servicios = proyecto_cantidad_servicios.id 
+        LEFT JOIN proyectos ON proyecto_cantidad_servicios.proy_id = proyectos.proy_id 
+        LEFT JOIN clientes ON proyectos.client_id = clientes.client_id 
+        WHERE proyecto_gestionado.id = :id";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue(":id", $id, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 }

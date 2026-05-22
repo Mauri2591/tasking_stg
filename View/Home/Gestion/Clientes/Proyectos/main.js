@@ -877,7 +877,7 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
                                 function (data, textStatus, jqXHR) {
                                     $("#titulo_client_rs_alta_proy")
                                         .val(data.titulo)
-                                        .data("base", data.titulo.split("_Ref")[0]); // 🔥 CLAVE
+                                        .data("base", data.titulo.split("_Ref")[0]); // CLAVE
                                 },
                                 "json"
                             );
@@ -972,6 +972,7 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
         formData.append('titulo', $("#titulo_client_rs_alta_proy").val());
         formData.append('descripcion', $("#descripcion_proy").val());
         formData.append('refProy', $("#client_refPro_proy_nuevo").val());
+        formData.append('correo_envio_cliente', $("#correo_envio_cliente").val());
         formData.append('recurrencia', $("#combo_recurrente_proy_nuevo").val() || 0);
         formData.append('fech_inicio', $("#fech_ini_proy_nuevo").val());
         formData.append('fech_fin', $("#fech_fin_proy_nuevo").val());
@@ -1062,6 +1063,7 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
             $("#descripcion_proy").val(data.descripcion);
             $("#hs_dimensionadas").val(data.hs_dimensionadas);
             $("#client_refPro_proy_nuevo").val(data.refProy);
+            $("#correo_envio_cliente").val(data.correo_envio_cliente);
             $("#combo_recurrente_proy_nuevo").val(data.recurrencia);
             $("#fech_ini_proy_nuevo").val(data.fech_inicio);
 
@@ -1558,6 +1560,7 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
         formData.append('titulo', document.getElementById('titulo_client_rs_alta_proy').value);
         formData.append('descripcion', document.getElementById('descripcion_proy').value);
         formData.append('refProy', document.getElementById('client_refPro_proy_nuevo').value);
+        formData.append('correo_envio_cliente', document.getElementById('correo_envio_cliente').value);
         formData.append('recurrencia', document.getElementById('combo_recurrente_proy_nuevo').value);
         formData.append('fech_inicio', document.getElementById('fech_ini_proy_nuevo').value);
         formData.append('fech_fin', document.getElementById('fech_fin_proy_nuevo').value);

@@ -5,22 +5,34 @@ if (isset($_SESSION['usu_id'])) {
     // require_once __DIR__ . "/../../../../../Model/Clases/Openssl.php";
     require_once __DIR__ . "/../../../../../Model/Clases/Headers.php";
     require_once __DIR__ . "/../../../../../Model/Clases/Redirect.php";
+    require_once __DIR__ . "/../../../../../Model/Proyectos.php";
 
     Headers::get_cors();
-
     $params = Redirect::validateProyectoParams();
     $p_id  = $params['p_id'];
     $pg_id = $params['pg_id'];
-?>
 
+    //Variables PHP locales para la vista----------------------------------------
+    $proyecto = new Proyectos();
+    $estado_id = $proyecto->get_estado_proyecto_gestionado($pg_id)['estados_id'];
+    $total_estados = $proyecto->get_total_estados();
+
+    $estado_actual = array_filter($total_estados, fn($e) => $e['estados_id'] == $estado_id);
+    $estado_actual = reset($estado_actual);
+
+    $validar_envio_correo = $proyecto->get_validar_si_tiene_correos_enviados($pg_id)['total']; //validar si tiene correos enviados
+    $datos_correos_enviados = $proyecto->get_datos_correo_enviado($pg_id); //quien envio los correos
+    $documentos_envio_cliente = $proyecto->get_documentos_para_envio_correo_cliente($pg_id); //validar documentos a enviar
+    $client_rs = $proyecto->get_datos_cliente_para_envio_correo($pg_id)['client_rs']; //validar documentos a enviar
+    $correo_envio_cliente = $proyecto->get_datos_cliente_para_envio_correo($pg_id)['correo_envio_cliente']; //validar documentos a enviar
+    //----------------------------------------------------------------------------
+
+?>
     <?php
     include_once __DIR__ . "/../../../../../View/Home/Public/Template/head.php";
-    include_once __DIR__ . "/../../../../../View/Home/Public/Template/head.php";
     include_once __DIR__ . "/../../../../../View/Home/Public/Template/main_content.php";
-
-
-
     ?>
+
     <div class="page-content">
         <div class="container-fluid">
 
@@ -28,6 +40,7 @@ if (isset($_SESSION['usu_id'])) {
             include_once __DIR__ . "/../Modales/mdlAgregarUsuarioProy.php";
             include_once __DIR__ . "/../Modales/mdlPipeline.php";
             include_once __DIR__ . "/../Modales/mdlLogsProyectos.php";
+            include_once __DIR__ . "/../Modales/mdlEnviarCorreoCliente.php";
             ?>
 
             <!-- start page title -->
@@ -364,12 +377,13 @@ if (isset($_SESSION['usu_id'])) {
                                                 </label>
                                             </section>
                                             <div class="col-12" id="cont_mje_proy_archivo">
-
                                             </div>
+
                                             <br>
+
                                             <section style="display: flex;">
                                                 <button id="btn_guardar_descripcion"
-                                                    class="btn btn-sm btn-primary text-light" type="button">
+                                                    class="btn btn-sm btn-primary text-light" type="button" style="margin: 0 .1rem">
                                                     <span id="btn_texto_guardar">Guardar</span>
                                                     <span id="btn_spinner_guardar"
                                                         class="spinner-border spinner-border-sm ms-2 d-none" role="status"
@@ -377,14 +391,27 @@ if (isset($_SESSION['usu_id'])) {
                                                 </button>
 
                                                 <button id="btn_finalizar_proyecto"
-                                                    class="btn btn-sm btn-success text-light">Finalizar</button>
+                                                    class="btn btn-sm btn-success text-light" style="margin: 0 .1rem">Finalizar</button>
+
+                                                <?php if (in_array($estado_id, ['1', '2', '3'])): ?>
+                                                    <button id="btn_abrir_modal" class="btn btn-sm text-light"
+                                                        style="background-color: #475569; margin: 0 .1rem;">
+                                                        Visualizar Documentos
+                                                    </button>
+
+                                                <?php elseif ($validar_envio_correo > 0): ?>
+                                                    <span class="text-light badge" style="background-color: #475569; margin: 0 .1rem;">
+                                                        Historial de envíos
+                                                    </span>
+                                                <?php endif; ?>
                                             </section>
                                         </section>
+                                        <hr>
+
+
 
                                         <section id="cont_usuario_finalizador" style="font-size: 11px; display: none;"
                                             class="ms-2 badge bg-dark text-success border border-success">
-
-
                                         </section>
 
                                     </div>
@@ -468,7 +495,7 @@ if (isset($_SESSION['usu_id'])) {
                                 $("#contenedor_urls").show();
                                 break;
 
-                             case 6:
+                            case 6:
                                 $("#contenedor_ips").show();
                                 $("#contenedor_urls").show();
                                 $("#contenedor_otros").show();
@@ -1116,7 +1143,7 @@ if (isset($_SESSION['usu_id'])) {
                     Swal.fire({
                         icon: 'info',
                         title: "¿Desea finalizar este Proyecto?",
-                        text: 'Presione OK para continuar',
+                        text: 'Recuerde que una vez finalizado se le habilitará a Calidad el envío de los Informes al cliente',
                         showCancelButton: true,
                         confirmButtonText: 'OK'
                     }).then((result) => {
@@ -1208,11 +1235,82 @@ if (isset($_SESSION['usu_id'])) {
                     });
                 });
             }
-
             mostrar_contenedores_de_activos(id_proyecto_gestionado)
-
             finalizar_proyecto(id_proyecto_gestionado);
+
+
+            const btnAbrirModal = document.getElementById("btn_abrir_modal");
+            if (btnAbrirModal) {
+                btnAbrirModal.addEventListener("click", function() {
+                    $("#ModalEnviarCorreoCliente").modal("show");
+                });
+            }
+
+            const btnEnviar = document.getElementById("btn_enviar_correo_cliente");
+            if (btnEnviar) {
+                btnEnviar.addEventListener("click", function() {
+
+                    const inputCorreo = document.getElementById("correo_envio_email");
+                    if (!inputCorreo) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'No se encontró el campo de correo'
+                        });
+                        return;
+                    }
+
+                    const correo = inputCorreo.value.trim();
+                    if (!correo) {
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Atención',
+                            text: 'Ingrese un correo destino',
+                            timer: 1200,
+                            showConfirmButton: false
+                        });
+                        return;
+                    }
+
+                    const textoOriginal = btnEnviar.textContent;
+                    btnEnviar.textContent = "Enviando...";
+                    btnEnviar.disabled = true;
+
+                    $.post("../../../../../Controller/ctrCorreo.php?correo=enviar_correo_cliente", {
+                        id_proyecto_gestionado: id_proyecto_gestionado,
+                        correo_destino: correo
+                    }, function(data) {
+                        console.log('Respuesta:', data);
+
+                        // Siempre restaurar el botón
+                        btnEnviar.textContent = textoOriginal;
+                        btnEnviar.disabled = false;
+
+                        if (data.status === 'OK_TEST') {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'ZIP generado OK',
+                                html: `
+                                <p><strong>Archivos comprimidos:</strong> ${data.archivos_encontrados}</p>
+                                <p><strong>Clave:</strong> <code style="font-size:1.1rem; background:#eee; padding:2px 6px;">${data.clave}</code></p>
+                                <p><strong>Ruta ZIP:</strong> <small>${data.zip}</small></p>
+                                `,
+                                showConfirmButton: true
+                            }).then(() => {
+                                location.reload();
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: data.error || JSON.stringify(data)
+                            });
+                        }
+                    }, 'json');
+                });
+            }
         });
+
 
         function descargarPipeline(id) {
             $("#ModalVerTecnologiasPipeline").modal("show");
@@ -1447,11 +1545,11 @@ if (isset($_SESSION['usu_id'])) {
                     },
                     {
                         "targets": 1,
-                        "width": "35%"
+                        "width": "25%"
                     },
                     {
                         "targets": 2,
-                        "width": "10%"
+                        "width": "5%"
                     },
                     {
                         "targets": 3,
@@ -1463,15 +1561,15 @@ if (isset($_SESSION['usu_id'])) {
                     },
                     {
                         "targets": 5,
-                        "width": "20%"
+                        "width": "30%"
                     },
                     {
                         "targets": 6,
-                        "width": "15%"
+                        "width": "25%"
                     },
                     {
                         "targets": 7,
-                        "width": "5%"
+                        "width": "1%"
                     }
                 ],
                 "language": {

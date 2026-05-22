@@ -93,6 +93,18 @@
                                         id="titulo_client_rs_alta_proy">
                                 </div>
 
+                                <div class="mb-1 col-sm-2">
+                                    <label class="badge bg-light fs-10 mb-1 text-dark d-flex align-items-center justify-content-center"
+                                        style="white-space: nowrap;">
+                                        <span class="text-danger fs-13"></span> Correo Envio Email
+                                    </label>
+                                    <input type="email"
+                                        class="form-control form-control-sm"
+                                        id="correo_envio_cliente"
+                                        placeholder="correo@ejemplo.com"
+                                        required>
+                                </div>
+
                                 <div class="mb-3 col-sm-2">
                                     <span class="badge bg-light fs-10 mb-1 text-dark">Referencia</span>
                                     <input autofocus type="text" class="form-control form-control-sm"
