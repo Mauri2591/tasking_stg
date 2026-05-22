@@ -103,7 +103,7 @@ class Correo extends Conexion
         }
     }
 
-     public function enviarCorreoCliente(int $id_proyecto_gestionado, string $correo_destino)
+    public function enviarCorreoCliente(int $id_proyecto_gestionado, string $correo_destino)
     {
         $conn = $this->get_conexion();
         $sql  = "SELECT carpeta_documentos_proy, documento 
@@ -115,6 +115,7 @@ class Correo extends Conexion
         $stmt->execute();
         $doc = $stmt->fetch(PDO::FETCH_ASSOC);
 
+
         if (!$doc || empty($doc['documento'])) {
             $this->registrarEnvio($id_proyecto_gestionado, 'ERROR');  // ← acá
             return 'Sin documentos para enviar';
@@ -123,7 +124,13 @@ class Correo extends Conexion
         $carpeta  = $doc['carpeta_documentos_proy'];
         $archivos = array_filter(explode(',', $doc['documento']));
         $clave    = strtoupper(bin2hex(random_bytes(6)));
-        $ruta_zip = sys_get_temp_dir() . '/informe_' . $id_proyecto_gestionado . '_' . uniqid() . '.zip';
+
+        $carpeta_zip = ZIP_PATH;
+        if (!file_exists($carpeta_zip)) {
+            mkdir($carpeta_zip, 0755, true);
+        }
+        $nombre_zip = 'informe_' . $id_proyecto_gestionado . '_' . date('Ymd_His') . '.zip';
+        $ruta_zip   = $carpeta_zip . $nombre_zip;
 
         $zip = new ZipArchive();
         $zip->open($ruta_zip, ZipArchive::CREATE);
@@ -148,9 +155,10 @@ class Correo extends Conexion
         $this->registrarEnvio($id_proyecto_gestionado, 'OK');  // ← acá cuando todo sale bien
 
         return [
-            'status' => 'OK_TEST',
-            'clave'  => $clave,
-            'zip'    => $ruta_zip,
+            'status'               => 'OK_TEST',
+            'clave'                => $clave,
+            'zip'                  => $ruta_zip,
+            'url_descarga'         => ZIP_URL . $nombre_zip,
             'archivos_encontrados' => $archivos_encontrados
         ];
     }
@@ -167,6 +175,4 @@ class Correo extends Conexion
         $stmt->bindValue(':status', $status,                     PDO::PARAM_STR);
         $stmt->execute();
     }
-
-    
 }
