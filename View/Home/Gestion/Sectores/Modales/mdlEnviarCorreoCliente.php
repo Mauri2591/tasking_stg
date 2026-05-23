@@ -105,8 +105,8 @@
                                                     <i class="ri-mail-check-line"></i> Correo enviado por otro medio
                                                 </span>
                                                 <br><span class="text-muted fs-11">Confirmado el: <?= htmlspecialchars($val['fech_actualizacion']) ?></span>
-                                            <?php elseif ($val['status_envio'] == 'ERROR'): ?>
-                                                <br><span><strong>Enviar Correo por otro medio: </strong>
+
+                                            <?php elseif ($_SESSION['sector_id'] == '4' && $val['status_envio'] == 'ERROR'): ?> <br><span><strong>Enviar Correo por otro medio: </strong>
                                                     <i class="ri-mail-send-line"
                                                         type="button"
                                                         onclick='reenviar_correo(<?= intval($val["id"]) ?>)'
