@@ -1623,7 +1623,7 @@ if (isset($_SESSION['usu_id'])) {
                     },
                     {
                         "targets": 5,
-                        "width": "15%"
+                        "width": "20%"
                     },
                     {
                         "targets": 6,
