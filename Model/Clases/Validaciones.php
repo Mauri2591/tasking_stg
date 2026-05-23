@@ -75,33 +75,41 @@
             }
 
             $extensiones_permitidas = ["jpeg", "jpg", "png", "txt", "xls", "xlsx", "doc", "docx", "pdf", "zip"];
-            $tipos_mime_permitidos = [
-                'image/jpeg',
-                'image/png',
-                'text/plain',
-                'application/x-empty',
-                'application/pdf',
-                'application/msword',
-                'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-                'application/zip',
-                'application/vnd.ms-excel',
-                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-                'application/octet-stream'
+
+            $mimes_peligrosos = [
+                'application/x-php',
+                'application/php',
+                'text/php',
+                'text/x-php',
+                'application/x-httpd-php',
+                'application/x-httpd-php-source',
+                'application/x-sh',
+                'application/x-shellscript',
+                'text/x-shellscript',
+                'text/x-python',
+                'application/x-perl',
+                'text/x-perl',
             ];
 
             $extension = strtolower(pathinfo($data['name'], PATHINFO_EXTENSION));
             $mime_type = mime_content_type($data['tmp_name']);
 
-            // Excepción para XLSX y DOCX
-            if (in_array($extension, ['docx', 'xlsx']) && in_array($mime_type, ['application/zip', 'application/octet-stream'])) {
-                // válido
-            } elseif (!in_array($extension, $extensiones_permitidas) || !in_array($mime_type, $tipos_mime_permitidos)) {
+            // Rechazar si la extensión no está permitida
+            if (!in_array($extension, $extensiones_permitidas)) {
+                self::$errores_archivos[] = "{$data['name']} - Extensión no permitida.";
                 http_response_code(400);
                 echo json_encode(["Status" => "Error", "Message" => "Archivo no permitido"]);
                 exit;
             }
 
-            // Carpeta por hash
+            // Rechazar si el MIME es ejecutable/peligroso sin importar la extensión
+            if (in_array($mime_type, $mimes_peligrosos)) {
+                self::$errores_archivos[] = "{$data['name']} - Tipo de archivo peligroso.";
+                http_response_code(400);
+                echo json_encode(["Status" => "Error", "Message" => "Archivo no permitido"]);
+                exit;
+            }
+
             $ruta_archivos = __DIR__ . "../../../View/Home/Public/Uploads/Proyectos/" . $hash_folder . "/";
             if (!is_dir($ruta_archivos)) {
                 mkdir($ruta_archivos, 0777, true);

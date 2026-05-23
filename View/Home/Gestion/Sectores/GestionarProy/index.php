@@ -356,7 +356,6 @@ if (isset($_SESSION['usu_id'])) {
                                             </li>
                                         </ul>
 
-
                                         <section class="p-2 mt-2" style="display: none;" id="sect_descrip">
                                             <textarea name="descripcion_proyecto" id="descripcion_proyecto"
                                                 class="d-none"></textarea>
@@ -376,6 +375,7 @@ if (isset($_SESSION['usu_id'])) {
                                                         accept=".pdf, .doc, .docx, .xls, .xlsx, .jpg, .jpeg, .png, .txt, .zip">
                                                 </label>
                                             </section>
+
                                             <div class="col-12" id="cont_mje_proy_archivo">
                                             </div>
 
@@ -392,23 +392,18 @@ if (isset($_SESSION['usu_id'])) {
 
                                                 <button id="btn_finalizar_proyecto"
                                                     class="btn btn-sm btn-success text-light" style="margin: 0 .1rem">Finalizar</button>
-
-                                                <?php if (in_array($estado_id, ['1', '2', '3'])): ?>
-                                                    <button id="btn_abrir_modal" class="btn btn-sm text-light"
-                                                        style="background-color: #475569; margin: 0 .1rem;">
-                                                        Visualizar Documentos
-                                                    </button>
-
-                                                <?php elseif ($validar_envio_correo > 0): ?>
-                                                    <span class="text-light badge" style="background-color: #475569; margin: 0 .1rem;">
-                                                        Historial de envíos
-                                                    </span>
-                                                <?php endif; ?>
                                             </section>
+
+                                           
+
                                         </section>
+                                         <hr>
+                                            <button id="btn_abrir_modal" class="btn btn-sm text-light"
+                                                style="background-color: #475569; margin: 0 .7rem;">
+                                                Visualizar Documentos
+                                            </button>
+                                            <br>
                                         <hr>
-
-
 
                                         <section id="cont_usuario_finalizador" style="font-size: 11px; display: none;"
                                             class="ms-2 badge bg-dark text-success border border-success">

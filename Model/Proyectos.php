@@ -917,7 +917,19 @@ WHERE proyecto_gestionado.id = :id_proyecto_gestionado
     public function get_descripciones_proyecto(int $id)
     {
         $conn = parent::get_conexion();
-        $sql = "SELECT descripciones_proyecto.id,descripciones_proyecto.carpeta_documentos_proy,descripciones_proyecto.documento,descripciones_proyecto.descripcion_proyecto,descripciones_proyecto.captura_imagen,descripciones_proyecto.usu_crea, descripciones_proyecto.fech_crea, tm_usuario.usu_nom, sectores.sector_nombre, proyecto_gestionado.estados_id FROM descripciones_proyecto LEFT JOIN tm_usuario ON descripciones_proyecto.usu_crea=tm_usuario.usu_id LEFT JOIN sectores ON tm_usuario.sector_id=sectores.sector_id LEFT JOIN proyecto_gestionado ON descripciones_proyecto.id_proyecto_gestionado=proyecto_gestionado.id WHERE proyecto_gestionado.id=:id";
+        $sql = "SELECT descripciones_proyecto.id,descripciones_proyecto.carpeta_documentos_proy,descripciones_proyecto.documento,
+        descripciones_proyecto.descripcion_proyecto,descripciones_proyecto.captura_imagen,
+        descripciones_proyecto.usu_crea, descripciones_proyecto.fech_crea, tm_usuario.usu_nom, 
+        sectores.sector_nombre, proyecto_gestionado.estados_id, 
+        IF(envio_correo_cliente.id IS NOT NULL, 'SI','NO') AS envio_correo_cliente 
+        FROM descripciones_proyecto LEFT JOIN tm_usuario 
+        ON descripciones_proyecto.usu_crea=tm_usuario.usu_id 
+        LEFT JOIN sectores ON tm_usuario.sector_id=sectores.sector_id 
+        LEFT JOIN proyecto_gestionado 
+        ON descripciones_proyecto.id_proyecto_gestionado=proyecto_gestionado.id 
+        LEFT JOIN envio_correo_cliente 
+        ON envio_correo_cliente.id_descripciones_proyecto=descripciones_proyecto.id 
+        WHERE proyecto_gestionado.id=:id ORDER BY descripciones_proyecto.id ASC";
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(':id', $id, PDO::PARAM_INT);
         $stmt->execute();
@@ -2775,7 +2787,7 @@ WHERE pg.id_proyecto_cantidad_servicios = :id_proyecto_cantidad_servicios";
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-        public function get_total_estados()
+    public function get_total_estados()
     {
         $conn = parent::get_conexion();
         $sql = "SELECT tm_estados.estados_id, tm_estados.estados_nombre, tm_estados.CatColor, tm_estados.icono FROM tm_estados";
@@ -2800,13 +2812,16 @@ WHERE pg.id_proyecto_cantidad_servicios = :id_proyecto_cantidad_servicios";
     public function get_datos_correo_enviado(int $id_proyecto_gestionado)
     {
         $conn = parent::get_conexion();
-        $sql = "SELECT tm_usuario.usu_correo, sectores.sector_nombre, envio_correo_cliente.status_envio,
-            DATE_FORMAT(envio_correo_cliente.fech_crea,'%d-%m-%Y %H:%i:%s') AS fech_crea 
-            FROM envio_correo_cliente 
-            INNER JOIN tm_usuario ON tm_usuario.usu_id = envio_correo_cliente.usu_crea 
-            INNER JOIN sectores ON sectores.sector_id = envio_correo_cliente.sector_id 
-            WHERE envio_correo_cliente.id_proyecto_gestionado = :id_proyecto_gestionado 
-            ORDER BY envio_correo_cliente.id DESC";
+        $sql = "SELECT tm_usuario.usu_correo, sectores.sector_nombre, 
+        envio_correo_cliente.status_envio, envio_correo_cliente.ruta_comprimido, 
+        envio_correo_cliente.clave_comprimido, 
+        DATE_FORMAT(envio_correo_cliente.fech_crea,'%d-%m-%Y %H:%i:%s') AS fech_crea 
+        FROM envio_correo_cliente INNER JOIN tm_usuario 
+        ON tm_usuario.usu_id = envio_correo_cliente.usu_crea 
+        INNER JOIN sectores ON sectores.sector_id = envio_correo_cliente.sector_id 
+        WHERE envio_correo_cliente.id_proyecto_gestionado = :id_proyecto_gestionado 
+        ORDER BY envio_correo_cliente.id 
+        DESC";
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(":id_proyecto_gestionado", $id_proyecto_gestionado, PDO::PARAM_INT);
         $stmt->execute();
@@ -2827,11 +2842,11 @@ WHERE pg.id_proyecto_cantidad_servicios = :id_proyecto_cantidad_servicios";
     public function get_documentos_para_envio_correo_cliente(int $id_proyecto_gestionado)
     {
         $conn = parent::get_conexion();
-        $sql = "SELECT descripciones_proyecto.id, 
+        $sql = "SELECT descripciones_proyecto.id, envio_correo_cliente.id_descripciones_proyecto,
             descripciones_proyecto.carpeta_documentos_proy, 
             descripciones_proyecto.documento, 
             DATE_FORMAT(descripciones_proyecto.fech_crea, '%d-%m-%Y %H:%i') AS fech_crea 
-            FROM descripciones_proyecto 
+            FROM descripciones_proyecto LEFT JOIN envio_correo_cliente ON envio_correo_cliente.id_proyecto_gestionado=descripciones_proyecto.id_proyecto_gestionado
             WHERE descripciones_proyecto.id_proyecto_gestionado=:id_proyecto_gestionado 
             ORDER BY descripciones_proyecto.id DESC LIMIT 1";
         $stmt = $conn->prepare($sql);
@@ -2840,7 +2855,7 @@ WHERE pg.id_proyecto_cantidad_servicios = :id_proyecto_cantidad_servicios";
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-        public function get_datos_cliente_para_envio_correo($id)
+    public function get_datos_cliente_para_envio_correo($id)
     {
         $conn = parent::get_conexion();
         $sql = "SELECT proyecto_gestionado.id, proyecto_gestionado.refProy,proyecto_gestionado.correo_envio_cliente, clientes.client_rs 

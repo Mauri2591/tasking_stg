@@ -11,6 +11,6 @@ $dotenv->load();
 define("URL", $_ENV['URL']);
 define("KEY", $_ENV['KEY']);
 define("BASE_URL", getenv('URL'));
-define("BASE_PATH", $_SERVER['DOCUMENT_ROOT'] . "/tasking_stg/");
+define("BASE_PATH", $_ENV['BASE_PATH']);
 define('ZIP_PATH', $_ENV['ZIP_PATH']);
-
+define('ZIP_URL', $_ENV['ZIP_URL']);

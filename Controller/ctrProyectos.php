@@ -1917,6 +1917,8 @@ switch ($_GET['proy']) {
 
                         // Permiso final
                         $tienePermiso = $esAutor && (!$estadoNoEditable || $esSector4);
+                        
+                        $icono_correo_enviado= $val['envio_correo_cliente'] == 'SI' ? '<i class="ri-mail-send-line fw-bold" style="margin-right:4px; font-size:1rem; color:#6C6E00"></i>' : '';
 
                         if ($tienePermiso):
                         ?>
@@ -1926,8 +1928,10 @@ switch ($_GET['proy']) {
                                 type="button"
                                 onclick="eliminar_descripcion(<?php echo $val['id']; ?>)"
                                 class="ri-delete-bin-2-fill ms-3 fs-14 text-danger">
-                            </i>
+                            </i>                            
                         <?php endif; ?>
+                            <span title='Correo enviado al cliente' class="mx-2"><?php echo $icono_correo_enviado; ?></span>
+
                     </div>
                     <p id="sector_descripcion" class="text-muted fs-11" style="margin-left: 1.5rem;">
                         <span class="badge bg-light text-primary"><?php echo $val['sector_nombre'] ?></span>

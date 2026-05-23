@@ -4,7 +4,7 @@
             <div class="modal-header">
                 <div class="d-flex align-items-center gap-3">
                     <h5 class="modal-title">
-                        Estos documentos se enviarán por Email al cliente: 
+                        Estos documentos se enviarán por Email al cliente:
                         <strong><?= htmlspecialchars(strtoupper($client_rs ?? '')) ?></strong>
                     </h5>
                 </div>
@@ -31,7 +31,7 @@
                 <div class="d-flex gap-3" style="height: 500px;">
 
                     <!-- Lista de documentos -->
-                    <div style="width: 20rem; border-right: 1px solid #ddd; overflow-y: auto; border:.1rem solid #ddd; border-radius: .7rem;">
+                    <div style="width: 25rem; border-right: 1px solid #ddd; overflow-y: auto; border:.1rem solid #ddd; border-radius: .7rem;">
 
                         <p class="fw-bold fs-13 px-2 pt-2">Documentos a enviar</p>
                         <?php
@@ -69,10 +69,10 @@
                         <?php endif; ?>
 
                         <hr>
+                        <span class="badge bg-light text-dark border-dark mx-2">Correos enviados al Cliente</span>
                         <div class="card-body" style="width: 100%; height: 10rem; overflow-y: auto; padding: 1rem;">
                             <ol style="padding-left: 1rem;">
                                 <?php if (!empty($datos_correos_enviados)): ?>
-                                    <span class="badge bg-light text-dark border-dark">Correos enviados al Cliente</span>
                                     <?php foreach ($datos_correos_enviados as $val): ?>
                                         <li class="fs-13 my-2">
                                             <span><strong>Usuario: </strong><?= htmlspecialchars($val['usu_correo']) ?></span><br>
@@ -82,8 +82,23 @@
                                                     ? '<span class="badge bg-success text-light">' . htmlspecialchars($val['status_envio']) . '</span>'
                                                     : '<span class="badge bg-danger text-light">'  . htmlspecialchars($val['status_envio']) . '</span>'
                                                 ?>
-                                            </span><br> <span><strong>Fecha: </strong><?= htmlspecialchars($val['fech_crea']) ?></span>
+                                            </span>
+                                            <span><strong>Fecha: </strong><?= htmlspecialchars($val['fech_crea']) ?></span><br>
+                                            <?php if ($_SESSION['sector_id'] == '4'): ?>
+                                                <?php if (!empty($val['ruta_comprimido'])): ?>
+                                                    <strong>Comprimido: </strong>
+                                                    <a href="<?= htmlspecialchars(ZIP_URL . basename($val['ruta_comprimido'])) ?>"
+                                                        download
+                                                        class="text-decoration-none">
+                                                        <i class="fa-solid fa-file-zipper"></i> Descargar ZIP
+                                                    </a>
+                                                <?php else: ?>
+                                                    <span class="text-muted">Sin archivo</span>
+                                                <?php endif; ?>
+                                                <br><span><strong>Clave: </strong><?= htmlspecialchars($val['clave_comprimido']) ?></span>
+                                            <?php endif; ?>
                                         </li>
+                                        <hr>
                                     <?php endforeach; ?>
                                 <?php else: ?>
                                     <p class="fs-13 text-muted">Sin correos enviados al cliente</p>
