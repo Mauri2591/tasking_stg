@@ -1363,6 +1363,12 @@ if (isset($_SESSION['usu_id'])) {
                         },
                         "json"
                     );
+                    $.post(
+                        "../../../../../Controller/ctrAuditoria.php?case=insert_audit_estados_proyecto", {
+                            id_proyecto_gestionado: id_proyecto_gestionado,
+                            estados_id: 22
+                        }
+                    );
                 }
             });
         }
@@ -1617,7 +1623,7 @@ if (isset($_SESSION['usu_id'])) {
                     },
                     {
                         "targets": 5,
-                        "width": "30%"
+                        "width": "15%"
                     },
                     {
                         "targets": 6,
