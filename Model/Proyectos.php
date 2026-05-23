@@ -2824,7 +2824,7 @@ WHERE pg.id_proyecto_cantidad_servicios = :id_proyecto_cantidad_servicios";
     public function get_datos_correo_enviado(int $id_proyecto_gestionado)
     {
         $conn = parent::get_conexion();
-        $sql = "SELECT tm_usuario.usu_correo, sectores.sector_nombre, 
+        $sql = "SELECT envio_correo_cliente.id,envio_correo_cliente.fech_actualizacion,tm_usuario.usu_correo, sectores.sector_nombre, 
         envio_correo_cliente.status_envio, envio_correo_cliente.ruta_comprimido, 
         envio_correo_cliente.clave_comprimido, 
         DATE_FORMAT(envio_correo_cliente.fech_crea,'%d-%m-%Y %H:%i:%s') AS fech_crea 

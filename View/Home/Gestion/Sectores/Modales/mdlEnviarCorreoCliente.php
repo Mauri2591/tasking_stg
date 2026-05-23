@@ -74,17 +74,17 @@
                             <ol style="padding-left: 1rem;">
                                 <?php if (!empty($datos_correos_enviados)): ?>
                                     <?php foreach ($datos_correos_enviados as $val): ?>
-                                        <li class="fs-13 my-2">
+                                        <li class="fs-13 my-2" id="correo_item_<?= intval($val['id']) ?>">
                                             <span><strong>Usuario: </strong><?= htmlspecialchars($val['usu_correo']) ?></span><br>
                                             <span><strong>Sector: </strong><?= htmlspecialchars($val['sector_nombre']) ?></span><br>
                                             <span><strong>Status envio: </strong>
-                                                <?= $val['status_envio'] == 'OK'
-                                                    ? '<span class="badge bg-success text-light">' . htmlspecialchars($val['status_envio']) . '</span>'
-                                                    : '<span class="badge bg-danger text-light">'  . htmlspecialchars($val['status_envio']) . '</span>'
-                                                ?>
+                                                <span class="badge_status_<?= intval($val['id']) ?> <?= $val['status_envio'] == 'OK' ? 'badge bg-success text-light' : 'badge bg-danger text-light' ?>">
+                                                    <?= htmlspecialchars($val['status_envio']) ?>
+                                                </span>
                                             </span>
                                             <br>
                                             <span><strong>Fecha: </strong><?= htmlspecialchars($val['fech_crea']) ?></span><br>
+
                                             <?php if ($_SESSION['sector_id'] == '4'): ?>
                                                 <?php if (!empty($val['ruta_comprimido'])): ?>
                                                     <strong>Comprimido: </strong>
@@ -93,10 +93,27 @@
                                                         class="text-decoration-none">
                                                         <i class="fa-solid fa-file-zipper"></i> Descargar ZIP
                                                     </a>
+                                                    <br>
                                                 <?php else: ?>
                                                     <span class="text-muted">Sin archivo</span>
                                                 <?php endif; ?>
-                                                <br><span><strong>Clave: </strong><?= htmlspecialchars($val['clave_comprimido']) ?></span>
+                                                <span><strong>Clave: </strong><?= htmlspecialchars($val['clave_comprimido']) ?></span>
+                                            <?php endif; ?>
+
+                                            <?php if (!empty($val['fech_actualizacion'])): ?>
+                                                <br><span class="badge bg-success text-light">
+                                                    <i class="ri-mail-check-line"></i> Correo enviado por otro medio
+                                                </span>
+                                                <br><span class="text-muted fs-11">Confirmado el: <?= htmlspecialchars($val['fech_actualizacion']) ?></span>
+                                            <?php elseif ($val['status_envio'] == 'ERROR'): ?>
+                                                <br><span><strong>Enviar Correo por otro medio: </strong>
+                                                    <i class="ri-mail-send-line"
+                                                        type="button"
+                                                        onclick='reenviar_correo(<?= intval($val["id"]) ?>)'
+                                                        style="font-size:1.1rem; color:#0d6efd; cursor:pointer;"
+                                                        onmouseover="this.style.filter='brightness(1.2)';"
+                                                        onmouseout="this.style.filter='brightness(1)';"></i>
+                                                </span>
                                             <?php endif; ?>
                                         </li>
                                         <hr>

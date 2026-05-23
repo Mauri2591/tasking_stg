@@ -180,4 +180,17 @@ class Correo extends Conexion
         $stmt->bindValue(':clave',   $clave,                      PDO::PARAM_STR);
         $stmt->execute();
     }
+
+    public function update_envio_correo($id, $status_envio)
+    {
+        $conn = parent::get_conexion();
+        $sql = "UPDATE envio_correo_cliente SET status_envio=:status_envio, fech_actualizacion=now() WHERE id=:id";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue(":id", $id, PDO::PARAM_INT);
+        $stmt->bindValue(":status_envio", $status_envio, PDO::PARAM_STR);
+        $stmt->execute();
+        if ($stmt->rowCount() > 0) {
+            return "success";
+        }
+    }
 }

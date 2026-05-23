@@ -27,26 +27,37 @@ switch ($case) {
         ]);
         exit;
 
-case 'enviar_correo_cliente':
-    $id_proyecto_gestionado = isset($_POST['id_proyecto_gestionado']) ? (int)$_POST['id_proyecto_gestionado'] : 0;
-    $correo_destino         = $_POST['correo_destino'] ?? '';
+    case 'enviar_correo_cliente':
+        $id_proyecto_gestionado = isset($_POST['id_proyecto_gestionado']) ? (int)$_POST['id_proyecto_gestionado'] : 0;
+        $correo_destino         = $_POST['correo_destino'] ?? '';
 
-    if ($id_proyecto_gestionado <= 0) {
-        echo json_encode(['status' => 'ERROR', 'error' => 'ID inválido']);
+        if ($id_proyecto_gestionado <= 0) {
+            echo json_encode(['status' => 'ERROR', 'error' => 'ID inválido']);
+            exit;
+        }
+
+        if (!filter_var($correo_destino, FILTER_VALIDATE_EMAIL)) {
+            echo json_encode(['status' => 'ERROR', 'error' => 'Correo destino inválido']);
+            exit;
+        }
+
+        $result = $correo->enviarCorreoCliente($id_proyecto_gestionado, $correo_destino);
+        $auditoria->insert_audit_estados_proyecto($_POST['id_proyecto_gestionado'], 21, $_SESSION['usu_id'], $_SESSION['sector_id']);
+        echo json_encode($result);
         exit;
-    }
 
-    if (!filter_var($correo_destino, FILTER_VALIDATE_EMAIL)) {
-        echo json_encode(['status' => 'ERROR', 'error' => 'Correo destino inválido']);
-        exit;
-    }
+    case 'update_envio_correo':
+        $datos = $correo->update_envio_correo($_POST['id'], $_POST['status_envio']);
+        if ($datos == 'success') {
+            echo json_encode(['status' => 'success']);
+            http_response_code(200);
+        } else {
+            echo json_encode(['status' => 'error']);
+            http_response_code(400);
+        }
+        break;
 
-    $result = $correo->enviarCorreoCliente($id_proyecto_gestionado, $correo_destino);
-    $auditoria->insert_audit_estados_proyecto($_POST['id_proyecto_gestionado'],21,$_SESSION['usu_id'],$_SESSION['sector_id']);
-    echo json_encode($result);
-    exit;
 
-        
     default:
         echo json_encode([
             'status' => 'ERROR',

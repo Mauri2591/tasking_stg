@@ -349,7 +349,7 @@ if (isset($_SESSION['usu_id'])) {
 
                                     <div class="pt-3 border-top border-top-dashed mt-4">
                                     </div>
-                                    
+
                                     <div class="card-body">
                                         <ul class="list-unstyled vstack gap-3 mb-0">
                                             <li id="cont_descripciones_proyecto">
@@ -1310,6 +1310,62 @@ if (isset($_SESSION['usu_id'])) {
                 });
             }
         });
+
+        let correo_actualizado = false;
+
+        $('#ModalEnviarCorreoCliente').on('hidden.bs.modal', function() {
+            if (correo_actualizado) {
+                location.reload();
+            }
+        });
+
+        function reenviar_correo(id) {
+            Swal.fire({
+                icon: 'info',
+                title: 'Atencion',
+                text: 'Al confirmar, se registrará que el informe fue enviado al cliente por un medio alternativo. ¿Desea continuar?',
+                showConfirmButton: true,
+                showCancelButton: true,
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.post("../../../../../Controller/ctrCorreo.php?correo=update_envio_correo", {
+                            id: id,
+                            status_envio: 'OK'
+                        },
+                        function(data, textStatus, jqXHR) {
+                            if (data.status === 'success') {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Bien',
+                                    text: 'Correo actualizado correctamente.',
+                                    showConfirmButton: false,
+                                    showCancelButton: false,
+                                    timer: 1000
+                                }).then(() => {
+                                    $(`.badge_status_${id}`)
+                                        .removeClass('bg-danger')
+                                        .addClass('bg-success')
+                                        .text('OK');
+
+                                    $(`#correo_item_${id} .ri-mail-send-line`).closest('span').remove();
+
+                                    // Agregar badge de confirmación
+                                    $(`#correo_item_${id}`).append(`
+                                <br><span class="badge bg-success text-light">
+                                    <i class="ri-mail-check-line"></i> Correo enviado por otro medio
+                                </span>
+                                <br><span class="text-muted fs-11">Confirmado ahora</span>
+                            `);
+
+                                    correo_actualizado = true;
+                                });
+                            }
+                        },
+                        "json"
+                    );
+                }
+            });
+        }
 
 
         function descargarPipeline(id) {
