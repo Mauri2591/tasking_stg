@@ -1921,9 +1921,9 @@ switch ($_GET['proy']) {
                         $icono_correo_enviado = '';
                         if ($val['envio_correo_cliente'] == 'SI') {
                             if ($val['status_envio'] == 'OK') {
-                                $icono_correo_enviado = '<i class="ri-mail-send-line fs-20 text-success" title="Correo enviado correctamente" style="margin-right:4px; font-size:1rem;"></i>';
+                                $icono_correo_enviado = '<i class="ri-mail-send-line fs-18 text-success" title="Correo enviado correctamente" style="margin-right:4px; font-size:1rem;"></i>';
                             } elseif ($val['status_envio'] == 'ERROR') {
-                                $icono_correo_enviado = '<i class="ri-mail-close-line fs-20" title="Error al enviar correo" style="margin-right:4px; font-size:1rem; color:#dc3545;"></i>';
+                                $icono_correo_enviado = '<i class="ri-mail-close-line fs-18" title="Error al enviar correo" style="margin-right:4px; font-size:1rem; color:#dc3545;"></i>';
                             }
                         }
                         if ($tienePermiso):
