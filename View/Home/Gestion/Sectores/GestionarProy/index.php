@@ -349,6 +349,7 @@ if (isset($_SESSION['usu_id'])) {
 
                                     <div class="pt-3 border-top border-top-dashed mt-4">
                                     </div>
+                                    
                                     <div class="card-body">
                                         <ul class="list-unstyled vstack gap-3 mb-0">
                                             <li id="cont_descripciones_proyecto">
@@ -393,18 +394,22 @@ if (isset($_SESSION['usu_id'])) {
                                                 <button id="btn_finalizar_proyecto"
                                                     class="btn btn-sm btn-success text-light" style="margin: 0 .1rem">Finalizar</button>
                                             </section>
-
-                                           
-
                                         </section>
-                                         <hr>
-                                            <button id="btn_abrir_modal" class="btn btn-sm text-light"
-                                                style="background-color: #475569; margin: 0 .7rem;">
-                                                Visualizar Documentos
-                                            </button>
-                                            <br>
-                                        <hr>
 
+                                        <hr>
+                                        <hr>
+                                        <div>
+                                            <button id="btn_abrir_modal"
+                                                class="btn btn-sm btn-info text-white"
+                                                style="margin: 0 .5rem; padding: 3px 7px; letter-spacing: 0.3px; transition: all 0.2s ease;"
+                                                onmouseover="this.style.transform='translateY(-.1px)'; this.style.boxShadow='0 4px 8px rgba(13,202,240,0.3)'; this.style.filter='brightness(1.15)';"
+                                                onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'; this.style.filter='brightness(1)';"
+                                                onmousedown="this.style.transform='translateY(.1px)';"
+                                                onmouseup="this.style.transform='translateY(-.1px)';">
+                                                <i class="ri-folder-open-line me-1"></i> Visualizar Documentos
+                                            </button>
+                                        </div>
+                                        <hr>
                                         <section id="cont_usuario_finalizador" style="font-size: 11px; display: none;"
                                             class="ms-2 badge bg-dark text-success border border-success">
                                         </section>
