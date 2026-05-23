@@ -928,17 +928,20 @@ WHERE proyecto_gestionado.id = :id_proyecto_gestionado
     tm_usuario.usu_nom,
     sectores.sector_nombre,
     proyecto_gestionado.estados_id,
+    (SELECT status_envio FROM envio_correo_cliente 
+     WHERE envio_correo_cliente.id_descripciones_proyecto = descripciones_proyecto.id
+     ORDER BY id DESC LIMIT 1) AS status_envio,
     IF(
         (SELECT COUNT(*) FROM envio_correo_cliente 
          WHERE envio_correo_cliente.id_descripciones_proyecto = descripciones_proyecto.id) > 0,
         'SI', 'NO'
     ) AS envio_correo_cliente
-    FROM descripciones_proyecto 
-    LEFT JOIN tm_usuario ON descripciones_proyecto.usu_crea = tm_usuario.usu_id 
-    LEFT JOIN sectores ON tm_usuario.sector_id = sectores.sector_id 
-    LEFT JOIN proyecto_gestionado ON descripciones_proyecto.id_proyecto_gestionado = proyecto_gestionado.id 
-    WHERE proyecto_gestionado.id = :id
-    ORDER BY descripciones_proyecto.id ASC";
+        FROM descripciones_proyecto 
+        LEFT JOIN tm_usuario ON descripciones_proyecto.usu_crea = tm_usuario.usu_id 
+        LEFT JOIN sectores ON tm_usuario.sector_id = sectores.sector_id 
+        LEFT JOIN proyecto_gestionado ON descripciones_proyecto.id_proyecto_gestionado = proyecto_gestionado.id 
+        WHERE proyecto_gestionado.id = :id
+        ORDER BY descripciones_proyecto.id ASC";
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(':id', $id, PDO::PARAM_INT);
         $stmt->execute();
