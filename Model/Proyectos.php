@@ -917,19 +917,28 @@ WHERE proyecto_gestionado.id = :id_proyecto_gestionado
     public function get_descripciones_proyecto(int $id)
     {
         $conn = parent::get_conexion();
-        $sql = "SELECT descripciones_proyecto.id,descripciones_proyecto.carpeta_documentos_proy,descripciones_proyecto.documento,
-        descripciones_proyecto.descripcion_proyecto,descripciones_proyecto.captura_imagen,
-        descripciones_proyecto.usu_crea, descripciones_proyecto.fech_crea, tm_usuario.usu_nom, 
-        sectores.sector_nombre, proyecto_gestionado.estados_id, 
-        IF(envio_correo_cliente.id IS NOT NULL, 'SI','NO') AS envio_correo_cliente 
-        FROM descripciones_proyecto LEFT JOIN tm_usuario 
-        ON descripciones_proyecto.usu_crea=tm_usuario.usu_id 
-        LEFT JOIN sectores ON tm_usuario.sector_id=sectores.sector_id 
-        LEFT JOIN proyecto_gestionado 
-        ON descripciones_proyecto.id_proyecto_gestionado=proyecto_gestionado.id 
-        LEFT JOIN envio_correo_cliente 
-        ON envio_correo_cliente.id_descripciones_proyecto=descripciones_proyecto.id 
-        WHERE proyecto_gestionado.id=:id ORDER BY descripciones_proyecto.id ASC";
+        $sql = "SELECT 
+    descripciones_proyecto.id,
+    descripciones_proyecto.carpeta_documentos_proy,
+    descripciones_proyecto.documento,
+    descripciones_proyecto.descripcion_proyecto,
+    descripciones_proyecto.captura_imagen,
+    descripciones_proyecto.usu_crea,
+    descripciones_proyecto.fech_crea,
+    tm_usuario.usu_nom,
+    sectores.sector_nombre,
+    proyecto_gestionado.estados_id,
+    IF(
+        (SELECT COUNT(*) FROM envio_correo_cliente 
+         WHERE envio_correo_cliente.id_descripciones_proyecto = descripciones_proyecto.id) > 0,
+        'SI', 'NO'
+    ) AS envio_correo_cliente
+    FROM descripciones_proyecto 
+    LEFT JOIN tm_usuario ON descripciones_proyecto.usu_crea = tm_usuario.usu_id 
+    LEFT JOIN sectores ON tm_usuario.sector_id = sectores.sector_id 
+    LEFT JOIN proyecto_gestionado ON descripciones_proyecto.id_proyecto_gestionado = proyecto_gestionado.id 
+    WHERE proyecto_gestionado.id = :id
+    ORDER BY descripciones_proyecto.id ASC";
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(':id', $id, PDO::PARAM_INT);
         $stmt->execute();
