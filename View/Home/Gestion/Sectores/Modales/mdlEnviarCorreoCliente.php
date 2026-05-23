@@ -83,6 +83,7 @@
                                                     : '<span class="badge bg-danger text-light">'  . htmlspecialchars($val['status_envio']) . '</span>'
                                                 ?>
                                             </span>
+                                            <br>
                                             <span><strong>Fecha: </strong><?= htmlspecialchars($val['fech_crea']) ?></span><br>
                                             <?php if ($_SESSION['sector_id'] == '4'): ?>
                                                 <?php if (!empty($val['ruta_comprimido'])): ?>
