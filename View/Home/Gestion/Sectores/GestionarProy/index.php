@@ -406,7 +406,7 @@ if (isset($_SESSION['usu_id'])) {
                                                 onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'; this.style.filter='brightness(1)';"
                                                 onmousedown="this.style.transform='translateY(.1px)';"
                                                 onmouseup="this.style.transform='translateY(-.1px)';">
-                                                <i class="ri-folder-open-line me-1"></i> Visualizar Documentos
+                                                <i class="ri-folder-open-line me-1"></i> Ver Documentos que se enviaran
                                             </button>
                                         </div>
                                         <hr>
