@@ -218,7 +218,7 @@ class Correo extends Conexion
         try {
             $smtpConfig($mailCliente);
             $mailCliente->addAddress($correo_destino);
-            $mailCliente->Subject = 'Documentos del proyecto - Tasking MSSP';
+            $mailCliente->Subject = 'Documentos del proyecto - Personal MSSP';
             $mailCliente->Body    = "
         <p>Estimado/a cliente,</p>
         <p>Adjuntamos la documentación correspondiente a su proyecto en formato ZIP protegido.</p>
