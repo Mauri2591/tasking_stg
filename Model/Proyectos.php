@@ -2839,6 +2839,50 @@ WHERE pg.id_proyecto_cantidad_servicios = :id_proyecto_cantidad_servicios";
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    public function get_datos_correo_interno_enviado($id_proyecto_gestionado)
+    {
+        $conn = $this->get_conexion();
+        $sql = "SELECT eci.id, eci.id_descripciones_proyecto, eci.id_envio_correo_cliente,
+                   eci.correo, eci.status_envio, eci.fech_crea, eci.fech_actualizacion,
+                   tu.usu_correo, s.sector_nombre
+            FROM envio_correo_interno eci
+            LEFT JOIN tm_usuario tu ON tu.usu_id = eci.usu_crea
+            LEFT JOIN sectores s ON s.sector_id = eci.sector_id
+            WHERE eci.id_proyecto_gestionado = :id
+            ORDER BY eci.id DESC";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue(':id', $id_proyecto_gestionado, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function get_datos_envios_agrupados($id_proyecto_gestionado)
+    {
+        $conn = $this->get_conexion();
+        $sql = "SELECT 
+                ecc.id,
+                ecc.id_descripciones_proyecto,
+                ecc.usu_crea,
+                ecc.sector_id,
+                ecc.status_envio,
+                ecc.ruta_comprimido,
+                ecc.clave_comprimido,
+                ecc.fech_crea,
+                ecc.fech_actualizacion,
+                tu.usu_correo,
+                s.sector_nombre
+            FROM envio_correo_cliente ecc
+            LEFT JOIN tm_usuario tu ON tu.usu_id = ecc.usu_crea
+            LEFT JOIN sectores s ON s.sector_id = ecc.sector_id
+            WHERE ecc.id_proyecto_gestionado = :id
+            ORDER BY ecc.id DESC";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue(':id', $id_proyecto_gestionado, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
     public function get_validar_si_tiene_correos_enviados(int $id_proyecto_gestionado)
     {
         $conn = parent::get_conexion();

@@ -20,11 +20,18 @@ if (isset($_SESSION['usu_id'])) {
     $estado_actual = array_filter($total_estados, fn($e) => $e['estados_id'] == $estado_id);
     $estado_actual = reset($estado_actual);
 
-    $validar_envio_correo = $proyecto->get_validar_si_tiene_correos_enviados($pg_id)['total']; //validar si tiene correos enviados
-    $datos_correos_enviados = $proyecto->get_datos_correo_enviado($pg_id); //quien envio los correos
-    $documentos_envio_cliente = $proyecto->get_documentos_para_envio_correo_cliente($pg_id); //validar documentos a enviar
-    $client_rs = $proyecto->get_datos_cliente_para_envio_correo($pg_id)['client_rs']; //validar documentos a enviar
-    $correo_envio_cliente = $proyecto->get_datos_cliente_para_envio_correo($pg_id)['correo_envio_cliente']; //validar documentos a enviar
+    $validar_envio_correo     = $proyecto->get_validar_si_tiene_correos_enviados($pg_id)['total'];
+    $datos_correos_enviados   = $proyecto->get_datos_correo_enviado($pg_id); // podés eliminar esta también si ya no la usás en el modal
+    $documentos_envio_cliente = $proyecto->get_documentos_para_envio_correo_cliente($pg_id);
+    $client_rs                = $proyecto->get_datos_cliente_para_envio_correo($pg_id)['client_rs'];
+    $correo_envio_cliente     = $proyecto->get_datos_cliente_para_envio_correo($pg_id)['correo_envio_cliente'];
+    $datos_envios_agrupados   = $proyecto->get_datos_envios_agrupados($pg_id);
+    $datos_correos_internos   = $proyecto->get_datos_correo_interno_enviado($pg_id);
+
+    $internos_por_desc = [];
+    foreach ($datos_correos_internos as $interno) {
+        $internos_por_desc[$interno['id_envio_correo_cliente']][] = $interno;
+    }
     //----------------------------------------------------------------------------
 
 ?>
@@ -1301,6 +1308,19 @@ if (isset($_SESSION['usu_id'])) {
                             }).then(() => {
                                 location.reload();
                             });
+                        } else if (data.status === 'ERROR') {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error al enviar el correo',
+                                html: `
+            <p>${data.error}</p>
+            <hr>
+            <p class="text-muted fs-13">El ZIP fue generado y guardado. Podés descargarlo desde el historial de envíos y reenviarlo manualmente.</p>
+        `,
+                                showConfirmButton: true
+                            }).then(() => {
+                                location.reload();
+                            });
                         } else {
                             Swal.fire({
                                 icon: 'error',
@@ -1375,6 +1395,45 @@ if (isset($_SESSION['usu_id'])) {
             });
         }
 
+        function reenviar_correo_interno(id) {
+            Swal.fire({
+                icon: 'info',
+                title: 'Atención',
+                text: '¿Confirma que la copia fue enviada por un medio alternativo?',
+                showConfirmButton: true,
+                showCancelButton: true,
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.post("../../../../../Controller/ctrCorreo.php?correo=update_envio_correo_interno", {
+                        id: id,
+                        status_envio: 'OK'
+                    }, function(data) {
+                        if (data.status === 'success') {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Bien',
+                                text: 'Copia actualizada correctamente.',
+                                showConfirmButton: false,
+                                timer: 1000
+                            }).then(() => {
+                                $(`.badge_status_interno_${id}`)
+                                    .removeClass('bg-danger')
+                                    .addClass('bg-success')
+                                    .text('OK');
+                                $(`#correo_interno_item_${id} .ri-mail-send-line`).closest('span').remove();
+                                $(`#correo_interno_item_${id}`).append(`
+                            <br><span class="badge bg-success text-light">
+                                <i class="ri-mail-check-line"></i> Copia enviada por otro medio
+                            </span>
+                            <br><span class="text-muted fs-11">Confirmado ahora</span>
+                        `);
+                                correo_actualizado = true;
+                            });
+                        }
+                    }, "json");
+                }
+            });
+        }
 
         function descargarPipeline(id) {
             $("#ModalVerTecnologiasPipeline").modal("show");
