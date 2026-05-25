@@ -60,6 +60,9 @@ class Correo extends Conexion
     public function enviarCorreoProyectoFinalizado($id)
     {
         $datos = $this->getDatosParaCorreo($id);
+        $categoria = $datos->producto ?? 'N/A';
+        $cliente   = $datos->cliente  ?? 'N/A';
+        $refProy   = $datos->refProy  ?? 'N/A';
         if (!$datos) {
             return 'No se encontraron datos del proyecto';
         }
@@ -244,7 +247,7 @@ class Correo extends Conexion
             return 'ERROR SMTP (cliente): ' . $mailCliente->ErrorInfo;
         }
 
-        // ── COPIAS INTERNAS por sector (sin ZIP, sin clave) ────────────────────
+        // COPIAS INTERNAS por sector (sin ZIP, sin clave)
         foreach ($correos_copia as $correo_copia) {
             $correo_copia = trim($correo_copia);
             $mailCopia = new PHPMailer(true);
@@ -252,12 +255,12 @@ class Correo extends Conexion
                 $smtpConfig($mailCopia);
                 $mailCopia->addAddress($correo_copia);
                 $mailCopia->Subject = 'Copia - Documentos enviados al cliente';
-                $mailCopia->Body    = "
-                <p>Estimados,</p>
-                <p>Se realizó el envío de documentación al cliente <strong>{$correo_destino}</strong>.</p>
-                <p>Los documentos fueron enviados correctamente desde Tasking MSSP.</p>
-                <p>Saludos.</p>
-            ";
+                $mailCopia->Body = "
+                    <p>Estimados,</p>
+                    <p>Se realizó el envío de documentación al cliente <strong>{$cliente}</strong> al email <strong>{$correo_destino}</strong> acorde al proyecto <strong>{$categoria}</strong> - referencia <strong>{$refProy}</strong>.</p>
+                    <p>Los documentos fueron enviados correctamente desde Tasking MSSP.</p>
+                    <p>Saludos.</p>
+                ";
                 $mailCopia->send();
                 $this->registrarEnvioInterno($id_proyecto_gestionado, $id_descripciones_proyecto, $correo_copia, 'OK');
             } catch (Exception $e) {
