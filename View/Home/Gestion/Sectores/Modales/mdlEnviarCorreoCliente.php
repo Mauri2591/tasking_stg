@@ -1,39 +1,48 @@
 <div class="modal fade" id="ModalEnviarCorreoCliente" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog" style="max-width: 95vw;">
         <div class="modal-content">
-            <div class="modal-header">
-                <div class="d-flex align-items-center gap-3">
-                    <h5 class="modal-title">
-                        Estos documentos se enviarán por Email al cliente:
-                        <strong><?= htmlspecialchars(strtoupper($client_rs ?? '')) ?></strong>
-                    </h5>
-                </div>
-                <?php if ($estado_actual): ?>
-                    <span class="fs-14">
-                        <span class="badge" style="background-color: <?= $estado_actual['CatColor'] ?>;">
-                            <i class="<?= $estado_actual['icono'] ?>"></i>
-                            ESTADO <?= htmlspecialchars($estado_actual['estados_nombre']) ?>
+
+            <div class="card ribbon-box shadow-none mb-lg-0">
+                <div class="card-body" style="position: relative;">
+
+                    <div class="ribbon ribbon-info py-0 ribbon-shape d-flex align-items-center">
+                        Envio de Correos <i class="ri-mail-send-line fs-18 mx-1"></i>
+                    </div>
+
+                    <?php if ($estado_actual): ?>
+                        <span class="fs-14 mt-2" style="position: absolute; top: 0; right: 0;">
+                            <span class="badge" style="background-color: <?= $estado_actual['CatColor'] ?>;">
+                                <i class="<?= $estado_actual['icono'] ?>"></i>
+                                ESTADO <?= htmlspecialchars($estado_actual['estados_nombre']) ?>
+                            </span>
                         </span>
-                    </span>
-                <?php endif; ?>
-            </div>
-
-            <?php if ($_SESSION['sector_id'] == '4'): ?>
-
-                <div class="d-flex align-items-center gap-2 mx-2 my-2">
-                    <span class="badge text-dark fs-13"><span class="text-danger fw-bold">*</span> Correo:</span>
-                    <input type="text" id="correo_envio_email" name="correo_envio_email" class="form-control form-control-sm" style="width: 15rem;" value="<?= htmlspecialchars($correo_envio_cliente ?? '') ?>">
+                    <?php endif; ?>
+                    <br>
+                    <div class="bg-light rounded p-2 border mt-2 text-center">
+                        <span class="text-muted fs-15">
+                            Los siguientes documentos serán enviados al cliente
+                        </span>
+                        <strong class="mb-0 fs-15 fw-bold text-dark">
+                            <?= htmlspecialchars(strtoupper($client_rs ?? '')) ?>
+                        </strong>
+                    </div>
                 </div>
-
-            <?php endif; ?>
-
+            </div>
             <div class="modal-body">
                 <div class="d-flex gap-3" style="height: 500px;">
 
                     <!-- Lista de documentos -->
                     <div style="width: 25rem; border-right: 1px solid #ddd; overflow-y: auto; border:.1rem solid #ddd; border-radius: .7rem;">
 
-                        <p class="fw-bold fs-13 px-2 pt-2">Documentos a enviar</p>
+                        <p class="fw-bold fs-13 px-2 pt-2">Informacion asociada al cliente:</p>
+
+                        <?php if ($_SESSION['sector_id'] == '4'): ?>
+                            <div class="d-flex align-items-center">
+                                <span class="badge bg-light text-dark fs-11 border-dark mx-2"><span class="text-danger">*</span> Correo:</span>
+                                <input type="text" id="correo_envio_email" name="correo_envio_email" class="form-control form-control-sm" style="width: 15rem;" value="<?= htmlspecialchars($correo_envio_cliente ?? '') ?>">
+                            </div>
+                        <?php endif; ?>
+
                         <?php
                         $archivos = [];
                         $carpeta  = '';
@@ -46,7 +55,7 @@
                         ?>
 
                         <?php if (!empty($archivos)): ?>
-                            <span class="badge bg-light text-dark fs-11 px-2 mb-3 mx-2">Fecha: <?= htmlspecialchars($doc['fech_crea']) ?></span>
+                            <span class="badge bg-light text-dark fs-11 px-2 mb-1 mt-3 mx-2">Fecha de carga de los Docs: <span class="fs-12 border"><?= htmlspecialchars($doc['fech_crea']) ?></span></span>
                             <?php foreach ($archivos as $archivo): ?>
                                 <?php
                                 $ext   = strtolower(pathinfo(trim($archivo), PATHINFO_EXTENSION));
@@ -69,7 +78,7 @@
                         <?php endif; ?>
 
                         <hr>
-                        <span class="badge bg-light text-dark border-dark mx-2">Correos enviados al Cliente</span>
+                        <span class="badge bg-light text-dark fs-11 border-dark mx-2">Correos enviados:</span>
                         <div class="card-body" style="width: 100%; height: 10rem; overflow-y: auto; padding: 1rem;">
                             <ol style="padding-left: 1rem;">
                                 <?php if (!empty($datos_correos_enviados)): ?>
