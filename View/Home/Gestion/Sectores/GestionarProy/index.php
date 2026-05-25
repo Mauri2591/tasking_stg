@@ -1000,7 +1000,7 @@ if (isset($_SESSION['usu_id'])) {
                             const porcentaje = Math.round((e.loaded / e.total) * 100);
                             document.getElementById('progreso').style.width = porcentaje + '%';
                             document.getElementById('porcentaje-texto').textContent = porcentaje + '%';
-                            textoBtn.textContent = "Subiendo " + porcentaje + "%";
+                            textoBtn.textContent = "Subiendo ";
                         }
                     });
 
