@@ -1268,7 +1268,7 @@ if (isset($_SESSION['usu_id'])) {
                             icon: 'warning',
                             title: 'Atención',
                             text: 'Ingrese un correo destino',
-                            timer: 1200,
+                            timer: 1300,
                             showConfirmButton: false
                         });
                         return;
