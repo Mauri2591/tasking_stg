@@ -5,7 +5,7 @@
             <div class="card ribbon-box shadow-none mb-lg-0">
                 <div class="card-body" style="position: relative;">
 
-                    <div class="ribbon ribbon-info py-0 ribbon-shape d-flex align-items-center">
+                    <div class="ribbon ribbon-secondary py-0 ribbon-shape d-flex align-items-center">
                         Envio de Correos <i class="ri-mail-send-line fs-18 mx-1"></i>
                     </div>
 
