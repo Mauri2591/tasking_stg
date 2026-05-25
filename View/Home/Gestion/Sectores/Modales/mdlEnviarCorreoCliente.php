@@ -19,10 +19,10 @@
                     <?php endif; ?>
                     <br>
                     <div class="bg-light rounded p-2 border mt-2 text-center">
-                        <span class="text-muted fs-15">
+                        <span class="text-muted fs-16">
                             Los siguientes documentos serán enviados al cliente
                         </span>
-                        <strong class="mb-0 fs-15 fw-bold text-dark">
+                        <strong class="mb-0 fs-16 fw-bold text-dark">
                             <?= htmlspecialchars(strtoupper($client_rs ?? '')) ?>
                         </strong>
                     </div>

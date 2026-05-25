@@ -357,7 +357,7 @@ if (isset($_SESSION['usu_id'])) {
                                             </li>
                                         </ul>
 
-                                        <section class="p-2 mt-2" style="display: none;" id="sect_descrip">
+                                        <section class="p-1 mt-2" style="display: none;" id="sect_descrip">
                                             <textarea name="descripcion_proyecto" id="descripcion_proyecto"
                                                 class="d-none"></textarea>
 
@@ -403,7 +403,6 @@ if (isset($_SESSION['usu_id'])) {
                                                     class="btn btn-sm btn-success text-light" style="margin: 0 .1rem">Finalizar</button>
                                             </section>
                                         </section>
-
                                         <hr>
                                         <hr>
                                         <div>
