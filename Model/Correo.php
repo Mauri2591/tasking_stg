@@ -227,9 +227,9 @@ class Correo extends Conexion
     ";
             $mailCliente->addAttachment($ruta_zip, $nombre_zip);
             $mailCliente->send();
-            $id_ecc = $this->registrarEnvio($id_proyecto_gestionado, 'OK', $ruta_zip, $clave, $id_descripciones_proyecto);
+            $id_ecc = $this->registrarEnvio($id_proyecto_gestionado, 'OK', $ruta_zip, $clave, $id_descripciones_proyecto, $correo_destino);
         } catch (Exception $e) {
-            $id_ecc = $this->registrarEnvio($id_proyecto_gestionado, 'ERROR', $ruta_zip, $clave, $id_descripciones_proyecto);
+            $id_ecc = $this->registrarEnvio($id_proyecto_gestionado, 'ERROR', $ruta_zip, $clave, $id_descripciones_proyecto, $correo_destino);
             foreach ($correos_copia as $correo_copia) {
                 $this->registrarEnvioInterno($id_proyecto_gestionado, $id_descripciones_proyecto, trim($correo_copia), 'PENDIENTE', 'Envío al cliente fallido', $id_ecc);
             }
@@ -265,13 +265,14 @@ class Correo extends Conexion
         ];
     }
 
-    private function registrarEnvio(int $id_proyecto_gestionado, string $status, string $ruta_zip = '', string $clave = '', ?int $id_descripciones_proyecto = null): int
+    private function registrarEnvio(int $id_proyecto_gestionado, string $status, string $ruta_zip = '', string $clave = '', ?int $id_descripciones_proyecto = null, string $correo_destino = ''): int
     {
         $conn = $this->get_conexion();
-        $sql  = "INSERT INTO envio_correo_cliente (id_descripciones_proyecto, id_proyecto_gestionado, usu_crea, sector_id, status_envio, ruta_comprimido, clave_comprimido, fech_crea) 
-         VALUES (:id_desc, :id, :usu, :sector, :status, :ruta, :clave, now())";
+        $sql  = "INSERT INTO envio_correo_cliente (id_descripciones_proyecto, correo, id_proyecto_gestionado, usu_crea, sector_id, status_envio, ruta_comprimido, clave_comprimido, fech_crea) 
+         VALUES (:id_desc, :correo, :id, :usu, :sector, :status, :ruta, :clave, now())";
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(':id_desc', $id_descripciones_proyecto,  PDO::PARAM_INT);
+        $stmt->bindValue(':correo',  $correo_destino,             PDO::PARAM_STR);
         $stmt->bindValue(':id',      $id_proyecto_gestionado,     PDO::PARAM_INT);
         $stmt->bindValue(':usu',     (int)$_SESSION['usu_id'],    PDO::PARAM_INT);
         $stmt->bindValue(':sector',  (int)$_SESSION['sector_id'], PDO::PARAM_INT);
