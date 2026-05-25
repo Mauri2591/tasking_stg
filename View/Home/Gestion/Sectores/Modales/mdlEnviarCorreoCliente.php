@@ -22,7 +22,7 @@
 
                 <div class="d-flex align-items-center gap-2 mx-2 my-2">
                     <span class="badge text-dark fs-13"><span class="text-danger fw-bold">*</span> Correo:</span>
-                    <input type="text" id="correo_envio_email" name="correo_envio_email" class="form-control form-control-sm" style="width: auto;" value="<?= htmlspecialchars($correo_envio_cliente ?? '') ?>">
+                    <input type="text" id="correo_envio_email" name="correo_envio_email" class="form-control form-control-sm" style="width: 15rem;" value="<?= htmlspecialchars($correo_envio_cliente ?? '') ?>">
                 </div>
 
             <?php endif; ?>

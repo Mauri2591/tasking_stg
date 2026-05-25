@@ -1271,6 +1271,7 @@ if (isset($_SESSION['usu_id'])) {
                             timer: 1300,
                             showConfirmButton: false
                         });
+                        $("#correo_envio_email").focus();
                         return;
                     }
 
