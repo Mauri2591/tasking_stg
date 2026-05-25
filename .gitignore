@@ -4,3 +4,4 @@ audit_login.sql
 apuntesMios.txt
 View/Home/Public/Uploads/
 Api/public/.htaccess
+Config/Config.php
