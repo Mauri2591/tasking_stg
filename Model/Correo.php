@@ -137,7 +137,8 @@ class Correo extends Conexion
     public function enviarCorreoCliente(int $id_proyecto_gestionado, string $correo_destino)
     {
         $correos_copia = array_filter(explode(',', MAIL_COPIA_SECTORES));
-        //SMTP base
+
+        // ── SMTP base ──────────────────────────────────────────────────────────
         $smtpConfig = function (PHPMailer $mail) {
             $mail->isSMTP();
             $mail->Host       = SMTP_HOST;
@@ -157,6 +158,13 @@ class Correo extends Conexion
             $mail->setFrom(SMTP_FROM, SMTP_FROM_NAME);
             $mail->isHTML(true);
         };
+
+        // ── Datos del proyecto para el cuerpo del correo ───────────────────────
+        $datos    = $this->getDatosParaCorreo($id_proyecto_gestionado);
+        $categoria = $datos->producto ?? 'N/A';
+        $cliente   = $datos->cliente  ?? 'N/A';
+        $refProy   = $datos->refProy  ?? 'N/A';
+
         $conn = $this->get_conexion();
         $sql  = "SELECT id, carpeta_documentos_proy, documento 
              FROM descripciones_proyecto 
@@ -203,28 +211,6 @@ class Correo extends Conexion
             $this->registrarEnvio($id_proyecto_gestionado, 'ERROR');
             return 'No se encontraron archivos físicos en el servidor';
         }
-
-        // ── SMTP base ──────────────────────────────────────────────────────────
-        $smtpConfig = function (PHPMailer $mail) {
-            $mail->isSMTP();
-            $mail->Host       = $_ENV['SMTP_HOST'];
-            $mail->SMTPAuth   = true;
-            $mail->Username   = $_ENV['SMTP_USER'];
-            $mail->Password   = $_ENV['SMTP_PASS'];
-            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-            $mail->Port       = (int)$_ENV['SMTP_PORT'];
-            $mail->SMTPOptions = [
-                'ssl' => [
-                    'verify_peer'       => false,
-                    'verify_peer_name'  => false,
-                    'allow_self_signed' => true,
-                ],
-            ];
-            $mail->CharSet = 'UTF-8';
-            $mail->setFrom($_ENV['SMTP_FROM'], $_ENV['SMTP_FROM_NAME']);
-            $mail->isHTML(true);
-        };
-
         // ── CORREO AL CLIENTE (con ZIP y clave) ────────────────────────────────
         $mailCliente = new PHPMailer(true);
         try {
