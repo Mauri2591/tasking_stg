@@ -223,7 +223,7 @@ class Correo extends Conexion
         <p>Estimado/a cliente,</p>
         <p>Adjuntamos la documentación correspondiente a su proyecto en formato ZIP protegido.</p>
         <p><strong>Clave para abrir el archivo:</strong> {$clave}</p>
-        <p>Saludos,<br>Tasking MSSP</p>
+        <p>Saludos.</p>
     ";
             $mailCliente->addAttachment($ruta_zip, $nombre_zip);
             $mailCliente->send();
