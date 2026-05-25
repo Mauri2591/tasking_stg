@@ -3,4 +3,4 @@ tasking_stg.sql
 audit_login.sql
 apuntesMios.txt
 View/Home/Public/Uploads/
-Api/public/.htaccess
+Api/public/.htaccessConfig/Config.php
