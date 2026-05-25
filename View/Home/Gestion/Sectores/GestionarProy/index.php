@@ -1288,15 +1288,15 @@ if (isset($_SESSION['usu_id'])) {
                         btnEnviar.textContent = textoOriginal;
                         btnEnviar.disabled = false;
 
-                        if (data.status === 'OK_TEST') {
+                        if (data.status === 'OK') {
                             Swal.fire({
                                 icon: 'success',
-                                title: 'ZIP generado OK',
+                                title: 'Correo enviado correctamente',
                                 html: `
-                                <p><strong>Archivos comprimidos:</strong> ${data.archivos_encontrados}</p>
-                                <p><strong>Clave:</strong> <code style="font-size:1.1rem; background:#eee; padding:2px 6px;">${data.clave}</code></p>
-                                <p><strong>Ruta ZIP:</strong> <small>${data.zip}</small></p>
-                                `,
+            <p><strong>Archivos comprimidos:</strong> ${data.archivos_encontrados}</p>
+            <p><strong>Clave:</strong> <code style="font-size:1.1rem; background:#eee; padding:2px 6px;">${data.clave}</code></p>
+            <p><strong>Ruta ZIP:</strong> <small>${data.zip}</small></p>
+        `,
                                 showConfirmButton: true
                             }).then(() => {
                                 location.reload();

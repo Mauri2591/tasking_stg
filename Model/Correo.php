@@ -108,8 +108,52 @@ class Correo extends Conexion
         }
     }
 
+    private function registrarEnvioInterno(
+        int $id_proyecto_gestionado,
+        ?int $id_descripciones_proyecto,
+        string $correo,
+        string $status,
+        string $detalle_error = ''
+    ): void {
+        $conn = $this->get_conexion();
+        $sql  = "INSERT INTO envio_correo_interno 
+                (id_descripciones_proyecto, id_proyecto_gestionado, correo, usu_crea, sector_id, status_envio, detalle_error, fech_crea) 
+             VALUES 
+                (:id_desc, :id, :correo, :usu, :sector, :status, :detalle, now())";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue(':id_desc', $id_descripciones_proyecto,  PDO::PARAM_INT);
+        $stmt->bindValue(':id',      $id_proyecto_gestionado,     PDO::PARAM_INT);
+        $stmt->bindValue(':correo',  $correo,                     PDO::PARAM_STR);
+        $stmt->bindValue(':usu',     (int)$_SESSION['usu_id'],    PDO::PARAM_INT);
+        $stmt->bindValue(':sector',  (int)$_SESSION['sector_id'], PDO::PARAM_INT);
+        $stmt->bindValue(':status',  $status,                     PDO::PARAM_STR);
+        $stmt->bindValue(':detalle', $detalle_error,              PDO::PARAM_STR);
+        $stmt->execute();
+    }
+
     public function enviarCorreoCliente(int $id_proyecto_gestionado, string $correo_destino)
     {
+        $correos_copia = array_filter(explode(',', MAIL_COPIA_SECTORES));
+        //SMTP base
+        $smtpConfig = function (PHPMailer $mail) {
+            $mail->isSMTP();
+            $mail->Host       = SMTP_HOST;
+            $mail->SMTPAuth   = true;
+            $mail->Username   = SMTP_USER;
+            $mail->Password   = SMTP_PASS;
+            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+            $mail->Port       = (int)SMTP_PORT;
+            $mail->SMTPOptions = [
+                'ssl' => [
+                    'verify_peer'       => false,
+                    'verify_peer_name'  => false,
+                    'allow_self_signed' => true,
+                ],
+            ];
+            $mail->CharSet = 'UTF-8';
+            $mail->setFrom(SMTP_FROM, SMTP_FROM_NAME);
+            $mail->isHTML(true);
+        };
         $conn = $this->get_conexion();
         $sql  = "SELECT id, carpeta_documentos_proy, documento 
              FROM descripciones_proyecto 
@@ -120,14 +164,12 @@ class Correo extends Conexion
         $stmt->execute();
         $doc = $stmt->fetch(PDO::FETCH_ASSOC);
 
-
         if (!$doc || empty($doc['documento'])) {
             $this->registrarEnvio($id_proyecto_gestionado, 'ERROR');
             return 'Sin documentos para enviar';
         }
 
         $id_descripciones_proyecto = $doc['id'];
-
         $carpeta  = $doc['carpeta_documentos_proy'];
         $archivos = array_filter(explode(',', $doc['documento']));
         $clave    = strtoupper(bin2hex(random_bytes(6)));
@@ -159,10 +201,71 @@ class Correo extends Conexion
             return 'No se encontraron archivos físicos en el servidor';
         }
 
-        $this->registrarEnvio($id_proyecto_gestionado, 'OK', $ruta_zip, $clave, $id_descripciones_proyecto);
+        // ── SMTP base ──────────────────────────────────────────────────────────
+        $smtpConfig = function (PHPMailer $mail) {
+            $mail->isSMTP();
+            $mail->Host       = $_ENV['SMTP_HOST'];
+            $mail->SMTPAuth   = true;
+            $mail->Username   = $_ENV['SMTP_USER'];
+            $mail->Password   = $_ENV['SMTP_PASS'];
+            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+            $mail->Port       = (int)$_ENV['SMTP_PORT'];
+            $mail->SMTPOptions = [
+                'ssl' => [
+                    'verify_peer'       => false,
+                    'verify_peer_name'  => false,
+                    'allow_self_signed' => true,
+                ],
+            ];
+            $mail->CharSet = 'UTF-8';
+            $mail->setFrom($_ENV['SMTP_FROM'], $_ENV['SMTP_FROM_NAME']);
+            $mail->isHTML(true);
+        };
 
+        // ── CORREO AL CLIENTE (con ZIP y clave) ────────────────────────────────
+        $mailCliente = new PHPMailer(true);
+        try {
+            $smtpConfig($mailCliente);
+            $mailCliente->addAddress($correo_destino);
+            $mailCliente->Subject = 'Documentos del proyecto - Tasking MSSP';
+            $mailCliente->Body    = "
+            <p>Estimado/a cliente,</p>
+            <p>Adjuntamos la documentación correspondiente a su proyecto en formato ZIP protegido.</p>
+            <p><strong>Clave para abrir el archivo:</strong> {$clave}</p>
+            <p>Saludos,<br>Tasking MSSP</p>
+        ";
+            $mailCliente->addAttachment($ruta_zip, $nombre_zip);
+            $mailCliente->send();
+            // ZIP y clave se guardan siempre para contingencia
+            $this->registrarEnvio($id_proyecto_gestionado, 'OK', $ruta_zip, $clave, $id_descripciones_proyecto);
+        } catch (Exception $e) {
+            // Guardamos ERROR pero CON zip y clave para que puedan descargarlo y reenviar por Outlook
+            $this->registrarEnvio($id_proyecto_gestionado, 'ERROR', $ruta_zip, $clave, $id_descripciones_proyecto);
+            return 'ERROR SMTP (cliente): ' . $mailCliente->ErrorInfo;
+        }
+
+        // ── COPIAS INTERNAS por sector (sin ZIP, sin clave) ────────────────────
+        foreach ($correos_copia as $correo_copia) {
+            $correo_copia = trim($correo_copia);
+            $mailCopia = new PHPMailer(true);
+            try {
+                $smtpConfig($mailCopia);
+                $mailCopia->addAddress($correo_copia);
+                $mailCopia->Subject = 'Copia - Documentos enviados al cliente';
+                $mailCopia->Body    = "
+                <p>Estimados,</p>
+                <p>Se realizó el envío de documentación al cliente <strong>{$correo_destino}</strong>.</p>
+                <p>Los documentos fueron enviados correctamente desde Tasking MSSP.</p>
+                <p>Saludos.</p>
+            ";
+                $mailCopia->send();
+                $this->registrarEnvioInterno($id_proyecto_gestionado, $id_descripciones_proyecto, $correo_copia, 'OK');
+            } catch (Exception $e) {
+                $this->registrarEnvioInterno($id_proyecto_gestionado, $id_descripciones_proyecto, $correo_copia, 'ERROR', $mailCopia->ErrorInfo);
+            }
+        }
         return [
-            'status'               => 'OK_TEST',
+            'status'               => 'OK',
             'clave'                => $clave,
             'zip'                  => $ruta_zip,
             'url_descarga'         => ZIP_URL . $nombre_zip,
