@@ -1369,17 +1369,13 @@ if (isset($_SESSION['usu_id'])) {
                                         .removeClass('bg-danger')
                                         .addClass('bg-success')
                                         .text('OK');
-
                                     $(`#correo_item_${id} .ri-mail-send-line`).closest('span').remove();
-
-                                    // Agregar badge de confirmación
                                     $(`#correo_item_${id}`).append(`
-                                <br><span class="badge bg-success text-light">
-                                    <i class="ri-mail-check-line"></i> Correo enviado por otro medio
-                                </span>
-                                <br><span class="text-muted fs-11">Confirmado ahora</span>
-                            `);
-
+                                        <span class="badge bg-success text-light fs-10 mt-1 d-inline-block">
+                                            <i class="ri-mail-check-line"></i> Enviado por otro medio
+                                        </span>
+                                        <span class="text-muted fs-10"> Confirmado ahora</span>
+                                    `);
                                     correo_actualizado = true;
                                 });
                             }
@@ -1418,16 +1414,16 @@ if (isset($_SESSION['usu_id'])) {
                                 timer: 1000
                             }).then(() => {
                                 $(`.badge_status_interno_${id}`)
-                                    .removeClass('bg-danger')
-                                    .addClass('bg-success')
+                                    .removeClass('bg-danger bg-warning text-dark')
+                                    .addClass('bg-success text-light')
                                     .text('OK');
-                                $(`#correo_interno_item_${id} .ri-mail-send-line`).closest('span').remove();
+                                $(`#correo_interno_item_${id} .ri-mail-send-line`).remove();
                                 $(`#correo_interno_item_${id}`).append(`
-                            <br><span class="badge bg-success text-light">
-                                <i class="ri-mail-check-line"></i> Copia enviada por otro medio
-                            </span>
-                            <br><span class="text-muted fs-11">Confirmado ahora</span>
-                        `);
+                        <br><span class="badge bg-success text-light fs-10">
+                            <i class="ri-mail-check-line"></i> Copia enviada por otro medio
+                        </span>
+                        <span class="text-muted fs-10"> Confirmado ahora</span>
+                    `);
                                 correo_actualizado = true;
                             });
                         }
