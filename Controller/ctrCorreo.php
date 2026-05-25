@@ -42,9 +42,26 @@ switch ($case) {
         }
 
         $result = $correo->enviarCorreoCliente($id_proyecto_gestionado, $correo_destino);
-        $auditoria->insert_audit_estados_proyecto($_POST['id_proyecto_gestionado'], 21, $_SESSION['usu_id'], $_SESSION['sector_id']);
-        echo json_encode($result);
+
+        if (is_array($result)) {
+            $auditoria->insert_audit_estados_proyecto($_POST['id_proyecto_gestionado'], 21, $_SESSION['usu_id'], $_SESSION['sector_id']);
+            echo json_encode($result);
+        } else {
+            // Retornó un string de error
+            echo json_encode(['status' => 'ERROR', 'error' => $result]);
+        }
         exit;
+
+    case 'update_envio_correo_interno':
+        $datos = $correo->update_envio_correo_interno($_POST['id'], $_POST['status_envio']);
+        if ($datos == 'success') {
+            echo json_encode(['status' => 'success']);
+            http_response_code(200);
+        } else {
+            echo json_encode(['status' => 'error']);
+            http_response_code(400);
+        }
+        break;
 
     case 'update_envio_correo':
         $datos = $correo->update_envio_correo($_POST['id'], $_POST['status_envio']);
@@ -56,7 +73,6 @@ switch ($case) {
             http_response_code(400);
         }
         break;
-
 
     default:
         echo json_encode([

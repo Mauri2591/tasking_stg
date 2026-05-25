@@ -78,44 +78,40 @@
                         <?php endif; ?>
 
                         <hr>
-                        <span class="badge bg-light text-dark fs-11 border-dark mx-2">Correos enviados:</span>
-                        <div class="card-body" style="width: 100%; height: 10rem; overflow-y: auto; padding: 1rem;">
-                            <ol style="padding-left: 1rem;">
-                                <?php if (!empty($datos_correos_enviados)): ?>
-                                    <?php foreach ($datos_correos_enviados as $val): ?>
-                                        <li class="fs-13 my-2" id="correo_item_<?= intval($val['id']) ?>">
-                                            <span><strong>Usuario: </strong><?= htmlspecialchars($val['usu_correo']) ?></span><br>
-                                            <span><strong>Sector: </strong><?= htmlspecialchars($val['sector_nombre']) ?></span><br>
-                                            <span><strong>Status envio: </strong>
-                                                <span class="badge_status_<?= intval($val['id']) ?> <?= $val['status_envio'] == 'OK' ? 'badge bg-success text-light' : 'badge bg-danger text-light' ?>">
-                                                    <?= htmlspecialchars($val['status_envio']) ?>
-                                                </span>
-                                            </span>
-                                            <br>
-                                            <span><strong>Fecha: </strong><?= htmlspecialchars($val['fech_crea']) ?></span><br>
+                        <span class="badge bg-light text-dark fs-11 border-dark mx-2">Historial de envíos:</span>
+                        <div class="card-body" style="width: 100%; overflow-y: auto; padding: 1rem;">
+
+                            <?php if (!empty($datos_envios_agrupados)): ?>
+                                <?php foreach ($datos_envios_agrupados as $idx => $val): ?>
+
+                                    <div class="border rounded p-2 mb-2" style="background:#fafafa;">
+                                        <span class="badge bg-light text-dark fs-10 mb-1">Envío #<?= $idx + 1 ?></span>
+
+                                        <!-- CORREO AL CLIENTE -->
+                                        <div class="fs-13" id="correo_item_<?= intval($val['id']) ?>">
+                                            <strong>Cliente:</strong>
+                                            <span class="badge_status_<?= intval($val['id']) ?> <?= $val['status_envio'] == 'OK' ? 'badge bg-success text-light' : 'badge bg-danger text-light' ?>">
+                                                <?= htmlspecialchars($val['status_envio']) ?>
+                                            </span><br>
+                                            <span class="text-muted fs-11">Por: <?= htmlspecialchars($val['usu_correo']) ?> - <?= htmlspecialchars($val['sector_nombre']) ?></span><br>
+                                            <span class="text-muted fs-11">Fecha: <?= htmlspecialchars($val['fech_crea']) ?></span><br>
 
                                             <?php if ($_SESSION['sector_id'] == '4'): ?>
                                                 <?php if (!empty($val['ruta_comprimido'])): ?>
-                                                    <strong>Comprimido: </strong>
-                                                    <a href="<?= htmlspecialchars(ZIP_URL . basename($val['ruta_comprimido'])) ?>"
-                                                        download
-                                                        class="text-decoration-none">
+                                                    <a href="<?= htmlspecialchars(ZIP_URL . basename($val['ruta_comprimido'])) ?>" download class="text-decoration-none fs-11">
                                                         <i class="fa-solid fa-file-zipper"></i> Descargar ZIP
-                                                    </a>
-                                                    <br>
-                                                <?php else: ?>
-                                                    <span class="text-muted">Sin archivo</span>
+                                                    </a><br>
                                                 <?php endif; ?>
-                                                <span><strong>Clave: </strong><?= htmlspecialchars($val['clave_comprimido']) ?></span>
+                                                <span class="fs-11"><strong>Clave: </strong><?= htmlspecialchars($val['clave_comprimido']) ?></span><br>
                                             <?php endif; ?>
 
                                             <?php if (!empty($val['fech_actualizacion'])): ?>
-                                                <br><span class="badge bg-success text-light">
-                                                    <i class="ri-mail-check-line"></i> Correo enviado por otro medio
+                                                <span class="badge bg-success text-light fs-10 mt-1 d-inline-block">
+                                                    <i class="ri-mail-check-line"></i> Enviado por otro medio
                                                 </span>
-                                                <br><span class="text-muted fs-11">Confirmado el: <?= htmlspecialchars($val['fech_actualizacion']) ?></span>
-
-                                            <?php elseif ($_SESSION['sector_id'] == '4' && $val['status_envio'] == 'ERROR'): ?> <br><span><strong>Enviar Correo por otro medio: </strong>
+                                                <span class="text-muted fs-10">el: <?= htmlspecialchars($val['fech_actualizacion']) ?></span>
+                                            <?php elseif ($_SESSION['sector_id'] == '4' && $val['status_envio'] == 'ERROR'): ?>
+                                                <span><strong class="fs-11">Reenviar por otro medio: </strong>
                                                     <i class="ri-mail-send-line"
                                                         type="button"
                                                         onclick='reenviar_correo(<?= intval($val["id"]) ?>)'
@@ -124,13 +120,45 @@
                                                         onmouseout="this.style.filter='brightness(1)';"></i>
                                                 </span>
                                             <?php endif; ?>
-                                        </li>
-                                        <hr>
-                                    <?php endforeach; ?>
-                                <?php else: ?>
-                                    <p class="fs-13 text-muted">Sin correos enviados al cliente</p>
-                                <?php endif; ?>
-                            </ol>
+                                            <br> <br>
+                                        </div>
+
+                                        <!-- COPIAS del mismo envío -->
+                                        <?php $copias = $internos_por_desc[$val['id']] ?? []; ?>
+                                        <?php if (!empty($copias)): ?>
+                                            <div class="mt-1 ps-2 border-start border-secondary">
+                                                <?php foreach ($copias as $copia): ?>
+                                                    <div class="fs-12 my-1" id="correo_interno_item_<?= intval($copia['id']) ?>">
+                                                        <strong>Copia:</strong> <?= htmlspecialchars($copia['correo']) ?>
+                                                        <span class="badge_status_interno_<?= intval($copia['id']) ?> <?= $copia['status_envio'] == 'OK' ? 'badge bg-success text-light' : ($copia['status_envio'] == 'PENDIENTE' ? 'badge bg-warning text-dark' : 'badge bg-danger text-light') ?> fs-10">
+                                                            <?= htmlspecialchars($copia['status_envio']) ?>
+                                                        </span><br>
+                                                        <span class="text-muted fs-10">Fecha: <?= htmlspecialchars($copia['fech_crea']) ?></span>
+
+                                                        <?php if (!empty($copia['fech_actualizacion'])): ?>
+                                                            <br><span class="badge bg-success text-light fs-10">
+                                                                <i class="ri-mail-check-line"></i> Enviado por otro medio
+                                                            </span>
+                                                            <span class="text-muted fs-10">el: <?= htmlspecialchars($copia['fech_actualizacion']) ?></span>
+                                                        <?php elseif ($_SESSION['sector_id'] == '4' && in_array($copia['status_envio'], ['ERROR', 'PENDIENTE'])): ?>
+                                                            <i class="ri-mail-send-line ms-1"
+                                                                type="button"
+                                                                onclick='reenviar_correo_interno(<?= intval($copia["id"]) ?>)'
+                                                                style="font-size:1rem; color:#0d6efd; cursor:pointer;"
+                                                                onmouseover="this.style.filter='brightness(1.2)';"
+                                                                onmouseout="this.style.filter='brightness(1)';"></i>
+                                                        <?php endif; ?>
+                                                    </div>
+                                                <?php endforeach; ?>
+                                            </div>
+                                        <?php endif; ?>
+                                    </div>
+
+                                <?php endforeach; ?>
+                            <?php else: ?>
+                                <p class="fs-13 text-muted">Sin envíos registrados</p>
+                            <?php endif; ?>
+
                         </div>
                     </div>
 

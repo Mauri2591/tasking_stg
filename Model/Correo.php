@@ -116,21 +116,23 @@ class Correo extends Conexion
         ?int $id_descripciones_proyecto,
         string $correo,
         string $status,
-        string $detalle_error = ''
+        string $detalle_error = '',
+        ?int $id_envio_correo_cliente = null  // ← nuevo parámetro
     ): void {
         $conn = $this->get_conexion();
         $sql  = "INSERT INTO envio_correo_interno 
-                (id_descripciones_proyecto, id_proyecto_gestionado, correo, usu_crea, sector_id, status_envio, detalle_error, fech_crea) 
-             VALUES 
-                (:id_desc, :id, :correo, :usu, :sector, :status, :detalle, now())";
+            (id_descripciones_proyecto, id_proyecto_gestionado, correo, usu_crea, sector_id, status_envio, detalle_error, id_envio_correo_cliente, fech_crea) 
+         VALUES 
+            (:id_desc, :id, :correo, :usu, :sector, :status, :detalle, :id_ecc, now())";
         $stmt = $conn->prepare($sql);
-        $stmt->bindValue(':id_desc', $id_descripciones_proyecto,  PDO::PARAM_INT);
-        $stmt->bindValue(':id',      $id_proyecto_gestionado,     PDO::PARAM_INT);
-        $stmt->bindValue(':correo',  $correo,                     PDO::PARAM_STR);
-        $stmt->bindValue(':usu',     (int)$_SESSION['usu_id'],    PDO::PARAM_INT);
+        $stmt->bindValue(':id_desc', $id_descripciones_proyecto, PDO::PARAM_INT);
+        $stmt->bindValue(':id',      $id_proyecto_gestionado,    PDO::PARAM_INT);
+        $stmt->bindValue(':correo',  $correo,                    PDO::PARAM_STR);
+        $stmt->bindValue(':usu',     (int)$_SESSION['usu_id'],   PDO::PARAM_INT);
         $stmt->bindValue(':sector',  (int)$_SESSION['sector_id'], PDO::PARAM_INT);
-        $stmt->bindValue(':status',  $status,                     PDO::PARAM_STR);
-        $stmt->bindValue(':detalle', $detalle_error,              PDO::PARAM_STR);
+        $stmt->bindValue(':status',  $status,                    PDO::PARAM_STR);
+        $stmt->bindValue(':detalle', $detalle_error,             PDO::PARAM_STR);
+        $stmt->bindValue(':id_ecc',  $id_envio_correo_cliente,   PDO::PARAM_INT);
         $stmt->execute();
     }
 
@@ -211,25 +213,26 @@ class Correo extends Conexion
             $this->registrarEnvio($id_proyecto_gestionado, 'ERROR');
             return 'No se encontraron archivos físicos en el servidor';
         }
-        // ── CORREO AL CLIENTE (con ZIP y clave) ────────────────────────────────
+        // CORREO AL CLIENTE (con ZIP y clave)
         $mailCliente = new PHPMailer(true);
         try {
             $smtpConfig($mailCliente);
             $mailCliente->addAddress($correo_destino);
             $mailCliente->Subject = 'Documentos del proyecto - Tasking MSSP';
             $mailCliente->Body    = "
-            <p>Estimado/a cliente,</p>
-            <p>Adjuntamos la documentación correspondiente a su proyecto en formato ZIP protegido.</p>
-            <p><strong>Clave para abrir el archivo:</strong> {$clave}</p>
-            <p>Saludos,<br>Tasking MSSP</p>
-        ";
+        <p>Estimado/a cliente,</p>
+        <p>Adjuntamos la documentación correspondiente a su proyecto en formato ZIP protegido.</p>
+        <p><strong>Clave para abrir el archivo:</strong> {$clave}</p>
+        <p>Saludos,<br>Tasking MSSP</p>
+    ";
             $mailCliente->addAttachment($ruta_zip, $nombre_zip);
             $mailCliente->send();
-            // ZIP y clave se guardan siempre para contingencia
-            $this->registrarEnvio($id_proyecto_gestionado, 'OK', $ruta_zip, $clave, $id_descripciones_proyecto);
+            $id_ecc = $this->registrarEnvio($id_proyecto_gestionado, 'OK', $ruta_zip, $clave, $id_descripciones_proyecto);
         } catch (Exception $e) {
-            // Guardamos ERROR pero CON zip y clave para que puedan descargarlo y reenviar por Outlook
-            $this->registrarEnvio($id_proyecto_gestionado, 'ERROR', $ruta_zip, $clave, $id_descripciones_proyecto);
+            $id_ecc = $this->registrarEnvio($id_proyecto_gestionado, 'ERROR', $ruta_zip, $clave, $id_descripciones_proyecto);
+            foreach ($correos_copia as $correo_copia) {
+                $this->registrarEnvioInterno($id_proyecto_gestionado, $id_descripciones_proyecto, trim($correo_copia), 'PENDIENTE', 'Envío al cliente fallido', $id_ecc);
+            }
             return 'ERROR SMTP (cliente): ' . $mailCliente->ErrorInfo;
         }
 
@@ -242,15 +245,15 @@ class Correo extends Conexion
                 $mailCopia->addAddress($correo_copia);
                 $mailCopia->Subject = 'Copia - Documentos enviados al cliente';
                 $mailCopia->Body = "
-                    <p>Estimados,</p>
-                    <p>Se realizó el envío de documentación al cliente <strong>{$cliente}</strong> al email <strong>{$correo_destino}</strong> acorde al proyecto <strong>{$categoria}</strong> - referencia <strong>{$refProy}</strong>.</p>
-                    <p>Los documentos fueron enviados correctamente desde Tasking MSSP.</p>
-                    <p>Saludos.</p>
-                ";
+            <p>Estimados,</p>
+            <p>Se realizó el envío de documentación al cliente <strong>{$cliente}</strong> al email <strong>{$correo_destino}</strong> acorde al proyecto <strong>{$categoria}</strong> - referencia <strong>{$refProy}</strong>.</p>
+            <p>Los documentos fueron enviados correctamente desde Tasking MSSP.</p>
+            <p>Saludos.</p>
+        ";
                 $mailCopia->send();
-                $this->registrarEnvioInterno($id_proyecto_gestionado, $id_descripciones_proyecto, $correo_copia, 'OK');
+                $this->registrarEnvioInterno($id_proyecto_gestionado, $id_descripciones_proyecto, $correo_copia, 'OK', '', $id_ecc);
             } catch (Exception $e) {
-                $this->registrarEnvioInterno($id_proyecto_gestionado, $id_descripciones_proyecto, $correo_copia, 'ERROR', $mailCopia->ErrorInfo);
+                $this->registrarEnvioInterno($id_proyecto_gestionado, $id_descripciones_proyecto, $correo_copia, 'ERROR', $mailCopia->ErrorInfo, $id_ecc);
             }
         }
         return [
@@ -262,11 +265,11 @@ class Correo extends Conexion
         ];
     }
 
-    private function registrarEnvio(int $id_proyecto_gestionado, string $status, string $ruta_zip = '', string $clave = '', ?int $id_descripciones_proyecto = null): void
+    private function registrarEnvio(int $id_proyecto_gestionado, string $status, string $ruta_zip = '', string $clave = '', ?int $id_descripciones_proyecto = null): int
     {
         $conn = $this->get_conexion();
         $sql  = "INSERT INTO envio_correo_cliente (id_descripciones_proyecto, id_proyecto_gestionado, usu_crea, sector_id, status_envio, ruta_comprimido, clave_comprimido, fech_crea) 
-             VALUES (:id_desc, :id, :usu, :sector, :status, :ruta, :clave, now())";
+         VALUES (:id_desc, :id, :usu, :sector, :status, :ruta, :clave, now())";
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(':id_desc', $id_descripciones_proyecto,  PDO::PARAM_INT);
         $stmt->bindValue(':id',      $id_proyecto_gestionado,     PDO::PARAM_INT);
@@ -276,12 +279,25 @@ class Correo extends Conexion
         $stmt->bindValue(':ruta',    $ruta_zip,                   PDO::PARAM_STR);
         $stmt->bindValue(':clave',   $clave,                      PDO::PARAM_STR);
         $stmt->execute();
+        return (int)$conn->lastInsertId();
     }
 
     public function update_envio_correo($id, $status_envio)
     {
         $conn = parent::get_conexion();
         $sql = "UPDATE envio_correo_cliente SET status_envio=:status_envio, fech_actualizacion=now() WHERE id=:id";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue(":id", $id, PDO::PARAM_INT);
+        $stmt->bindValue(":status_envio", $status_envio, PDO::PARAM_STR);
+        $stmt->execute();
+        if ($stmt->rowCount() > 0) {
+            return "success";
+        }
+    }
+    public function update_envio_correo_interno($id, $status_envio)
+    {
+        $conn = parent::get_conexion();
+        $sql = "UPDATE envio_correo_interno SET status_envio=:status_envio, fech_actualizacion=now() WHERE id=:id";
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(":id", $id, PDO::PARAM_INT);
         $stmt->bindValue(":status_envio", $status_envio, PDO::PARAM_STR);
