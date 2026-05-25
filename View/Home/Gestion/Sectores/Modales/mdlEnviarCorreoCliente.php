@@ -94,13 +94,14 @@
                                             <span class="badge_status_<?= intval($val['id']) ?> <?= $val['status_envio'] == 'OK' ? 'badge bg-success text-light' : 'badge bg-danger text-light' ?> ms-1">
                                                 <?= htmlspecialchars($val['status_envio']) ?>
                                             </span><br>
-                                            <span class="text-muted fs-11">Por: <?= htmlspecialchars($val['usu_correo']) ?> - <?= htmlspecialchars($val['sector_nombre']) ?></span><br>
-                                            <span class="text-muted fs-11">Fecha: <?= htmlspecialchars($val['fech_crea']) ?></span><br>
+                                            <span class="text-muted fs-11"><strong class="text-dark">De: </strong><?= htmlspecialchars($val['usu_correo']) ?> - <?= htmlspecialchars($val['sector_nombre']) ?></span><br>
+                                            <span class="text-muted fs-11"><strong class="text-dark">Fecha: </strong> <?= htmlspecialchars($val['fech_crea']) ?></span><br>
 
                                             <?php if ($_SESSION['sector_id'] == '4'): ?>
                                                 <?php if (!empty($val['ruta_comprimido'])): ?>
-                                                    <a href="<?= htmlspecialchars(ZIP_URL . basename($val['ruta_comprimido'])) ?>" download class="text-decoration-none fs-11">
-                                                        <i class="fa-solid fa-file-zipper"></i> Descargar ZIP
+                                                    <a href="<?= htmlspecialchars(ZIP_URL . basename($val['ruta_comprimido'])) ?>" download class="text-decoration-none fs-13">
+                                                        <i class="ri-download-2-line"></i> Descargar ZIP
+                                                    </a> <i class="fa-solid fa-file-zipper"></i>
                                                     </a><br>
                                                 <?php endif; ?>
                                                 <span class="fs-11"><strong>Clave: </strong><?= htmlspecialchars($val['clave_comprimido']) ?></span><br>
@@ -116,7 +117,7 @@
                                                     <i class="ri-mail-send-line"
                                                         type="button"
                                                         onclick='reenviar_correo(<?= intval($val["id"]) ?>)'
-                                                        style="font-size:1.1rem; color:#0d6efd; cursor:pointer;"
+                                                        style="font-size:.9rem; color:#0d6efd; cursor:pointer;"
                                                         onmouseover="this.style.filter='brightness(1.2)';"
                                                         onmouseout="this.style.filter='brightness(1)';"></i>
                                                 </span>
@@ -145,7 +146,7 @@
                                                             <i class="ri-mail-send-line ms-1"
                                                                 type="button"
                                                                 onclick='reenviar_correo_interno(<?= intval($copia["id"]) ?>)'
-                                                                style="font-size:1rem; color:#0d6efd; cursor:pointer;"
+                                                                style="font-size:.9rem; color:#0d6efd; cursor:pointer;"
                                                                 onmouseover="this.style.filter='brightness(1.2)';"
                                                                 onmouseout="this.style.filter='brightness(1)';"></i>
                                                         <?php endif; ?>
@@ -194,10 +195,12 @@
             </div>
             <?php if ($_SESSION['sector_id'] == '4'  && !empty($archivos)): ?>
                 <div class="modal-footer">
-                    <button class="btn btn-sm btn-primary" id="btn_enviar_correo_cliente">Enviar Correo</button>
+                    <button class="btn btn-sm btn-primary" id="btn_enviar_correo_cliente">
+                        <span id="btn_enviar_texto">Enviar Correo</span>
+                        <span id="btn_enviar_spinner" class="spinner-border spinner-border-sm ms-1 d-none" role="status" aria-hidden="true"></span>
+                    </button>
                 </div>
             <?php endif; ?>
-
         </div>
     </div>
 </div>

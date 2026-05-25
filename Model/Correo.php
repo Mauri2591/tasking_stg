@@ -138,9 +138,9 @@ class Correo extends Conexion
 
     public function enviarCorreoCliente(int $id_proyecto_gestionado, string $correo_destino)
     {
-        $correos_copia = array_filter(explode(',', MAIL_COPIA_SECTORES));
+        $correos_copia = $this->getCorreosCopia($id_proyecto_gestionado);
 
-        // ── SMTP base ──────────────────────────────────────────────────────────
+        // SMTP base
         $smtpConfig = function (PHPMailer $mail) {
             $mail->isSMTP();
             $mail->Host       = SMTP_HOST;
@@ -306,5 +306,33 @@ class Correo extends Conexion
         if ($stmt->rowCount() > 0) {
             return "success";
         }
+    }
+
+    private function getCorreosCopia(int $id_proyecto_gestionado): array
+    {
+        $conn = $this->get_conexion();
+        // Traer cat_id y sector_id del proyecto
+        $sql = "SELECT cat_id, sector_id FROM proyecto_gestionado WHERE id = :id";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue(':id', $id_proyecto_gestionado, PDO::PARAM_INT);
+        $stmt->execute();
+        $proy = $stmt->fetch(PDO::FETCH_ASSOC);
+        $cat_id    = (int)$proy['cat_id'];
+        $sector_id = (int)$proy['sector_id'];
+        // Siempre mssp-calidad
+        $correos = array_filter(array_map('trim', explode(',', MAIL_COPIA_SECTORES)));
+        // Líderes del sector solo si NO es INCIDENT RESPONSE (cat_id = 26)
+        if ($cat_id !== 26) {
+            $sql2 = "SELECT usu_correo FROM tm_usuario 
+                 WHERE sector_id = :sector_id 
+                 AND lider = 'SI' 
+                 AND est = 1";
+            $stmt2 = $conn->prepare($sql2);
+            $stmt2->bindValue(':sector_id', $sector_id, PDO::PARAM_INT);
+            $stmt2->execute();
+            $lideres = array_column($stmt2->fetchAll(PDO::FETCH_ASSOC), 'usu_correo');
+            $correos = array_merge($correos, $lideres);
+        }
+        return array_unique($correos);
     }
 }
