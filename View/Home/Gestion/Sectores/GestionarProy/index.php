@@ -993,6 +993,7 @@ if (isset($_SESSION['usu_id'])) {
                     const archivos = document.getElementById('documento').files;
                     if (archivos.length > 0) {
                         document.getElementById('cont_progreso').style.display = 'block';
+                        document.getElementById('btn_finalizar_proyecto').disabled = true;
                     }
 
                     xhr.upload.addEventListener('progress', function(e) {
@@ -1005,6 +1006,7 @@ if (isset($_SESSION['usu_id'])) {
                     });
 
                     xhr.addEventListener('load', function() {
+                        document.getElementById('btn_finalizar_proyecto').disabled = false; // 👈
                         document.getElementById('cont_progreso').style.display = 'none';
                         document.getElementById('progreso').style.width = '0%';
                         document.getElementById('porcentaje-texto').textContent = '0%';
@@ -1058,6 +1060,7 @@ if (isset($_SESSION['usu_id'])) {
                     });
 
                     xhr.addEventListener('error', function() {
+                        document.getElementById('btn_finalizar_proyecto').disabled = false;
                         let htmlmje = `<div class="alert alert-warning text-center" role="alert"><a class="alert-link">Error!<br></a>Extensión no permitida</div>`;
                         $("#cont_mje_proy_archivo").html(htmlmje).show();
                         $("#documento").val("");
