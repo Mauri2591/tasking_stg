@@ -377,8 +377,16 @@ if (isset($_SESSION['usu_id'])) {
                                                 </label>
                                             </section>
 
-                                            <div class="col-12" id="cont_mje_proy_archivo">
+                                            <!-- Barra de progreso - separada -->
+                                            <div id="cont_progreso" style="display:none; margin: 10px 0;">
+                                                <div style="background:#eee; border-radius:4px; height:20px;">
+                                                    <div id="progreso" style="background:#17a2b8; height:100%; width:0%; border-radius:4px; transition:width 0.3s;"></div>
+                                                </div>
+                                                <span id="porcentaje-texto">0%</span>
                                             </div>
+
+                                            <!-- Mensajes de error - separado -->
+                                            <div class="col-12" id="cont_mje_proy_archivo"></div>
 
                                             <br>
 
@@ -956,7 +964,6 @@ if (isset($_SESSION['usu_id'])) {
                 const spinner = document.getElementById("btn_spinner_guardar");
                 const textoBtn = document.getElementById("btn_texto_guardar");
 
-                // Activar siempre el spinner y "Guardando"
                 textoBtn.textContent = "Guardando";
                 spinner.classList.remove("d-none");
                 btn.disabled = true;
@@ -972,8 +979,6 @@ if (isset($_SESSION['usu_id'])) {
                         timer: 1100,
                         showConfirmButton: false
                     });
-
-                    // IMPORTANTE: Restaurar el botón si no hay descripción
                     spinner.classList.add("d-none");
                     textoBtn.textContent = "Guardar";
                     btn.disabled = false;
@@ -981,96 +986,90 @@ if (isset($_SESSION['usu_id'])) {
                 }
 
                 if (validar_usu_asignado || sector_usu_id == 4) {
-                    $.ajax({
-                        type: "POST",
-                        url: "../../../../../Controller/ctrProyectos.php?proy=insert_descripciones_proyecto",
-                        data: data,
-                        processData: false,
-                        contentType: false,
-                        success: function(response) {
-                            const btn = document.getElementById("btn_guardar_descripcion");
-                            const spinner = document.getElementById("btn_spinner_guardar");
-                            const textoBtn = document.getElementById("btn_texto_guardar");
 
-                            // Activar spinner y texto "Guardando"
-                            textoBtn.textContent = "Guardando";
-                            spinner.classList.remove("d-none");
-                            btn.disabled = true;
+                    const xhr = new XMLHttpRequest();
 
-                            let json;
-                            try {
-                                json = typeof response === 'string' ? JSON.parse(response) :
-                                    response;
-                            } catch (e) {
-                                console.error("Respuesta inválida del servidor:", response);
-                                return;
-                            }
+                    // Al hacer click - mostrar la barra
+                    const archivos = document.getElementById('documento').files;
+                    if (archivos.length > 0) {
+                        document.getElementById('cont_progreso').style.display = 'block';
+                    }
 
-                            // Caso: archivos inválidos pero nota guardada
-                            if (json.status === "error" && json.errores) {
-                                // Mostrar alerta HTML de error MIME
-                                let htmlErrores =
-                                    `<div class="alert alert-warning text-center" role="alert"><strong>Error:</strong><br>`;
-                                json.errores.forEach(err => {
-                                    htmlErrores += `- ${err}<br>`;
-                                });
-                                htmlErrores += `</div>`;
-                                $("#cont_mje_proy_archivo").html(htmlErrores).show();
-                                $("#documento").val("");
-
-                                // ⏱ Ocultar error después de 1.5s, luego mostrar Swal, luego recargar
-                                setTimeout(() => {
-                                    $("#cont_mje_proy_archivo").fadeOut();
-
-                                    Swal.fire({
-                                        icon: 'info',
-                                        title: "Guardado parcial",
-                                        text: "La nota fue guardada, pero algunos archivos no se subieron.",
-                                        timer: 2000,
-                                        showConfirmButton: false
-                                    });
-
-                                    // ⏱ Recargar luego del Swal
-                                    setTimeout(() => {
-                                        location.reload();
-                                    }, 2000);
-                                }, 1500);
-
-                                return;
-                            }
-
-                            // ✅ Todo OK
-                            Swal.fire({
-                                icon: 'success',
-                                title: "Bien!",
-                                text: json.mensaje,
-                                timer: 1100,
-                                showConfirmButton: false
-                            });
-
-                            $("#captura_imagen").val('');
-                            $('#descripcion_proyecto').summernote('reset');
-
-                            setTimeout(() => {
-                                location.reload();
-                            }, 1100);
-                        },
-                        error: function() {
-                            let htmlmje = `<div id="extension_no_permitida" class="alert alert-warning text-center" role="alert">
-                                            <a class="alert-link">Error! <br></a>Extensión no permitida
-                                        </div>`;
-                            $("#cont_mje_proy_archivo").html(htmlmje).show();
-                            $("#documento").val("");
-                            setTimeout(() => {
-                                $("#cont_mje_proy_archivo").fadeOut();
-                            }, 2000);
-
-                            // En error también dejamos "Guardando" hasta el reload
-                            setTimeout(() => {
-                                location.reload();
-                            }, 2000);
+                    xhr.upload.addEventListener('progress', function(e) {
+                        if (e.lengthComputable) {
+                            const porcentaje = Math.round((e.loaded / e.total) * 100);
+                            document.getElementById('progreso').style.width = porcentaje + '%';
+                            document.getElementById('porcentaje-texto').textContent = porcentaje + '%';
+                            textoBtn.textContent = "Subiendo " + porcentaje + "%";
                         }
                     });
+
+                    xhr.addEventListener('load', function() {
+                        document.getElementById('cont_progreso').style.display = 'none';
+                        document.getElementById('progreso').style.width = '0%';
+                        document.getElementById('porcentaje-texto').textContent = '0%';
+                        textoBtn.textContent = "Guardando";
+
+                        let json;
+                        try {
+                            json = typeof xhr.responseText === 'string' ? JSON.parse(xhr.responseText) : xhr.responseText;
+                        } catch (e) {
+                            console.error("Respuesta inválida:", xhr.responseText);
+                            return;
+                        }
+
+                        if (json.status === "error" && json.errores) {
+                            let htmlErrores = `<div class="alert alert-warning text-center" role="alert"><strong>Error:</strong><br>`;
+                            json.errores.forEach(err => {
+                                htmlErrores += `- ${err}<br>`;
+                            });
+                            htmlErrores += `</div>`;
+                            $("#cont_mje_proy_archivo").html(htmlErrores).show();
+                            $("#documento").val("");
+
+                            setTimeout(() => {
+                                $("#cont_mje_proy_archivo").fadeOut();
+                                Swal.fire({
+                                    icon: 'info',
+                                    title: "Guardado parcial",
+                                    text: "La nota fue guardada, pero algunos archivos no se subieron.",
+                                    timer: 2000,
+                                    showConfirmButton: false
+                                });
+                                setTimeout(() => {
+                                    location.reload();
+                                }, 2000);
+                            }, 1500);
+                            return;
+                        }
+
+                        Swal.fire({
+                            icon: 'success',
+                            title: "Bien!",
+                            text: json.mensaje,
+                            timer: 1100,
+                            showConfirmButton: false
+                        });
+                        $("#captura_imagen").val('');
+                        $('#descripcion_proyecto').summernote('reset');
+                        setTimeout(() => {
+                            location.reload();
+                        }, 1100);
+                    });
+
+                    xhr.addEventListener('error', function() {
+                        let htmlmje = `<div class="alert alert-warning text-center" role="alert"><a class="alert-link">Error!<br></a>Extensión no permitida</div>`;
+                        $("#cont_mje_proy_archivo").html(htmlmje).show();
+                        $("#documento").val("");
+                        setTimeout(() => {
+                            $("#cont_mje_proy_archivo").fadeOut();
+                            location.reload();
+                        }, 2000);
+                    });
+
+                    xhr.open('POST', '../../../../../Controller/ctrProyectos.php?proy=insert_descripciones_proyecto');
+                    xhr.send(data);
+
                 } else {
                     Swal.fire({
                         icon: 'error',
