@@ -2864,6 +2864,7 @@ WHERE pg.id_proyecto_cantidad_servicios = :id_proyecto_cantidad_servicios";
                 ecc.id,
                 ecc.id_descripciones_proyecto,
                 ecc.usu_crea,
+                ecc.correo,
                 ecc.sector_id,
                 ecc.status_envio,
                 ecc.ruta_comprimido,

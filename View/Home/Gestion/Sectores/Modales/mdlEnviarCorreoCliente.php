@@ -90,7 +90,8 @@
                                         <!-- CORREO AL CLIENTE -->
                                         <div class="fs-13" id="correo_item_<?= intval($val['id']) ?>">
                                             <strong>Cliente:</strong>
-                                            <span class="badge_status_<?= intval($val['id']) ?> <?= $val['status_envio'] == 'OK' ? 'badge bg-success text-light' : 'badge bg-danger text-light' ?>">
+                                            <span class="text-muted fs-11"><?= htmlspecialchars($val['correo'] ?? '') ?></span>
+                                            <span class="badge_status_<?= intval($val['id']) ?> <?= $val['status_envio'] == 'OK' ? 'badge bg-success text-light' : 'badge bg-danger text-light' ?> ms-1">
                                                 <?= htmlspecialchars($val['status_envio']) ?>
                                             </span><br>
                                             <span class="text-muted fs-11">Por: <?= htmlspecialchars($val['usu_correo']) ?> - <?= htmlspecialchars($val['sector_nombre']) ?></span><br>
