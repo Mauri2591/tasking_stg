@@ -1281,8 +1281,9 @@ if (isset($_SESSION['usu_id'])) {
                         return;
                     }
 
-                    const textoOriginal = btnEnviar.textContent;
-                    btnEnviar.textContent = "Enviando...";
+                    // Mostrar spinner
+                    document.getElementById('btn_enviar_texto').textContent = 'Enviando...';
+                    document.getElementById('btn_enviar_spinner').classList.remove('d-none');
                     btnEnviar.disabled = true;
 
                     $.post("../../../../../Controller/ctrCorreo.php?correo=enviar_correo_cliente", {
@@ -1291,8 +1292,9 @@ if (isset($_SESSION['usu_id'])) {
                     }, function(data) {
                         console.log('Respuesta:', data);
 
-                        // Siempre restaurar el botón
-                        btnEnviar.textContent = textoOriginal;
+                        // Restaurar botón
+                        document.getElementById('btn_enviar_texto').textContent = 'Enviar Correo';
+                        document.getElementById('btn_enviar_spinner').classList.add('d-none');
                         btnEnviar.disabled = false;
 
                         if (data.status === 'OK') {
@@ -1300,9 +1302,9 @@ if (isset($_SESSION['usu_id'])) {
                                 icon: 'success',
                                 title: 'Correo enviado correctamente',
                                 html: `
-            <p><strong>Archivos comprimidos:</strong> ${data.archivos_encontrados}</p>
-            <p><strong>Clave:</strong> <code style="font-size:1.1rem; background:#eee; padding:2px 6px;">${data.clave}</code></p>
-        `,
+                        <p><strong>Archivos comprimidos:</strong> ${data.archivos_encontrados}</p>
+                        <p><strong>Clave:</strong> <code style="font-size:1.1rem; background:#eee; padding:2px 6px;">${data.clave}</code></p>
+                    `,
                                 showConfirmButton: true
                             }).then(() => {
                                 location.reload();
@@ -1312,10 +1314,10 @@ if (isset($_SESSION['usu_id'])) {
                                 icon: 'error',
                                 title: 'Error al enviar el correo',
                                 html: `
-            <p>${data.error}</p>
-            <hr>
-            <p class="text-muted fs-13">El ZIP fue generado y guardado. Podés descargarlo desde el historial de envíos y reenviarlo manualmente.</p>
-        `,
+                        <p>${data.error}</p>
+                        <hr>
+                        <p class="text-muted fs-13">El ZIP fue generado y guardado. Podés descargarlo desde el historial de envíos y reenviarlo manualmente.</p>
+                    `,
                                 showConfirmButton: true
                             }).then(() => {
                                 location.reload();
