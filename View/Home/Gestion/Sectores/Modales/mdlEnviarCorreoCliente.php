@@ -1,5 +1,5 @@
 <div class="modal fade" id="ModalEnviarCorreoCliente" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog" style="max-width: 95vw;">
+    <div class="modal-dialog" style="max-width: 95vw; margin-top: .5rem;">
         <div class="modal-content">
 
             <div class="card ribbon-box shadow-none mb-lg-0">
@@ -10,7 +10,7 @@
                     </div>
 
                     <?php if ($estado_actual): ?>
-                        <span class="fs-14 mt-2" style="position: absolute; top: 0; right: 0;">
+                        <span class="fs-14 mt-2 mx-2" style="position: absolute; top: 0; right: 0;">
                             <span class="badge" style="background-color: <?= $estado_actual['CatColor'] ?>;">
                                 <i class="<?= $estado_actual['icono'] ?>"></i>
                                 ESTADO <?= htmlspecialchars($estado_actual['estados_nombre']) ?>
