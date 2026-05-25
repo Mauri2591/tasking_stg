@@ -93,7 +93,12 @@ class Correo extends Conexion
             <p><b>Producto:</b> {$datos->producto}</p>
             <p><b>Tipo:</b> {$datos->tipo}</p>
             <p><b>Usuarios:</b><br>{$datos->usuarios}</p>
-            <p>Los informes se encuentran cargados en <strong>Tasking_stg</strong>.</p>
+            <p>
+            <b>Envío al cliente:</b><br>
+            Los informes fueron cargados en <strong>Tasking_stg</strong>.<br>
+            Recuerde enviar el correo al cliente mediante Tasking_stg.
+            En caso de falla, podrá realizar el envío por otro medio (por ejemplo, Outlook) y deberá registrarlo en Tasking_stg utilizando el botón <strong>Enviar por otro medio</strong>.
+            </p>
             <br>
             <p>Saludos.</p>";
             $mail->send();
