@@ -154,7 +154,7 @@
                     </div>
                 </div>
             </div>
-            <?php if ($_SESSION['sector_id'] == '4'  && $estado_id == '3' && !empty($archivos)): ?>
+            <?php if ($_SESSION['sector_id'] == '4'  && !empty($archivos)): ?>
                 <div class="modal-footer">
                     <button class="btn btn-sm btn-primary" id="btn_enviar_correo_cliente">Enviar Correo</button>
                 </div>
