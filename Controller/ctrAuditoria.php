@@ -53,8 +53,6 @@ switch ($_GET['case']) {
             $sub_array[] = $row['est'] == 1
                 ? '<span class="badge bg-info text-light"><i class="ri-user-follow-fill" style="margin-right:4px;"></i>Activo</span>'
                 : '<span class="badge" style="background-color:#475569;color:#fff;"><i class="ri-user-unfollow-fill" style="margin-right:4px;"></i>Inactivo</span>';
-            $sub_array[] = $row['fecha_orden']; // columna oculta para ordenar
-
             $data[] = $sub_array;
         }
         $results = array(

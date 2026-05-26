@@ -1711,4 +1711,13 @@ if (isset($_SESSION['usu_id'])) {
                 }
             });
         }
+
+        function ver_id_pg(id_proyecto_gestionado) { //guarda logs de descarga de zip
+            $.post(
+                "../../../../../Controller/ctrAuditoria.php?case=insert_audit_estados_proyecto", {
+                    id_proyecto_gestionado: id_proyecto_gestionado,
+                    estados_id: 23
+                }
+            );
+        }
     </script>

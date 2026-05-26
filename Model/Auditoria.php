@@ -83,7 +83,7 @@ class Auditoria extends Conexion
         INNER JOIN sectores ON sectores.sector_id=audit_estados_proyecto.sector_id 
         INNER JOIN tm_estados ON tm_estados.estados_id=audit_estados_proyecto.estados_id
         LEFT JOIN proyecto_gestionado ON proyecto_gestionado.id=audit_estados_proyecto.id_proyecto_gestionado
-        ORDER BY audit_estados_proyecto.fecha DESC";
+        ORDER BY audit_estados_proyecto.id DESC";
         $stmt = $conn->prepare($sql);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
