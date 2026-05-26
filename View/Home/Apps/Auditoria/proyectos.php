@@ -81,7 +81,6 @@ if (isset($_SESSION['usu_id'])) {
                 error: function(e) {}
             },
             "order": [
-                [5, "desc"]
             ],
             "bDestroy": true,
             "responsive": false,

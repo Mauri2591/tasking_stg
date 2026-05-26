@@ -99,7 +99,7 @@
 
                                             <?php if ($_SESSION['sector_id'] == '4'): ?>
                                                 <?php if (!empty($val['ruta_comprimido'])): ?>
-                                                    <a href="<?= htmlspecialchars(ZIP_URL . basename($val['ruta_comprimido'])) ?>" download class="text-decoration-none fs-13">
+                                                    <a onclick="ver_id_pg(<?php echo $val['id_proyecto_gestionado'] ?>)" href="<?= htmlspecialchars(ZIP_URL . basename($val['ruta_comprimido'])) ?>" download class="text-decoration-none fs-13">
                                                         <i class="ri-download-2-line"></i> Descargar ZIP
                                                     </a> <i class="fa-solid fa-file-zipper"></i>
                                                     </a><br>
@@ -182,7 +182,7 @@
                                         <div class="d-flex align-items-center gap-2 p-3 border rounded">
                                             <i class="ri-file-line fs-24 text-muted"></i>
                                             <span class="fs-13"><?= htmlspecialchars(trim($archivo)) ?></span>
-                                            <a href="<?= $url_arch ?>" download class="btn btn-sm btn-outline-primary ms-auto">
+                                            <a id="btn_descarga_zip()" href="<?= $url_arch ?>" download class="btn btn-sm btn-outline-primary ms-auto">
                                                 <i class="ri-download-line"></i> Descargar
                                             </a>
                                         </div>

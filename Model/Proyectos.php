@@ -2863,6 +2863,7 @@ WHERE pg.id_proyecto_cantidad_servicios = :id_proyecto_cantidad_servicios";
         $sql = "SELECT 
                 ecc.id,
                 ecc.id_descripciones_proyecto,
+                ecc.id_proyecto_gestionado,
                 ecc.usu_crea,
                 ecc.correo,
                 ecc.sector_id,
