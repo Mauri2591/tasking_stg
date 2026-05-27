@@ -179,7 +179,7 @@ class Correo extends Conexion
         INNER JOIN proyecto_cantidad_servicios ON proyecto_cantidad_servicios.id = proyecto_gestionado.id_proyecto_cantidad_servicios
         INNER JOIN proyectos ON proyectos.proy_id = proyecto_cantidad_servicios.proy_id
         INNER JOIN clientes ON clientes.client_id = proyectos.client_id
-        WHERE descripciones_proyecto.id_proyecto_gestionado = id
+        WHERE descripciones_proyecto.id_proyecto_gestionado = :id
         ORDER BY descripciones_proyecto.id DESC LIMIT 1";
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(':id', $id_proyecto_gestionado, PDO::PARAM_INT);
@@ -230,7 +230,7 @@ class Correo extends Conexion
             $mailCliente->Subject = 'Documentos del proyecto ' . $doc['producto'] . ' - Personal Tech';
             $mailCliente->Body    = "
         <p>Estimado/a cliente,</p>
-        <p>Adjuntamos la documentación correspondiente a su proyecto {$doc['titulo']} bajo la referencia {$doc['referencia']} en formato ZIP protegido.</p>
+        <p>Adjuntamos la documentación correspondiente a su servicio de {$doc['producto']} bajo la referencia {$doc['referencia']} en formato ZIP protegido.</p>
         <p><strong>Clave para abrir el archivo:</strong> {$clave}</p>
         <p>Saludos.</p>";
             $mailCliente->addAttachment($ruta_zip, $nombre_zip);
@@ -251,7 +251,7 @@ class Correo extends Conexion
             try {
                 $smtpConfig($mailCopia);
                 $mailCopia->addAddress($correo_copia);
-                $mailCopia->Subject = 'Copia - Documentos enviados al cliente' .$doc['cliente'];
+                $mailCopia->Subject = 'Copia - Documentos enviados al cliente: ' . $doc['cliente'];
                 $mailCopia->Body = "
             <p>Estimados,</p>
             <p>Se realizó el envío de documentación al cliente <strong>{$cliente}</strong> al email <strong>{$correo_destino}</strong> acorde al producto <strong>{$categoria}</strong> - bajo la referencia <strong>{$refProy}</strong>.</p>
