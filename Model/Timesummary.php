@@ -583,6 +583,7 @@ class timesummary extends Conexion
             tm_categoria.cat_nom AS producto,
             tareas.nombre AS tarea,
             timesummary_carga.fecha,
+            timesummary_carga.hora_desde,
             TIME_FORMAT(timesummary_carga.hora_desde, '%H:%i') AS hora_desde,
             TIME_FORMAT(timesummary_carga.hora_hasta, '%H:%i') AS hora_hasta,
             TIME_FORMAT(
@@ -626,7 +627,7 @@ class timesummary extends Conexion
                 ON proyectos.client_id = clientes.client_id
 
             WHERE timesummary_carga.usu_id = :usu_id
-            ORDER BY timesummary_carga.fecha DESC";
+            ORDER BY timesummary_carga.fecha DESC, timesummary_carga.hora_desde DESC";
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(":usu_id", $usu_id, PDO::PARAM_INT);
         $stmt->execute();
@@ -684,7 +685,7 @@ class timesummary extends Conexion
 
         WHERE timesummary_carga.usu_id = :usu_id
 
-        ORDER BY timesummary_carga.fecha DESC";
+        ORDER BY timesummary_carga.fecha DESC, timesummary_carga.hora_desde DESC";
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(":usu_id", $usu_id, PDO::PARAM_INT);
         $stmt->execute();
