@@ -226,7 +226,7 @@ class Correo extends Conexion
         try {
             $smtpConfig($mailCliente);
             $mailCliente->addAddress($correo_destino);
-            $mailCliente->Subject = 'Documentos del proyecto ' . $doc['producto'] . ' - Personal Tech';
+            $mailCliente->Subject = 'Documentos del Servicio ' . $doc['producto'] . ' - Personal Tech';
             $mailCliente->Body = "
             <p>Estimado/a cliente,</p>
             <p>Adjuntamos la documentación correspondiente a su servicio de {$doc['producto']} bajo la referencia <strong>" . ($doc['referencia'] ?: 'N/A') . "</strong> en formato ZIP protegido.</p>
