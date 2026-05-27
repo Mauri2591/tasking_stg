@@ -166,17 +166,20 @@ class Correo extends Conexion
         $refProy   = $datos->refProy   ?: 'N/A';
         $categoria = $datos->categoria ?: 'N/A';
         $cliente   = $datos->cliente   ?: 'N/A';
-
         $conn = $this->get_conexion();
         $sql  = "SELECT descripciones_proyecto.id, 
-        descripciones_proyecto.carpeta_documentos_proy, 
-        descripciones_proyecto.documento, 
-        tm_categoria.cat_nom AS producto,
-        proyecto_gestionado.refProy
+       descripciones_proyecto.carpeta_documentos_proy, 
+       descripciones_proyecto.documento, 
+       tm_categoria.cat_nom AS producto,
+       proyecto_gestionado.refProy AS referencia,
+       clientes.client_rs AS cliente
         FROM descripciones_proyecto 
         INNER JOIN proyecto_gestionado ON proyecto_gestionado.id = descripciones_proyecto.id_proyecto_gestionado
         INNER JOIN tm_categoria ON tm_categoria.cat_id = proyecto_gestionado.cat_id
-        WHERE descripciones_proyecto.id_proyecto_gestionado = :id
+        INNER JOIN proyecto_cantidad_servicios ON proyecto_cantidad_servicios.id = proyecto_gestionado.id_proyecto_cantidad_servicios
+        INNER JOIN proyectos ON proyectos.proy_id = proyecto_cantidad_servicios.proy_id
+        INNER JOIN clientes ON clientes.client_id = proyectos.client_id
+        WHERE descripciones_proyecto.id_proyecto_gestionado = id
         ORDER BY descripciones_proyecto.id DESC LIMIT 1";
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(':id', $id_proyecto_gestionado, PDO::PARAM_INT);
@@ -227,7 +230,7 @@ class Correo extends Conexion
             $mailCliente->Subject = 'Documentos del proyecto ' . $doc['producto'] . ' - Personal Tech';
             $mailCliente->Body    = "
         <p>Estimado/a cliente,</p>
-        <p>Adjuntamos la documentación correspondiente a su proyecto {$doc['titulo']} bajo la referencia {$doc['refProy']} en formato ZIP protegido.</p>
+        <p>Adjuntamos la documentación correspondiente a su proyecto {$doc['titulo']} bajo la referencia {$doc['referencia']} en formato ZIP protegido.</p>
         <p><strong>Clave para abrir el archivo:</strong> {$clave}</p>
         <p>Saludos.</p>";
             $mailCliente->addAttachment($ruta_zip, $nombre_zip);
@@ -248,7 +251,7 @@ class Correo extends Conexion
             try {
                 $smtpConfig($mailCopia);
                 $mailCopia->addAddress($correo_copia);
-                $mailCopia->Subject = 'Copia - Documentos enviados al cliente';
+                $mailCopia->Subject = 'Copia - Documentos enviados al cliente' .$doc['cliente'];
                 $mailCopia->Body = "
             <p>Estimados,</p>
             <p>Se realizó el envío de documentación al cliente <strong>{$cliente}</strong> al email <strong>{$correo_destino}</strong> acorde al producto <strong>{$categoria}</strong> - bajo la referencia <strong>{$refProy}</strong>.</p>
