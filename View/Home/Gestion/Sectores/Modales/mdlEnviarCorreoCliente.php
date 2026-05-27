@@ -38,13 +38,14 @@
 
                         <?php if ($_SESSION['sector_id'] == '4'): ?>
                             <div class="d-flex align-items-center">
-                                <span class="badge bg-light text-dark fs-11 border-dark mx-2"><span class="text-danger">*</span> Correo:</span>
-                                <input type="text" id="correo_envio_email" name="correo_envio_email" class="form-control form-control-sm" style="width: 19rem;" value="<?= htmlspecialchars($correo_envio_cliente ?? '') ?>" autocomplete="new-password">
+                                <span class="badge bg-light text-dark fs-11 border-dark mx-2"><span class="text-danger">*</span> Correo cliente:</span>
+                                <input type="text" id="correo_envio_email" name="correo_envio_email" class="form-control form-control-sm" style="width: 16rem;" value="<?= htmlspecialchars($correo_envio_cliente ?? '') ?>" autocomplete="new-password">
                             </div>
                             <div class="d-flex align-items-center mt-1">
-                                <span class="badge bg-light text-dark fs-11 border-dark mx-2"><span class="text-danger">*</span> Correos copias:</span>
-                                <input type="text" id="correo_envio_email_copias" name="correo_envio_email_copias" class="form-control form-control-sm" style="width: 16rem;" value="<?= htmlspecialchars($correo_envio_cliente_copias ?? '') ?>" autocomplete="new-password">
+                                <span class="badge bg-light text-dark fs-11 border-dark mx-2" style="width: 6rem;"><span class="text-danger">*</span> Copias:</span>
+                                <textarea class="form-control" id="correo_envio_email_copias" name="correo_envio_email_copias" ><?= htmlspecialchars($correo_envio_cliente_copias ?? '') ?></textarea>
                             </div>
+                            <hr>
                         <?php endif; ?>
                         <?php
                         $archivos = [];
@@ -58,7 +59,7 @@
                         ?>
 
                         <?php if (!empty($archivos)): ?>
-                            <span class="badge bg-light text-dark fs-11 px-2 mb-1 mt-3 mx-2">Fecha de carga de los Docs: <span class="fs-12 border"><?= htmlspecialchars($doc['fech_crea']) ?></span></span>
+                            <span class="badge bg-light text-dark fs-11 px-2 mb-1 mt-1 mx-2"><span class="text-danger">*</span> Fecha de carga de los Docs: <span class="fs-12 border"><?= htmlspecialchars($doc['fech_crea']) ?></span></span>
                             <?php foreach ($archivos as $archivo): ?>
                                 <?php
                                 $ext   = strtolower(pathinfo(trim($archivo), PATHINFO_EXTENSION));
@@ -81,7 +82,7 @@
                         <?php endif; ?>
 
                         <hr>
-                        <span class="badge bg-light text-dark fs-11 border-dark mx-2">Historial de envíos:</span>
+                        <span class="badge bg-light text-dark fs-11 border-dark mx-2"><span class="text-danger">*</span> Historial de envíos:</span>
                         <div class="card-body" style="width: 100%; overflow-y: auto; padding: 1rem;">
 
                             <?php if (!empty($datos_envios_agrupados)): ?>
