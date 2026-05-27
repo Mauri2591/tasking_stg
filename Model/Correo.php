@@ -168,10 +168,16 @@ class Correo extends Conexion
         $refProy   = $datos->refProy  ?? 'N/A';
 
         $conn = $this->get_conexion();
-        $sql  = "SELECT id, carpeta_documentos_proy, documento 
-             FROM descripciones_proyecto 
-             WHERE id_proyecto_gestionado = :id 
-             ORDER BY id DESC LIMIT 1";
+        $sql  = "SELECT descripciones_proyecto.id, 
+       descripciones_proyecto.carpeta_documentos_proy, 
+       descripciones_proyecto.documento, 
+       tm_categoria.cat_nom AS producto,
+       proyecto_gestionado.titulo
+        FROM descripciones_proyecto 
+        INNER JOIN proyecto_gestionado ON proyecto_gestionado.id = descripciones_proyecto.id_proyecto_gestionado
+        INNER JOIN tm_categoria ON tm_categoria.cat_id = proyecto_gestionado.cat_id
+        WHERE descripciones_proyecto.id_proyecto_gestionado = :id
+        ORDER BY descripciones_proyecto.id DESC LIMIT 1";
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(':id', $id_proyecto_gestionado, PDO::PARAM_INT);
         $stmt->execute();
@@ -218,10 +224,10 @@ class Correo extends Conexion
         try {
             $smtpConfig($mailCliente);
             $mailCliente->addAddress($correo_destino);
-            $mailCliente->Subject = 'Documentos del proyecto - Personal MSSP';
+            $mailCliente->Subject = 'Documentos del proyecto ' . $doc['producto'] . -'Personal Tech';
             $mailCliente->Body    = "
         <p>Estimado/a cliente,</p>
-        <p>Adjuntamos la documentación correspondiente a su proyecto en formato ZIP protegido.</p>
+        <p>Adjuntamos la documentación correspondiente a su proyecto {$doc['titulo']} en formato ZIP protegido.</p>
         <p><strong>Clave para abrir el archivo:</strong> {$clave}</p>
         <p>Saludos.</p>
     ";
