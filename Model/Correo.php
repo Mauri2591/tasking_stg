@@ -60,12 +60,12 @@ class Correo extends Conexion
     public function enviarCorreoProyectoFinalizado($id)
     {
         $datos = $this->getDatosParaCorreo($id);
-        $categoria = $datos->producto ?? 'N/A';
-        $cliente   = $datos->cliente  ?? 'N/A';
-        $refProy   = $datos->refProy  ?? 'N/A';
         if (!$datos) {
             return 'No se encontraron datos del proyecto';
         }
+        $producto = $datos->producto ?: 'N/A';
+        $cliente  = $datos->cliente  ?: 'N/A';
+        $refProy  = $datos->refProy  ?: 'N/A';
         $mail = new PHPMailer(true);
         try {
             $mail->isSMTP();
@@ -83,27 +83,26 @@ class Correo extends Conexion
                 ],
             ];
             $mail->CharSet = 'UTF-8';
-            // FROM correcto
             $mail->setFrom('vulma-mssp@teco.com.ar', 'Tasking MSSP');
             $mail->addAddress('mssp-calidad@personal.com.ar');
             $mail->isHTML(true);
-            $mail->Subject = 'Proyecto finalizado - [CLIENTE] ' . $datos->cliente;
+            $mail->Subject = 'Proyecto finalizado - [CLIENTE] ' . $cliente;
             $mail->Body = "<p>Estimados,<br><br>
-            El presente proyecto se encuentra finalizado correctamente.</p>
-            <p><b>Título:</b> {$datos->titulo}</p>
-            <p><b>Ref:</b> {$datos->refProy}</p>
-            <p><b>Sector:</b> {$datos->sector}</p>
-            <p><b>Producto:</b> {$datos->producto}</p>
-            <p><b>Tipo:</b> {$datos->tipo}</p>
-            <p><b>Usuarios:</b><br>{$datos->usuarios}</p>
-            <p>
-            <b>Envío al cliente:</b><br>
-            Los informes fueron cargados en <strong>Tasking_stg</strong>.<br>
-            Recuerde enviar el correo al cliente mediante Tasking_stg.
-            En caso de falla, podrá realizar el envío por otro medio (por ejemplo, Outlook) y deberá registrarlo en Tasking_stg utilizando el botón <strong>Enviar por otro medio</strong>.
-            </p>
-            <br>
-            <p>Saludos.</p>";
+                El presente proyecto se encuentra finalizado correctamente.</p>
+                <p><b>Título:</b> {$datos->titulo}</p>
+                <p><b>Ref:</b> {$refProy}</p>
+                <p><b>Sector:</b> {$datos->sector}</p>
+                <p><b>Producto:</b> {$producto}</p>
+                <p><b>Tipo:</b> {$datos->tipo}</p>
+                <p><b>Usuarios:</b><br>{$datos->usuarios}</p>
+                <p>
+                <b>Envío al cliente:</b><br>
+                Los informes fueron cargados en <strong>Tasking_stg</strong>.<br>
+                Recuerde enviar el correo al cliente mediante Tasking_stg.
+                En caso de falla, podrá realizar el envío por otro medio (por ejemplo, Outlook) y deberá registrarlo en Tasking_stg utilizando el botón <strong>Enviar por otro medio</strong>.
+                </p>
+                <br>
+                <p>Saludos.</p>";
             $mail->send();
             return true;
         } catch (Exception $e) {
@@ -164,7 +163,7 @@ class Correo extends Conexion
         // ── Datos del proyecto para el cuerpo del correo ───────────────────────
         $datos    = $this->getDatosParaCorreo($id_proyecto_gestionado);
         $refProy   = $datos->refProy   ?: 'N/A';
-        $categoria = $datos->categoria ?: 'N/A';
+        $producto = $datos->producto ?: 'N/A';
         $cliente   = $datos->cliente   ?: 'N/A';
         $conn = $this->get_conexion();
         $sql  = "SELECT descripciones_proyecto.id, 
@@ -254,7 +253,7 @@ class Correo extends Conexion
                 $mailCopia->Subject = 'Copia - Documentos enviados al cliente: ' . $doc['cliente'];
                 $mailCopia->Body = "
             <p>Estimados,</p>
-            <p>Se realizó el envío de documentación al cliente <strong>{$cliente}</strong> al email <strong>{$correo_destino}</strong> acorde al producto <strong>{$categoria}</strong> - bajo la referencia <strong>{$refProy}</strong>.</p>
+            <p>Se realizó el envío de documentación al cliente <strong>{$cliente}</strong> al email <strong>{$correo_destino}</strong> acorde al producto <strong>{$producto}</strong> - bajo la referencia <strong>{$refProy}</strong>.</p>
             <p>Saludos.</p>";
                 $mailCopia->send();
                 $this->registrarEnvioInterno($id_proyecto_gestionado, $id_descripciones_proyecto, $correo_copia, 'OK', '', $id_ecc);
