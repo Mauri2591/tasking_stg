@@ -261,8 +261,8 @@ if (isset($_SESSION['usu_id'])) {
                 "aServerSide": true,
                 autoWidth: false,
                 order: [
-                    [4, "desc"]
-                ], // 🔥 FECHA DESC
+                   
+                ], 
                 dom: 'Bfrtip',
                 columns: [{
                         width: "25%"
