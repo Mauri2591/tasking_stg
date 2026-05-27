@@ -38,12 +38,21 @@
 
                         <?php if ($_SESSION['sector_id'] == '4'): ?>
                             <div class="d-flex align-items-center">
-                                <span class="badge bg-light text-dark fs-11 border-dark mx-2"><span class="text-danger">*</span> Correo cliente:</span>
-                                <input type="text" id="correo_envio_email" name="correo_envio_email" class="form-control form-control-sm" style="width: 16rem;" value="<?= htmlspecialchars($correo_envio_cliente ?? '') ?>" autocomplete="new-password">
+                                <span class="badge bg-light text-dark fs-11 border-dark mx-2" style="width: 6.5rem;">
+                                    <span class="text-danger">*</span> Correo cliente
+                                </span>
+                                <input type="text" id="correo_envio_email" name="correo_envio_email"
+                                    class="form-control form-control-sm" style="width: 16rem;"
+                                    value="<?= htmlspecialchars($correo_envio_cliente ?? '') ?>"
+                                    autocomplete="new-password">
                             </div>
                             <div class="d-flex align-items-center mt-1">
-                                <span class="badge bg-light text-dark fs-11 border-dark mx-2" style="width: 6rem;"><span class="text-danger">*</span> Copias:</span>
-                                <textarea class="form-control" id="correo_envio_email_copias" name="correo_envio_email_copias" ><?= htmlspecialchars($correo_envio_cliente_copias ?? '') ?></textarea>
+                                <span class="badge bg-light text-dark fs-11 border-dark mx-2" style="width: 6.5rem;">
+                                    <span class="text-danger">*</span> Correos CC
+                                </span>
+                                <textarea class="form-control form-control-sm" id="correo_envio_email_copias"
+                                    name="correo_envio_email_copias"
+                                    style="width: 16rem; height: 3rem;"><?= htmlspecialchars($correo_envio_cliente_copias ?? '') ?></textarea>
                             </div>
                             <hr>
                         <?php endif; ?>
