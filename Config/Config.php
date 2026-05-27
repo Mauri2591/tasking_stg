@@ -14,7 +14,7 @@ define("BASE_URL", getenv('URL'));
 define("BASE_PATH", $_ENV['BASE_PATH']);
 define('ZIP_PATH', $_ENV['ZIP_PATH']);
 define('ZIP_URL', $_ENV['ZIP_URL']);
-
+define('SMTP_ENABLED', $_ENV['SMTP_ENABLED'] ?? 'false');
 // Correo
 define('SMTP_HOST',      $_ENV['SMTP_HOST']);
 define('SMTP_USER',      $_ENV['SMTP_USER']);

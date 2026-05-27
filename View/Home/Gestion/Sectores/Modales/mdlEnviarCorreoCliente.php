@@ -41,6 +41,7 @@
                                 <span class="badge bg-light text-dark fs-11 border-dark mx-2"><span class="text-danger">*</span> Correo:</span>
                                 <input type="text" id="correo_envio_email" name="correo_envio_email" class="form-control form-control-sm" style="width: 15rem;" value="<?= htmlspecialchars($correo_envio_cliente ?? '') ?>">
                             </div>
+
                         <?php endif; ?>
 
                         <?php
@@ -129,6 +130,18 @@
                                         <?php $copias = $internos_por_desc[$val['id']] ?? []; ?>
                                         <?php if (!empty($copias)): ?>
                                             <div class="mt-1 ps-2 border-start border-secondary">
+                                                <?php
+                                                // Verificar si TODAS las copias están OK o ya fueron reenviadas
+                                                $todas_ok = array_reduce($copias, fn($carry, $c) =>
+                                                $carry && ($c['status_envio'] == 'OK' || !empty($c['fech_actualizacion'])), true);
+
+                                                // IDs de copias pendientes/error para el reenvío
+                                                $ids_pendientes = array_column(
+                                                    array_filter($copias, fn($c) =>
+                                                    in_array($c['status_envio'], ['ERROR', 'PENDIENTE']) && empty($c['fech_actualizacion'])),
+                                                    'id'
+                                                );
+                                                ?>
                                                 <?php foreach ($copias as $copia): ?>
                                                     <div class="fs-12 my-1" id="correo_interno_item_<?= intval($copia['id']) ?>">
                                                         <strong>Copia:</strong> <?= htmlspecialchars($copia['correo']) ?>
@@ -136,22 +149,19 @@
                                                             <?= htmlspecialchars($copia['status_envio']) ?>
                                                         </span><br>
                                                         <span class="text-muted fs-10">Fecha: <?= htmlspecialchars($copia['fech_crea']) ?></span>
-
-                                                        <?php if (!empty($copia['fech_actualizacion'])): ?>
-                                                            <br><span class="badge bg-success text-light fs-10">
-                                                                <i class="ri-mail-check-line"></i> Enviado por otro medio
-                                                            </span>
-                                                            <span class="text-muted fs-10">el: <?= htmlspecialchars($copia['fech_actualizacion']) ?></span>
-                                                        <?php elseif ($_SESSION['sector_id'] == '4' && in_array($copia['status_envio'], ['ERROR', 'PENDIENTE'])): ?>
-                                                            <i class="ri-mail-send-line ms-1"
-                                                                type="button"
-                                                                onclick='reenviar_correo_interno(<?= intval($copia["id"]) ?>)'
-                                                                style="font-size:.9rem; color:#0d6efd; cursor:pointer;"
-                                                                onmouseover="this.style.filter='brightness(1.2)';"
-                                                                onmouseout="this.style.filter='brightness(1)';"></i>
-                                                        <?php endif; ?>
                                                     </div>
                                                 <?php endforeach; ?>
+                                                <?php if ($_SESSION['sector_id'] == '4' && !empty($ids_pendientes)): ?>
+                                                    <div class="mt-1">
+                                                        <strong class="fs-11">Reenviar copias: </strong>
+                                                        <i class="ri-mail-send-line ms-1"
+                                                            type="button"
+                                                            onclick='reenviar_copias(<?= htmlspecialchars(json_encode($ids_pendientes)) ?>)'
+                                                            style="font-size:.9rem; color:#0d6efd; cursor:pointer;"
+                                                            onmouseover="this.style.filter='brightness(1.2)';"
+                                                            onmouseout="this.style.filter='brightness(1)';"></i>
+                                                    </div>
+                                                <?php endif; ?>
                                             </div>
                                         <?php endif; ?>
                                     </div>
