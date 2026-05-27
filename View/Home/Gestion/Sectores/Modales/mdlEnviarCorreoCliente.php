@@ -39,11 +39,13 @@
                         <?php if ($_SESSION['sector_id'] == '4'): ?>
                             <div class="d-flex align-items-center">
                                 <span class="badge bg-light text-dark fs-11 border-dark mx-2"><span class="text-danger">*</span> Correo:</span>
-                                <input type="text" id="correo_envio_email" name="correo_envio_email" class="form-control form-control-sm" style="width: 15rem;" value="<?= htmlspecialchars($correo_envio_cliente ?? '') ?>">
+                                <input type="text" id="correo_envio_email" name="correo_envio_email" class="form-control form-control-sm" style="width: 19rem;" value="<?= htmlspecialchars($correo_envio_cliente ?? '') ?>">
                             </div>
-
+                             <div class="d-flex align-items-center mt-1">
+                                <span class="badge bg-light text-dark fs-11 border-dark mx-2"><span class="text-danger">*</span> Correos copias:</span>
+                                <input type="text" id="correo_envio_email_copias" name="correo_envio_email_copias" class="form-control form-control-sm" style="width: 16rem;" value="<?= htmlspecialchars($correo_envio_cliente_copias ?? '') ?>">
+                            </div>
                         <?php endif; ?>
-
                         <?php
                         $archivos = [];
                         $carpeta  = '';

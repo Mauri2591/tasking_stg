@@ -20,7 +20,7 @@
                             Cliente</span>
                         <div class="col-12">
                             <div class="row">
-                                <div class="mb-3 col-sm-6">
+                                <div class="mb-3 col-sm-4">
                                     <span class="badge bg-light fs-10 mb-1 text-dark">Cliente</span>
                                     <input type="text" class="bg-primary text-light form-control form-control-sm"
                                         readonly id="client_rs_alta_proy">
@@ -86,7 +86,7 @@
                                     </select>
                                 </div>
 
-                                <div class="mb-3 col-sm-6">
+                                <div class="mb-3 col-sm-4">
                                     <span class="badge bg-light fs-10 mb-1 text-dark">Titulo</span>
                                     <input type="text"
                                         class="form-control form-control-sm"
@@ -94,14 +94,28 @@
                                 </div>
 
                                 <div class="mb-1 col-sm-2">
-                                    <label class="badge bg-light fs-10 mb-1 text-dark d-flex align-items-center justify-content-center"
+                                    <label for="correo_envio_cliente" class="badge bg-light fs-10 mb-1 text-dark d-flex align-items-center justify-content-center"
                                         style="white-space: nowrap;">
-                                        <span class="text-danger fs-13"></span> Correo Envio Email
+                                        <span class="text-danger fs-13"></span> Correo Envio Cliente
                                     </label>
-                                    <input type="email"
+                                    <input type="text"
                                         class="form-control form-control-sm"
                                         id="correo_envio_cliente"
                                         placeholder="correo@ejemplo.com"
+                                        autocomplete="new-password"
+                                        required>
+                                </div>
+
+                                <div class="mb-1 col-sm-2">
+                                    <label for="correo_envio_cliente_copias" class="badge bg-light fs-10 mb-1 text-dark d-flex align-items-center justify-content-center"
+                                        style="white-space: nowrap;">
+                                        <span class="text-danger fs-13"></span> Correos en copias Cliente
+                                    </label>
+                                    <input type="text"
+                                        class="form-control form-control-sm"
+                                        id="correo_envio_cliente_copias"
+                                        placeholder="correo@ejemplo.com"
+                                        autocomplete="new-password"
                                         required>
                                 </div>
 
@@ -110,7 +124,6 @@
                                     <input autofocus type="text" class="form-control form-control-sm"
                                         id="client_refPro_proy_nuevo">
                                 </div>
-
 
                                 <div class="mb-1 col-sm-2">
                                     <label class="badge bg-light fs-10 mb-1 text-dark d-flex align-items-center justify-content-center" style="white-space: nowrap;">
@@ -127,11 +140,9 @@
                                         <option value="SI">SI</option>
                                     </select>
                                 </div>
-
                             </div>
-
                         </div>
-
+                        <br>
                         <span class="mt-2 mb-2 badge bg-light border border-primary fs-10 text-primary"
                             style="font-weight: bold;">Datos del
                             Servicio

@@ -973,6 +973,7 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
         formData.append('descripcion', $("#descripcion_proy").val());
         formData.append('refProy', $("#client_refPro_proy_nuevo").val());
         formData.append('correo_envio_cliente', $("#correo_envio_cliente").val());
+        formData.append('correo_envio_cliente_copias', $("#correo_envio_cliente_copias").val());
         formData.append('recurrencia', $("#combo_recurrente_proy_nuevo").val() || 0);
         formData.append('fech_inicio', $("#fech_ini_proy_nuevo").val());
         formData.append('fech_fin', $("#fech_fin_proy_nuevo").val());
@@ -1064,6 +1065,8 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
             $("#hs_dimensionadas").val(data.hs_dimensionadas);
             $("#client_refPro_proy_nuevo").val(data.refProy);
             $("#correo_envio_cliente").val(data.correo_envio_cliente);
+            $("#correo_envio_cliente_copias").val(data.correo_envio_cliente_copias);
+
             $("#combo_recurrente_proy_nuevo").val(data.recurrencia);
             $("#fech_ini_proy_nuevo").val(data.fech_inicio);
 
@@ -1561,6 +1564,8 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
         formData.append('descripcion', document.getElementById('descripcion_proy').value);
         formData.append('refProy', document.getElementById('client_refPro_proy_nuevo').value);
         formData.append('correo_envio_cliente', document.getElementById('correo_envio_cliente').value);
+        formData.append('correo_envio_cliente_copias', document.getElementById('correo_envio_cliente_copias').value);
+
         formData.append('recurrencia', document.getElementById('combo_recurrente_proy_nuevo').value);
         formData.append('fech_inicio', document.getElementById('fech_ini_proy_nuevo').value);
         formData.append('fech_fin', document.getElementById('fech_fin_proy_nuevo').value);

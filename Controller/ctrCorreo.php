@@ -41,7 +41,7 @@ switch ($case) {
             exit;
         }
 
-        $result = $correo->enviarCorreoCliente($id_proyecto_gestionado, $correo_destino);
+        $result = $correo->enviarCorreoCliente($id_proyecto_gestionado, $correo_destino, $_POST['correos_copia_input'] ?? '');
 
         if (is_array($result)) {
             $auditoria->insert_audit_estados_proyecto($_POST['id_proyecto_gestionado'], 21, $_SESSION['usu_id'], $_SESSION['sector_id']);
