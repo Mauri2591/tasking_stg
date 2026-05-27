@@ -1317,13 +1317,14 @@ if (isset($_SESSION['usu_id'])) {
                                 icon: 'error',
                                 title: 'Error al enviar el correo',
                                 html: `
-                                    <p>${data.error}</p>
-                                    <hr>
-                                    ${data.error !== 'Correo destino inválido' ? '<p class="text-muted fs-13">El ZIP fue generado y guardado. Podés descargarlo desde el historial de envíos y reenviarlo manualmente.</p>' : ''}
-                                `,
+                                <p>${data.error}</p>
+                                ${data.error !== 'Correo destino inválido' ? '<hr><p class="text-muted fs-13">El ZIP fue generado y guardado. Podés descargarlo desde el historial de envíos y reenviarlo manualmente.</p>' : ''}
+                            `,
                                 showConfirmButton: true
                             }).then(() => {
-                                location.reload();
+                                if (data.error !== 'Correo destino inválido') {
+                                    location.reload();
+                                }
                             });
                         } else {
                             Swal.fire({
