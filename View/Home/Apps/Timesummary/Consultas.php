@@ -189,8 +189,8 @@ if (isset($_SESSION['usu_id'])) {
                 "aProcessing": true,
                 "aServerSide": true,
                 order: [
-                    [4, "desc"]
-                ], // 🔥 FECHA DESC
+                    
+                ],
                 autoWidth: false,
                 dom: 'Bfrtip',
                 columns: [{
