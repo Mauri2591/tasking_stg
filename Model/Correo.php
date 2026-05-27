@@ -135,9 +135,46 @@ class Correo extends Conexion
         $stmt->execute();
     }
 
-    public function enviarCorreoCliente(int $id_proyecto_gestionado, string $correo_destino)
+    private function getCorreosCopia(int $id_proyecto_gestionado, string $correos_override = ''): array
     {
-        $correos_copia = $this->getCorreosCopia($id_proyecto_gestionado);
+        $conn = $this->get_conexion();
+        $sql = "SELECT cat_id, sector_id, correo_envio_cliente_copias FROM proyecto_gestionado WHERE id = :id";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue(':id', $id_proyecto_gestionado, PDO::PARAM_INT);
+        $stmt->execute();
+        $proy = $stmt->fetch(PDO::FETCH_ASSOC);
+        $cat_id    = (int)$proy['cat_id'];
+        $sector_id = (int)$proy['sector_id'];
+
+        // Siempre mssp-calidad
+        $correos = array_filter(array_map('trim', explode(',', MAIL_COPIA_SECTORES)));
+
+        // Copias: usa el override del input si viene, sino las de la DB
+        $copias_str = !empty($correos_override) ? $correos_override : ($proy['correo_envio_cliente_copias'] ?? '');
+        if (!empty($copias_str)) {
+            $copias = array_filter(array_map('trim', explode(',', $copias_str)));
+            $correos = array_merge($correos, $copias);
+        }
+
+        // Líderes del sector solo si NO es INCIDENT RESPONSE (cat_id = 26)
+        if ($cat_id !== 26) {
+            $sql2 = "SELECT usu_correo FROM tm_usuario 
+                 WHERE sector_id = :sector_id 
+                 AND lider = 'SI' 
+                 AND est = 1";
+            $stmt2 = $conn->prepare($sql2);
+            $stmt2->bindValue(':sector_id', $sector_id, PDO::PARAM_INT);
+            $stmt2->execute();
+            $lideres = array_column($stmt2->fetchAll(PDO::FETCH_ASSOC), 'usu_correo');
+            $correos = array_merge($correos, $lideres);
+        }
+
+        return array_unique($correos);
+    }
+
+    public function enviarCorreoCliente(int $id_proyecto_gestionado, string $correo_destino, string $correos_copia_input = '')
+    {
+        $correos_copia = $this->getCorreosCopia($id_proyecto_gestionado, $correos_copia_input);
 
         // SMTP base
         $smtpConfig = function (PHPMailer $mail) {
@@ -160,11 +197,11 @@ class Correo extends Conexion
             $mail->isHTML(true);
         };
 
-        // ── Datos del proyecto para el cuerpo del correo ───────────────────────
         $datos    = $this->getDatosParaCorreo($id_proyecto_gestionado);
-        $refProy   = $datos->refProy   ?: 'N/A';
+        $refProy  = $datos->refProy  ?: 'N/A';
         $producto = $datos->producto ?: 'N/A';
-        $cliente   = $datos->cliente   ?: 'N/A';
+        $cliente  = $datos->cliente  ?: 'N/A';
+
         $conn = $this->get_conexion();
         $sql  = "SELECT descripciones_proyecto.id, 
        descripciones_proyecto.carpeta_documentos_proy, 
@@ -221,6 +258,7 @@ class Correo extends Conexion
             $this->registrarEnvio($id_proyecto_gestionado, 'ERROR');
             return 'No se encontraron archivos físicos en el servidor';
         }
+
         // CORREO AL CLIENTE (con ZIP y clave)
         $mailCliente = new PHPMailer(true);
         try {
@@ -246,24 +284,30 @@ class Correo extends Conexion
             }
             return 'ERROR SMTP (cliente): ' . $mailCliente->ErrorInfo;
         }
-        // COPIAS INTERNAS por sector (sin ZIP, sin clave)
+
+        // COPIAS INTERNAS (sin ZIP, sin clave)
         foreach ($correos_copia as $correo_copia) {
             $correo_copia = trim($correo_copia);
             $mailCopia = new PHPMailer(true);
             try {
-                $smtpConfig($mailCopia);
-                $mailCopia->addAddress($correo_copia);
-                $mailCopia->Subject = 'Copia - Documentos enviados al cliente: ' . $doc['cliente'];
-                $mailCopia->Body = "
+                if (SMTP_ENABLED === 'true') {
+                    $smtpConfig($mailCopia);
+                    $mailCopia->addAddress($correo_copia);
+                    $mailCopia->Subject = 'Copia - Documentos enviados al cliente: ' . $doc['cliente'];
+                    $mailCopia->Body = "
             <p>Estimados,</p>
             <p>Se realizó el envío de documentación al cliente <strong>{$cliente}</strong> al email <strong>{$correo_destino}</strong> acorde al servicio <strong>{$producto}</strong> - bajo la referencia <strong>{$refProy}</strong>.</p>
             <p>Saludos.</p>";
-                $mailCopia->send();
+                    $mailCopia->send();
+                } else {
+                    throw new Exception('SMTP deshabilitado');
+                }
                 $this->registrarEnvioInterno($id_proyecto_gestionado, $id_descripciones_proyecto, $correo_copia, 'OK', '', $id_ecc);
             } catch (Exception $e) {
                 $this->registrarEnvioInterno($id_proyecto_gestionado, $id_descripciones_proyecto, $correo_copia, 'ERROR', $mailCopia->ErrorInfo, $id_ecc);
             }
         }
+
         return [
             'status'               => 'OK',
             'clave'                => $clave,
@@ -314,33 +358,5 @@ class Correo extends Conexion
         if ($stmt->rowCount() > 0) {
             return "success";
         }
-    }
-
-    private function getCorreosCopia(int $id_proyecto_gestionado): array
-    {
-        $conn = $this->get_conexion();
-        // Traer cat_id y sector_id del proyecto
-        $sql = "SELECT cat_id, sector_id FROM proyecto_gestionado WHERE id = :id";
-        $stmt = $conn->prepare($sql);
-        $stmt->bindValue(':id', $id_proyecto_gestionado, PDO::PARAM_INT);
-        $stmt->execute();
-        $proy = $stmt->fetch(PDO::FETCH_ASSOC);
-        $cat_id    = (int)$proy['cat_id'];
-        $sector_id = (int)$proy['sector_id'];
-        // Siempre mssp-calidad
-        $correos = array_filter(array_map('trim', explode(',', MAIL_COPIA_SECTORES)));
-        // Líderes del sector solo si NO es INCIDENT RESPONSE (cat_id = 26)
-        if ($cat_id !== 26) {
-            $sql2 = "SELECT usu_correo FROM tm_usuario 
-                 WHERE sector_id = :sector_id 
-                 AND lider = 'SI' 
-                 AND est = 1";
-            $stmt2 = $conn->prepare($sql2);
-            $stmt2->bindValue(':sector_id', $sector_id, PDO::PARAM_INT);
-            $stmt2->execute();
-            $lideres = array_column($stmt2->fetchAll(PDO::FETCH_ASSOC), 'usu_correo');
-            $correos = array_merge($correos, $lideres);
-        }
-        return array_unique($correos);
     }
 }

@@ -23,8 +23,10 @@ if (isset($_SESSION['usu_id'])) {
     $validar_envio_correo     = $proyecto->get_validar_si_tiene_correos_enviados($pg_id)['total'];
     $datos_correos_enviados   = $proyecto->get_datos_correo_enviado($pg_id); // podés eliminar esta también si ya no la usás en el modal
     $documentos_envio_cliente = $proyecto->get_documentos_para_envio_correo_cliente($pg_id);
+    
     $client_rs                = $proyecto->get_datos_cliente_para_envio_correo($pg_id)['client_rs'];
     $correo_envio_cliente     = $proyecto->get_datos_cliente_para_envio_correo($pg_id)['correo_envio_cliente'];
+    $correo_envio_cliente_copias     = $proyecto->get_datos_cliente_para_envio_correo($pg_id)['correo_envio_cliente_copias'];
     $datos_envios_agrupados   = $proyecto->get_datos_envios_agrupados($pg_id);
     $datos_correos_internos   = $proyecto->get_datos_correo_interno_enviado($pg_id);
 
@@ -1288,7 +1290,8 @@ if (isset($_SESSION['usu_id'])) {
 
                     $.post("../../../../../Controller/ctrCorreo.php?correo=enviar_correo_cliente", {
                         id_proyecto_gestionado: id_proyecto_gestionado,
-                        correo_destino: correo
+                        correo_destino: correo,
+                            correos_copia_input: document.getElementById('correo_envio_email_copias')?.value.trim() ?? ''
                     }, function(data) {
                         console.log('Respuesta:', data);
 
