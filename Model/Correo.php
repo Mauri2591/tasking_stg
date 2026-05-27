@@ -256,7 +256,7 @@ class Correo extends Conexion
                 $mailCopia->Subject = 'Copia - Documentos enviados al cliente: ' . $doc['cliente'];
                 $mailCopia->Body = "
             <p>Estimados,</p>
-            <p>Se realizó el envío de documentación al cliente <strong>{$cliente}</strong> al email <strong>{$correo_destino}</strong> acorde al producto <strong>{$producto}</strong> - bajo la referencia <strong>{$refProy}</strong>.</p>
+            <p>Se realizó el envío de documentación al cliente <strong>{$cliente}</strong> al email <strong>{$correo_destino}</strong> acorde al servicio <strong>{$producto}</strong> - bajo la referencia <strong>{$refProy}</strong>.</p>
             <p>Saludos.</p>";
                 $mailCopia->send();
                 $this->registrarEnvioInterno($id_proyecto_gestionado, $id_descripciones_proyecto, $correo_copia, 'OK', '', $id_ecc);
