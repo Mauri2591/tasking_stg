@@ -1712,6 +1712,47 @@ if (isset($_SESSION['usu_id'])) {
             });
         }
 
+        function reenviar_copias(ids) {
+            Swal.fire({
+                icon: 'info',
+                title: 'Atención',
+                text: '¿Confirma que las copias fueron enviadas por un medio alternativo?',
+                showConfirmButton: true,
+                showCancelButton: true,
+            }).then((result) => {
+                if (!result.isConfirmed) return;
+                const promesas = ids.map(id =>
+                    $.post("../../../../../Controller/ctrCorreo.php?correo=update_envio_correo_interno", {
+                        id: id,
+                        status_envio: 'OK'
+                    })
+                );
+                Promise.all(promesas).then(() => {
+                    ids.forEach(id => {
+                        $(`.badge_status_interno_${id}`)
+                            .removeClass('bg-danger bg-warning text-dark')
+                            .addClass('bg-success text-light')
+                            .text('OK');
+                        $(`#correo_interno_item_${id} .ri-mail-send-line`).closest('div.mt-1').remove();
+                        $(`#correo_interno_item_${id}`).append(`
+                    <br><span class="badge bg-success text-light fs-10">
+                        <i class="ri-mail-check-line"></i> Copia enviada por otro medio
+                    </span>
+                    <span class="text-muted fs-10"> Confirmado ahora</span>
+                `);
+                    });
+                    correo_actualizado = true;
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Bien',
+                        text: 'Copias actualizadas correctamente.',
+                        showConfirmButton: false,
+                        timer: 1000
+                    });
+                });
+            });
+        }
+
         function ver_id_pg(id_proyecto_gestionado) { //guarda logs de descarga de zip
             $.post(
                 "../../../../../Controller/ctrAuditoria.php?case=insert_audit_estados_proyecto", {
@@ -1720,4 +1761,5 @@ if (isset($_SESSION['usu_id'])) {
                 }
             );
         }
+        
     </script>

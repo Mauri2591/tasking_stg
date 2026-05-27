@@ -224,16 +224,20 @@ class Correo extends Conexion
         // CORREO AL CLIENTE (con ZIP y clave)
         $mailCliente = new PHPMailer(true);
         try {
-            $smtpConfig($mailCliente);
-            $mailCliente->addAddress($correo_destino);
-            $mailCliente->Subject = 'Documentos del Servicio ' . $doc['producto'] . ' - Personal Tech';
-            $mailCliente->Body = "
-            <p>Estimado/a cliente,</p>
-            <p>Adjuntamos la documentación correspondiente a su servicio de {$doc['producto']} bajo la referencia <strong>" . ($doc['referencia'] ?: 'N/A') . "</strong> en formato ZIP protegido.</p>
-            <p><strong>Clave para abrir el archivo:</strong> {$clave}</p>
-            <p>Saludos.</p>";
-            $mailCliente->addAttachment($ruta_zip, $nombre_zip);
-            $mailCliente->send();
+            if (SMTP_ENABLED === 'true') {
+                $smtpConfig($mailCliente);
+                $mailCliente->addAddress($correo_destino);
+                $mailCliente->Subject = 'Documentos del Servicio ' . $doc['producto'] . ' - Personal Tech';
+                $mailCliente->Body = "
+        <p>Estimado/a cliente,</p>
+        <p>Adjuntamos la documentación correspondiente a su servicio de {$doc['producto']} bajo la referencia <strong>" . ($doc['referencia'] ?: 'N/A') . "</strong> en formato ZIP protegido.</p>
+        <p><strong>Clave para abrir el archivo:</strong> {$clave}</p>
+        <p>Saludos.</p>";
+                $mailCliente->addAttachment($ruta_zip, $nombre_zip);
+                $mailCliente->send();
+            } else {
+                throw new Exception('SMTP deshabilitado');
+            }
             $id_ecc = $this->registrarEnvio($id_proyecto_gestionado, 'OK', $ruta_zip, $clave, $id_descripciones_proyecto, $correo_destino);
         } catch (Exception $e) {
             $id_ecc = $this->registrarEnvio($id_proyecto_gestionado, 'ERROR', $ruta_zip, $clave, $id_descripciones_proyecto, $correo_destino);
@@ -242,7 +246,6 @@ class Correo extends Conexion
             }
             return 'ERROR SMTP (cliente): ' . $mailCliente->ErrorInfo;
         }
-
         // COPIAS INTERNAS por sector (sin ZIP, sin clave)
         foreach ($correos_copia as $correo_copia) {
             $correo_copia = trim($correo_copia);
