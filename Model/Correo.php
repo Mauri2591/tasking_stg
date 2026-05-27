@@ -252,7 +252,7 @@ class Correo extends Conexion
                 $mailCopia->Subject = 'Copia - Documentos enviados al cliente';
                 $mailCopia->Body = "
             <p>Estimados,</p>
-            <p>Se realizó el envío de documentación al cliente <strong>{$cliente}</strong> al email <strong>{$correo_destino}</strong> acorde al proyecto <strong>{$categoria}</strong> - referencia <strong>{$refProy}</strong>.</p>
+            <p>Se realizó el envío de documentación al cliente <strong>{$cliente}</strong> al email <strong>{$correo_destino}</strong> acorde al producto <strong>{$categoria}</strong> - bajo la referencia <strong>{$refProy}</strong>.</p>
             <p>Los documentos fueron enviados correctamente desde Tasking MSSP.</p>
             <p>Saludos.</p>
         ";
