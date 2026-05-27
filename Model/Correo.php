@@ -228,11 +228,11 @@ class Correo extends Conexion
             $smtpConfig($mailCliente);
             $mailCliente->addAddress($correo_destino);
             $mailCliente->Subject = 'Documentos del proyecto ' . $doc['producto'] . ' - Personal Tech';
-            $mailCliente->Body    = "
-        <p>Estimado/a cliente,</p>
-        <p>Adjuntamos la documentación correspondiente a su servicio de {$doc['producto']} bajo la referencia {$doc['referencia']} en formato ZIP protegido.</p>
-        <p><strong>Clave para abrir el archivo:</strong> {$clave}</p>
-        <p>Saludos.</p>";
+            $mailCliente->Body = "
+            <p>Estimado/a cliente,</p>
+            <p>Adjuntamos la documentación correspondiente a su servicio de {$doc['producto']} bajo la referencia <strong>" . ($doc['referencia'] ?: 'N/A') . "</strong> en formato ZIP protegido.</p>
+            <p><strong>Clave para abrir el archivo:</strong> {$clave}</p>
+            <p>Saludos.</p>";
             $mailCliente->addAttachment($ruta_zip, $nombre_zip);
             $mailCliente->send();
             $id_ecc = $this->registrarEnvio($id_proyecto_gestionado, 'OK', $ruta_zip, $clave, $id_descripciones_proyecto, $correo_destino);
