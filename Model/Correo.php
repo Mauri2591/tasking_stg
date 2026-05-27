@@ -229,8 +229,7 @@ class Correo extends Conexion
         <p>Estimado/a cliente,</p>
         <p>Adjuntamos la documentación correspondiente a su proyecto {$doc['titulo']} en formato ZIP protegido.</p>
         <p><strong>Clave para abrir el archivo:</strong> {$clave}</p>
-        <p>Saludos.</p>
-    ";
+        <p>Saludos.</p>";
             $mailCliente->addAttachment($ruta_zip, $nombre_zip);
             $mailCliente->send();
             $id_ecc = $this->registrarEnvio($id_proyecto_gestionado, 'OK', $ruta_zip, $clave, $id_descripciones_proyecto, $correo_destino);
@@ -254,8 +253,7 @@ class Correo extends Conexion
             <p>Estimados,</p>
             <p>Se realizó el envío de documentación al cliente <strong>{$cliente}</strong> al email <strong>{$correo_destino}</strong> acorde al producto <strong>{$categoria}</strong> - bajo la referencia <strong>{$refProy}</strong>.</p>
             <p>Los documentos fueron enviados correctamente desde Tasking MSSP.</p>
-            <p>Saludos.</p>
-        ";
+            <p>Saludos.</p>";
                 $mailCopia->send();
                 $this->registrarEnvioInterno($id_proyecto_gestionado, $id_descripciones_proyecto, $correo_copia, 'OK', '', $id_ecc);
             } catch (Exception $e) {
