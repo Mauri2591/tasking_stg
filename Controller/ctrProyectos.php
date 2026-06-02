@@ -1026,7 +1026,7 @@ switch ($_GET['proy']) {
                     . $row['id_proyecto_gestionado']
                     . ')" title="Asignarme el proyecto" class="badge bg-light border border-dark text-dark">Sin asignar</span>';
             }
-            $sub_array[] = '<span type="button" onclick="ver_hosts_eh('
+            $sub_array[] = '<span type="button" onclick="ver_hosts_consulting('
                 . $row['id_proyecto_gestionado']
                 . ')">
             <i class="text-secondary fs-18 ri-global-line" title="Ver hosts"></i>
