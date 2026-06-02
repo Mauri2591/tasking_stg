@@ -20,8 +20,7 @@ if (isset($_SESSION['usu_id'])) {
             <div class="row">
                 <div class="col-12">
                     <div class="page-title-box d-sm-flex align-items-center justify-content-between bg-light">
-                        <h4 class="mb-sm-0"><span class="badge bg-warning text-dark border border-dark">ETHICAL
-                                HACKING</span><span class="badge bg-dark text-light border mx-1 border-dark">PENTEST</span>
+                        <h4 class="mb-sm-0"><span class="badge" style='background-color:#F88163; color:#FFF;'>CONSULTING</span><span class="badge mx-1" style='background-color:#F88163; color:#FFF;'>FIRMA ELECTRONICA</span>
                         </h4>
                     </div>
                 </div>
@@ -64,14 +63,14 @@ if (isset($_SESSION['usu_id'])) {
                         </ul>
 
                         <?php
-                        include_once __DIR__ . "/../Modals/ModalVerHosts.php";
+                        include_once __DIR__ . "/../../EthicalHacking/Modals/ModalVerHosts.php";
                         ?>
                         <!-- Tab panes -->
                         <div class="tab-content text-muted">
 
                             <div class="tab-pane active" id="tab_nuevos" role="tabpanel">
                                 <div class="card card-body">
-                                    <table id="table_proyectos_nuevos_eh_pentest" style="text-align: center; width: 100%;">
+                                    <table id="table_proyectos_nuevos_consulting_producto1" style="text-align: center; width: 100%;">
                                         <thead style="text-align: center;">
                                             <tr style="text-align: center;">
                                                 <th style="width: 300px;text-align: center;">TITULO</th>
@@ -112,7 +111,7 @@ if (isset($_SESSION['usu_id'])) {
                             <div class="tab-pane" id="tab_abiertos" role="tabpanel">
                                 <div class="tab-pane active" id="tab_nuevos" role="tabpanel">
                                     <div class="card card-body">
-                                        <table id="table_proyectos_abiertos_eh_pentest"
+                                        <table id="table_proyectos_abiertos_consulting_producto1"
                                             style="text-align: center; width: 100%;">
                                             <thead style="text-align: center;">
                                                 <tr style="text-align: center;">
@@ -150,7 +149,7 @@ if (isset($_SESSION['usu_id'])) {
                             <div class="tab-pane" id="tab_realizados" role="tabpanel">
                                 <div class="tab-pane active" id="tab_nuevos" role="tabpanel">
                                     <div class="card card-body">
-                                        <table id="table_proyectos_realizados_eh_pentest"
+                                        <table id="table_proyectos_realizados_consulting_producto1"
                                             style="text-align: center; width: 100%;">
                                             <thead style="text-align: center;">
                                                 <tr style="text-align: center;">
@@ -186,7 +185,7 @@ if (isset($_SESSION['usu_id'])) {
                             <div class="tab-pane" id="tab_cerrado_calidad" role="tabpanel">
                                 <div class="tab-pane active" id="tab_nuevos" role="tabpanel">
                                     <div class="card card-body">
-                                        <table id="table_proyectos_cerrado_calidad_eh_pentest"
+                                        <table id="table_proyectos_cerrado_calidad_consulting_producto1"
                                             style="text-align: center; width: 100%;">
                                             <thead style="text-align: center;">
                                                 <tr style="text-align: center;">

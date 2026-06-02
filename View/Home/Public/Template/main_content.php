@@ -151,8 +151,8 @@
                                                 class="nav-link" data-key="t-mailbox">Sase</a>
                                         </li>
                                         <li class="nav-item">
-                                            <a href="<?php echo URL . "View/Home/Gestion/Sectores/Delivery/"; ?>"
-                                                class="nav-link" data-key="t-mailbox">Delivery</a>
+                                            <a href="<?php echo URL . "View/Home/Gestion/Sectores/Consulting/"; ?>"
+                                                class="nav-link" data-key="t-mailbox">Consulting</a>
                                         </li>
                                     </ul>
                                 </div>
@@ -607,8 +607,8 @@
                                                         class="nav-link" data-key="t-mailbox">Sase</a>
                                                 </li>
                                                 <li class="nav-item">
-                                                    <a href="<?php echo URL . "View/Home/Gestion/Sectores/Delivery/"; ?>"
-                                                        class="nav-link" data-key="t-mailbox">Delivery</a>
+                                                    <a href="<?php echo URL . "View/Home/Gestion/Sectores/Consulting/"; ?>"
+                                                        class="nav-link" data-key="t-mailbox">Consulting</a>
                                                 </li>
                                             </ul>
                                         </div>
@@ -710,8 +710,8 @@
                                     <div class="menu-dropdown collapse" id="sidebarEmail">
                                         <ul class="nav nav-sm flex-column">
                                             <li class="nav-item">
-                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/Delivery/productoDelivery/"; ?>"
-                                                    class="nav-link" data-key="t-mailbox">productoDelivery</a>
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/Consulting/productoConsulting/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Producto Consulting</a>
                                             </li>
                                         </ul>
                                     </div>

@@ -1,5 +1,5 @@
 $(document).ready(function () {
-    tabla = $("#table_proyectos_nuevos_delivery_producto1").dataTable({
+    tabla = $("#table_proyectos_nuevos_consulting_producto1").dataTable({
         "aProcessing": true,
         "aServerSide": true,
         dom: 'Bfrtip',
@@ -13,12 +13,12 @@ $(document).ready(function () {
             'pdfHtml5'
         ],
         "ajax": {
-            url: "../../../../../../Controller/ctrProyectos.php?proy=get_proyectos_delivery",
+            url: "../../../../../../Controller/ctrProyectos.php?proy=get_proyectos_consulting",
             type: "post",
             dataType: "json",
             data: {
                 sector_id: 6,
-                cat_id: 81,
+                cat_id: 82,
                 estados_id: 1
             },
             error: function (e) {}
@@ -57,7 +57,7 @@ $(document).ready(function () {
         }
     });
 
-    tabla = $("#table_proyectos_abiertos_delivery_producto1").dataTable({
+    tabla = $("#table_proyectos_abiertos_consulting_producto1").dataTable({
         "aProcessing": true,
         "aServerSide": true,
         dom: 'Bfrtip',
@@ -71,12 +71,12 @@ $(document).ready(function () {
             'pdfHtml5'
         ],
         "ajax": {
-            url: "../../../../../../Controller/ctrProyectos.php?proy=get_proyectos_delivery",
+            url: "../../../../../../Controller/ctrProyectos.php?proy=get_proyectos_consulting",
             type: "post",
             dataType: "json",
             data: {
                 sector_id: 6,
-                cat_id: 81,
+                cat_id: 82,
                 estados_id: 2
             },
             error: function (e) {}
@@ -115,7 +115,7 @@ $(document).ready(function () {
         }
     });
 
-    tabla = $("#table_proyectos_realizados_delivery_producto1").dataTable({
+    tabla = $("#table_proyectos_realizados_consulting_producto1").dataTable({
         "aProcessing": true,
         "aServerSide": true,
         dom: 'Bfrtip',
@@ -129,12 +129,12 @@ $(document).ready(function () {
             'pdfHtml5'
         ],
         "ajax": {
-            url: "../../../../../../Controller/ctrProyectos.php?proy=get_proyectos_delivery",
+            url: "../../../../../../Controller/ctrProyectos.php?proy=get_proyectos_consulting",
             type: "post",
             dataType: "json",
             data: {
                 sector_id: 6,
-                cat_id: 81,
+                cat_id: 82,
                 estados_id: 3
             },
             error: function (e) {}
@@ -173,7 +173,7 @@ $(document).ready(function () {
         }
     });
 
-    tabla = $("#table_proyectos_cerrado_calidad_delivery_producto1").dataTable({
+    tabla = $("#table_proyectos_cerrado_calidad_consulting_producto1").dataTable({
         "aProcessing": true,
         "aServerSide": true,
         dom: 'Bfrtip',
@@ -187,12 +187,12 @@ $(document).ready(function () {
             'pdfHtml5'
         ],
         "ajax": {
-            url: "../../../../../../Controller/ctrProyectos.php?proy=get_proyectos_delivery",
+            url: "../../../../../../Controller/ctrProyectos.php?proy=get_proyectos_consulting",
             type: "post",
             dataType: "json",
             data: {
                 sector_id: 6,
-                cat_id: 81,
+                cat_id: 82,
                 estados_id: 4
             },
             error: function (e) {}
@@ -233,7 +233,7 @@ $(document).ready(function () {
 
 });
 
-function cambiar_proy_delivery_producto1(id_proyecto_gestionado) {
+function cambiar_proy_consulting_producto1(id_proyecto_gestionado) {
     Swal.fire({
         icon: "info",
         title: "Desea pasar el proyecto a Borrador?",
@@ -258,8 +258,8 @@ function cambiar_proy_delivery_producto1(id_proyecto_gestionado) {
                 showConfirmButton: false
             });
             setTimeout(() => {
-                if ($.fn.DataTable.isDataTable('#table_proyectos_nuevos_delivery_producto1')) {
-                    $('#table_proyectos_nuevos_delivery_producto1').DataTable().ajax.reload(null, false);
+                if ($.fn.DataTable.isDataTable('#table_proyectos_nuevos_consulting_producto1')) {
+                    $('#table_proyectos_nuevos_consulting_producto1').DataTable().ajax.reload(null, false);
                 }
                 if ($.fn.DataTable.isDataTable('#table_proyectos_borrador')) {
                     $('#table_proyectos_borrador').DataTable().ajax.reload(null, false);
@@ -301,14 +301,14 @@ function cambiar_a_borrador(id_proyecto_gestionado) {
             });
 
             setTimeout(() => {
-                if ($.fn.DataTable.isDataTable('#table_proyectos_nuevos_delivery_producto1')) {
-                    $('#table_proyectos_nuevos_delivery_producto1').DataTable().ajax.reload(null, false);
+                if ($.fn.DataTable.isDataTable('#table_proyectos_nuevos_consulting_producto1')) {
+                    $('#table_proyectos_nuevos_consulting_producto1').DataTable().ajax.reload(null, false);
                 }
                 if ($.fn.DataTable.isDataTable('#table_proyectos_borrador')) {
                     $('#table_proyectos_borrador').DataTable().ajax.reload(null, false);
                 }
-                if ($.fn.DataTable.isDataTable('#table_proyectos_abiertos_delivery_producto1')) {
-                    $('#table_proyectos_abiertos_delivery_producto1').DataTable().ajax.reload(null, false);
+                if ($.fn.DataTable.isDataTable('#table_proyectos_abiertos_consulting_producto1')) {
+                    $('#table_proyectos_abiertos_consulting_producto1').DataTable().ajax.reload(null, false);
                 }
             }, 500);
 
@@ -348,11 +348,11 @@ function cambiar_a_abierto(id_proyecto_gestionado) {
             });
 
             setTimeout(() => {
-                if ($.fn.DataTable.isDataTable('#table_proyectos_nuevos_delivery_producto1')) {
-                    $('#table_proyectos_nuevos_delivery_producto1').DataTable().ajax.reload(null, false);
+                if ($.fn.DataTable.isDataTable('#table_proyectos_nuevos_consulting_producto1')) {
+                    $('#table_proyectos_nuevos_consulting_producto1').DataTable().ajax.reload(null, false);
                 }
-                if ($.fn.DataTable.isDataTable('#table_proyectos_abiertos_delivery_producto1')) {
-                    $('#table_proyectos_abiertos_delivery_producto1').DataTable().ajax.reload(null, false);
+                if ($.fn.DataTable.isDataTable('#table_proyectos_abiertos_consulting_producto1')) {
+                    $('#table_proyectos_abiertos_consulting_producto1').DataTable().ajax.reload(null, false);
                 }
             }, 500);
         }
@@ -391,8 +391,8 @@ function asignar_proyecto(id_proyecto_gestionado) {
             });
 
             setTimeout(() => {
-                if ($.fn.DataTable.isDataTable('#table_proyectos_nuevos_delivery_producto1')) {
-                    $('#table_proyectos_nuevos_delivery_producto1').DataTable().ajax.reload(null, false);
+                if ($.fn.DataTable.isDataTable('#table_proyectos_nuevos_consulting_producto1')) {
+                    $('#table_proyectos_nuevos_consulting_producto1').DataTable().ajax.reload(null, false);
                 }
             }, 500);
         }
@@ -401,7 +401,7 @@ function asignar_proyecto(id_proyecto_gestionado) {
 }
 
 
-function ver_hosts_delivery(id_proyecto_gestionado) {
+function ver_hosts_consulting(id_proyecto_gestionado) {
     $("#ModalVerHosts").modal("show");
     $.post("../../../../../../Controller/ctrProyectos.php?proy=get_hosts_proy_ip", {
             id_proyecto_gestionado: id_proyecto_gestionado
@@ -457,9 +457,9 @@ function cambiar_a_nuevo(id_proyecto_gestionado) {
                         }
                     );
                     setTimeout(() => {
-                        if ($.fn.DataTable.isDataTable('#table_proyectos_nuevos_delivery_producto1')) {
-                            $('#table_proyectos_abiertos_delivery_producto1').DataTable().ajax.reload(null, false);
-                            $('#table_proyectos_nuevos_delivery_producto1').DataTable().ajax.reload(null, false);
+                        if ($.fn.DataTable.isDataTable('#table_proyectos_nuevos_consulting_producto1')) {
+                            $('#table_proyectos_abiertos_consulting_producto1').DataTable().ajax.reload(null, false);
+                            $('#table_proyectos_nuevos_consulting_producto1').DataTable().ajax.reload(null, false);
                         }
                     }, 500);
 
@@ -501,9 +501,9 @@ function cambiar_a_realizado(id_proyecto_gestionado) {
                 showConfirmButton: false
             });
             setTimeout(() => {
-                if ($.fn.DataTable.isDataTable('#table_proyectos_nuevos_delivery_producto1')) {
-                    $('#table_proyectos_abiertos_delivery_producto1').DataTable().ajax.reload(null, false);
-                    $('#table_proyectos_realizados_delivery_producto1').DataTable().ajax.reload(null, false);
+                if ($.fn.DataTable.isDataTable('#table_proyectos_nuevos_consulting_producto1')) {
+                    $('#table_proyectos_abiertos_consulting_producto1').DataTable().ajax.reload(null, false);
+                    $('#table_proyectos_realizados_consulting_producto1').DataTable().ajax.reload(null, false);
                 }
             }, 500);
         }
