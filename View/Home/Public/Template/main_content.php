@@ -710,8 +710,16 @@
                                     <div class="menu-dropdown collapse" id="sidebarEmail">
                                         <ul class="nav nav-sm flex-column">
                                             <li class="nav-item">
-                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/Consulting/productoConsulting/"; ?>"
-                                                    class="nav-link" data-key="t-mailbox">Producto Consulting</a>
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/Consulting/FirmaElectronica/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Firma Electronica</a>
+                                            </li>
+                                             <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/Consulting/FortalecimientoUsuarios/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Fortalecimiento de Usuarios</a>
+                                            </li>
+                                             <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/Consulting/Consultoria/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Consultoria</a>
                                             </li>
                                         </ul>
                                     </div>
