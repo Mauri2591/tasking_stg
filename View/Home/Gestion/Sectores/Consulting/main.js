@@ -1,5 +1,5 @@
 $(document).ready(function () {
-    tabla = $("#table_proyectos_nuevos_delivery").dataTable({
+    tabla = $("#table_proyectos_nuevos_consulting").dataTable({
         "aProcessing": true,
         "aServerSide": true,
         dom: 'Bfrtip',
@@ -57,7 +57,7 @@ $(document).ready(function () {
     });
 
 
-    tabla = $("#table_proyectos_abiertos_delivery").dataTable({
+    tabla = $("#table_proyectos_abiertos_consulting").dataTable({
         "aProcessing": true,
         "aServerSide": true,
         dom: 'Bfrtip',
@@ -114,7 +114,7 @@ $(document).ready(function () {
         }
     });
 
-    tabla = $("#table_proyectos_realizados_delivery").dataTable({
+    tabla = $("#table_proyectos_realizados_consulting").dataTable({
         "aProcessing": true,
         "aServerSide": true,
         dom: 'Bfrtip',
@@ -196,7 +196,7 @@ function cambiar_estado_proy_desde_calidad_a_borrador(id_proyecto_gestionado) {
                 }
             );
             setTimeout(() => {
-                $('#table_proyectos_nuevos_delivery').DataTable().ajax.reload(null, false);
+                $('#table_proyectos_nuevos_consulting').DataTable().ajax.reload(null, false);
                 $('#table_proyectos_borrador').DataTable().ajax.reload(null, false);
             }, 500);
 
@@ -235,8 +235,8 @@ function cambiar_estado_proy_desde_calidad_a_abierto(id_proyecto_gestionado) {
                 }
             );
             setTimeout(() => {
-                $('#table_proyectos_nuevos_delivery').DataTable().ajax.reload(null, false);
-                $('#table_proyectos_abiertos_delivery').DataTable().ajax.reload(null, false);
+                $('#table_proyectos_nuevos_consulting').DataTable().ajax.reload(null, false);
+                $('#table_proyectos_abiertos_consulting').DataTable().ajax.reload(null, false);
             }, 500);
 
             Swal.fire({
@@ -284,8 +284,8 @@ function cerrar_proyecto(id_proyecto_gestionado) {
             });
 
             setTimeout(() => {
-                if ($.fn.DataTable.isDataTable('#table_proyectos_realizados_delivery')) {
-                    $('#table_proyectos_realizados_delivery').DataTable().ajax.reload(null, false);
+                if ($.fn.DataTable.isDataTable('#table_proyectos_realizados_consulting')) {
+                    $('#table_proyectos_realizados_consulting').DataTable().ajax.reload(null, false);
                 }
             }, 500);
 

@@ -499,6 +499,111 @@ ORDER BY
 
     // FINALIZAN servicios ETHICAL HACKING VAS
 
+     public function get_proyectos_consulting($sector_id, $cat_id, $estados_id)
+    {
+        $conn = parent::get_conexion();
+        $sql = "SELECT 
+    pcs.id AS id_proyecto_cantidad_servicios,
+    pcs.proy_id, 
+    pcs.numero_servicio, 
+    DATE_FORMAT(pg.fech_inicio, '%d-%m-%Y') AS fech_inicio,
+    DATE_FORMAT(pg.fech_fin, '%d-%m-%Y') AS fech_fin,
+    p.cantidad_servicios, 
+    c.client_rs, 
+    u.usu_nom AS creador_proy,              -- ✅ ahora del proyecto_gestionado
+    s.sector_nombre,
+    s.sector_id,
+    tsc.cats_nom,
+    tp.pais_nombre,
+    pg.id AS id_proyecto_gestionado,
+    pg.cat_id,
+    pg.estados_id,
+    pg.titulo,
+    prio.id AS prioridad,
+    prio.prioridad AS prioridad_nom,
+    pr.posicion_recurrencia,
+    CASE 
+        WHEN pg.id_proyecto_recurrencia IS NULL THEN 0 
+        ELSE pg.id_proyecto_recurrencia 
+    END AS id_proyecto_recurrencia,
+    IF(proyecto_rechequeo.id IS NOT NULL, 'SI', 'NO') AS rechequeo,
+    GROUP_CONCAT(uas.usu_nom SEPARATOR ',<br>') AS usu_nom_asignado,
+    GROUP_CONCAT(uas.usu_id SEPARATOR ',') AS usu_id_asignado,
+    (
+        SELECT SUM(d.hs_dimensionadas)
+        FROM dimensionamiento d
+        WHERE d.id_proyecto_gestionado = pg.id
+    ) AS hs_dimensionadas,
+    tmc.cat_nom AS categoria
+
+FROM proyecto_cantidad_servicios pcs
+JOIN proyectos p 
+    ON pcs.proy_id = p.proy_id
+LEFT JOIN clientes c 
+    ON p.client_id = c.client_id
+LEFT JOIN tm_pais tp 
+    ON c.pais_id = tp.pais_id
+LEFT JOIN proyecto_gestionado pg 
+    ON pg.id_proyecto_cantidad_servicios = pcs.id
+LEFT JOIN tm_usuario u 
+    ON pg.usu_crea = u.usu_id             -- ✅ cambio clave
+LEFT JOIN sectores s 
+    ON pg.sector_id = s.sector_id
+LEFT JOIN tm_subcategoria tsc 
+    ON pg.cats_id = tsc.cats_id
+LEFT JOIN tm_categoria tmc 
+    ON pg.cat_id = tmc.cat_id
+LEFT JOIN prioridad prio 
+    ON pg.prioridad_id = prio.id
+LEFT JOIN usuario_proyecto ua 
+    ON pg.id = ua.id_proyecto_gestionado
+LEFT JOIN tm_usuario uas 
+    ON ua.usu_asignado = uas.usu_id
+LEFT JOIN proyecto_recurrencia pr 
+    ON pg.id_proyecto_recurrencia = pr.id
+LEFT JOIN proyecto_rechequeo 
+    ON pg.id = proyecto_rechequeo.id_proyecto_gestionado
+
+WHERE 
+    s.sector_id = ? 
+    AND pcs.est = 1 
+    AND pg.cat_id = ? 
+    AND pg.estados_id = ?
+
+GROUP BY 
+    pcs.id,
+    pcs.proy_id, 
+    pcs.numero_servicio, 
+    pg.fech_inicio,
+    pg.fech_fin,
+    p.cantidad_servicios, 
+    c.client_rs, 
+    u.usu_nom,
+    s.sector_nombre,
+    s.sector_id,
+    tsc.cats_nom,
+    tp.pais_nombre,
+    pg.id,
+    pg.cat_id,
+    pg.estados_id,
+    pg.titulo,
+    prio.id,
+    prio.prioridad,
+    tmc.cat_nom,
+    pr.posicion_recurrencia,
+    pg.id_proyecto_recurrencia,
+    proyecto_rechequeo.id
+
+ORDER BY 
+    id_proyecto_cantidad_servicios ASC";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue(1, $sector_id, PDO::PARAM_INT);
+        $stmt->bindValue(2, $cat_id, PDO::PARAM_INT);
+        $stmt->bindValue(3, $estados_id, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
     // Inician INCIDENT RESPONSE
     public function get_proyectos_incident_response($sector_id, $estados_id, $cat_id)
     {

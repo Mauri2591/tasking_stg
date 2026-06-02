@@ -62,7 +62,7 @@ if (isset($_SESSION['usu_id'])) {
                                                     <th>TIPO</th>
                                                     <th>HS</th>
                                                     <th>ASIGNADO</th>
-                                                    <th>HOSTS</th>
+                                                    <th>ACTIVOS</th>
                                                     <th>ESTADO</th>
                                                 </tr>
                                             </thead>
@@ -85,7 +85,7 @@ if (isset($_SESSION['usu_id'])) {
                                                     <th>TIPO</th>
                                                     <th>HS</th>
                                                     <th>ASIGNADO</th>
-                                                    <th>HOSTS</th>
+                                                    <th>ACTIVOS</th>
                                                     <th>Ver</th>
                                                 </tr>
                                             </thead>
@@ -108,7 +108,7 @@ if (isset($_SESSION['usu_id'])) {
                                                     <th>TIPO</th>
                                                     <th>HS</th>
                                                     <th>ASIGNADO</th>
-                                                    <th>HOSTS</th>
+                                                    <th>ACTIVOS</th>
                                                     <th>Ver</th>
                                                     <th></th>
                                                 </tr>

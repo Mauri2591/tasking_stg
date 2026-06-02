@@ -17,7 +17,7 @@ if (isset($_SESSION['usu_id'])) {
                 <div class="col-12">
                     <div class="page-title-box d-sm-flex align-items-center justify-content-between bg-light">
                         <h4 class="mb-sm-0">
-                            <span class="badge" style="background-color:#F88163; color:#FFF;">DELIVERY</span>
+                            <span class="badge" style="background-color:#F88163; color:#FFF;">CONSULTING&GRC</span>
                         </h4>
                     </div>
                 </div>
@@ -51,7 +51,7 @@ if (isset($_SESSION['usu_id'])) {
                                 <!-- NUEVOS -->
                                 <div class="tab-pane active" id="tab_nuevos" role="tabpanel">
                                     <div class="card card-body">
-                                        <table id="table_proyectos_nuevos_delivery" class="table text-center w-100">
+                                        <table id="table_proyectos_nuevos_consulting" class="table text-center w-100">
                                             <thead>
                                                 <tr>
                                                     <th>TITULO</th>
@@ -62,7 +62,7 @@ if (isset($_SESSION['usu_id'])) {
                                                     <th>TIPO</th>
                                                     <th>HS</th>
                                                     <th>ASIGNADO</th>
-                                                    <th>HOSTS</th>
+                                                    <th>ACTIVOS</th>
                                                     <th>ESTADO</th>
                                                 </tr>
                                             </thead>
@@ -74,7 +74,7 @@ if (isset($_SESSION['usu_id'])) {
                                 <!-- ABIERTOS -->
                                 <div class="tab-pane" id="tab_abiertos" role="tabpanel">
                                     <div class="card card-body">
-                                        <table id="table_proyectos_abiertos_delivery" class="table text-center w-100">
+                                        <table id="table_proyectos_abiertos_consulting" class="table text-center w-100">
                                             <thead>
                                                 <tr>
                                                     <th>CLIENTE</th>
@@ -85,7 +85,7 @@ if (isset($_SESSION['usu_id'])) {
                                                     <th>TIPO</th>
                                                     <th>HS</th>
                                                     <th>ASIGNADO</th>
-                                                    <th>HOSTS</th>
+                                                    <th>ACTIVOS</th>
                                                     <th></th>
                                                 </tr>
                                             </thead>
@@ -97,7 +97,7 @@ if (isset($_SESSION['usu_id'])) {
                                 <!-- REALIZADOS -->
                                 <div class="tab-pane" id="tab_realizados" role="tabpanel">
                                     <div class="card card-body">
-                                        <table id="table_proyectos_realizados_delivery" class="table text-center w-100">
+                                        <table id="table_proyectos_realizados_consulting" class="table text-center w-100">
                                             <thead>
                                                 <tr>
                                                     <th>CLIENTE</th>
@@ -108,7 +108,7 @@ if (isset($_SESSION['usu_id'])) {
                                                     <th>TIPO</th>
                                                     <th>HS</th>
                                                     <th>ASIGNADO</th>
-                                                    <th>HOSTS</th>
+                                                    <th>ACTIVOS</th>
                                                     <th>VER</th>
                                                     <th></th>
                                                 </tr>
