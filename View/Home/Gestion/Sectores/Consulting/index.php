@@ -17,7 +17,7 @@ if (isset($_SESSION['usu_id'])) {
                 <div class="col-12">
                     <div class="page-title-box d-sm-flex align-items-center justify-content-between bg-light">
                         <h4 class="mb-sm-0">
-                            <span class="badge" style="background-color:#F88163; color:#FFF;">CONSULTING&GRC</span>
+                            <span class="badge" style="background-color:#F88163; color:#FFF;">CONSULTING & GRC</span>
                         </h4>
                     </div>
                 </div>
