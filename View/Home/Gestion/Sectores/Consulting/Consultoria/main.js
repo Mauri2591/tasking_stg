@@ -18,7 +18,7 @@ $(document).ready(function () {
             dataType: "json",
             data: {
                 sector_id: 6,
-                cat_id: 82,
+                cat_id: 83,
                 estados_id: 1
             },
             error: function (e) {}
@@ -76,7 +76,7 @@ $(document).ready(function () {
             dataType: "json",
             data: {
                 sector_id: 6,
-                cat_id: 82,
+                cat_id: 83,
                 estados_id: 2
             },
             error: function (e) {}
@@ -134,7 +134,7 @@ $(document).ready(function () {
             dataType: "json",
             data: {
                 sector_id: 6,
-                cat_id: 82,
+                cat_id: 83,
                 estados_id: 3
             },
             error: function (e) {}
@@ -192,7 +192,7 @@ $(document).ready(function () {
             dataType: "json",
             data: {
                 sector_id: 6,
-                cat_id: 82,
+                cat_id: 83,
                 estados_id: 4
             },
             error: function (e) {}
