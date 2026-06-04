@@ -1015,7 +1015,7 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
     $("#combo_categoria_proy_nuevo").prop("disabled", false);
     $("#combo_subcategoria_proy_nuevo").prop("disabled", false);
     $("#combo_sector_proy_nuevo").prop("disabled", false);
-    $("#client_refPro_proy_nuevo").prop("disabled", false);
+    // $("#client_refPro_proy_nuevo").prop("disabled", false);
 
     $.post("../../../../../Controller/ctrProyectos.php?proy=get_datos_proyecto_creado", {
         id: $("#mdl_id_proyecto_gestionado").val()
@@ -1038,12 +1038,12 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
             $("#combo_categoria_proy_nuevo").prop("disabled", true);
             // $("#combo_subcategoria_proy_nuevo").prop("disabled", true);
             $("#combo_sector_proy_nuevo").prop("disabled", true);
-            $("#client_refPro_proy_nuevo").prop("disabled", true);
+            // $("#client_refPro_proy_nuevo").prop("disabled", true);
         } else {
             $("#combo_categoria_proy_nuevo").prop("disabled", false);
             $("#combo_subcategoria_proy_nuevo").prop("disabled", false);
             $("#combo_sector_proy_nuevo").prop("disabled", false);
-            $("#client_refPro_proy_nuevo").prop("disabled", false);
+            // $("#client_refPro_proy_nuevo").prop("disabled", false);
         }
 
         VALIDAR_SI_HAY_FECHA_INICIO = !!data.fech_inicio;
