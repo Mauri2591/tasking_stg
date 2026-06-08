@@ -65,10 +65,9 @@ if (isset($_SESSION['usu_id'])) {
 
         <?php
         if ($_SESSION['usu_id'] == "104") { //Usuario testing mio
-            $_SESSION['estado_proyecto'] = '<strong class="fs-16">'.$estado_id.'</strong>'; // estadao_id = 3 Finalizado
+            $_SESSION['estado_proyecto'] = $estado_id;
             foreach ($_SESSION as $key => $val) {
                 echo '<pre>' . $key . ':' . $val . '</pre>';
-                
             }
             $param_p = Openssl::get_ssl_decrypt($_GET['p']);
             echo '<pre>id_proyecto_cantidad_servicios: <strong style="font-size:1rem">' . $param_p . '</strong></pre>';
@@ -410,10 +409,8 @@ if (isset($_SESSION['usu_id'])) {
                                                         aria-hidden="true"></span>
                                                 </button>
 
-                                                <?php if($estado_id == 1 || $estado_id == 2 || $estado_id == 14): ?>
                                                 <button id="btn_finalizar_proyecto"
                                                     class="btn btn-sm btn-success text-light" style="margin: 0 .1rem">Finalizar</button>
-                                                <?php endif; ?>
                                             </section>
                                         </section>
                                         <hr>
@@ -452,6 +449,8 @@ if (isset($_SESSION['usu_id'])) {
 } ?>
 
     <script>
+        var ESTADO_PROYECTO = <?php echo $estado_id; ?>;
+
         var id_proyecto_gestionado =
             "<?php echo isset($_GET['pg']) ? Openssl::get_ssl_decrypt($_GET['pg']) : ''; ?>"
 
@@ -525,6 +524,12 @@ if (isset($_SESSION['usu_id'])) {
                         $("#contenedor_ips_y_descripcion").css("opacity", "1");
                     }
                 });
+            }
+
+            if (ESTADO_PROYECTO == 1 || ESTADO_PROYECTO == 2 || ESTADO_PROYECTO == 14) {
+                $("#btn_finalizar_proyecto").show();
+            } else {
+                $("#btn_finalizar_proyecto").hide();
             }
 
             let btn_guardar_descripcion = document.getElementById("btn_guardar_descripcion");
