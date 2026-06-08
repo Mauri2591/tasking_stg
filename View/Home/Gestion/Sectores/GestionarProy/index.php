@@ -410,7 +410,7 @@ if (isset($_SESSION['usu_id'])) {
                                                         aria-hidden="true"></span>
                                                 </button>
 
-                                                <?php if($estado_id != 3): ?>
+                                                <?php if($estado_id == 1 || $estado_id == 2 || $estado_id == 14): ?>
                                                 <button id="btn_finalizar_proyecto"
                                                     class="btn btn-sm btn-success text-light" style="margin: 0 .1rem">Finalizar</button>
                                                 <?php endif; ?>
