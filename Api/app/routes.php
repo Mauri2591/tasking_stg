@@ -257,8 +257,17 @@ return function (App $app) {
 
         // 3. Transformar datos
         foreach ($rows as &$row) {
-            $row['hosts'] = json_decode($row['hosts'], true);
+            $hostsJson = json_decode($row['hosts'], true);
+            $row['hosts'] = [
+                'ips'   => $hostsJson['ips'] ?? [],
+                'urls'  => $hostsJson['urls'] ?? [],
+                'otros' => []
+            ];
 
+            // Otros: texto libre, se trae por separado
+            $stmtOtros = $pdo->prepare("SELECT host FROM hosts WHERE id_proyecto_gestionado = :id AND est = 1 AND tipo NOT IN ('IP', 'URL')");
+            $stmtOtros->execute([':id' => $row['id_proyecto']]);
+            $row['hosts']['otros'] = $stmtOtros->fetchAll(PDO::FETCH_COLUMN);
             // Cliente
             $row['cliente'] = [
                 'id' => $row['id_cliente'],
@@ -410,7 +419,17 @@ return function (App $app) {
 
         // 3. Transformar datos
         foreach ($rows as &$row) {
-            $row['hosts'] = json_decode($row['hosts'], true);
+            $hostsJson = json_decode($row['hosts'], true);
+            $row['hosts'] = [
+                'ips'   => $hostsJson['ips'] ?? [],
+                'urls'  => $hostsJson['urls'] ?? [],
+                'otros' => []
+            ];
+
+            // Otros: texto libre, se trae por separado
+            $stmtOtros = $pdo->prepare("SELECT host FROM hosts WHERE id_proyecto_gestionado = :id AND est = 1 AND tipo NOT IN ('IP', 'URL')");
+            $stmtOtros->execute([':id' => $row['id_proyecto']]);
+            $row['hosts']['otros'] = $stmtOtros->fetchAll(PDO::FETCH_COLUMN);
 
             // Cliente
             $row['cliente'] = [
@@ -565,7 +584,17 @@ return function (App $app) {
 
         // 3. Transformar datos
         foreach ($rows as &$row) {
-            $row['hosts'] = json_decode($row['hosts'], true);
+            $hostsJson = json_decode($row['hosts'], true);
+            $row['hosts'] = [
+                'ips'   => $hostsJson['ips'] ?? [],
+                'urls'  => $hostsJson['urls'] ?? [],
+                'otros' => []
+            ];
+
+            // Otros: texto libre, se trae por separado
+            $stmtOtros = $pdo->prepare("SELECT host FROM hosts WHERE id_proyecto_gestionado = :id AND est = 1 AND tipo NOT IN ('IP', 'URL')");
+            $stmtOtros->execute([':id' => $row['id_proyecto']]);
+            $row['hosts']['otros'] = $stmtOtros->fetchAll(PDO::FETCH_COLUMN);
 
             // Cliente
             $row['cliente'] = [
@@ -721,7 +750,17 @@ return function (App $app) {
 
         // 3. Transformar datos
         foreach ($rows as &$row) {
-            $row['hosts'] = json_decode($row['hosts'], true);
+            $hostsJson = json_decode($row['hosts'], true);
+            $row['hosts'] = [
+                'ips'   => $hostsJson['ips'] ?? [],
+                'urls'  => $hostsJson['urls'] ?? [],
+                'otros' => []
+            ];
+
+            // Otros: texto libre, se trae por separado
+            $stmtOtros = $pdo->prepare("SELECT host FROM hosts WHERE id_proyecto_gestionado = :id AND est = 1 AND tipo NOT IN ('IP', 'URL')");
+            $stmtOtros->execute([':id' => $row['id_proyecto']]);
+            $row['hosts']['otros'] = $stmtOtros->fetchAll(PDO::FETCH_COLUMN);
 
             // Cliente
             $row['cliente'] = [
