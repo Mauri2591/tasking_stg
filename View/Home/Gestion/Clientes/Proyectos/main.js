@@ -2669,7 +2669,12 @@ if (params.get('doc') === "error") {
 let dataRecurrente = null;
 
 //------------------------------ INICIO RECURRENCIAS  -----------------------------------//
+// Variable global para el id de proyecto_recurrencia a eliminar
+let idProyectoRecurrenciaEliminar = null;
+
 function gestionar_proy_recurrente(id_proyecto_cantidad_servicios, conteo_id_recurrencia) {
+
+    idProyectoRecurrenciaEliminar = conteo_id_recurrencia; // ← guardás el id pendiente
 
     $("#ModalPasarRecurrenteABorrador").modal("show");
 
@@ -2682,7 +2687,6 @@ function gestionar_proy_recurrente(id_proyecto_cantidad_servicios, conteo_id_rec
         "html"
     );
 
-    // Traigo datos para el insert
     $.ajax({
         type: "POST",
         url: "../../../../../Controller/ctrProyectos.php?proy=get_datos_recurrente_para_insert",
@@ -2691,7 +2695,6 @@ function gestionar_proy_recurrente(id_proyecto_cantidad_servicios, conteo_id_rec
         },
         dataType: "json",
         success: function (response) {
-
             dataRecurrente = {
                 id_proyecto_gestionado: response.id_proyecto_gestionado,
                 id_proyecto_cantidad_servicios: response.id_proyecto_cantidad_servicios,
@@ -2712,13 +2715,11 @@ function gestionar_proy_recurrente(id_proyecto_cantidad_servicios, conteo_id_rec
                 fech_crea: response.fech_crea,
                 est: response.est
             };
-
         },
         error: function (xhr, status, error) {
             console.error("Error al obtener datos:", error);
         }
     });
-
 }
 
 function asignarPm(id_proyecto_gestionado, id_pm_calidad) {
@@ -2840,6 +2841,34 @@ $("#btnPasarRecurrenteABorrador").off("click").on("click", function () {
             console.error("Error al insertar:", error);
         }
     });
+});
+
+$("#btnPasarEliminarHistorico").off("click").on("click", function () {
+    if (!idProyectoRecurrenciaEliminar) {
+        Swal.fire({
+            icon: "warning",
+            title: "Error",
+            text: "No hay recurrencia seleccionada"
+        });
+        return;
+    }
+    $.post("../../../../../Controller/ctrProyectos.php?proy=inactivar_proyecto_recurrencia", {
+        id: idProyectoRecurrenciaEliminar
+    }, function (data) {
+        if (data.status === "success") {
+            Swal.fire({
+                icon: "success",
+                title: "Eliminado correctamente",
+                timer: 1100,
+                showConfirmButton: false
+            });
+            setTimeout(() => {
+                if ($.fn.DataTable.isDataTable('#table_proyectos_recurrencia')) {
+                    $('#table_proyectos_recurrencia').DataTable().ajax.reload(null, false);
+                }
+            }, 500);
+        }
+    }, "json");
 });
 
 //------------------------------ FIN RECURRENCIAS  -----------------------------------//

@@ -173,12 +173,28 @@ class timesummary extends Conexion
         $sql = "SELECT 
     tse.id AS id_timesummary_estados,
     pg.id AS id_proyecto_gestionado,
-    DATE_FORMAT(pg.fech_inicio, '%M-%Y') AS periodo,
+    CONCAT(
+    COALESCE(DATE_FORMAT(pg.fech_inicio, '%d-%m-%Y'), 'N/A'),
+    ' / ',
+    COALESCE(DATE_FORMAT(pg.fech_fin, '%d-%m-%Y'), 'N/A')
+) AS periodo,
     pg.titulo,
     tm_categoria.cat_nom AS producto,
     IFNULL(dim.total_hs_dimensionadas, 0) AS hs_dimensionadas,
-    proyecto_recurrencia.posicion_recurrencia,
-
+CASE 
+    WHEN proyecto_recurrencia.id IS NOT NULL THEN
+        CONCAT(
+            (SELECT COUNT(*) FROM proyecto_recurrencia prx 
+             WHERE prx.id_proyecto_cantidad_servicios = proyecto_recurrencia.id_proyecto_cantidad_servicios
+               AND prx.est = 1 
+               AND prx.id <= proyecto_recurrencia.id),
+            '/',
+            (SELECT COUNT(*) FROM proyecto_recurrencia prx 
+             WHERE prx.id_proyecto_cantidad_servicios = proyecto_recurrencia.id_proyecto_cantidad_servicios
+               AND prx.est = 1)
+        )
+    ELSE NULL
+END AS posicion_recurrencia,
     -- horas_consumidas (solo las que el usuario actual cargó)
     IFNULL((
         SELECT TIME_FORMAT(SEC_TO_TIME(SUM(TIME_TO_SEC(tc1.horas_consumidas))), '%H:%i')
@@ -270,7 +286,20 @@ class timesummary extends Conexion
         tm_categoria.cat_nom AS producto,
         IFNULL(dim.total_hs_dimensionadas, 0) AS hs_dimensionadas,
         tse.est,
-        proyecto_recurrencia.posicion_recurrencia AS recurrencia,
+        CASE 
+    WHEN proyecto_recurrencia.id IS NOT NULL THEN
+        CONCAT(
+            (SELECT COUNT(*) FROM proyecto_recurrencia prx 
+             WHERE prx.id_proyecto_cantidad_servicios = proyecto_recurrencia.id_proyecto_cantidad_servicios
+               AND prx.est = 1 
+               AND prx.id <= proyecto_recurrencia.id),
+            '/',
+            (SELECT COUNT(*) FROM proyecto_recurrencia prx 
+             WHERE prx.id_proyecto_cantidad_servicios = proyecto_recurrencia.id_proyecto_cantidad_servicios
+               AND prx.est = 1)
+        )
+    ELSE NULL
+END AS recurrencia,
        CONCAT(
     'Desde ',
     COALESCE(DATE_FORMAT(pg.fech_inicio, '%d-%m-%Y'), 'NO POSEE'),
@@ -345,12 +374,28 @@ class timesummary extends Conexion
         $sql = "SELECT 
         tse.id AS id_timesummary_estados,
         pg.id AS id_proyecto_gestionado,
-        DATE_FORMAT(pg.fech_inicio, '%M-%Y') AS periodo,
+        CONCAT(
+    COALESCE(DATE_FORMAT(pg.fech_inicio, '%d-%m-%Y'), 'N/A'),
+    ' / ',
+    COALESCE(DATE_FORMAT(pg.fech_fin, '%d-%m-%Y'), 'N/A')
+) AS periodo,
         pg.titulo,
         tm_categoria.cat_nom AS producto,
         IFNULL(dim.total_hs_dimensionadas, 0) AS hs_dimensionadas,
-        proyecto_recurrencia.posicion_recurrencia,
-
+        CASE 
+    WHEN proyecto_recurrencia.id IS NOT NULL THEN
+        CONCAT(
+            (SELECT COUNT(*) FROM proyecto_recurrencia prx 
+             WHERE prx.id_proyecto_cantidad_servicios = proyecto_recurrencia.id_proyecto_cantidad_servicios
+               AND prx.est = 1 
+               AND prx.id <= proyecto_recurrencia.id),
+            '/',
+            (SELECT COUNT(*) FROM proyecto_recurrencia prx 
+             WHERE prx.id_proyecto_cantidad_servicios = proyecto_recurrencia.id_proyecto_cantidad_servicios
+               AND prx.est = 1)
+        )
+    ELSE NULL
+END AS posicion_recurrencia,
         -- MIS HORAS
         IFNULL((
             SELECT TIME_FORMAT(SEC_TO_TIME(SUM(TIME_TO_SEC(tc1.horas_consumidas))), '%H:%i')
@@ -476,15 +521,14 @@ class timesummary extends Conexion
         $sql = "SELECT 
                 proyecto_gestionado.cat_id,
                 proyecto_gestionado.refProy AS referencia,
-                DATE_FORMAT(proyecto_gestionado.fech_inicio, '%d-%m') AS fecha_inicio,
-                DATE_FORMAT(proyecto_gestionado.fech_fin, '%d-%m') AS fecha_fin,
+                DATE_FORMAT(proyecto_gestionado.fech_inicio, '%d-%m-%Y') AS fecha_inicio,
+                DATE_FORMAT(proyecto_gestionado.fech_fin, '%d-%m-%Y') AS fecha_fin,
                 dimensionamiento.hs_dimensionadas AS dimensionamiento,
                 CONCAT(
-                    UPPER(LEFT(DATE_FORMAT(proyecto_gestionado.fech_inicio, '%M'),1)),
-                    SUBSTRING(DATE_FORMAT(proyecto_gestionado.fech_inicio, '%M'),2),
-                    ' ',
-                    DATE_FORMAT(proyecto_gestionado.fech_inicio, '%Y')
-                ) AS periodo
+                COALESCE(DATE_FORMAT(proyecto_gestionado.fech_inicio, '%d-%m-%Y'), 'N/A'),
+                ' hasta ',
+                COALESCE(DATE_FORMAT(proyecto_gestionado.fech_fin, '%d-%m-%Y'), 'N/A')
+            ) AS periodo
             FROM proyecto_gestionado
             LEFT JOIN dimensionamiento 
                 ON dimensionamiento.id_proyecto_gestionado = proyecto_gestionado.id
@@ -706,12 +750,12 @@ class timesummary extends Conexion
     }
 
     public function getDatosReporteSinFiltro($sector_id = null)
-{
-    $conn = parent::get_conexion();
+    {
+        $conn = parent::get_conexion();
 
-    $whereSector = $sector_id ? "AND proyecto_gestionado.sector_id = :sector_id" : "";
+        $whereSector = $sector_id ? "AND proyecto_gestionado.sector_id = :sector_id" : "";
 
-    $sql = "SELECT
+        $sql = "SELECT
     clientes.client_id,
     clientes.client_rs,
     clientes.client_cuit AS cuit,
@@ -811,23 +855,23 @@ GROUP BY
     dimensionamiento.hs_dimensionadas
 ORDER BY clientes.client_rs";
 
-    $stmt = $conn->prepare($sql);
+        $stmt = $conn->prepare($sql);
 
-    if ($sector_id) {
-        $stmt->bindValue(":sector_id", $sector_id, PDO::PARAM_INT);
+        if ($sector_id) {
+            $stmt->bindValue(":sector_id", $sector_id, PDO::PARAM_INT);
+        }
+
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    $stmt->execute();
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);
-}
+    public function getDatosReporteConFiltroFechas($fecha_desde, $fecha_hasta, $sector_id = null)
+    {
+        $conn = parent::get_conexion();
 
-   public function getDatosReporteConFiltroFechas($fecha_desde, $fecha_hasta, $sector_id = null)
-{
-    $conn = parent::get_conexion();
-    
-    $whereSector = $sector_id ? "AND proyecto_gestionado.sector_id = :sector_id" : "";
-    
-    $sql = "SELECT
+        $whereSector = $sector_id ? "AND proyecto_gestionado.sector_id = :sector_id" : "";
+
+        $sql = "SELECT
         clientes.client_id,
         clientes.client_rs,
         clientes.client_cuit AS cuit,
@@ -930,25 +974,25 @@ ORDER BY clientes.client_rs";
             tm_usuario_pm.usu_nom
         ORDER BY clientes.client_rs";
 
-    $stmt = $conn->prepare($sql);
-    $stmt->bindValue(":fecha_desde", $fecha_desde, PDO::PARAM_STR);
-    $stmt->bindValue(":fecha_hasta", $fecha_hasta, PDO::PARAM_STR);
-    
-    if ($sector_id) {
-        $stmt->bindValue(":sector_id", $sector_id, PDO::PARAM_INT);
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue(":fecha_desde", $fecha_desde, PDO::PARAM_STR);
+        $stmt->bindValue(":fecha_hasta", $fecha_hasta, PDO::PARAM_STR);
+
+        if ($sector_id) {
+            $stmt->bindValue(":sector_id", $sector_id, PDO::PARAM_INT);
+        }
+
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
-    
-    $stmt->execute();
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);
-}
 
     public function getDatosReporteConFiltroPoriDCliente($client_id, $sector_id = null)
-{
-    $conn = parent::get_conexion();
+    {
+        $conn = parent::get_conexion();
 
-    $whereSector = $sector_id ? "AND proyecto_gestionado.sector_id = :sector_id" : "";
+        $whereSector = $sector_id ? "AND proyecto_gestionado.sector_id = :sector_id" : "";
 
-    $sql = "SELECT
+        $sql = "SELECT
         clientes.client_id,
         clientes.client_rs,
         clientes.client_cuit AS cuit,
@@ -1061,16 +1105,16 @@ ORDER BY clientes.client_rs";
         tm_usuario_pm.usu_nom
     ORDER BY clientes.client_rs";
 
-    $stmt = $conn->prepare($sql);
-    $stmt->bindValue(":client_id", $client_id, PDO::PARAM_STR);
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue(":client_id", $client_id, PDO::PARAM_STR);
 
-    if ($sector_id) {
-        $stmt->bindValue(":sector_id", $sector_id, PDO::PARAM_INT);
+        if ($sector_id) {
+            $stmt->bindValue(":sector_id", $sector_id, PDO::PARAM_INT);
+        }
+
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
-
-    $stmt->execute();
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);
-}
     public function getReportePorFechasYCliente($client_id, $fecha_desde, $fecha_hasta, $sector_id = null)
     {
         $conn = parent::get_conexion();

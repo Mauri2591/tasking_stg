@@ -211,79 +211,63 @@ class Proyectos extends Conexion
     DATE_FORMAT(pg.fech_inicio, '%d-%m-%Y') AS fech_inicio, 
     p.cantidad_servicios, 
     c.client_rs, 
-
-    pm_concat.id_pm_calidad AS id_pm_calidad,  -- ✅ NUEVO
-
-COALESCE(
-    pm_concat.pm_calidad_nombres,
-    GROUP_CONCAT(
-        DISTINCT CONCAT(
-            UPPER(LEFT(u.usu_nom, 1)),
-            LOWER(SUBSTRING(u.usu_nom, 2))
+    pm_concat.id_pm_calidad AS id_pm_calidad,
+    COALESCE(
+        pm_concat.pm_calidad_nombres,
+        GROUP_CONCAT(
+            DISTINCT CONCAT(
+                UPPER(LEFT(u.usu_nom, 1)),
+                LOWER(SUBSTRING(u.usu_nom, 2))
+            )
+            SEPARATOR ',<br>'
         )
-        SEPARATOR ',<br>'
-    )
-) AS creador_proy,
+    ) AS creador_proy,
     s.sector_nombre,
     tc.cat_nom,
     tp.pais_nombre,
     pg.id AS id_proyecto_gestionado,
-    pr.posicion_recurrencia,
     prioridad.prioridad,
-    IF(proyecto_rechequeo.id,'SI','NO') as rechequeo,
-
+    IF(proyecto_rechequeo.id,'SI','NO') AS rechequeo,
     CASE 
         WHEN pg.id_proyecto_recurrencia IS NULL THEN 0 
         ELSE pg.id_proyecto_recurrencia 
     END AS id_proyecto_recurrencia,
-
     GROUP_CONCAT(
         CONCAT(
             UPPER(LEFT(tmu.usu_nom, 1)),
             LOWER(SUBSTRING(tmu.usu_nom, 2))
         )
         SEPARATOR ',<br>'
-    ) AS usu_nom_asignado
+    ) AS usu_nom_asignado,
+
+    -- ✅ posición calculada dinámicamente
+    (
+    SELECT CONCAT(
+        (SELECT COUNT(*) FROM proyecto_recurrencia prx 
+         WHERE prx.id_proyecto_cantidad_servicios = pcs.id 
+           AND prx.est = 1 
+           AND prx.id <= pg.id_proyecto_recurrencia),
+        '/',
+        (SELECT COUNT(*) FROM proyecto_recurrencia prx 
+         WHERE prx.id_proyecto_cantidad_servicios = pcs.id 
+           AND prx.est = 1)
+    )
+    FROM DUAL
+    WHERE pg.id_proyecto_recurrencia IS NOT NULL
+) AS posicion_recurrencia
 
 FROM proyecto_cantidad_servicios pcs
-
-JOIN proyectos p 
-    ON pcs.proy_id = p.proy_id
-
-LEFT JOIN clientes c 
-    ON p.client_id = c.client_id
-
-LEFT JOIN tm_pais tp 
-    ON c.pais_id = tp.pais_id
-
-LEFT JOIN proyecto_gestionado pg 
-    ON pg.id_proyecto_cantidad_servicios = pcs.id
-
-LEFT JOIN tm_usuario u 
-    ON pg.usu_crea = u.usu_id
-
-LEFT JOIN tm_categoria tc 
-    ON pg.cat_id = tc.cat_id
-
-LEFT JOIN sectores s 
-    ON pg.sector_id = s.sector_id
-
-LEFT JOIN usuario_proyecto AS ua 
-    ON pg.id = ua.id_proyecto_gestionado
-
-LEFT JOIN tm_usuario tmu 
-    ON ua.usu_asignado = tmu.usu_id
-
-LEFT JOIN proyecto_recurrencia pr 
-    ON pg.id_proyecto_recurrencia = pr.id
-
-LEFT JOIN prioridad 
-    ON pg.prioridad_id = prioridad.id
-
-LEFT JOIN proyecto_rechequeo 
-    ON pg.id = proyecto_rechequeo.id_proyecto_gestionado
-
--- ✅ SUBQUERY PM CALIDAD
+JOIN proyectos p ON pcs.proy_id = p.proy_id
+LEFT JOIN clientes c ON p.client_id = c.client_id
+LEFT JOIN tm_pais tp ON c.pais_id = tp.pais_id
+LEFT JOIN proyecto_gestionado pg ON pg.id_proyecto_cantidad_servicios = pcs.id
+LEFT JOIN tm_usuario u ON pg.usu_crea = u.usu_id
+LEFT JOIN tm_categoria tc ON pg.cat_id = tc.cat_id
+LEFT JOIN sectores s ON pg.sector_id = s.sector_id
+LEFT JOIN usuario_proyecto AS ua ON pg.id = ua.id_proyecto_gestionado
+LEFT JOIN tm_usuario tmu ON ua.usu_asignado = tmu.usu_id
+LEFT JOIN prioridad ON pg.prioridad_id = prioridad.id
+LEFT JOIN proyecto_rechequeo ON pg.id = proyecto_rechequeo.id_proyecto_gestionado
 LEFT JOIN (
     SELECT 
         tse.id_proyecto_gestionado,
@@ -296,33 +280,19 @@ LEFT JOIN (
             SEPARATOR ',<br>'
         ) AS pm_calidad_nombres
     FROM timesummary_estados tse
-    INNER JOIN tm_usuario u 
-        ON u.usu_id = tse.usuario_asignado
-    WHERE 
-        tse.id_pm_calidad IS NOT NULL
-        AND tse.est = 1
+    INNER JOIN tm_usuario u ON u.usu_id = tse.usuario_asignado
+    WHERE tse.id_pm_calidad IS NOT NULL AND tse.est = 1
     GROUP BY tse.id_proyecto_gestionado
-) pm_concat 
-ON pm_concat.id_proyecto_gestionado = pg.id
+) pm_concat ON pm_concat.id_proyecto_gestionado = pg.id
 
 WHERE pcs.est = 1 
   AND (pg.estados_id IS NULL OR pg.estados_id = 14)
 
 GROUP BY 
-    pcs.id,
-    pcs.proy_id, 
-    pcs.numero_servicio, 
-    pcs.fech_crea, 
-    p.cantidad_servicios, 
-    c.client_rs, 
-    u.usu_nom,
-    s.sector_nombre,
-    tc.cat_nom,
-    tp.pais_nombre,
-    pg.id,
-    pr.posicion_recurrencia,
-    pg.id_proyecto_recurrencia,
-    pm_concat.id_pm_calidad   -- ✅ importante en algunos MySQL
+    pcs.id, pcs.proy_id, pcs.numero_servicio, pcs.fech_crea, 
+    p.cantidad_servicios, c.client_rs, u.usu_nom,
+    s.sector_nombre, tc.cat_nom, tp.pais_nombre,
+    pg.id, pg.id_proyecto_recurrencia, pm_concat.id_pm_calidad
 
 ORDER BY pcs.proy_id ASC, pcs.numero_servicio ASC";
         $stmt = $conn->prepare($sql);
@@ -499,7 +469,7 @@ ORDER BY
 
     // FINALIZAN servicios ETHICAL HACKING VAS
 
-     public function get_proyectos_consulting($sector_id, $cat_id, $estados_id)
+    public function get_proyectos_consulting($sector_id, $cat_id, $estados_id)
     {
         $conn = parent::get_conexion();
         $sql = "SELECT 
@@ -1529,7 +1499,7 @@ ORDER BY id_proyecto_cantidad_servicios ASC";
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function insert_proyecto_gestionado(int $id_proyecto_cantidad_servicios, int $cat_id, int $cats_id, int $sector_id, int $usu_crea, string $prioridad_id, int $estados_id, string $titulo, string $descripcion, string $refProy, string $correo_envio_cliente, string $correo_envio_cliente_copias,string $recurrencia, string $fech_inicio, string $fech_fin, string $fech_vantive, $archivo, $captura_imagen)
+    public function insert_proyecto_gestionado(int $id_proyecto_cantidad_servicios, int $cat_id, int $cats_id, int $sector_id, int $usu_crea, string $prioridad_id, int $estados_id, string $titulo, string $descripcion, string $refProy, string $correo_envio_cliente, string $correo_envio_cliente_copias, string $recurrencia, string $fech_inicio, string $fech_fin, string $fech_vantive, $archivo, $captura_imagen)
     {
         $conn = parent::get_conexion();
         $sql = "INSERT INTO proyecto_gestionado (
@@ -2286,7 +2256,20 @@ ORDER BY cantidad_proyectos DESC";
         cl.client_rs AS cliente,
         tm_estados.estados_nombre AS estado,
         pcs.id AS id_proyecto_cantidad_servicios,
-        prc.posicion_recurrencia,
+        (
+            SELECT CONCAT(
+                (SELECT COUNT(*) FROM proyecto_recurrencia prx 
+                WHERE prx.id_proyecto_cantidad_servicios = pcs.id 
+                AND prx.est = 1 
+                AND prx.id <= prc.id),
+                '/',
+                (SELECT COUNT(*) FROM proyecto_recurrencia prx 
+                WHERE prx.id_proyecto_cantidad_servicios = pcs.id 
+                AND prx.est = 1)
+            )
+            FROM DUAL
+            WHERE prc.id IS NOT NULL
+        ) AS posicion_recurrencia,
         IF(pr.id IS NULL, NULL, 'SI') AS rechequeo,
         pr.id_proyecto_gestionado_origen AS rechequeo_de,  
         SUM(CASE WHEN hosts.tipo = 'IP' THEN 1 ELSE 0 END) AS ips,
@@ -2417,41 +2400,46 @@ ORDER BY cantidad_proyectos DESC";
     MAX(pg.id) AS id_proyecto_gestionado,  
     pcs.id AS id_proyecto_cantidad_servicios,
 
-    -- Total de recurrencias
-    (
-        SELECT COUNT(*)
-        FROM proyecto_recurrencia prx
-        WHERE prx.id_proyecto_cantidad_servicios = pcs.id
-    ) AS recurrencias_total,
+   -- Total de recurrencias
+(
+    SELECT COUNT(*)
+    FROM proyecto_recurrencia prx
+    WHERE prx.id_proyecto_cantidad_servicios = pcs.id
+      AND prx.est = 1                          -- ← agregar
+) AS recurrencias_total,
 
-    -- Utilizadas (activo = 'SI')
-    (
-        SELECT COUNT(*)
-        FROM proyecto_recurrencia prx
-        WHERE prx.id_proyecto_cantidad_servicios = pcs.id
-          AND prx.activo = 'SI'
-    ) AS recurrencias_utilizadas,
+-- Utilizadas (activo = 'SI')
+(
+    SELECT COUNT(*)
+    FROM proyecto_recurrencia prx
+    WHERE prx.id_proyecto_cantidad_servicios = pcs.id
+      AND prx.activo = 'SI'
+      AND prx.est = 1                          -- ← agregar
+) AS recurrencias_utilizadas,
 
-    -- Restantes (total - utilizadas)
-    (
-        SELECT COUNT(*)
-        FROM proyecto_recurrencia prx
-        WHERE prx.id_proyecto_cantidad_servicios = pcs.id
-    ) -
-    (
-        SELECT COUNT(*)
-        FROM proyecto_recurrencia prx
-        WHERE prx.id_proyecto_cantidad_servicios = pcs.id
-          AND prx.activo = 'SI'
-    ) AS recurrencias_restantes,
+-- Restantes
+(
+    SELECT COUNT(*)
+    FROM proyecto_recurrencia prx
+    WHERE prx.id_proyecto_cantidad_servicios = pcs.id
+      AND prx.est = 1                          -- ← agregar
+) -
+(
+    SELECT COUNT(*)
+    FROM proyecto_recurrencia prx
+    WHERE prx.id_proyecto_cantidad_servicios = pcs.id
+      AND prx.activo = 'SI'
+      AND prx.est = 1                          -- ← agregar
+) AS recurrencias_restantes,
 
-    -- Primer ID pendiente
-    (
-        SELECT MIN(pr2.id)
-        FROM proyecto_recurrencia pr2
-        WHERE pr2.id_proyecto_cantidad_servicios = pcs.id
-          AND pr2.activo = 'NO'
-    ) AS conteo_id_recurrencia,
+-- Primer ID pendiente
+(
+    SELECT MIN(pr2.id)
+    FROM proyecto_recurrencia pr2
+    WHERE pr2.id_proyecto_cantidad_servicios = pcs.id
+      AND pr2.activo = 'NO'
+      AND pr2.est = 1                          -- ← agregar
+) AS conteo_id_recurrencia,
 
     -- Estado de toma
     CASE 
@@ -2482,6 +2470,32 @@ ORDER BY pcs.id DESC";
         $stmt = $conn->prepare($sql);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function inactivar_proyecto_recurrencia(int $id): void
+    {
+        $conn = parent::get_conexion();
+
+        // 1. Obtenemos el id_proyecto_gestionado antes de inactivar
+        $sqlGet = "SELECT id_proyecto_gestionado FROM proyecto_recurrencia WHERE id = :id AND est = 1";
+        $stmtGet = $conn->prepare($sqlGet);
+        $stmtGet->bindValue(':id', $id, PDO::PARAM_INT);
+        $stmtGet->execute();
+        $row = $stmtGet->fetch(PDO::FETCH_ASSOC);
+
+        // 2. Inactivar proyecto_recurrencia
+        $sql = "UPDATE proyecto_recurrencia SET est = 0 WHERE id = :id";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+        $stmt->execute();
+
+        // 3. Si tiene proyecto_gestionado asociado, lo inactivamos también
+        if (!empty($row['id_proyecto_gestionado'])) {
+            $sqlPG = "UPDATE proyecto_gestionado SET est = 0 WHERE id = :id_pg";
+            $stmtPG = $conn->prepare($sqlPG);
+            $stmtPG->bindValue(':id_pg', $row['id_proyecto_gestionado'], PDO::PARAM_INT);
+            $stmtPG->execute();
+        }
     }
     public function get_id_proyecto_recurrencia($id)
     {
