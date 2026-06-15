@@ -12,8 +12,8 @@
       <?php endif; ?>
       <span class="badge bg-light text-primary mt-2 text-start" style="width: 35%; margin-left: 1.3rem;">REF <span class="fw-bold fs-11" id="referencia"></span> </span>
       <span class="badge bg-light text-primary mt-1 text-start" style="width: 35%; margin-left: 1.3rem;">HS <span class="fw-bold fs-11" id="dimensionamiento"></span> </span>
-      <span class="badge bg-light text-primary mt-1 text-start" style="width: 35%; margin-left: 1.3rem;">PERIODO <span class="fw-bold fs-11" id="periodo"></span> </span>
-      <span class="badge bg-light text-primary mt-1 text-start" style="width: 35%; margin-left: 1.3rem;">DESDE <span class="fw-bold fs-11" id="desde"></span> <br>HASTA <span class="fw-bold fs-11" id="hasta"></span> </span>
+      <span class="badge bg-light text-primary mt-1 text-start" style="width: 50%; margin-left: 1.3rem;">PERIODO <br><span class="fw-bold fs-11" id="periodo"></span> </span>
+      <!-- <span class="badge bg-light text-primary mt-1 text-start" style="width: 35%; margin-left: 1.3rem;">DESDE <span class="fw-bold fs-11" id="desde"></span> <br>HASTA <span class="fw-bold fs-11" id="hasta"></span> </span> -->
 
       <div class="modal-body pt-0">
 

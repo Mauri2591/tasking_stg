@@ -180,21 +180,20 @@ if (isset($_SESSION['usu_id'])) {
                                         document.getElementById("validar_periodo").style.display = 'none';
                                         if (resp.cat_id) {
 
-                                            let partesFecha = FECHA.split('-');
-                                            let mesCalendar = partesFecha[1];
-                                            let mesInicio = null;
+                                            let fechaCalendar = new Date(FECHA);
 
-                                            if (resp.fecha_inicio) {
-                                                let partesInicio = resp.fecha_inicio.split('-');
-                                                mesInicio = String(partesInicio[1]).padStart(2, '0');
+                                            let fechaInicio = resp.fecha_inicio ? new Date(resp.fecha_inicio.split('-').reverse().join('-')) : null;
+                                            let fechaFin = resp.fecha_fin ? new Date(resp.fecha_fin.split('-').reverse().join('-')) : null;
+
+                                            let fueraDeRango = false;
+
+                                            if (fechaInicio && fechaFin) {
+                                                fueraDeRango = fechaCalendar < fechaInicio || fechaCalendar > fechaFin;
+                                            } else if (fechaInicio) {
+                                                fueraDeRango = fechaCalendar < fechaInicio;
                                             }
 
-                                            if (!resp.fecha_inicio || mesCalendar === mesInicio) {
-                                                document.getElementById("validar_periodo").style.display = "none";
-                                            } else {
-                                                document.getElementById("validar_periodo").style.display = "flex";
-                                            }
-
+                                            document.getElementById("validar_periodo").style.display = fueraDeRango ? "flex" : "none";
                                             $("#id_producto").val(resp.cat_id);
                                             $("#id_producto").prop('disabled', true); // viene predefinido, bloquear
 
@@ -219,7 +218,7 @@ if (isset($_SESSION['usu_id'])) {
 
                         } else {
                             $("#id_producto").prop('disabled', false); // al abrir, 209 = libre
-                           
+
                             $("#id_proyecto_gestionado").off("change").on("change", function() {
                                 let idProyecto = this.value;
                                 const selectedOption = this.options[this.selectedIndex];
@@ -242,19 +241,21 @@ if (isset($_SESSION['usu_id'])) {
                                         document.getElementById("validar_periodo").style.display = 'none';
                                         if (resp.cat_id) {
 
-                                            let partesFecha = FECHA.split('-');
-                                            let mesCalendar = partesFecha[1];
-                                            let mesInicio = null;
+                                            let fechaCalendar = new Date(FECHA);
 
-                                            if (resp.fecha_inicio) {
-                                                let partesInicio = resp.fecha_inicio.split('-');
-                                                mesInicio = String(partesInicio[1]).padStart(2, '0');
+                                            let fechaInicio = resp.fecha_inicio ? new Date(resp.fecha_inicio.split('-').reverse().join('-')) : null;
+                                            let fechaFin = resp.fecha_fin ? new Date(resp.fecha_fin.split('-').reverse().join('-')) : null;
+
+                                            let fueraDeRango = false;
+
+                                            if (fechaInicio && fechaFin) {
+                                                fueraDeRango = fechaCalendar < fechaInicio || fechaCalendar > fechaFin;
+                                            } else if (fechaInicio) {
+                                                fueraDeRango = fechaCalendar < fechaInicio;
                                             }
-                                            if (!resp.fecha_inicio || mesCalendar === mesInicio) {
-                                                document.getElementById("validar_periodo").style.display = "none";
-                                            } else {
-                                                document.getElementById("validar_periodo").style.display = "flex";
-                                            }
+
+                                            document.getElementById("validar_periodo").style.display = fueraDeRango ? "flex" : "none";
+
                                             $("#id_producto").val(resp.cat_id);
                                             $("#id_producto").prop('disabled', true); // viene predefinido, bloquear
 

@@ -674,6 +674,11 @@ switch ($_GET['proy']) {
         echo json_encode($results);
         break;
 
+    case 'inactivar_proyecto_recurrencia':
+        $proyecto->inactivar_proyecto_recurrencia((int)$_POST['id']);
+        echo json_encode(['status' => 'success']);
+        break;
+
     case 'get_id_proyecto_recurrencia':
         echo json_encode($proyecto->get_id_proyecto_recurrencia($_POST['id']));
         break;
