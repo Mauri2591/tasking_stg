@@ -384,7 +384,20 @@ ORDER BY pcs.proy_id ASC, pcs.numero_servicio ASC";
     pg.titulo,
     prio.id AS prioridad,
     prio.prioridad AS prioridad_nom,
-    pr.posicion_recurrencia,
+    CASE 
+        WHEN pr.id IS NOT NULL THEN
+            CONCAT(
+                (SELECT COUNT(*) FROM proyecto_recurrencia prx 
+                WHERE prx.id_proyecto_cantidad_servicios = pr.id_proyecto_cantidad_servicios
+                AND prx.est = 1 
+                AND prx.id <= pr.id),
+                '/',
+                (SELECT COUNT(*) FROM proyecto_recurrencia prx 
+                WHERE prx.id_proyecto_cantidad_servicios = pr.id_proyecto_cantidad_servicios
+                AND prx.est = 1)
+            )
+        ELSE NULL
+    END AS posicion_recurrencia,
     CASE 
         WHEN pg.id_proyecto_recurrencia IS NULL THEN 0 
         ELSE pg.id_proyecto_recurrencia 
@@ -453,11 +466,11 @@ GROUP BY
     prio.id,
     prio.prioridad,
     tmc.cat_nom,
-    pr.posicion_recurrencia,
+    pr.id,
+    pr.id_proyecto_cantidad_servicios,
     pg.id_proyecto_recurrencia,
     proyecto_rechequeo.id
-
-ORDER BY 
+    ORDER BY 
     id_proyecto_cantidad_servicios ASC";
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(1, $sector_id, PDO::PARAM_INT);
@@ -491,7 +504,20 @@ ORDER BY
     pg.titulo,
     prio.id AS prioridad,
     prio.prioridad AS prioridad_nom,
-    pr.posicion_recurrencia,
+    CASE 
+    WHEN pr.id IS NOT NULL THEN
+        CONCAT(
+            (SELECT COUNT(*) FROM proyecto_recurrencia prx 
+             WHERE prx.id_proyecto_cantidad_servicios = pr.id_proyecto_cantidad_servicios
+               AND prx.est = 1 
+               AND prx.id <= pr.id),
+            '/',
+            (SELECT COUNT(*) FROM proyecto_recurrencia prx 
+             WHERE prx.id_proyecto_cantidad_servicios = pr.id_proyecto_cantidad_servicios
+               AND prx.est = 1)
+        )
+    ELSE NULL
+END AS posicion_recurrencia,
     CASE 
         WHEN pg.id_proyecto_recurrencia IS NULL THEN 0 
         ELSE pg.id_proyecto_recurrencia 
@@ -560,7 +586,8 @@ GROUP BY
     prio.id,
     prio.prioridad,
     tmc.cat_nom,
-    pr.posicion_recurrencia,
+    pr.id,
+    pr.id_proyecto_cantidad_servicios,
     pg.id_proyecto_recurrencia,
     proyecto_rechequeo.id
 
@@ -597,7 +624,20 @@ ORDER BY
     pg.titulo,
     prio.id AS prioridad,
     prio.prioridad AS prioridad_nom,
-    pr.posicion_recurrencia,
+    pCASE 
+    WHEN pr.id IS NOT NULL THEN
+        CONCAT(
+            (SELECT COUNT(*) FROM proyecto_recurrencia prx 
+             WHERE prx.id_proyecto_cantidad_servicios = pr.id_proyecto_cantidad_servicios
+               AND prx.est = 1 
+               AND prx.id <= pr.id),
+            '/',
+            (SELECT COUNT(*) FROM proyecto_recurrencia prx 
+             WHERE prx.id_proyecto_cantidad_servicios = pr.id_proyecto_cantidad_servicios
+               AND prx.est = 1)
+        )
+    ELSE NULL
+END AS posicion_recurrencia,
     IF(proyecto_rechequeo.id, 'SI', 'NO') AS rechequeo,
     CASE 
         WHEN pg.id_proyecto_recurrencia IS NULL THEN 0 
@@ -665,7 +705,8 @@ GROUP BY
     prio.id,
     prio.prioridad,
     tmc.cat_nom,
-    pr.posicion_recurrencia,
+    pr.id,
+    pr.id_proyecto_cantidad_servicios,
     pg.id_proyecto_recurrencia,
     rechequeo
 ORDER BY id_proyecto_cantidad_servicios ASC";
@@ -704,7 +745,20 @@ ORDER BY id_proyecto_cantidad_servicios ASC";
     pg.titulo,
     prio.id AS prioridad,
     prio.prioridad AS prioridad_nom,
-    pr.posicion_recurrencia,
+    CASE 
+    WHEN pr.id IS NOT NULL THEN
+        CONCAT(
+            (SELECT COUNT(*) FROM proyecto_recurrencia prx 
+             WHERE prx.id_proyecto_cantidad_servicios = pr.id_proyecto_cantidad_servicios
+               AND prx.est = 1 
+               AND prx.id <= pr.id),
+            '/',
+            (SELECT COUNT(*) FROM proyecto_recurrencia prx 
+             WHERE prx.id_proyecto_cantidad_servicios = pr.id_proyecto_cantidad_servicios
+               AND prx.est = 1)
+        )
+    ELSE NULL
+END AS posicion_recurrencia,
     IF(proyecto_rechequeo.id, 'SI', 'NO') AS rechequeo,
     CASE 
         WHEN pg.id_proyecto_recurrencia IS NULL THEN 0 
@@ -768,7 +822,8 @@ GROUP BY
     prio.id,
     prio.prioridad,
     tmc.cat_nom,
-    pr.posicion_recurrencia,
+    pr.id,
+    pr.id_proyecto_cantidad_servicios,
     rechequeo,
     pg.id_proyecto_recurrencia
 ORDER BY id_proyecto_cantidad_servicios ASC";
@@ -804,7 +859,20 @@ ORDER BY id_proyecto_cantidad_servicios ASC";
     pg.titulo,
     prio.id AS prioridad,
     prio.prioridad AS prioridad_nom,
-    pr.posicion_recurrencia,
+    CASE 
+    WHEN pr.id IS NOT NULL THEN
+        CONCAT(
+            (SELECT COUNT(*) FROM proyecto_recurrencia prx 
+             WHERE prx.id_proyecto_cantidad_servicios = pr.id_proyecto_cantidad_servicios
+               AND prx.est = 1 
+               AND prx.id <= pr.id),
+            '/',
+            (SELECT COUNT(*) FROM proyecto_recurrencia prx 
+             WHERE prx.id_proyecto_cantidad_servicios = pr.id_proyecto_cantidad_servicios
+               AND prx.est = 1)
+        )
+    ELSE NULL
+END AS posicion_recurrencia,
     IF(proyecto_rechequeo.id, 'SI', 'NO') AS rechequeo,
     CASE 
         WHEN pg.id_proyecto_recurrencia IS NULL THEN 0 
@@ -869,7 +937,8 @@ GROUP BY
     prio.id,
     prio.prioridad,
     tmc.cat_nom,
-    pr.posicion_recurrencia,
+    pr.id,
+    pr.id_proyecto_cantidad_servicios,
     rechequeo,
     pg.id_proyecto_recurrencia
 ORDER BY id_proyecto_cantidad_servicios ASC";
@@ -1618,18 +1687,27 @@ ORDER BY id_proyecto_cantidad_servicios ASC";
         $sql = "SELECT 
     pg.*, 
     d.hs_dimensionadas,
-    pr.posicion_recurrencia
-FROM 
-    proyecto_gestionado pg
-LEFT JOIN 
-    dimensionamiento d 
-        ON pg.id = d.id_proyecto_gestionado
-LEFT JOIN 
-    proyecto_recurrencia pr
-        ON pg.id = pr.id 
-WHERE 
-    pg.id = ?
-    AND pg.est = 1";
+    CASE 
+        WHEN pr.id IS NOT NULL THEN
+            CONCAT(
+                (SELECT COUNT(*) FROM proyecto_recurrencia prx 
+                 WHERE prx.id_proyecto_cantidad_servicios = pr.id_proyecto_cantidad_servicios
+                   AND prx.est = 1 
+                   AND prx.id <= pr.id),
+                '/',
+                (SELECT COUNT(*) FROM proyecto_recurrencia prx 
+                 WHERE prx.id_proyecto_cantidad_servicios = pr.id_proyecto_cantidad_servicios
+                   AND prx.est = 1)
+            )
+        ELSE NULL
+    END AS posicion_recurrencia
+FROM proyecto_gestionado pg
+LEFT JOIN dimensionamiento d 
+    ON pg.id = d.id_proyecto_gestionado
+LEFT JOIN proyecto_recurrencia pr
+    ON pg.id_proyecto_recurrencia = pr.id
+WHERE pg.id = ?
+  AND pg.est = 1";
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(1, $id, PDO::PARAM_INT);
         $stmt->execute();
