@@ -613,7 +613,7 @@ ORDER BY
     DATE_FORMAT(pg.fech_fin, '%d-%m-%Y') AS fech_fin,
     p.cantidad_servicios, 
     c.client_rs, 
-    u.usu_nom AS creador_proy,              -- ✅ ahora viene del proyecto_gestionado
+    u.usu_nom AS creador_proy,             
     s.sector_nombre,
     s.sector_id,
     tsc.cats_nom,
@@ -624,7 +624,7 @@ ORDER BY
     pg.titulo,
     prio.id AS prioridad,
     prio.prioridad AS prioridad_nom,
-    pCASE 
+    CASE 
     WHEN pr.id IS NOT NULL THEN
         CONCAT(
             (SELECT COUNT(*) FROM proyecto_recurrencia prx 
@@ -1701,13 +1701,13 @@ ORDER BY id_proyecto_cantidad_servicios ASC";
             )
         ELSE NULL
     END AS posicion_recurrencia
-FROM proyecto_gestionado pg
-LEFT JOIN dimensionamiento d 
-    ON pg.id = d.id_proyecto_gestionado
-LEFT JOIN proyecto_recurrencia pr
-    ON pg.id_proyecto_recurrencia = pr.id
-WHERE pg.id = ?
-  AND pg.est = 1";
+    FROM proyecto_gestionado pg
+    LEFT JOIN dimensionamiento d 
+        ON pg.id = d.id_proyecto_gestionado
+    LEFT JOIN proyecto_recurrencia pr
+        ON pg.id_proyecto_recurrencia = pr.id
+    WHERE pg.id = ?
+    AND pg.est = 1";
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(1, $id, PDO::PARAM_INT);
         $stmt->execute();
