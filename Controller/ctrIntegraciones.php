@@ -100,6 +100,8 @@ switch ($_GET['case']) {
         break;
 
     case 'get_models':
+        /*En este endpoint veo la documentacion: https://chat.genia-dev.click/api/v1/docs y
+        https://chat.genia-dev.click/api/v1/openapi.json*/
         session_write_close();
         $api_key = trim($_POST['api_key'] ?? '');
         if (!$api_key) {

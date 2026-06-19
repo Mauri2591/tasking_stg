@@ -85,6 +85,15 @@ class Correo extends Conexion
             $mail->CharSet = 'UTF-8';
             $mail->setFrom('vulma-mssp@teco.com.ar', 'Tasking MSSP');
             $mail->addAddress('mssp-calidad@personal.com.ar');
+            // Agregar usuarios en copia
+            if (!empty($datos->usuarios) && $datos->usuarios !== 'Sin usuarios asignados') {
+                $listaUsuarios = array_map('trim', explode(',', $datos->usuarios));
+                foreach ($listaUsuarios as $correo) {
+                    if (filter_var($correo, FILTER_VALIDATE_EMAIL)) {
+                        $mail->addCC($correo);
+                    }
+                }
+            }
             $mail->isHTML(true);
             $mail->Subject = 'Proyecto finalizado - [CLIENTE] ' . $cliente;
             $mail->Body = "<p>Estimados,<br><br>
@@ -204,19 +213,23 @@ class Correo extends Conexion
 
         $conn = $this->get_conexion();
         $sql  = "SELECT descripciones_proyecto.id, 
-       descripciones_proyecto.carpeta_documentos_proy, 
-       descripciones_proyecto.documento, 
-       tm_categoria.cat_nom AS producto,
-       proyecto_gestionado.refProy AS referencia,
-       clientes.client_rs AS cliente
+            descripciones_proyecto.carpeta_documentos_proy, 
+            descripciones_proyecto.documento, 
+            tm_categoria.cat_nom AS producto,
+            proyecto_gestionado.refProy AS referencia,
+            clientes.client_rs AS cliente,
+            tm_usuario.usu_correo
         FROM descripciones_proyecto 
         INNER JOIN proyecto_gestionado ON proyecto_gestionado.id = descripciones_proyecto.id_proyecto_gestionado
         INNER JOIN tm_categoria ON tm_categoria.cat_id = proyecto_gestionado.cat_id
         INNER JOIN proyecto_cantidad_servicios ON proyecto_cantidad_servicios.id = proyecto_gestionado.id_proyecto_cantidad_servicios
         INNER JOIN proyectos ON proyectos.proy_id = proyecto_cantidad_servicios.proy_id
         INNER JOIN clientes ON clientes.client_id = proyectos.client_id
+        LEFT JOIN usuario_proyecto ON usuario_proyecto.id_proyecto_gestionado = proyecto_gestionado.id
+        LEFT JOIN tm_usuario ON usuario_proyecto.usu_asignado = tm_usuario.usu_id
         WHERE descripciones_proyecto.id_proyecto_gestionado = :id
-        ORDER BY descripciones_proyecto.id DESC LIMIT 1";
+        ORDER BY descripciones_proyecto.id DESC 
+        LIMIT 1";
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(':id', $id_proyecto_gestionado, PDO::PARAM_INT);
         $stmt->execute();
