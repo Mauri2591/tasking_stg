@@ -100,6 +100,7 @@ switch ($_GET['case']) {
         break;
 
     case 'get_models':
+        session_write_close();
         $api_key = trim($_POST['api_key'] ?? '');
         if (!$api_key) {
             echo json_encode(['error' => 'Falta api_key']);
@@ -134,6 +135,7 @@ switch ($_GET['case']) {
         exit;
 
     case 'chat':
+        session_write_close();
         $api_key = trim($_POST['api_key'] ?? '');
         $modelo  = trim($_POST['modelo'] ?? '');
         $prompt  = trim($_POST['prompt'] ?? '');
@@ -182,7 +184,6 @@ switch ($_GET['case']) {
                 $chat_id = $chunk['data']['chat_id'] ?? '';
             }
         }
-
         echo json_encode([
             'http_code' => $http_code,
             'respuesta' => $texto_final,
