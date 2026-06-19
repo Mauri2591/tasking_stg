@@ -33,13 +33,13 @@ if (isset($_SESSION['usu_id'])) {
                         <span class="d-none d-sm-block">Power Bi</span>
                     </a>
                 </li>
-                <?php if($_SESSION['usu_id'] == '104'): ?>
-                <li class="nav-item">
-                    <a class="nav-link" data-bs-toggle="tab" href="#genAi" role="tab">
-                        <span class="d-block d-sm-none"><i class="mdi mdi-home-variant"></i></span>
-                        <span class="d-none d-sm-block">GenAi</span>
-                    </a>
-                </li>
+                <?php if ($_SESSION['usu_id'] == '104'): ?>
+                    <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="tab" href="#genAi" role="tab">
+                            <span class="d-block d-sm-none"><i class="mdi mdi-home-variant"></i></span>
+                            <span class="d-none d-sm-block">GenAi</span>
+                        </a>
+                    </li>
                 <?php endif; ?>
             </ul>
             <!-- Tab panes -->
@@ -107,95 +107,95 @@ if (isset($_SESSION['usu_id'])) {
                     </div>
                 </div>
 
-                <?php if($_SESSION['usu_id'] == '104'): ?>
+                <?php if ($_SESSION['usu_id'] == '104'): ?>
 
-                <div class="tab-pane" id="genAi" role="tabpanel">
-                    <div class="d-flex">
-                        <div class="card col-lg-12">
-                            <div class="card-body">
-                                <p class="text-muted">Vista para realizar pruebas. <code>Mauricio Raul Gonzalez - <strong> GenAi</strong></code> </p>
-                                <!-- Nav tabs -->
-                                <ul class="nav nav-pills nav-custom-outline nav-primary mb-3" role="tablist">
-                                    <li class="nav-item waves-effect waves-light">
-                                        <a class="nav-link active" data-bs-toggle="tab" href="#consultarGenAiModelos" role="tab" aria-selected="true">Consultar Modelos</a>
-                                    </li>
+                    <div class="tab-pane" id="genAi" role="tabpanel">
+                        <div class="d-flex">
+                            <div class="card col-lg-12">
+                                <div class="card-body">
+                                    <p class="text-muted">Vista para realizar pruebas. <code>Mauricio Raul Gonzalez - <strong> GenAi</strong></code> </p>
+                                    <!-- Nav tabs -->
+                                    <ul class="nav nav-tabs nav-tabs-custom nav-info mb-4" role="tablist" style="border-bottom: none;">
+                                        <li class="nav-item">
+                                            <a class="nav-link active btn btn-sm" data-bs-toggle="tab" href="#consultarGenAiModelos" role="tab" aria-selected="true">Consultar Modelos</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link btn btn-sm" data-bs-toggle="tab" href="#testGenAi" role="tab" aria-selected="false">Chat</a>
+                                        </li>
+                                    </ul>
+                                    <!-- Tab panes -->
+                                    <div class="tab-content text-muted col-lg-12 p-3 bg bg-light" style="border:.1rem solid #d3d3d3">
 
-                                      <li class="nav-item waves-effect waves-light">
-                                        <a class="nav-link" data-bs-toggle="tab" href="#testGenAi" role="tab" aria-selected="false">Chat</a>
-                                    </li>
-                                </ul>
-                                <!-- Tab panes -->
-                                <div class="tab-content text-muted col-lg-12">
+                                        <div class="tab-pane" id="testGenAi" role="tabpanel">
+                                            <div class="mb-2">
+                                                <label class="form-label fw-bold">API Key (JWT)</label>
+                                                <input type="text" id="genai_api_key" class="form-control form-control-sm" placeholder="eyJhbGci...">
+                                            </div>
 
-                                    <div class="tab-pane" id="testGenAi" role="tabpanel">
-                                        <div class="mb-2">
-                                            <label class="form-label fw-bold">API Key (JWT)</label>
-                                            <input type="text" id="genai_api_key" class="form-control form-control-sm" placeholder="eyJhbGci...">
-                                        </div>
+                                            <div class="mb-2">
+                                                <label class="form-label fw-bold">Agente</label>
+                                                <input id="genai_agente" class="form-control form-control-sm">
+                                            </div>
 
-                                        <div class="mb-2">
-                                            <label class="form-label fw-bold">Agente</label>
-                                            <input id="genai_agente" class="form-control form-control-sm">
-                                        </div>
+                                            <div class="mb-2">
+                                                <label class="form-label fw-bold">Prompt</label>
+                                                <textarea id="genai_prompt" class="form-control form-control-sm" rows="3"></textarea>
+                                            </div>
 
-                                        <div class="mb-2">
-                                            <label class="form-label fw-bold">Prompt</label>
-                                            <textarea id="genai_prompt" class="form-control form-control-sm" rows="3"></textarea>
-                                        </div>
+                                            <button id="btn_genai_enviar" class="btn btn-info btn-sm mt-1">Enviar</button>
+                                            <button id="btn_genai_enviar" class="btn btn-primary btn-sm" style="display:none;">Enviar</button>
 
-                                        <button id="btn_genai_enviar" class="btn btn-secondary btn-sm">Chat</button>
-                                        <button id="btn_genai_enviar" class="btn btn-primary btn-sm" style="display:none;">Enviar</button>
+                                            <div id="genai_spinner" class="mt-2" style="display:none;">
+                                                <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
+                                                <span class="ms-1">Chateando con modelo...</span>
+                                            </div>
 
-                                        <div id="genai_spinner" class="mt-2" style="display:none;">
-                                            <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
-                                            <span class="ms-1">Chateando con modelo...</span>
-                                        </div>
-
-                                        <div id="genai_resultado" class="mt-3" style="display:none;">
-                                            <i class="ri-bilibili-line fs-4 text-primary me-1"></i>
-                                            <span class="badge bg-success">HTTP 200</span>
-                                            <small id="genai_chat_id" class="text-muted ms-2"></small>
-                                            <div class="alert alert-success mt-2" style="white-space: pre-wrap;" id="genai_respuesta_texto"></div>
-                                        </div>
-                                    </div>
-
-                                    <div class="tab-pane active" id="consultarGenAiModelos" role="tabpanel">
-                                        <div class="mb-2" style="max-width: 700px;">
-                                            <label class="form-label fw-bold">API Key (JWT)</label>
-                                            <div class="input-group input-group-sm">
-                                                <input type="text" id="cm_api_key" class="form-control form-control-sm" placeholder="eyJhbGci...">
-                                                <button id="btn_cm_consultar" class="btn btn-primary btn-sm">Consultar modelos</button>
+                                            <div id="genai_resultado" class="mt-3" style="display:none;">
+                                                <i class="ri-bilibili-line fs-4 text-primary me-1"></i>
+                                                <span class="badge bg-success">HTTP 200</span>
+                                                <small id="genai_chat_id" class="text-muted ms-2"></small>
+                                                <div class="alert alert-success mt-2" style="white-space: pre-wrap;" id="genai_respuesta_texto"></div>
                                             </div>
                                         </div>
 
-                                        <div id="cm_spinner" class="mt-2" style="display:none;">
-                                            <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
-                                            <span class="ms-1">Cargando modelos...</span>
+                                        <div class="tab-pane active" id="consultarGenAiModelos" role="tabpanel">
+                                            <div class="mb-2">
+                                                <label class="form-label fw-bold">API Key (JWT)</label>
+                                                <div class="input-group input-group-sm">
+                                                    <input type="text" id="cm_api_key" class="form-control form-control-sm" placeholder="eyJhbGci...">
+                                                    
+                                                </div>
+                                                <button id="btn_cm_consultar" class="btn btn-info btn-sm mt-3">Enviar</button>
+                                            </div>
+
+                                            <div id="cm_spinner" class="mt-2" style="display:none;">
+                                                <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
+                                                <span class="ms-1">Cargando modelos...</span>
+                                            </div>
+
+                                            <div id="cm_resultado" class="mt-3" style="display:none;">
+                                                <span class="badge bg-success mb-2">HTTP 200</span>
+                                                <table class="table table-sm table-bordered table-hover">
+                                                    <thead class="table-light">
+                                                        <tr>
+                                                            <th>Modelo</th>
+                                                            <th>Modo</th>
+                                                            <th>Descripción</th>
+                                                            <th>Costo input/token</th>
+                                                            <th>Costo output/token</th>
+                                                            <th>Acción</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody id="cm_tabla_body"></tbody>
+                                                </table>
+                                            </div>
                                         </div>
 
-                                        <div id="cm_resultado" class="mt-3" style="display:none;">
-                                            <span class="badge bg-success mb-2">HTTP 200</span>
-                                            <table class="table table-sm table-bordered table-hover">
-                                                <thead class="table-light">
-                                                    <tr>
-                                                        <th>Modelo</th>
-                                                        <th>Modo</th>
-                                                        <th>Descripción</th>
-                                                        <th>Costo input/token</th>
-                                                        <th>Costo output/token</th>
-                                                        <th>Acción</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody id="cm_tabla_body"></tbody>
-                                            </table>
-                                        </div>
                                     </div>
-
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
                 <?php endif; ?>
             </div>
         </div>
