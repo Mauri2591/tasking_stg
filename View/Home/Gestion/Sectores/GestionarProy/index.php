@@ -1953,16 +1953,29 @@ if (isset($_SESSION['usu_id'])) {
                 clearInterval(intervalo);
                 $('#progress_ia_bar').css('width', '100%');
 
-                setTimeout(() => {
-                    $btn.html(htmlOriginal);
-                    desbloquearBotonIA(btnEl);
-                    resumenIaFueGenerado = true; // se generó contenido nuevo, esta vez sí hay que recargar al cerrar
-                    mostrarModalResumenes(res.resultados.map(r => ({
-                        documento: r.documento,
-                        resumen: r.resumen,
-                        modelo_usado: res.modelo_usado
-                    })));
-                }, 400);
+                // Volvemos a pedir los resúmenes recién guardados, así vienen con su id real (para el botón de borrar)
+                $.post("../../../../../Controller/ctrIntegraciones.php?case=get_resumenes_documentos_ia", {
+                    id
+                }, function(resActualizado) {
+                    setTimeout(() => {
+                        $btn.html(htmlOriginal);
+                        desbloquearBotonIA(btnEl);
+                        resumenIaFueGenerado = true;
+                        mostrarModalResumenes(resActualizado.resumenes);
+                    }, 400);
+                }, 'json').fail(function() {
+                    // Si por algún motivo falla el refetch, igual mostramos lo que tenemos (sin tachos, pero no rompe el flujo)
+                    setTimeout(() => {
+                        $btn.html(htmlOriginal);
+                        desbloquearBotonIA(btnEl);
+                        resumenIaFueGenerado = true;
+                        mostrarModalResumenes(res.resultados.map(r => ({
+                            documento: r.documento,
+                            resumen: r.resumen,
+                            modelo_usado: res.modelo_usado
+                        })));
+                    }, 400);
+                });
 
             }, 'json').fail(function() {
                 clearInterval(intervalo);
