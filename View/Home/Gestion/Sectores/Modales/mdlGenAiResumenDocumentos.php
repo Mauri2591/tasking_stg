@@ -10,7 +10,7 @@
         #modalIaResumenDocumentos .modal-body,
         #modalIaResumenDocumentos .card {
             background-color: #101010 !important;
-            border-color: #313244 !important;
+            border-color: #a1a1a1 !important;
         }
 
         #modalIaResumenDocumentos .modal-title {
