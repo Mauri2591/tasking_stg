@@ -43,7 +43,7 @@
         }
 
         #tablaResumenDocumentos {
-            font-size: 14px;
+            font-size: 15px;
         }
 
         #tablaResumenDocumentos thead th {
@@ -53,7 +53,7 @@
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Resumen de Documentos con IA</h5>
+                <h5 class="modal-title"><i class="ri-bilibili-line text-primary me-1" style="font-size: 2.5rem;"></i> Resumen de Documentos con IA</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
