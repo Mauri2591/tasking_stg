@@ -1779,23 +1779,26 @@ if (isset($_SESSION['usu_id'])) {
             );
         }
 
-        function verPromptDefault() {
+        function verPromptDefault(btnEl, id) {
             $.post("../../../../../Controller/ctrIntegraciones.php?case=get_prompt_default", {}, function(res) {
                 Swal.fire({
                     icon: 'info',
                     title: 'Prompt predefinido',
                     html: `<div style="white-space:pre-wrap; text-align:left; max-height:350px; overflow-y:auto;">${escapeHtml(res.explicacion)}</div>`,
                     confirmButtonText: 'Entendido'
+                }).then(() => {
+                    elegirModoPrompt(btnEl, id); // volvemos al selector de modo anterior
                 });
             }, 'json');
         }
 
 
+        let resumenIaFueGenerado = false;
+
         function btnAbrirModalIa(btnEl, id) {
             if ($(btnEl).attr('data-procesando-ia') === 'true') {
-                return; // ya hay una operación en curso para este botón, ignoramos el click
+                return;
             }
-            bloquearBotonIA(btnEl);
 
             $.post("../../../../../Controller/ctrIntegraciones.php?case=get_resumenes_documentos_ia", {
                 id
@@ -1811,16 +1814,17 @@ if (isset($_SESSION['usu_id'])) {
                     }).then((result) => {
                         if (result.isConfirmed) {
                             elegirModoPrompt(btnEl, id);
-                        } else {
-                            desbloquearBotonIA(btnEl);
+                        } else if (result.dismiss === Swal.DismissReason.cancel) {
+                            // Solo abrimos la tabla si presionó explícitamente "No, ver los actuales"
+                            resumenIaFueGenerado = false;
                             mostrarModalResumenes(res.resumenes);
                         }
+                        // Si cerró con click afuera (backdrop) o Escape, no hacemos nada — se cierra y listo
                     });
                 } else {
                     elegirModoPrompt(btnEl, id);
                 }
             }, 'json').fail(function() {
-                desbloquearBotonIA(btnEl);
                 Swal.fire('Error', 'No se pudo verificar si existen resúmenes previos', 'error');
             });
         }
@@ -1872,7 +1876,7 @@ if (isset($_SESSION['usu_id'])) {
                 didOpen: () => {
                     $('#link_ver_prompt_default').on('click', function(e) {
                         e.preventDefault();
-                        verPromptDefault();
+                        verPromptDefault(btnEl, id);
                     });
                     $('#btn_modo_default').on('click', function() {
                         Swal.close();
@@ -1884,7 +1888,6 @@ if (isset($_SESSION['usu_id'])) {
                     });
                     $('#btn_modo_cancelar').on('click', function() {
                         Swal.close();
-                        desbloquearBotonIA(btnEl);
                     });
                 }
             });
@@ -1895,7 +1898,7 @@ if (isset($_SESSION['usu_id'])) {
                 title: 'Tu prompt personalizado',
                 input: 'textarea',
                 text: 'Indicale a la IA qué querés que destaque o cómo querés el resumen',
-                inputPlaceholder: 'Ej: Enfocate solo en errores de ortografía y devuelveme solo las palabras que no estén en castellano Rioplatence...',
+                inputPlaceholder: 'Ej: Enfocate solo en vulnerabilidades críticas y altas, con lenguaje no técnico para gerencia...',
                 inputAttributes: {
                     'aria-label': 'Prompt personalizado'
                 },
@@ -1911,17 +1914,17 @@ if (isset($_SESSION['usu_id'])) {
             }).then((result) => {
                 if (result.isConfirmed) {
                     generarResumenesIA(btnEl, id, 'personalizado', result.value.trim());
-                } else {
-                    desbloquearBotonIA(btnEl);
                 }
             });
         }
+
 
         function generarResumenesIA(btnEl, id, modo, promptPersonalizado) {
             const $btn = $(btnEl);
             const htmlOriginal = $btn.html();
 
-            // El botón ya quedó bloqueado desde btnAbrirModalIa; acá solo cambiamos el contenido visual
+            bloquearBotonIA(btnEl); // el bloqueo arranca acá, recién cuando empieza la generación real
+
             $btn.html(`
         <div style="min-width:170px;">
             <div class="d-flex align-items-center mb-1">
@@ -1950,15 +1953,29 @@ if (isset($_SESSION['usu_id'])) {
                 clearInterval(intervalo);
                 $('#progress_ia_bar').css('width', '100%');
 
-                setTimeout(() => {
-                    $btn.html(htmlOriginal);
-                    desbloquearBotonIA(btnEl);
-                    mostrarModalResumenes(res.resultados.map(r => ({
-                        documento: r.documento,
-                        resumen: r.resumen,
-                        modelo_usado: res.modelo_usado
-                    })));
-                }, 400);
+                // Volvemos a pedir los resúmenes recién guardados, así vienen con su id real (para el botón de borrar)
+                $.post("../../../../../Controller/ctrIntegraciones.php?case=get_resumenes_documentos_ia", {
+                    id
+                }, function(resActualizado) {
+                    setTimeout(() => {
+                        $btn.html(htmlOriginal);
+                        desbloquearBotonIA(btnEl);
+                        resumenIaFueGenerado = true;
+                        mostrarModalResumenes(resActualizado.resumenes);
+                    }, 400);
+                }, 'json').fail(function() {
+                    // Si por algún motivo falla el refetch, igual mostramos lo que tenemos (sin tachos, pero no rompe el flujo)
+                    setTimeout(() => {
+                        $btn.html(htmlOriginal);
+                        desbloquearBotonIA(btnEl);
+                        resumenIaFueGenerado = true;
+                        mostrarModalResumenes(res.resultados.map(r => ({
+                            documento: r.documento,
+                            resumen: r.resumen,
+                            modelo_usado: res.modelo_usado
+                        })));
+                    }, 400);
+                });
 
             }, 'json').fail(function() {
                 clearInterval(intervalo);
@@ -2054,7 +2071,9 @@ if (isset($_SESSION['usu_id'])) {
             return $('<div>').text(str || '').html();
         }
         $('#modalIaResumenDocumentos').on('hidden.bs.modal', function() {
-            location.reload();
+            if (resumenIaFueGenerado) {
+                location.reload();
+            }
         });
 
         function bloquearBotonIA(btnEl) {
