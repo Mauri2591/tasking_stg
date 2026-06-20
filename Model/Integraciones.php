@@ -121,7 +121,7 @@ class Integraciones extends Conexion
         $conn = parent::get_conexion();
         $sql = "SELECT id, documento, resumen, modelo_usado, fech_crea
         FROM resumen_documentos_ia
-        WHERE id_descripciones_proyecto = :id
+        WHERE id_descripciones_proyecto = :id AND est=1
         ORDER BY documento ASC";
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(":id", $id_descripciones_proyecto, PDO::PARAM_INT);
@@ -132,7 +132,7 @@ class Integraciones extends Conexion
     public function eliminar_resumen_documento_ia_por_fila(int $id_fila): bool
     {
         $conn = parent::get_conexion();
-        $sql = "DELETE FROM resumen_documentos_ia WHERE id = :id_fila";
+        $sql = "UPDATE resumen_documentos_ia SET est=0 WHERE id = :id_fila";
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(":id_fila", $id_fila, PDO::PARAM_INT);
         return $stmt->execute();
