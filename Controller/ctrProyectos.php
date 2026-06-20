@@ -7,10 +7,10 @@ require_once __DIR__ . "/../Model/Proyectos.php";
 require_once __DIR__ . "/../Model/Clases/Validaciones.php";
 require_once __DIR__ . "/../Model/Clases/Headers.php";
 require_once __DIR__ . "/../Model/Clases/Openssl.php";
-
+require_once __DIR__ . "/../Model/Integraciones.php";
 
 $conexion = new Conexion();
-
+$integracion = new Integraciones();
 $proyecto = new Proyectos();
 $validacion = new Validaciones();
 Headers::get_csp();
@@ -1916,6 +1916,7 @@ switch ($_GET['proy']) {
 
     case 'get_descripciones_proyecto':
         $data = $proyecto->get_descripciones_proyecto($_POST['id']);
+        $ids_con_resumen = $integracion->obtener_ids_con_resumen_ia(array_column($data, 'id'));
         foreach ($data as $key => $val) {
         ?>
             <div class="d-flex align-items-center mt-4">
@@ -2041,7 +2042,16 @@ switch ($_GET['proy']) {
                     echo "<div class='d-flex align-items-center mb-1'>
                 <i class='me-1 $icono $color fs-16'></i>
                 <a href='$ruta_completa' target='_blank'>$archivo</a>
-              </div>";
+                </div>";
+                }
+                $tiene_resumen = in_array($val['id'], $ids_con_resumen);
+                $icono_resumen = $tiene_resumen ? '<i class="ri-book-2-fill me-1 text-success mx-2" style="font-size:0.9rem;"></i>' : '';
+
+                if ($_SESSION['usu_id'] == '104') {
+                    echo '<span onclick="btnAbrirModalIa(this, \'' . $val['id'] . '\')" class="px-2 border mt-1 rounded-pill d-inline-flex align-items-center shadow-sm" style="background-color: #f0f4ff; border-color: #c7d6fe !important; cursor: pointer;">
+                            <i class="ri-bilibili-line fs-5 text-primary me-1"></i>
+                            <span class="fw-semibold text-primary">Resumen de Documentos con IA</span> ' . $icono_resumen . '
+                         </span>';
                 }
                 echo '</div>';
             }
@@ -2049,6 +2059,17 @@ switch ($_GET['proy']) {
             <br>
             <br>
             <?php
+        }
+        break;
+
+    case 'get_archivos_por_id_descripciones_proyecto':
+        $data = $proyecto->get_archivos_por_id_descripciones_proyecto((int)$_POST['id']);
+        if ($data !== null) {
+            http_response_code(200);
+            echo json_encode($data);
+        } else {
+            http_response_code(404);
+            echo json_encode(['error' => 'No se encontraron archivos']);
         }
         break;
 

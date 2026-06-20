@@ -60,4 +60,81 @@ class Integraciones extends Conexion
         $stmt->bindValue(':usu_crea', $usu_crea, PDO::PARAM_INT);
         return $stmt->execute();
     }
+
+    public function insertar_resumen_documento_ia(
+        int $id_descripciones_proyecto,
+        string $documento,
+        string $resumen,
+        string $modelo_usado,
+        int $usu_crea,
+        string $tipo_prompt = 'default',
+        ?string $prompt_usado = null
+    ): bool {
+        $conn = parent::get_conexion();
+        $sql = "INSERT INTO resumen_documentos_ia
+            (id_descripciones_proyecto, documento, resumen, modelo_usado, tipo_prompt, prompt_usado, usu_crea, fech_crea)
+        VALUES
+            (:id_descripciones_proyecto, :documento, :resumen, :modelo_usado, :tipo_prompt, :prompt_usado, :usu_crea, NOW())";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue(":id_descripciones_proyecto", $id_descripciones_proyecto, PDO::PARAM_INT);
+        $stmt->bindValue(":documento", $documento, PDO::PARAM_STR);
+        $stmt->bindValue(":resumen", $resumen, PDO::PARAM_STR);
+        $stmt->bindValue(":modelo_usado", $modelo_usado, PDO::PARAM_STR);
+        $stmt->bindValue(":tipo_prompt", $tipo_prompt, PDO::PARAM_STR);
+        $stmt->bindValue(":prompt_usado", $prompt_usado, $prompt_usado === null ? PDO::PARAM_NULL : PDO::PARAM_STR);
+        $stmt->bindValue(":usu_crea", $usu_crea, PDO::PARAM_INT);
+        return $stmt->execute();
+    }
+
+    public function obtener_ids_con_resumen_ia(array $ids_descripciones): array
+    {
+        if (empty($ids_descripciones)) {
+            return [];
+        }
+
+        $conn = parent::get_conexion();
+        $placeholders = implode(',', array_fill(0, count($ids_descripciones), '?'));
+
+        $sql = "SELECT DISTINCT id_descripciones_proyecto 
+            FROM resumen_documentos_ia 
+            WHERE id_descripciones_proyecto IN ($placeholders)";
+
+        $stmt = $conn->prepare($sql);
+        $stmt->execute(array_values($ids_descripciones));
+
+        return array_map('intval', $stmt->fetchAll(PDO::FETCH_COLUMN));
+    }
+
+    public function existen_resumenes_documento_ia(int $id_descripciones_proyecto): bool
+    {
+        $conn = parent::get_conexion();
+        $sql = "SELECT COUNT(*) AS total FROM resumen_documentos_ia WHERE id_descripciones_proyecto = :id";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue(":id", $id_descripciones_proyecto, PDO::PARAM_INT);
+        $stmt->execute();
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        return ((int) $row['total']) > 0;
+    }
+
+    public function obtener_resumenes_documento_ia(int $id_descripciones_proyecto): array
+    {
+        $conn = parent::get_conexion();
+        $sql = "SELECT id, documento, resumen, modelo_usado, fech_crea
+        FROM resumen_documentos_ia
+        WHERE id_descripciones_proyecto = :id
+        ORDER BY documento ASC";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue(":id", $id_descripciones_proyecto, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function eliminar_resumen_documento_ia_por_fila(int $id_fila): bool
+    {
+        $conn = parent::get_conexion();
+        $sql = "DELETE FROM resumen_documentos_ia WHERE id = :id_fila";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue(":id_fila", $id_fila, PDO::PARAM_INT);
+        return $stmt->execute();
+    }
 }
