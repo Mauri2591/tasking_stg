@@ -64,9 +64,16 @@ class ExtractorDocumentos
     {
         $parser = new PdfParser();
         $pdf    = $parser->parseFile($ruta);
-        $texto  = $pdf->getText();
+        $texto  = trim($pdf->getText());
 
-        return ['ok' => true, 'texto' => trim($texto), 'error' => null];
+        if ($texto === '') {
+            return [
+                'ok' => false,
+                'texto' => '',
+                'error' => 'El PDF no contiene texto extraíble (probablemente fue generado como imagen escaneada, sin capa de texto seleccionable). Si lo generaste convirtiendo un Word, revisá el método de conversión usado.'
+            ];
+        }
+        return ['ok' => true, 'texto' => $texto, 'error' => null];
     }
 
     private static function extraerXlsx(string $ruta): array
@@ -166,7 +173,6 @@ class ExtractorDocumentos
             }, $agrupadas));
 
             return ['ok' => true, 'vulnerabilidades' => $resultado, 'error' => null];
-
         } catch (\Throwable $e) {
             return ['ok' => false, 'vulnerabilidades' => [], 'error' => $e->getMessage()];
         }

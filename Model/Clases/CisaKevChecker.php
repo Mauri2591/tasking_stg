@@ -264,4 +264,55 @@ class CisaKevChecker
 
         return $texto;
     }
+
+    /**
+     * Determina si un texto (prompt del usuario o contenido del documento) tiene
+     * indicios suficientes de tratar sobre vulnerabilidades/CVEs/gestión de riesgo
+     * como para que tenga sentido cruzarlo contra el catálogo CISA KEV. Se usa
+     * únicamente en MODO PERSONALIZADO, donde el usuario puede subir cualquier
+     * tipo de documento de ciberseguridad (no solo informes de vulnerabilidades).
+     * En modo DEFAULT este chequeo no aplica: el prompt default ya está armado
+     * para análisis de vulnerabilidades, sin importar el área/sector del proyecto.
+     */
+    public static function pareceContenidoDeVulnerabilidades(string $texto): bool
+    {
+        $textoLower = mb_strtolower($texto);
+
+        $palabrasClave = [
+            'vulnerabilidad',
+            'vulnerabilidades',
+            'vulnerability',
+            'vulnerabilities',
+            'cve-',
+            'cwe-',
+            'exploit',
+            'cvss',
+            'pentest',
+            'penetration test',
+            'ethical hacking',
+            'análisis de vulnerabilidades',
+            'parche',
+            'patch',
+            'severidad crítica',
+            'severidad alta',
+            'rce',
+            'remote code execution',
+            'gestión de riesgo',
+            'gestion de riesgo',
+            'riesgo cibernético',
+            'riesgo informático',
+            'incidente de seguridad',
+            'amenaza',
+            'malware',
+            'ransomware',
+        ];
+
+        foreach ($palabrasClave as $palabra) {
+            if (str_contains($textoLower, $palabra)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

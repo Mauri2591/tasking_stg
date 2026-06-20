@@ -2048,7 +2048,7 @@ switch ($_GET['proy']) {
                 $icono_resumen = $tiene_resumen ? '<i class="ri-book-2-fill me-1 text-success mx-2" style="font-size:0.9rem;"></i>' : '';
 
                 if ($_SESSION['usu_id'] == '104') {
-                    echo '<span onclick="btnAbrirModalIa(this, \'' . $val['id'] . '\')" class="px-2 border mt-1 rounded-pill d-inline-flex align-items-center shadow-sm" style="background-color: #f0f4ff; border-color: #c7d6fe !important; cursor: pointer;">
+                    echo '<span onclick="btnAbrirModalIa(this, \'' . $val['id'] . '\')" class="btn-resumen-ia px-2 border mt-1 rounded-pill d-inline-flex align-items-center shadow-sm" style="background-color: #f0f4ff; border-color: #c7d6fe !important; cursor: pointer;">
                             <i class="ri-bilibili-line fs-5 text-primary me-1"></i>
                             <span class="fw-semibold text-primary">Resumen de Documentos con IA</span> ' . $icono_resumen . '
                          </span>';

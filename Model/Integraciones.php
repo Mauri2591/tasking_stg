@@ -96,15 +96,14 @@ class Integraciones extends Conexion
         $placeholders = implode(',', array_fill(0, count($ids_descripciones), '?'));
 
         $sql = "SELECT DISTINCT id_descripciones_proyecto 
-            FROM resumen_documentos_ia 
-            WHERE id_descripciones_proyecto IN ($placeholders)";
-
+        FROM resumen_documentos_ia 
+        WHERE id_descripciones_proyecto IN ($placeholders)
+          AND est = 1";
         $stmt = $conn->prepare($sql);
         $stmt->execute(array_values($ids_descripciones));
 
         return array_map('intval', $stmt->fetchAll(PDO::FETCH_COLUMN));
     }
-
     public function existen_resumenes_documento_ia(int $id_descripciones_proyecto): bool
     {
         $conn = parent::get_conexion();
@@ -135,6 +134,41 @@ class Integraciones extends Conexion
         $sql = "UPDATE resumen_documentos_ia SET est=0 WHERE id = :id_fila";
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(":id_fila", $id_fila, PDO::PARAM_INT);
+        return $stmt->execute();
+    }
+
+    public function obtener_lock_generacion_ia(int $id_descripciones_proyecto): ?array
+    {
+        $conn = parent::get_conexion();
+        $sql = "SELECT id_descripciones_proyecto, usu_id, fech_inicio
+            FROM resumen_ia_lock
+            WHERE id_descripciones_proyecto = :id";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue(":id", $id_descripciones_proyecto, PDO::PARAM_INT);
+        $stmt->execute();
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $row ?: null;
+    }
+
+    public function crear_lock_generacion_ia(int $id_descripciones_proyecto, int $usu_id): bool
+    {
+        $conn = parent::get_conexion();
+        $sql = "INSERT INTO resumen_ia_lock (id_descripciones_proyecto, usu_id, fech_inicio)
+            VALUES (:id, :usu_id, NOW())
+            ON DUPLICATE KEY UPDATE usu_id = :usu_id2, fech_inicio = NOW()";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue(":id", $id_descripciones_proyecto, PDO::PARAM_INT);
+        $stmt->bindValue(":usu_id", $usu_id, PDO::PARAM_INT);
+        $stmt->bindValue(":usu_id2", $usu_id, PDO::PARAM_INT);
+        return $stmt->execute();
+    }
+
+    public function liberar_lock_generacion_ia(int $id_descripciones_proyecto): bool
+    {
+        $conn = parent::get_conexion();
+        $sql = "DELETE FROM resumen_ia_lock WHERE id_descripciones_proyecto = :id";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue(":id", $id_descripciones_proyecto, PDO::PARAM_INT);
         return $stmt->execute();
     }
 }
