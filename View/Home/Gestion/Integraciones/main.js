@@ -97,6 +97,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // =================== GenAi ===================
+    // =================== GenAi chat ===================
     $('#btn_genai_enviar').on('click', function () {
         const api_key = $('#genai_api_key').val().trim();
         const modelo = $('#genai_agente').val().trim() || $('#genai_modelo').val();
@@ -126,7 +127,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
-    // =================== Consulta Modelos ===================
+    // =================== GenAi Consulta Modelos ===================
     $('#btn_cm_consultar').on('click', function () {
         const api_key = $('#cm_api_key').val().trim();
         if (!api_key) return Swal.fire('Atención', 'Ingresá la API Key', 'warning');

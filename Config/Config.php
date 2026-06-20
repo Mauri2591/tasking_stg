@@ -23,3 +23,5 @@ define('SMTP_PORT',      $_ENV['SMTP_PORT']);
 define('SMTP_FROM',      $_ENV['SMTP_FROM']);
 define('SMTP_FROM_NAME', $_ENV['SMTP_FROM_NAME']);
 define('MAIL_COPIA_SECTORES', $_ENV['MAIL_COPIA_SECTORES'] ?? '');
+define('BASE_GENAI', $GENIA_BASE = rtrim($_ENV['GENIA_API_URL'] ?? getenv('GENIA_API_URL') ?? '', '/'));
+define('JWT_API_GENIA',$_ENV['JWT_API_GENIA']);

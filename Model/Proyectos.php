@@ -1092,6 +1092,23 @@ WHERE proyecto_gestionado.id = :id_proyecto_gestionado
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    public function get_archivos_por_id_descripciones_proyecto(int $id)
+    {
+        $conn = parent::get_conexion();
+        $sql = "SELECT tm_categoria.cat_nom AS categoria,
+                   descripciones_proyecto.carpeta_documentos_proy,
+                   descripciones_proyecto.documento
+            FROM descripciones_proyecto
+            INNER JOIN proyecto_gestionado ON proyecto_gestionado.id = descripciones_proyecto.id_proyecto_gestionado
+            INNER JOIN tm_categoria ON tm_categoria.cat_id = proyecto_gestionado.cat_id
+            WHERE descripciones_proyecto.id = :id";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue(":id", $id, PDO::PARAM_INT);
+        $stmt->execute();
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $result ?: null;
+    }
+
     public function delete_descripciones_proyecto(int $id)
     {
         $conn = parent::get_conexion();

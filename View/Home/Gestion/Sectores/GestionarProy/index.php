@@ -40,6 +40,7 @@ if (isset($_SESSION['usu_id'])) {
     <?php
     include_once __DIR__ . "/../../../../../View/Home/Public/Template/head.php";
     include_once __DIR__ . "/../../../../../View/Home/Public/Template/main_content.php";
+
     ?>
 
     <div class="page-content">
@@ -50,6 +51,8 @@ if (isset($_SESSION['usu_id'])) {
             include_once __DIR__ . "/../Modales/mdlPipeline.php";
             include_once __DIR__ . "/../Modales/mdlLogsProyectos.php";
             include_once __DIR__ . "/../Modales/mdlEnviarCorreoCliente.php";
+            include_once __DIR__ . "/../Modales/mdlGenAiResumenDocumentos.php";
+
             ?>
 
             <!-- start page title -->
@@ -64,7 +67,9 @@ if (isset($_SESSION['usu_id'])) {
         </div>
 
         <?php
+
         if ($_SESSION['usu_id'] == "104") { //Usuario testing mio
+
             $_SESSION['estado_proyecto'] = $estado_id;
             foreach ($_SESSION as $key => $val) {
                 echo '<pre>' . $key . ':' . $val . '</pre>';
@@ -1089,7 +1094,6 @@ if (isset($_SESSION['usu_id'])) {
 
                     xhr.open('POST', '../../../../../Controller/ctrProyectos.php?proy=insert_descripciones_proyecto');
                     xhr.send(data);
-
                 } else {
                     Swal.fire({
                         icon: 'error',
@@ -1773,5 +1777,297 @@ if (isset($_SESSION['usu_id'])) {
                     estados_id: 23
                 }
             );
+        }
+
+        function verPromptDefault() {
+            $.post("../../../../../Controller/ctrIntegraciones.php?case=get_prompt_default", {}, function(res) {
+                Swal.fire({
+                    icon: 'info',
+                    title: 'Prompt predefinido',
+                    html: `<div style="white-space:pre-wrap; text-align:left; max-height:350px; overflow-y:auto;">${escapeHtml(res.explicacion)}</div>`,
+                    confirmButtonText: 'Entendido'
+                });
+            }, 'json');
+        }
+
+
+        function btnAbrirModalIa(btnEl, id) {
+            if ($(btnEl).attr('data-procesando-ia') === 'true') {
+                return; // ya hay una operación en curso para este botón, ignoramos el click
+            }
+            bloquearBotonIA(btnEl);
+
+            $.post("../../../../../Controller/ctrIntegraciones.php?case=get_resumenes_documentos_ia", {
+                id
+            }, function(res) {
+                if (res.existen) {
+                    Swal.fire({
+                        icon: 'info',
+                        title: 'Resúmenes existentes',
+                        text: 'Este proyecto ya posee resúmenes generados con IA. ¿Querés generar nuevos?',
+                        showCancelButton: true,
+                        confirmButtonText: 'Sí, generar nuevos',
+                        cancelButtonText: 'No, ver los actuales'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            elegirModoPrompt(btnEl, id);
+                        } else {
+                            desbloquearBotonIA(btnEl);
+                            mostrarModalResumenes(res.resumenes);
+                        }
+                    });
+                } else {
+                    elegirModoPrompt(btnEl, id);
+                }
+            }, 'json').fail(function() {
+                desbloquearBotonIA(btnEl);
+                Swal.fire('Error', 'No se pudo verificar si existen resúmenes previos', 'error');
+            });
+        }
+
+        function elegirModoPrompt(btnEl, id) {
+            Swal.fire({
+                title: '¿Cómo querés generar el resumen?',
+                html: `
+            <style>
+                .btn-modo-ia {
+                    border: none;
+                    border-radius: 8px;
+                    padding: 12px 18px;
+                    font-weight: 600;
+                    font-size: 14px;
+                    color: #fff;
+                    cursor: pointer;
+                    transition: filter 0.15s ease, transform 0.1s ease;
+                    box-shadow: 0 2px 4px rgba(0,0,0,0.12);
+                }
+                .btn-modo-ia:hover { filter: brightness(1.08); }
+                .btn-modo-ia:active { transform: scale(0.98); }
+                .btn-modo-default { background-color: #7367f0; }
+                .btn-modo-personalizado { background-color: #ea5455; }
+                .btn-modo-cancelar {
+                    background-color: #82868b;
+                    border: none;
+                    border-radius: 8px;
+                    padding: 10px 24px;
+                    font-weight: 600;
+                    font-size: 14px;
+                    color: #fff;
+                    cursor: pointer;
+                    transition: filter 0.15s ease;
+                }
+                .btn-modo-cancelar:hover { filter: brightness(1.08); }
+            </style>
+            <p class="text-start mb-2">Podés usar el prompt predefinido del sistema, o escribir tus propias instrucciones para la IA.</p>
+            <a href="#" id="link_ver_prompt_default" class="small d-block mb-3">Ver cómo está armado el prompt por defecto</a>
+            <div class="d-flex gap-2 justify-content-center mb-3">
+                <button type="button" id="btn_modo_default" class="btn-modo-ia btn-modo-default" style="flex:1;">Usar prompt de la aplicación</button>
+                <button type="button" id="btn_modo_personalizado" class="btn-modo-ia btn-modo-personalizado" style="flex:1;">Escribir mi propio prompt</button>
+            </div>
+            <button type="button" id="btn_modo_cancelar" class="btn-modo-cancelar">Cancelar</button>
+        `,
+                showConfirmButton: false,
+                showDenyButton: false,
+                showCancelButton: false,
+                didOpen: () => {
+                    $('#link_ver_prompt_default').on('click', function(e) {
+                        e.preventDefault();
+                        verPromptDefault();
+                    });
+                    $('#btn_modo_default').on('click', function() {
+                        Swal.close();
+                        generarResumenesIA(btnEl, id, 'default', null);
+                    });
+                    $('#btn_modo_personalizado').on('click', function() {
+                        Swal.close();
+                        pedirPromptPersonalizado(btnEl, id);
+                    });
+                    $('#btn_modo_cancelar').on('click', function() {
+                        Swal.close();
+                        desbloquearBotonIA(btnEl);
+                    });
+                }
+            });
+        }
+
+        function pedirPromptPersonalizado(btnEl, id) {
+            Swal.fire({
+                title: 'Tu prompt personalizado',
+                input: 'textarea',
+                text: 'Indicale a la IA qué querés que destaque o cómo querés el resumen',
+                inputPlaceholder: 'Ej: Enfocate solo en errores de ortografía y devuelveme solo las palabras que no estén en castellano Rioplatence...',
+                inputAttributes: {
+                    'aria-label': 'Prompt personalizado'
+                },
+                footer: '<small class="text-muted">Se incluirá automáticamente contexto verificado del catálogo CISA KEV si el documento de vulnerabilidades lo permite.</small>',
+                showCancelButton: true,
+                confirmButtonText: 'Generar resumen',
+                cancelButtonText: 'Cancelar',
+                inputValidator: (value) => {
+                    if (!value || !value.trim()) {
+                        return 'Tenés que escribir alguna instrucción';
+                    }
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    generarResumenesIA(btnEl, id, 'personalizado', result.value.trim());
+                } else {
+                    desbloquearBotonIA(btnEl);
+                }
+            });
+        }
+
+        function generarResumenesIA(btnEl, id, modo, promptPersonalizado) {
+            const $btn = $(btnEl);
+            const htmlOriginal = $btn.html();
+
+            // El botón ya quedó bloqueado desde btnAbrirModalIa; acá solo cambiamos el contenido visual
+            $btn.html(`
+        <div style="min-width:170px;">
+            <div class="d-flex align-items-center mb-1">
+                <div class="spinner-border spinner-border-sm text-primary me-2"></div>
+                <small class="text-primary fw-semibold">Generando con IA...</small>
+            </div>
+            <div class="progress" style="height:6px;">
+                <div class="progress-bar progress-bar-striped progress-bar-animated bg-primary" id="progress_ia_bar" style="width:5%"></div>
+            </div>
+        </div>
+    `);
+
+            let progreso = 5;
+            const intervalo = setInterval(() => {
+                if (progreso < 90) {
+                    progreso += Math.random() * 5;
+                    $('#progress_ia_bar').css('width', Math.min(progreso, 90) + '%');
+                }
+            }, 1500);
+
+            $.post("../../../../../Controller/ctrIntegraciones.php?case=analisis_resumen_documentos_eh", {
+                id,
+                modo,
+                prompt_personalizado: promptPersonalizado || ''
+            }, function(res) {
+                clearInterval(intervalo);
+                $('#progress_ia_bar').css('width', '100%');
+
+                setTimeout(() => {
+                    $btn.html(htmlOriginal);
+                    desbloquearBotonIA(btnEl);
+                    mostrarModalResumenes(res.resultados.map(r => ({
+                        documento: r.documento,
+                        resumen: r.resumen,
+                        modelo_usado: res.modelo_usado
+                    })));
+                }, 400);
+
+            }, 'json').fail(function() {
+                clearInterval(intervalo);
+                $btn.html(htmlOriginal);
+                desbloquearBotonIA(btnEl);
+                Swal.fire('Error', 'No se pudo generar el resumen con IA', 'error');
+            });
+        }
+
+        function mostrarModalResumenes(resumenes) {
+            const rows = resumenes.map(r => {
+                let col1 = `<strong>${escapeHtml(r.documento)}</strong>`;
+                if (r.modelo_usado) col1 += `<br><small class="text-muted">${escapeHtml(r.modelo_usado)}</small>`;
+                if (r.fech_crea) col1 += `<br><small class="text-muted">${escapeHtml(r.fech_crea)}</small>`;
+
+                const col2 = `<div style="white-space:pre-wrap; max-height:280px; overflow-y:auto;">${escapeHtml(r.resumen || '').replace(/\n/g, '<br>')}</div>`;
+
+                const col3 = r.id ?
+                    `<i class="ri-delete-bin-5-fill text-danger fs-16" style="cursor:pointer;" title="Eliminar resumen" onclick="eliminarResumenDocumentoIA(${r.id}, this)"></i>` :
+                    '';
+
+                return [col1, col2, col3];
+            });
+
+            if ($.fn.DataTable.isDataTable('#tablaResumenDocumentos')) {
+                $('#tablaResumenDocumentos').DataTable().clear().destroy();
+            }
+
+            $('#tablaResumenDocumentos').DataTable({
+                data: rows,
+                columns: [{
+                        title: 'Documento',
+                        width: '20%'
+                    },
+                    {
+                        title: 'Resumen'
+                    },
+                    {
+                        title: '',
+                        width: '40px',
+                        orderable: false
+                    }
+                ],
+                paging: false,
+                searching: false,
+                info: false,
+                ordering: false,
+                language: {
+                    zeroRecords: "Sin resúmenes disponibles"
+                }
+            });
+
+            $("#modalIaResumenDocumentos").modal("show");
+        }
+
+        function eliminarResumenDocumentoIA(idFila, iconEl) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Atención',
+                text: '¿Desea eliminar este resumen?',
+                showCancelButton: true,
+                showConfirmButton: true
+            }).then((result) => {
+                if (!result.isConfirmed) return;
+
+                $.post("../../../../../Controller/ctrIntegraciones.php?case=eliminar_resumen_documento_ia", {
+                    id_fila: idFila
+                }, function(res) {
+                    if (res.status === 'success') {
+                        setTimeout(() => {
+                            // Sacamos la fila completa de la tabla sin recargar el modal entero
+                            const tabla = $('#tablaResumenDocumentos').DataTable();
+                            tabla.row($(iconEl).closest('tr')).remove().draw(false);
+                        }, 500);
+
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Bien',
+                            text: 'Resumen eliminado correctamente',
+                            timer: 1200,
+                            showConfirmButton: false
+                        });
+                    } else {
+                        Swal.fire('Error', res.mensaje || 'No se pudo eliminar el resumen', 'error');
+                    }
+                }, 'json').fail(function() {
+                    Swal.fire('Error', 'No se pudo conectar con el servidor', 'error');
+                });
+            });
+        }
+
+        function escapeHtml(str) {
+            return $('<div>').text(str || '').html();
+        }
+        $('#modalIaResumenDocumentos').on('hidden.bs.modal', function() {
+            location.reload();
+        });
+
+        function bloquearBotonIA(btnEl) {
+            $(btnEl).attr('data-procesando-ia', 'true').css({
+                'pointer-events': 'none',
+                'opacity': '0.6'
+            });
+        }
+
+        function desbloquearBotonIA(btnEl) {
+            $(btnEl).removeAttr('data-procesando-ia').css({
+                'pointer-events': '',
+                'opacity': ''
+            });
         }
     </script>
