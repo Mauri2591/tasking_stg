@@ -9,7 +9,7 @@
         #modalIaResumenDocumentos .modal-header,
         #modalIaResumenDocumentos .modal-body,
         #modalIaResumenDocumentos .card {
-            background-color: #232327 !important;
+            background-color: #19191d !important;
             border-color: #313244 !important;
         }
 
@@ -26,7 +26,7 @@
         }
 
         #tablaResumenDocumentos thead th {
-            background-color: #232327 !important;
+            background-color: #19191d !important;
             color: #f5f5f5 !important;
             border-color: #313244 !important;
         }
