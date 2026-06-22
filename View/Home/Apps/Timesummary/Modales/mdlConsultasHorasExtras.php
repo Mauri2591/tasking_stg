@@ -8,19 +8,19 @@
             </div>
 
             <div class="modal-body">
-                <table id="tableHorasExtrasTimesummary" class="table table-sm table-hover" style="width:100%">
+                <table id="tableHorasExtrasTimesummary" class="table table-sm table-hover p-4" style="width:100%">
                     <thead>
                         <tr>
-                            <th style="width: 40%; text-align: center;">Proyecto</th>
                             <th style="text-align: center;">Fecha</th>
-                            <th style="text-align: center;">Extras desde</th>
-                            <th style="text-align: center;">Extras hasta</th>
+                            <th style="text-align: center;">Total del día</th>
                             <th style="text-align: center;">Horas extras</th>
                         </tr>
                     </thead>
                 </table>
             </div>
-
+            <div class="text-center">
+                <label class="text-danger p-3">Se consideran horas extras las horas cargadas antes de las 08:00 y despues de las 18:00</label>
+            </div>
         </div>
     </div>
 </div>

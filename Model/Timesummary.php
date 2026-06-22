@@ -1286,48 +1286,17 @@ ORDER BY clientes.client_rs";
     {
         $conn = parent::get_conexion();
         $sql = "SELECT 
-                CASE 
-                    WHEN tc.es_telecom = 'Telecom' THEN 'TELECOM'
-                    ELSE pg.titulo
-                END AS proyecto,
-                DATE_FORMAT(tc.fecha, '%d-%m-%y') AS fecha,
-
-                -- Extras ANTES de las 09:00
-                CASE WHEN tc.hora_desde < '09:00:00'
-                    THEN TIME_FORMAT(tc.hora_desde, '%H:%i')
-                    ELSE NULL
-                END AS extras_manana_desde,
-                CASE WHEN tc.hora_desde < '09:00:00'
-                    THEN TIME_FORMAT(LEAST(tc.hora_hasta, '09:00:00'), '%H:%i')
-                    ELSE NULL
-                END AS extras_manana_hasta,
-                CASE WHEN tc.hora_desde < '09:00:00'
-                    THEN TIME_FORMAT(TIMEDIFF(LEAST(tc.hora_hasta, '09:00:00'), tc.hora_desde), '%H:%i')
-                    ELSE NULL
-                END AS horas_extras_manana,
-
-                -- Extras DESPUÉS de las 18:00
-                CASE WHEN tc.hora_hasta > '18:00:00'
-                    THEN TIME_FORMAT(GREATEST(tc.hora_desde, '18:00:00'), '%H:%i')
-                    ELSE NULL
-                END AS extras_tarde_desde,
-                CASE WHEN tc.hora_hasta > '18:00:00'
-                    THEN TIME_FORMAT(tc.hora_hasta, '%H:%i')
-                    ELSE NULL
-                END AS extras_tarde_hasta,
-                CASE WHEN tc.hora_hasta > '18:00:00'
-                    THEN TIME_FORMAT(TIMEDIFF(tc.hora_hasta, GREATEST(tc.hora_desde, '18:00:00')), '%H:%i')
-                    ELSE NULL
-                END AS horas_extras_tarde
-
+                DATE_FORMAT(tc.fecha, '%d-%m-%Y') AS fecha,
+                TIME_FORMAT(SEC_TO_TIME(SUM(TIME_TO_SEC(tc.horas_consumidas))), '%H:%i') AS total_dia,
+                TIME_FORMAT(SEC_TO_TIME(SUM(TIME_TO_SEC(tc.horas_consumidas)) - 28800), '%H:%i') AS horas_extras
             FROM timesummary_carga tc
-            LEFT JOIN proyecto_gestionado pg ON tc.id_proyecto_gestionado = pg.id
             WHERE tc.usu_id = :usu_id
               AND MONTH(tc.fecha) = :mes
               AND YEAR(tc.fecha) = :anio
               AND tc.est = 1
-              AND (tc.hora_hasta > '18:00:00' OR tc.hora_desde < '09:00:00')
-            ORDER BY tc.fecha ASC, tc.hora_desde ASC";
+            GROUP BY tc.fecha
+            HAVING SUM(TIME_TO_SEC(tc.horas_consumidas)) > 28800
+            ORDER BY tc.fecha ASC";
 
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(':usu_id', $usu_id, PDO::PARAM_INT);
