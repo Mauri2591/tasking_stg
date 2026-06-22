@@ -52,20 +52,18 @@ if (isset($_SESSION['usu_id'])) {
 
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: .5rem;">
                         <div id="caption_tareas"></div>
-                        <i id="btnVerHistorialTimesummary"
-                            class="ri-history-line text-light"
-                            title="Ver historico"
-                            style="
-                            font-size: 1.2rem;
-                            cursor: pointer;
-                            display: inline-flex;
-                            align-items: center;
-                            justify-content: center;
-                            width: 2rem;
-                            height: 2rem;
-                            border-radius: .5rem;
-                            background: gray;">
-                        </i>
+                        <div>
+                            <span id="btnVerHorasExtrasTimesummary" type="button" class="badge  text-dark bg-light border fs-11 mx-2" title="Consultar horas extras cargadas">Hs Extras
+                                <i
+                                    class="ri-history-line fs-13">
+                                </i>
+                            </span> <span id="btnVerHistorialTimesummary" type="button" class="badge  text-dark bg-light border fs-11" title="Consultar historico">Historico
+                                <i
+                                    class="ri-history-line fs-13">
+                                </i>
+                            </span>
+                        </div>
+
                     </div>
 
                     <div style="display: flex; justify-content: end; margin-bottom: .5rem;">
@@ -99,6 +97,7 @@ if (isset($_SESSION['usu_id'])) {
     <?php
     include_once __DIR__ . "/Modales/mdlCarga.php";
     include_once __DIR__ . "/Modales/mdlHostorial.php";
+    include_once __DIR__ . "/Modales/mdlConsultasHorasExtras.php";
     include_once __DIR__ . "/../../Public/Template/footer.php";
     ?>
 <?php } else {
@@ -487,6 +486,12 @@ if (isset($_SESSION['usu_id'])) {
                                     calendar.refetchEvents();
                                     $("#mdlEditarTimesummary").modal("hide");
                                     refrescarTablaTS();
+
+                                    if ($("#mdlHorasExtrasTimesummary").hasClass("show")) {
+                                        if ($.fn.DataTable.isDataTable('#tableHorasExtrasTimesummary')) {
+                                            $('#tableHorasExtrasTimesummary').DataTable().ajax.reload(null, false);
+                                        }
+                                    }
                                 }, 500);
                             } else {
                                 Swal.fire({
@@ -829,6 +834,60 @@ if (isset($_SESSION['usu_id'])) {
 
             });
 
+        });
+
+        document.getElementById("btnVerHorasExtrasTimesummary").addEventListener("click", function() {
+
+            const fechaCalendario = calendar.getDate(); // mes actual del calendario
+            const mes = fechaCalendario.getMonth() + 1;
+            const anio = fechaCalendario.getFullYear();
+            const nombreMes = fechaCalendario.toLocaleString('es-AR', {
+                month: 'long'
+            });
+
+            $("#titulo_mes_hs_extras").text(`Horas Extras — ${nombreMes.charAt(0).toUpperCase() + nombreMes.slice(1)} ${anio}`);
+
+            $("#mdlHorasExtrasTimesummary").modal("show");
+
+            tabla = $("#tableHorasExtrasTimesummary").dataTable({
+                "aProcessing": true,
+                "aServerSide": true,
+                "ordering": false,
+                "lengthChange": false,
+                dom: 'Bfrtip',
+                "searching": false,
+                columnDefs: [{
+                    targets: "_all",
+                    className: "text-center"
+                }],
+                "ajax": {
+                    url: URL + "Controller/ctrTimesummary.php?accion=get_horas_extras_x_usu",
+                    type: "post",
+                    dataType: "json",
+                    data: function(d) {
+                        d.mes = mes;
+                        d.anio = anio;
+                    },
+                    error: function(e) {}
+                },
+                "bDestroy": true,
+                "responsive": true,
+                "bInfo": true,
+                "iDisplayLength": 15,
+                "language": {
+                    "sProcessing": "Procesando..",
+                    "sZeroRecords": "No se encontraron resultados..",
+                    "sEmptyTable": "Sin horas extras en este mes",
+                    "sInfo": "Mostrando un total de _TOTAL_ registros",
+                    "sInfoEmpty": "Mostrando un total de 0 registros",
+                    "oPaginate": {
+                        "sFirst": "Primero",
+                        "sLast": "Último",
+                        "sNext": "Siguiente",
+                        "sPrevious": "Anterior"
+                    }
+                }
+            });
         });
         calendar.render();
     });

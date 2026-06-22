@@ -540,6 +540,45 @@ switch ($_GET['accion']) {
         echo json_encode(['conflictos' => $conflictos]);
         break;
 
+    case 'get_horas_extras_x_usu':
+        $mes    = intval($_POST['mes']  ?? date('n'));
+        $anio   = intval($_POST['anio'] ?? date('Y'));
+        $usu_id = $_SESSION['usu_id'];
+
+        $data = $timesummary->get_horas_extras_x_usu($usu_id, $mes, $anio);
+
+        $registros = [];
+        foreach ($data as $row) {
+            // Tramo mañana
+            if ($row['extras_manana_desde']) {
+                $registros[] = [
+                    $row['proyecto'],
+                    $row['fecha'],
+                    $row['extras_manana_desde'],
+                    $row['extras_manana_hasta'],
+                    $row['horas_extras_manana']
+                ];
+            }
+            // Tramo tarde
+            if ($row['extras_tarde_desde']) {
+                $registros[] = [
+                    $row['proyecto'],
+                    $row['fecha'],
+                    $row['extras_tarde_desde'],
+                    $row['extras_tarde_hasta'],
+                    $row['horas_extras_tarde']
+                ];
+            }
+        }
+
+        echo json_encode([
+            "draw"            => intval($_POST['draw'] ?? 1),
+            "recordsTotal"    => count($registros),
+            "recordsFiltered" => count($registros),
+            "data"            => $registros
+        ]);
+        break;
+
     default:
         http_response_code(404);
         echo json_encode(["Error" => "Acción no reconocida"]);
