@@ -387,6 +387,8 @@ if (isset($_SESSION['usu_id'])) {
             },
             eventClick: function(info) {
                 console.log(info);
+                $("#dup_desde").val('');
+                $("#dup_hasta").val('');
 
                 const EVENTO = info.event;
                 const TITLE = EVENTO.title;
@@ -405,6 +407,7 @@ if (isset($_SESSION['usu_id'])) {
                 const START_MIN = START.getMinutes().toString().padStart(2, '0');
                 const END_HORA = END ? END.getHours().toString().padStart(2, '0') : '';
                 const END_MIN = END ? END.getMinutes().toString().padStart(2, '0') : '';
+                const ID_PROYECTO_GESTIONADO = EVENTO.extendedProps.id_proyecto_gestionado;
 
                 $("#hora_desde_edit").val(`${START_HORA}:${START_MIN}`);
                 $("#hora_hasta_edit").val(END ? `${END_HORA}:${END_MIN}` : '');
@@ -500,6 +503,154 @@ if (isset($_SESSION['usu_id'])) {
                                 title: "Error",
                                 text: "Error en la petición AJAX",
                                 timer: 800
+                            });
+                        }
+                    });
+                });
+
+                // Botón duplicar tareas
+                $("#btn_crear_copias").off("click").on("click", function() {
+                    const desde = $("#dup_desde").val();
+                    const hasta = $("#dup_hasta").val();
+
+                    if (!desde || !hasta) {
+                        Swal.fire({
+                            icon: "warning",
+                            title: "Completá el rango de fechas",
+                            showConfirmButton: false,
+                            timer: 1200
+                        });
+                        return;
+                    }
+
+                    if (desde > hasta) {
+                        Swal.fire({
+                            icon: "warning",
+                            title: "La fecha 'Desde' debe ser menor o igual a 'Hasta'",
+                            showConfirmButton: false,
+                            timer: 1300
+                        });
+                        return;
+                    }
+
+                    // Armar lista de días hábiles excluyendo la fecha original
+                    let fechas = [];
+                    let cursor = new Date(desde + "T00:00:00");
+                    const fin = new Date(hasta + "T00:00:00");
+
+                    while (cursor <= fin) {
+                        const dia = cursor.getDay();
+                        const fechaStr = cursor.toISOString().split("T")[0];
+                        if (dia !== 0 && dia !== 6 && fechaStr !== FECHA_FORMATO) {
+                            fechas.push(fechaStr);
+                        }
+                        cursor.setDate(cursor.getDate() + 1);
+                    }
+
+                    if (fechas.length === 0) {
+                        Swal.fire({
+                            icon: "info",
+                            title: "No hay días hábiles en ese rango",
+                            showConfirmButton: false,
+                            timer: 1300
+                        });
+                        return;
+                    }
+
+                    // Verificar conflictos primero
+                    $.ajax({
+                        type: "POST",
+                        url: URL + "Controller/ctrTimesummary.php?accion=verificar_conflictos_rango",
+                        data: {
+                            fechas: JSON.stringify(fechas),
+                            hora_desde: `${START_HORA}:${START_MIN}`,
+                            hora_hasta: `${END_HORA}:${END_MIN}`
+                        },
+                        dataType: "json",
+                        success: function(resp) {
+                            const conflictos = resp.conflictos;
+                            const fechasLibres = fechas.filter(f => !conflictos.find(c => c.fecha === f));
+
+                            if (fechasLibres.length === 0) {
+                                Swal.fire({
+                                    icon: "warning",
+                                    title: "Sin fechas disponibles",
+                                    text: "Todas las fechas del rango tienen conflicto horario.",
+                                    showConfirmButton: true
+                                });
+                                return;
+                            }
+
+                            // Armar mensaje de confirmación
+                            let textoConflictos = '';
+                            if (conflictos.length > 0) {
+                                const listaConflictos = conflictos.map(c => {
+                                    const fecha = new Date(c.fecha + "T00:00:00");
+                                    const opciones = {
+                                        weekday: 'long',
+                                        day: 'numeric',
+                                        month: 'numeric'
+                                    };
+                                    return `• ${fecha.toLocaleDateString('es-AR', opciones)} (${c.hora_desde} - ${c.hora_hasta})`;
+                                }).join('<br>');
+                                textoConflictos = `<br><br><small class="text-danger">Se omitirán por conflicto horario:<br>${listaConflictos}</small>`;
+                            }
+
+                            Swal.fire({
+                                icon: "question",
+                                title: `¿Crear ${fechasLibres.length} copia(s)?`,
+                                html: `Se insertarán en los días hábiles disponibles.${textoConflictos}`,
+                                showCancelButton: true,
+                                confirmButtonText: "Sí, crear",
+                                cancelButtonText: "Cancelar"
+                            }).then(result => {
+                                if (!result.isConfirmed) return;
+
+                                let promesas = fechasLibres.map(fecha => {
+                                    return $.ajax({
+                                        type: "POST",
+                                        url: URL + "Controller/ctrTimesummary.php?accion=insert_tarea",
+                                        data: {
+                                            id_proyecto_gestionado: ID_PROYECTO_GESTIONADO == 209 ? null : ID_PROYECTO_GESTIONADO,
+                                            id_producto: PRODUCTO,
+                                            id_tarea: ID_TAREA,
+                                            es_telecom: EVENTO.extendedProps.es_telecom ? "Telecom" : null,
+                                            fecha: fecha,
+                                            hora_desde: `${START_HORA}:${START_MIN}`,
+                                            hora_hasta: `${END_HORA}:${END_MIN}`,
+                                            descripcion: DESCRIPCION,
+                                            id_pm_calidad: ID_PM_CALIDAD
+                                        },
+                                        dataType: "json"
+                                    });
+                                });
+
+                                Promise.all(promesas).then(() => {
+                                    Swal.fire({
+                                        icon: "success",
+                                        title: "Tareas creadas correctamente",
+                                        showConfirmButton: false,
+                                        timer: 1200
+                                    });
+                                    setTimeout(() => {
+                                        calendar.refetchEvents();
+                                        $("#mdlEditarTimesummary").modal("hide");
+                                        refrescarTablaTS();
+                                    }, 500);
+                                }).catch(() => {
+                                    Swal.fire({
+                                        icon: "error",
+                                        title: "Hubo un error al crear alguna tarea",
+                                        showConfirmButton: true
+                                    });
+                                });
+                            });
+                        },
+                        error: function() {
+                            Swal.fire({
+                                icon: "error",
+                                title: "Error al verificar conflictos",
+                                showConfirmButton: true
                             });
                         }
                     });

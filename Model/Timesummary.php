@@ -1249,4 +1249,36 @@ ORDER BY clientes.client_rs";
             exit;
         }
     }
+
+    public function verificar_conflictos_rango($fechas, $hora_desde, $hora_hasta, $usu_id)
+    {
+        $conflictos = [];
+
+        foreach ($fechas as $fecha) {
+            $stmt = parent::get_conexion()->prepare("
+            SELECT hora_desde, hora_hasta 
+            FROM timesummary_carga 
+            WHERE usu_id = :usu_id 
+              AND fecha = :fecha
+              AND est = 1
+              AND hora_desde < :hora_hasta 
+              AND hora_hasta > :hora_desde
+        ");
+            $stmt->execute([
+                ':usu_id'     => $usu_id,
+                ':fecha'      => $fecha,
+                ':hora_desde' => $hora_desde,
+                ':hora_hasta' => $hora_hasta
+            ]);
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            if ($row) {
+                $conflictos[] = [
+                    'fecha'      => $fecha,
+                    'hora_desde' => substr($row['hora_desde'], 0, 5),
+                    'hora_hasta' => substr($row['hora_hasta'], 0, 5)
+                ];
+            }
+        }
+        return $conflictos;
+    }
 }

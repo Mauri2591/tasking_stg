@@ -1971,7 +1971,7 @@ if (isset($_SESSION['usu_id'])) {
                 }
             }, 1500);
 
-            $.post("../../../../../Controller/ctrIntegraciones.php?case=analisis_resumen_documentos_eh", {
+            $.post("../../../../../Controller/ctrIntegraciones.php?case=analisis_resumen_documentos", {
                 id,
                 modo,
                 prompt_personalizado: promptPersonalizado || '',

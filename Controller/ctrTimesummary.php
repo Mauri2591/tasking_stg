@@ -524,6 +524,22 @@ switch ($_GET['accion']) {
         echo json_encode($datos);
         break;
 
+    case 'verificar_conflictos_rango':
+        $fechas = json_decode($_POST['fechas'], true);
+        $hora_desde = $_POST['hora_desde'] ?? null;
+        $hora_hasta = $_POST['hora_hasta'] ?? null;
+        $usu_id = $_SESSION['usu_id'] ?? null;
+
+        if (!$fechas || !$hora_desde || !$hora_hasta || !$usu_id) {
+            http_response_code(400);
+            echo json_encode(["error" => "Parámetros incompletos"]);
+            exit;
+        }
+
+        $conflictos = $timesummary->verificar_conflictos_rango($fechas, $hora_desde, $hora_hasta, $usu_id);
+        echo json_encode(['conflictos' => $conflictos]);
+        break;
+
     default:
         http_response_code(404);
         echo json_encode(["Error" => "Acción no reconocida"]);

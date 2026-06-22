@@ -66,7 +66,6 @@
 
                </textarea>
           </div>
-
         </section>
 
         <div id="validar_periodo" class="alert alert-warning fs-14" style="display: none; justify-content: center;" role="alert">
@@ -139,6 +138,25 @@
 
                </textarea>
           </div>
+
+          <section class="card-body border border-light bg-light p-2 mt-2">
+            <p class="mb-2 text-muted" style="font-size: 13px;">
+              <i class="ri-calendar-2-line"></i> Repetir en fechas
+            </p>
+            <div class="d-flex gap-2 mb-2">
+              <div class="d-flex flex-column" style="flex:1;">
+                <label style="font-size: 11px; color: #6c757d;">Desde</label>
+                <input type="date" class="form-control form-control-sm" id="dup_desde">
+              </div>
+              <div class="d-flex flex-column" style="flex:1;">
+                <label style="font-size: 11px; color: #6c757d;">Hasta</label>
+                <input type="date" class="form-control form-control-sm" id="dup_hasta">
+              </div>
+            </div>
+            <button class="btn btn-sm btn-outline-info w-100 waves-effect waves-light" id="btn_crear_copias">
+              <i class="ri-calendar-check-line"></i> Crear copias de la tarea
+            </button>
+          </section>
 
         </section>
 

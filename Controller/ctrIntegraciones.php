@@ -284,7 +284,7 @@ switch ($_GET['case']) {
         ]);
         exit;
 
-    case 'analisis_resumen_documentos_eh':
+    case 'analisis_resumen_documentos':
         session_write_close();
         set_time_limit(0); // sin límite de tiempo para este endpoint
         ignore_user_abort(true); // controlo el corte, en vez de que PHP lo mate de golpe sin liberar el lock
