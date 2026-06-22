@@ -19,7 +19,7 @@
                 </table>
             </div>
             <div class="text-center">
-                <label class="text-danger p-3">Se consideran horas extras las horas cargadas antes de las 08:00 y despues de las 18:00</label>
+                <label class="text-danger p-3">Se consideran horas extras si supera las 08 horas diarias</label>
             </div>
         </div>
     </div>
