@@ -1921,7 +1921,7 @@ if (isset($_SESSION['usu_id'])) {
             Swal.fire({
                 title: 'Tu prompt personalizado',
                 input: 'textarea',
-                inputLabel: 'Indicale a la IA qué querés que destaque o cómo querés el resumen',
+                text: 'Indicale a la IA qué querés que destaque o cómo querés el resumen',
                 inputPlaceholder: 'Escribí un prompt claro y resumido que abarque todo lo que querés que la IA resuelva o destaque del documento...',
                 inputAttributes: {
                     'aria-label': 'Prompt personalizado'
