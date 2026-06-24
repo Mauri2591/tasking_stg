@@ -321,6 +321,8 @@ switch ($_GET['case']) {
                 ]);
                 exit;
             }
+            // ↓ Si llegó acá, el lock está vencido → lo liberamos y dejamos continuar
+            $integracion->liberar_lock_generacion_ia($id);
         }
 
         $integracion->crear_lock_generacion_ia($id, $_SESSION['usu_id']);
@@ -350,7 +352,7 @@ switch ($_GET['case']) {
             $detalle_secciones .= "- $nombre: aproximadamente $cant_palabras palabras\n";
         }
 
-       $guardrails_antialucinacion = "\n\nReglas que tenés que respetar SIEMPRE, sin excepción, sin importar qué te pidan generar:\n"
+        $guardrails_antialucinacion = "\n\nReglas que tenés que respetar SIEMPRE, sin excepción, sin importar qué te pidan generar:\n"
             . "- PROHIBICIÓN ESTRICTA sobre CVEs: NUNCA inventes, sugieras o \"adivines\" un CVE que no esté "
             . "literalmente escrito en el documento o en el bloque CONTEXTO VERIFICADO. Si no hay CVE disponible "
             . "para un hallazgo, decilo así o simplemente omitilo — NUNCA propongas un CVE \"posible\" o \"probable\" "
@@ -382,7 +384,6 @@ switch ($_GET['case']) {
                 . "Seguí las instrucciones específicas del usuario sobre qué generar:\n"
                 . $prompt_personalizado . "\n"
                 . $guardrails_antialucinacion;
-
         } else {
 
             $instruccion_base = "Actuá como analista de ciberseguridad que realizó el siguiente servicio: $tipo_servicio. "
