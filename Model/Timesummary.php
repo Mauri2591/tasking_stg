@@ -644,7 +644,6 @@ END AS posicion_recurrencia,
             END AS cliente,
 
             proyecto_gestionado.refProy AS referencia,
-            proyecto_gestionado.titulo AS titulo,
             tm_usuario.usu_nom,
             tm_usuario.usu_ape
 
@@ -1210,10 +1209,7 @@ ORDER BY clientes.client_rs";
         ) AS horas_usuarios ON horas_usuarios.id_proyecto_gestionado = proyecto_gestionado.id
         LEFT JOIN tm_estados ON proyecto_gestionado.estados_id = tm_estados.estados_id
         WHERE clientes.client_id = :client_id 
-        AND (
-    (proyecto_gestionado.fech_inicio BETWEEN :fecha_desde AND :fecha_hasta)
-    OR (proyecto_gestionado.fech_fin BETWEEN :fecha_desde AND :fecha_hasta)
-    OR (proyecto_gestionado.fech_inicio <= :fecha_desde AND proyecto_gestionado.fech_fin >= :fecha_hasta))
+        AND proyecto_gestionado.fech_inicio BETWEEN :fecha_desde AND :fecha_hasta 
         AND proyecto_gestionado.estados_id IN(1,2,3,4,14,15)
         $whereSector
         GROUP BY 

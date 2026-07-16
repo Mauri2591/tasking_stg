@@ -461,11 +461,11 @@ switch ($_GET['accion']) {
         $data = array();
         foreach ($datos as $row) {
             $sub_array = array();
-            $titulo = $row['titulo'];
-            if (strlen($titulo) > 30) {
-                $titulo = wordwrap($titulo, 30, "<br>", true);
+            $cliente = $row['cliente'];
+            if (strlen($cliente) > 30) {
+                $cliente = wordwrap($cliente, 30, "<br>", true);
             }
-            $sub_array[] = $titulo;
+            $sub_array[] = $cliente;
             $sub_array[] = $row['referencia'];
             $sub_array[] = $row['producto'];
             $sub_array[] = $row['tarea'];
