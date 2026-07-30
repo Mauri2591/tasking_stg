@@ -107,7 +107,7 @@
                                             <span class="badge_status_<?= intval($val['id']) ?> <?= $val['status_envio'] == 'OK' ? 'badge bg-success text-light' : 'badge bg-danger text-light' ?> ms-1">
                                                 <?= htmlspecialchars($val['status_envio']) ?>
                                             </span><br>
-                                            <span class="text-muted fs-11"><strong class="text-dark">De: </strong><?= htmlspecialchars($val['usu_correo']) ?> - <?= htmlspecialchars($val['sector_nombre']) ?></span><br>
+                                            <span class="text-muted fs-11"><strong class="text-dark">Remitente: </strong><?= htmlspecialchars($val['usu_correo']) ?> - <?= htmlspecialchars($val['sector_nombre']) ?></span><br>
                                             <span class="text-muted fs-11"><strong class="text-dark">Fecha: </strong> <?= htmlspecialchars($val['fech_crea']) ?></span><br>
 
                                             <?php if ($_SESSION['sector_id'] == '4'): ?>
