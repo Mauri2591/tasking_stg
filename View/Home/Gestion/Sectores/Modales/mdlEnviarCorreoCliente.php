@@ -124,7 +124,7 @@
                                                 <span class="badge bg-success text-light fs-10 mt-1 d-inline-block">
                                                     <i class="ri-mail-check-line"></i> Enviado por otro medio
                                                 </span>
-                                                <span class="text-muted fs-10">el: <?= htmlspecialchars(date("d-m-Y H:i", strtotime($val['fech_actualizacion']))) ?></span>                                            <?php elseif ($_SESSION['sector_id'] == '4' && $val['status_envio'] == 'ERROR'): ?>
+                                                <span class="text-muted fs-10">el: <?= htmlspecialchars(date("d-m-Y", strtotime($val['fech_actualizacion'])). " ".date("H:m", strtotime($val['fech_actualizacion']))."hs") ?></span>                                            <?php elseif ($_SESSION['sector_id'] == '4' && $val['status_envio'] == 'ERROR'): ?>
                                                 <span><strong class="fs-11">Reenviar por otro medio: </strong>
                                                     <i class="ri-mail-send-line"
                                                         type="button"
