@@ -882,7 +882,7 @@ ORDER BY clientes.client_rs";
         proyecto_gestionado.refProy,
         proyecto_gestionado.titulo,
         dimensionamiento.hs_dimensionadas AS dimensionamiento,
-        CASE
+        CASE 
             WHEN (SUM(DISTINCT CASE WHEN horas_usuarios.id_pm_calidad IS NULL OR horas_usuarios.id_pm_calidad = 0 THEN horas_usuarios.total_segundos ELSE 0 END) / 3600) >= dimensionamiento.hs_dimensionadas
             THEN ''
             ELSE CONCAT(
@@ -896,7 +896,7 @@ ORDER BY clientes.client_rs";
                 ), 2))) * 60), 2, '0')
             )
         END AS hs_restante,
-        CASE
+        CASE 
             WHEN (SUM(DISTINCT CASE WHEN horas_usuarios.id_pm_calidad IS NULL OR horas_usuarios.id_pm_calidad = 0 THEN horas_usuarios.total_segundos ELSE 0 END) / 3600) > dimensionamiento.hs_dimensionadas
             THEN CONCAT(
                 LPAD(FLOOR(ROUND((
@@ -910,7 +910,7 @@ ORDER BY clientes.client_rs";
             )
             ELSE NULL
         END AS hs_resto,
-        CONCAT(tm_usuario_pm.usu_nom, ' ',
+        CONCAT(tm_usuario_pm.usu_nom, ' ', 
             TIME_FORMAT(
                 SEC_TO_TIME(SUM(DISTINCT CASE WHEN horas_usuarios.id_pm_calidad = pm_calidad.id THEN horas_usuarios.total_segundos ELSE 0 END)),
                 '%H:%i'
@@ -948,8 +948,8 @@ ORDER BY clientes.client_rs";
         LEFT JOIN tm_usuario ON tm_usuario.usu_id = usuario_proyecto.usu_asignado
         LEFT JOIN pm_calidad ON pm_calidad.id_proyecto_gestionado = proyecto_gestionado.id
         LEFT JOIN tm_usuario AS tm_usuario_pm ON tm_usuario_pm.usu_id = pm_calidad.usu_crea
-        INNER JOIN (
-            SELECT
+        LEFT JOIN (
+            SELECT 
                 tc.id_proyecto_gestionado,
                 tc.usu_id,
                 tc.id_pm_calidad,
@@ -957,13 +957,13 @@ ORDER BY clientes.client_rs";
                 SUM(TIME_TO_SEC(tc.horas_consumidas)) AS total_segundos
             FROM timesummary_carga tc
             INNER JOIN tm_usuario ON tm_usuario.usu_id = tc.usu_id
-            WHERE tc.fecha BETWEEN :fecha_desde AND :fecha_hasta
             GROUP BY tc.id_proyecto_gestionado, tc.usu_id, tc.id_pm_calidad, tm_usuario.usu_nom
         ) AS horas_usuarios ON horas_usuarios.id_proyecto_gestionado = proyecto_gestionado.id
         LEFT JOIN tm_estados ON proyecto_gestionado.estados_id = tm_estados.estados_id
-        WHERE proyecto_gestionado.estados_id IN(1,2,3,4,14,15)
+        WHERE proyecto_gestionado.fech_inicio BETWEEN :fecha_desde AND :fecha_hasta 
+        AND proyecto_gestionado.estados_id IN(1,2,3,4,14,15)
         $whereSector
-        GROUP BY
+        GROUP BY 
             clientes.client_id,
             clientes.client_rs,
             tm_categoria.cat_nom,
@@ -1130,7 +1130,7 @@ ORDER BY clientes.client_rs";
         proyecto_gestionado.fech_fin,
         proyecto_gestionado.titulo,
         dimensionamiento.hs_dimensionadas AS dimensionamiento,
-        CASE
+        CASE 
             WHEN (SUM(DISTINCT CASE WHEN horas_usuarios.id_pm_calidad IS NULL OR horas_usuarios.id_pm_calidad = 0 THEN horas_usuarios.total_segundos ELSE 0 END) / 3600) >= dimensionamiento.hs_dimensionadas
             THEN ''
             ELSE CONCAT(
@@ -1144,7 +1144,7 @@ ORDER BY clientes.client_rs";
                 ), 2))) * 60), 2, '0')
             )
         END AS hs_restante,
-        CASE
+        CASE 
             WHEN (SUM(DISTINCT CASE WHEN horas_usuarios.id_pm_calidad IS NULL OR horas_usuarios.id_pm_calidad = 0 THEN horas_usuarios.total_segundos ELSE 0 END) / 3600) > dimensionamiento.hs_dimensionadas
             THEN CONCAT(
                 LPAD(FLOOR(ROUND((
@@ -1158,7 +1158,7 @@ ORDER BY clientes.client_rs";
             )
             ELSE NULL
         END AS hs_resto,
-        CONCAT(tm_usuario_pm.usu_nom, ' ',
+        CONCAT(tm_usuario_pm.usu_nom, ' ', 
             TIME_FORMAT(
                 SEC_TO_TIME(SUM(DISTINCT CASE WHEN horas_usuarios.id_pm_calidad = pm_calidad.id THEN horas_usuarios.total_segundos ELSE 0 END)),
                 '%H:%i'
@@ -1196,8 +1196,8 @@ ORDER BY clientes.client_rs";
         LEFT JOIN tm_usuario ON tm_usuario.usu_id = usuario_proyecto.usu_asignado
         LEFT JOIN pm_calidad ON pm_calidad.id_proyecto_gestionado = proyecto_gestionado.id
         LEFT JOIN tm_usuario AS tm_usuario_pm ON tm_usuario_pm.usu_id = pm_calidad.usu_crea
-        INNER JOIN (
-            SELECT
+        LEFT JOIN (
+            SELECT 
                 tc.id_proyecto_gestionado,
                 tc.usu_id,
                 tc.id_pm_calidad,
@@ -1205,14 +1205,14 @@ ORDER BY clientes.client_rs";
                 SUM(TIME_TO_SEC(tc.horas_consumidas)) AS total_segundos
             FROM timesummary_carga tc
             INNER JOIN tm_usuario ON tm_usuario.usu_id = tc.usu_id
-            WHERE tc.fecha BETWEEN :fecha_desde AND :fecha_hasta
             GROUP BY tc.id_proyecto_gestionado, tc.usu_id, tc.id_pm_calidad, tm_usuario.usu_nom
         ) AS horas_usuarios ON horas_usuarios.id_proyecto_gestionado = proyecto_gestionado.id
         LEFT JOIN tm_estados ON proyecto_gestionado.estados_id = tm_estados.estados_id
-        WHERE clientes.client_id = :client_id
+        WHERE clientes.client_id = :client_id 
+        AND proyecto_gestionado.fech_inicio BETWEEN :fecha_desde AND :fecha_hasta 
         AND proyecto_gestionado.estados_id IN(1,2,3,4,14,15)
         $whereSector
-        GROUP BY
+        GROUP BY 
             clientes.client_id,
             clientes.client_rs,
             tm_categoria.cat_nom,
