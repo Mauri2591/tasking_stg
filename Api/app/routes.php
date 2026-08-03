@@ -1197,7 +1197,7 @@ return function (App $app) {
                 "saveToSentItems" => "true"
             ];
 
-            $ch = curl_init("https://graph.microsoft.com/v1.0/users/legiarda@ubiquo.com/sendMail");
+            $ch = curl_init("https://graph.microsoft.com/v1.0/users/noreply-informes@ubiquo.com/sendMail");
             curl_setopt_array($ch, [
                 CURLOPT_RETURNTRANSFER => true,
                 CURLOPT_POST => true,
@@ -1226,8 +1226,9 @@ return function (App $app) {
             $response->getBody()->write(json_encode([
                 "status" => "success",
                 "message" => "Correo enviado exitosamente via Microsoft Graph API",
+                "from" => "noreply-informes@ubiquo.com",
                 "to" => "mssp-calidad@personal.com.ar",
-                "cc" => "legiarda@ubiquo.com"
+                "cc" => "mrgonzalez@personal.com.ar"
             ]));
             return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
         } catch (Exception $e) {
