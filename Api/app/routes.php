@@ -1100,5 +1100,117 @@ return function (App $app) {
 
         return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
     });
+
+    $app->post('/oauth/send-test-email', function (Request $request, Response $response) use ($app) {
+        // Validar API-KEY
+        $apiKeyPlana = $request->getHeaderLine('X-API-KEY');
+
+        if (!$apiKeyPlana) {
+            $response->getBody()->write(json_encode(["error" => "API Key requerida"]));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(401);
+        }
+
+        $pdo = $app->getContainer()->get(PDO::class);
+        $keys = $pdo->query("SELECT api_key FROM api_keys WHERE est = 1")
+            ->fetchAll(PDO::FETCH_ASSOC);
+
+        $valid = false;
+        foreach ($keys as $row) {
+            if (hash_equals(Openssl::get_ssl_decrypt($row['api_key']), $apiKeyPlana)) {
+                $valid = true;
+                break;
+            }
+        }
+
+        if (!$valid) {
+            $response->getBody()->write(json_encode(["error" => "API Key inválida"]));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(403);
+        }
+
+        // Obtener credenciales del body
+        $data = $request->getParsedBody();
+        $tenant_id = $data['tenant_id'] ?? '';
+        $client_id = $data['client_id'] ?? '';
+        $client_secret = $data['client_secret'] ?? '';
+
+        if (!$tenant_id || !$client_id || !$client_secret) {
+            $response->getBody()->write(json_encode(["error" => "Faltan: tenant_id, client_id, client_secret"]));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
+        }
+
+        // Obtener token de Azure
+        $ch = curl_init("https://login.microsoftonline.com/$tenant_id/oauth2/v2.0/token");
+        curl_setopt_array($ch, [
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_POST => true,
+            CURLOPT_POSTFIELDS => http_build_query([
+                'client_id' => $client_id,
+                'client_secret' => $client_secret,
+                'scope' => 'https://graph.microsoft.com/.default',
+                'grant_type' => 'client_credentials',
+            ]),
+            CURLOPT_TIMEOUT => 10,
+        ]);
+
+        $raw = curl_exec($ch);
+        $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        if ($http_code !== 200) {
+            $error = json_decode($raw, true);
+            $response->getBody()->write(json_encode([
+                "error" => "Fallo OAuth Azure",
+                "detalle" => $error['error_description'] ?? 'Error desconocido'
+            ]));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(401);
+        }
+
+        $token_data = json_decode($raw, true);
+        $access_token = $token_data['access_token'];
+
+        // Enviar correo con PHPMailer + XOAuth2
+        try {
+            $mail = new PHPMailer\PHPMailer\PHPMailer(true);
+            $mail->isSMTP();
+            $mail->Host = 'smtp.office365.com';
+            $mail->SMTPAuth = true;
+            $mail->Port = 587;
+            $mail->SMTPSecure = PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS;
+
+            // Configurar XOAuth2
+            $oauth = new PHPMailer\PHPMailer\OAuth([
+                'provider' => 'Microsoft',
+                'userName' => 'noreply-informes@ubiquo.com',
+                'accessToken' => $access_token,
+            ]);
+            $mail->setOAuth($oauth);
+
+            $mail->setFrom('noreply-informes@ubiquo.com', 'Servicios Personal Tech');
+            $mail->addAddress('mssp-calidad@personal.com.ar');
+            $mail->addCC('mrgonzalez@personal.com.ar');
+
+            $mail->isHTML(true);
+            $mail->Subject = '✅ Test OAuth SMTP - Prueba de Integración';
+            $mail->Body = '<h2>Prueba de envío con OAuth</h2>
+                       <p>Este correo fue enviado exitosamente usando autenticación OAuth con Azure.</p>
+                       <p><strong>Fecha:</strong> ' . date('Y-m-d H:i:s') . '</p>';
+
+            $mail->send();
+
+            $response->getBody()->write(json_encode([
+                "status" => "success",
+                "message" => "✅ Correo enviado exitosamente",
+                "to" => "mssp-calidad@personal.com.ar",
+                "cc" => "mrgonzalez@personal.com.ar"
+            ]));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+        } catch (Exception $e) {
+            $response->getBody()->write(json_encode([
+                "error" => "Error al enviar correo",
+                "detalle" => $e->getMessage()
+            ]));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(500);
+        }
+    });
     //********************************** OAUTH AZURE SMTP FIN ***************************** */
 };
