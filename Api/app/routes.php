@@ -1178,19 +1178,17 @@ return function (App $app) {
             $mail->SMTPSecure = PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS;
 
             // Configurar XOAuth2
-            $oauth = new PHPMailer\PHPMailer\OAuth([
-                'provider' => 'Microsoft',
-                'userName' => 'noreply-informes@ubiquo.com',
-                'accessToken' => $access_token,
-            ]);
-            $mail->setOAuth($oauth);
+            $mail->Username = 'noreply-informes@ubiquo.com';
+            $auth_string = base64_encode('user=' . $mail->Username . "\x01auth=Bearer " . $access_token . "\x01\x01");
+            $mail->Password = $auth_string;
+            $mail->AuthType = 'XOAUTH2';
 
             $mail->setFrom('noreply-informes@ubiquo.com', 'Servicios Personal Tech');
             $mail->addAddress('mssp-calidad@personal.com.ar');
             $mail->addCC('mrgonzalez@personal.com.ar');
 
             $mail->isHTML(true);
-            $mail->Subject = '✅ Test OAuth SMTP - Prueba de Integración';
+            $mail->Subject = 'Test OAuth SMTP - Prueba de Integración';
             $mail->Body = '<h2>Prueba de envío con OAuth</h2>
                        <p>Este correo fue enviado exitosamente usando autenticación OAuth con Azure.</p>
                        <p><strong>Fecha:</strong> ' . date('Y-m-d H:i:s') . '</p>';
@@ -1199,7 +1197,7 @@ return function (App $app) {
 
             $response->getBody()->write(json_encode([
                 "status" => "success",
-                "message" => "✅ Correo enviado exitosamente",
+                "message" => "Correo enviado exitosamente",
                 "to" => "mssp-calidad@personal.com.ar",
                 "cc" => "mrgonzalez@personal.com.ar"
             ]));
