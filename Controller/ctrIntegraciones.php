@@ -81,12 +81,13 @@ switch ($_GET['case']) {
 
         $sector_id = (int) $_POST['sector_id'];
 
-        $tieneActiva = $integracion->existe_api_key_activa_x_sector($sector_id);
+        $id_herramienta = (int)$_POST['id_herramienta'];
+        $tieneActiva = $integracion->existe_api_key_activa_x_sector_y_herramienta($sector_id, $id_herramienta);
         if ($tieneActiva) {
             http_response_code(400);
             echo json_encode([
                 "status" => "error",
-                "mensaje" => "El sector ya posee una API Key activa"
+                "mensaje" => "El sector ya posee una API Key activa para esta herramienta"
             ]);
             exit;
         }

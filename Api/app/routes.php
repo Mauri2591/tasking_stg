@@ -999,4 +999,106 @@ return function (App $app) {
         return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
     });
     // ******************   FIN TIMASUMMARY ***********************
+
+    //************************** OAUTH AZURE SMTP  *************************** */
+    $app->post('/oauth/azure-test', function (Request $request, Response $response) use ($app) {
+        // 1. Validar API-KEY
+        $apiKeyPlana = $request->getHeaderLine('X-API-KEY');
+
+        if (!$apiKeyPlana) {
+            $response->getBody()->write(json_encode([
+                "status" => "error",
+                "message" => "API Key requerida en header X-API-KEY"
+            ]));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(401);
+        }
+
+        $pdo = $app->getContainer()->get(PDO::class);
+        $keys = $pdo->query("SELECT api_key FROM api_keys WHERE est = 1")
+            ->fetchAll(PDO::FETCH_ASSOC);
+
+        $valid = false;
+        foreach ($keys as $row) {
+            if (hash_equals(Openssl::get_ssl_decrypt($row['api_key']), $apiKeyPlana)) {
+                $valid = true;
+                break;
+            }
+        }
+
+        if (!$valid) {
+            $response->getBody()->write(json_encode([
+                "status" => "error",
+                "message" => "API Key inválida o inactiva"
+            ]));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(403);
+        }
+
+        // 2. Obtener datos del body
+        $data = $request->getParsedBody();
+
+        $tenant_id = $data['tenant_id'] ?? '';
+        $client_id = $data['client_id'] ?? '';
+        $client_secret = $data['client_secret'] ?? '';
+
+        if (!$tenant_id || !$client_id || !$client_secret) {
+            $response->getBody()->write(json_encode([
+                "status" => "error",
+                "message" => "Faltan parámetros: tenant_id, client_id, client_secret"
+            ]));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
+        }
+
+        // 3. Probar conexión con Azure
+        $ch = curl_init("https://login.microsoftonline.com/$tenant_id/oauth2/v2.0/token");
+        curl_setopt_array($ch, [
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_POST => true,
+            CURLOPT_POSTFIELDS => http_build_query([
+                'client_id' => $client_id,
+                'client_secret' => $client_secret,
+                'scope' => 'https://graph.microsoft.com/.default',
+                'grant_type' => 'client_credentials',
+            ]),
+            CURLOPT_TIMEOUT => 10,
+        ]);
+
+        $raw = curl_exec($ch);
+        $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $err = curl_error($ch);
+        curl_close($ch);
+
+        if ($raw === false) {
+            $response->getBody()->write(json_encode([
+                "status" => "error",
+                "message" => "Error de conexión con Azure",
+                "detalle" => $err
+            ]));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(500);
+        }
+
+        if ($http_code !== 200) {
+            $error = json_decode($raw, true);
+            $response->getBody()->write(json_encode([
+                "status" => "error",
+                "message" => "Fallo autenticación con Azure",
+                "http_code" => $http_code,
+                "error_code" => $error['error'] ?? null,
+                "detalle" => $error['error_description'] ?? 'Error desconocido'
+            ]));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(401);
+        }
+
+        $token_data = json_decode($raw, true);
+
+        $response->getBody()->write(json_encode([
+            "status" => "success",
+            "message" => "Conexion exitosa con Azure",
+            "access_token" => $token_data['access_token'],
+            "expires_in" => $token_data['expires_in'],
+            "token_type" => $token_data['token_type']
+        ]));
+
+        return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+    });
+    //********************************** OAUTH AZURE SMTP FIN ***************************** */
 };

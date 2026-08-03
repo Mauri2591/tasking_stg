@@ -150,6 +150,21 @@ class Integraciones extends Conexion
         return $row ?: null;
     }
 
+    public function existe_api_key_activa_x_sector_y_herramienta($sector_id, $id_herramienta)
+    {
+        $conn = parent::get_conexion();
+        $sql = "SELECT COUNT(*) as count FROM api_keys 
+        WHERE sector_id = :sector_id 
+        AND id_herramienta = :id_herramienta 
+        AND est = 1";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue(':sector_id', $sector_id, PDO::PARAM_INT);
+        $stmt->bindValue(':id_herramienta', $id_herramienta, PDO::PARAM_INT);
+        $stmt->execute();
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $result['count'] > 0;
+    }
+
     public function crear_lock_generacion_ia(int $id_descripciones_proyecto, int $usu_id): bool
     {
         $conn = parent::get_conexion();
