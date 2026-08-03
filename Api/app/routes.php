@@ -1139,7 +1139,7 @@ return function (App $app) {
         }
 
         // Obtener token de Azure
-        $ch = curl_init("https://login.microsoftonline.com/$tenant_id/oauth2/v2.0/token");
+        $ch = curl_init("https://graph.microsoft.com/v1.0/users/noreply-informes@ubiquo.com/sendMail");
         curl_setopt_array($ch, [
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_POST => true,
