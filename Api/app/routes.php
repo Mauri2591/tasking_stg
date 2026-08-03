@@ -1177,12 +1177,10 @@ return function (App $app) {
             $mail->Port = 587;
             $mail->SMTPSecure = PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS;
             $mail->SMTPDebug = 2; // Mostrar errores detallados
-            
+
             // Configurar XOAuth2
             $mail->Username = 'noreply-informes@ubiquo.com';
-            $auth_string = base64_encode('user=' . $mail->Username . "\x01auth=Bearer " . $access_token . "\x01\x01");
-            $mail->Password = $auth_string;
-            $mail->AuthType = 'XOAUTH2';
+            $mail->Password = 'user=' . $mail->Username . chr(1) . 'auth=Bearer ' . $access_token . chr(1) . chr(1);
 
             $mail->setFrom('noreply-informes@ubiquo.com', 'Servicios Personal Tech');
             $mail->addAddress('mssp-calidad@personal.com.ar');
