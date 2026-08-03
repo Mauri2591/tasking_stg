@@ -1101,7 +1101,7 @@ return function (App $app) {
         return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
     });
 
-    $app->post('/oauth/send-test-email', function (Request $request, Response $response) use ($app) {
+    $app->post('/oauth/send-email-graph', function (Request $request, Response $response) use ($app) {
         // Validar API-KEY
         $apiKeyPlana = $request->getHeaderLine('X-API-KEY');
 
@@ -1168,42 +1168,71 @@ return function (App $app) {
         $token_data = json_decode($raw, true);
         $access_token = $token_data['access_token'];
 
-        // Enviar correo con PHPMailer + XOAuth2
+        // Enviar correo vía Microsoft Graph API
         try {
-            $mail = new PHPMailer\PHPMailer\PHPMailer(true);
-            $mail->isSMTP();
-            $mail->Host = 'smtp.office365.com';
-            $mail->SMTPAuth = true;
-            $mail->Port = 587;
-            $mail->SMTPSecure = PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS;
-            $mail->SMTPDebug = 2; // Mostrar errores detallados
+            $mailPayload = [
+                "message" => [
+                    "subject" => "Test Microsoft Graph API - Prueba de Integración",
+                    "body" => [
+                        "contentType" => "HTML",
+                        "content" => "<h2>Prueba de envío con Microsoft Graph</h2>
+                                 <p>Este correo fue enviado exitosamente usando Microsoft Graph API con OAuth.</p>
+                                 <p><strong>Fecha:</strong> " . date('Y-m-d H:i:s') . "</p>"
+                    ],
+                    "toRecipients" => [
+                        [
+                            "emailAddress" => [
+                                "address" => "mssp-calidad@personal.com.ar"
+                            ]
+                        ]
+                    ],
+                    "ccRecipients" => [
+                        [
+                            "emailAddress" => [
+                                "address" => "mrgonzalez@personal.com.ar"
+                            ]
+                        ]
+                    ]
+                ],
+                "saveToSentItems" => "true"
+            ];
 
-            // Configurar XOAuth2
-            $mail->Username = 'noreply-informes@ubiquo.com';
-            $mail->Password = $access_token;
-            
-            $mail->setFrom('noreply-informes@ubiquo.com', 'Servicios Personal Tech');
-            $mail->addAddress('mssp-calidad@personal.com.ar');
-            $mail->addCC('mrgonzalez@personal.com.ar');
+            $ch = curl_init("https://graph.microsoft.com/v1.0/me/sendMail");
+            curl_setopt_array($ch, [
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_POST => true,
+                CURLOPT_POSTFIELDS => json_encode($mailPayload),
+                CURLOPT_HTTPHEADER => [
+                    'Authorization: Bearer ' . $access_token,
+                    'Content-Type: application/json',
+                ],
+                CURLOPT_TIMEOUT => 10,
+            ]);
 
-            $mail->isHTML(true);
-            $mail->Subject = 'Test OAuth SMTP - Prueba de Integración';
-            $mail->Body = '<h2>Prueba de envío con OAuth</h2>
-                       <p>Este correo fue enviado exitosamente usando autenticación OAuth con Azure.</p>
-                       <p><strong>Fecha:</strong> ' . date('Y-m-d H:i:s') . '</p>';
+            $raw = curl_exec($ch);
+            $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            curl_close($ch);
 
-            $mail->send();
+            if ($http_code !== 202) {
+                $error = json_decode($raw, true);
+                $response->getBody()->write(json_encode([
+                    "error" => "Error al enviar correo con Graph API",
+                    "http_code" => $http_code,
+                    "detalle" => $error['error']['message'] ?? $raw
+                ]));
+                return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
+            }
 
             $response->getBody()->write(json_encode([
                 "status" => "success",
-                "message" => "Correo enviado exitosamente",
+                "message" => "Correo enviado exitosamente via Microsoft Graph API",
                 "to" => "mssp-calidad@personal.com.ar",
                 "cc" => "mrgonzalez@personal.com.ar"
             ]));
             return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
         } catch (Exception $e) {
             $response->getBody()->write(json_encode([
-                "error" => "Error al enviar correo",
+                "error" => "Error al procesar",
                 "detalle" => $e->getMessage()
             ]));
             return $response->withHeader('Content-Type', 'application/json')->withStatus(500);
