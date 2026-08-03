@@ -73,7 +73,7 @@ class Correo extends Conexion
             $mail->SMTPAuth   = true;
             $mail->Username   = $_ENV['SMTP_USER'];      // usuario de red
             $mail->Password   = $_ENV['SMTP_PASS'];      // clave de red
-            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+            $mail->SMTPSecure = (SMTP_SECURE === 'SMTPS') ? PHPMailer::ENCRYPTION_SMTPS : PHPMailer::ENCRYPTION_STARTTLS;
             $mail->Port       = (int)$_ENV['SMTP_PORT'];
             $mail->SMTPOptions = [
                 'ssl' => [
@@ -192,7 +192,7 @@ class Correo extends Conexion
             $mail->SMTPAuth   = true;
             $mail->Username   = SMTP_USER;
             $mail->Password   = SMTP_PASS;
-            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+            $mail->SMTPSecure = (SMTP_SECURE === 'SMTPS') ? PHPMailer::ENCRYPTION_SMTPS : PHPMailer::ENCRYPTION_STARTTLS;            
             $mail->Port       = (int)SMTP_PORT;
             $mail->SMTPOptions = [
                 'ssl' => [
