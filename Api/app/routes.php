@@ -1180,8 +1180,8 @@ return function (App $app) {
 
             // Configurar XOAuth2
             $mail->Username = 'noreply-informes@ubiquo.com';
-            $mail->Password = 'user=' . $mail->Username . chr(1) . 'auth=Bearer ' . $access_token . chr(1) . chr(1);
-
+            $mail->Password = $access_token;
+            
             $mail->setFrom('noreply-informes@ubiquo.com', 'Servicios Personal Tech');
             $mail->addAddress('mssp-calidad@personal.com.ar');
             $mail->addCC('mrgonzalez@personal.com.ar');
