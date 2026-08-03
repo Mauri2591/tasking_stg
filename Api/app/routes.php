@@ -1197,7 +1197,7 @@ return function (App $app) {
                 "saveToSentItems" => "true"
             ];
 
-            $ch = curl_init("https://graph.microsoft.com/v1.0/users/noreply-informes@ubiquo.com/sendMail");
+            $ch = curl_init("https://graph.microsoft.com/v1.0/users/mrgonzalez@personal.com.ar/sendMail");
             curl_setopt_array($ch, [
                 CURLOPT_RETURNTRANSFER => true,
                 CURLOPT_POST => true,
