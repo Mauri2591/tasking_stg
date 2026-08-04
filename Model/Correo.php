@@ -103,7 +103,7 @@ class Correo extends Conexion
                 <p><b>Sector:</b> {$datos->sector}</p>
                 <p><b>Producto:</b> {$producto}</p>
                 <p><b>Tipo:</b> {$datos->tipo}</p>
-                <p><b>Usuarios:</b><br>{$datos->usuarios}</p>
+                <p><b>Usuarios asignados:</b><br>{$datos->usuarios}</p>
                 <p>
                 <b>Envío al cliente:</b><br>
                 Los informes fueron cargados en <strong>Tasking</strong>.<br>
