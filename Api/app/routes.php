@@ -1127,17 +1127,51 @@ return function (App $app) {
             return $response->withHeader('Content-Type', 'application/json')->withStatus(403);
         }
 
-        // Obtener access_token del body
+        // Obtener credenciales del body
         $data = $request->getParsedBody();
-        $access_token = $data['access_token'] ?? '';
+        $tenant_id = $data['tenant_id'] ?? '';
+        $client_id = $data['client_id'] ?? '';
+        $client_secret = $data['client_secret'] ?? '';
 
-        if (!$access_token) {
-            $response->getBody()->write(json_encode(["error" => "Falta: access_token"]));
+        if (!$tenant_id || !$client_id || !$client_secret) {
+            $response->getBody()->write(json_encode(["error" => "Faltan: tenant_id, client_id, client_secret"]));
             return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
         }
 
-        // DEBUG: Guardar token en log
-        file_put_contents('/var/www/html/tasking_stg/oauth_debug.log', "[" . date('Y-m-d H:i:s') . "] Usando token: " . substr($access_token, 0, 50) . "...\n", FILE_APPEND);
+        // Obtener token de Azure
+        $ch = curl_init("https://login.microsoftonline.com/$tenant_id/oauth2/v2.0/token");
+        curl_setopt_array($ch, [
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_POST => true,
+            CURLOPT_POSTFIELDS => http_build_query([
+                'client_id' => $client_id,
+                'client_secret' => $client_secret,
+                'scope' => 'https://graph.microsoft.com/.default',
+                'grant_type' => 'client_credentials',
+            ]),
+            CURLOPT_TIMEOUT => 10,
+        ]);
+
+        $raw = curl_exec($ch);
+        $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        if ($http_code !== 200) {
+            $error = json_decode($raw, true);
+            $response->getBody()->write(json_encode([
+                "error" => "Fallo OAuth Azure",
+                "detalle" => $error['error_description'] ?? 'Error desconocido'
+            ]));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(401);
+        }
+
+        $token_data = json_decode($raw, true);
+        $access_token = $token_data['access_token'];
+
+        // DEBUG: Log de token y método de autenticación
+        file_put_contents('/var/www/html/tasking_stg/oauth_debug.log', "[" . date('Y-m-d H:i:s') . "] ===== NUEVA SOLICITUD =====\n", FILE_APPEND);
+        file_put_contents('/var/www/html/tasking_stg/oauth_debug.log', "[" . date('Y-m-d H:i:s') . "] Método de autenticación: Application (client_credentials)\n", FILE_APPEND);
+        file_put_contents('/var/www/html/tasking_stg/oauth_debug.log', "[" . date('Y-m-d H:i:s') . "] Token obtenido correctamente\n", FILE_APPEND);
 
         // Enviar correo vía Microsoft Graph API
         try {
@@ -1168,10 +1202,11 @@ return function (App $app) {
                 "saveToSentItems" => "true"
             ];
 
-            // DEBUG: Guardar que se va a enviar con el token
+            // DEBUG: Log de método y URL de Graph API
             $graph_url = "https://graph.microsoft.com/v1.0/users/noreply-informes@ubiquo.com/sendMail";
-            file_put_contents('/var/www/html/tasking_stg/oauth_debug.log', "[" . date('Y-m-d H:i:s') . "] Enviando a Graph API con token: " . substr($access_token, 0, 50) . "...\n", FILE_APPEND);
-            file_put_contents('/var/www/html/tasking_stg/oauth_debug.log', "[" . date('Y-m-d H:i:s') . "] POST URL: " . $graph_url . "\n", FILE_APPEND);
+            file_put_contents('/var/www/html/tasking_stg/oauth_debug.log', "[" . date('Y-m-d H:i:s') . "] Permiso utilizado: Mail.Send (Graph API)\n", FILE_APPEND);
+            file_put_contents('/var/www/html/tasking_stg/oauth_debug.log', "[" . date('Y-m-d H:i:s') . "] POST " . $graph_url . "\n", FILE_APPEND);
+            file_put_contents('/var/www/html/tasking_stg/oauth_debug.log', "[" . date('Y-m-d H:i:s') . "] Enviando solicitud con Authorization Bearer token...\n", FILE_APPEND);
 
             $ch = curl_init($graph_url);
             curl_setopt_array($ch, [
@@ -1191,6 +1226,9 @@ return function (App $app) {
 
             if ($http_code !== 202) {
                 $error = json_decode($raw, true);
+                file_put_contents('/var/www/html/tasking_stg/oauth_debug.log', "[" . date('Y-m-d H:i:s') . "] RESPUESTA: HTTP " . $http_code . "\n", FILE_APPEND);
+                file_put_contents('/var/www/html/tasking_stg/oauth_debug.log', "[" . date('Y-m-d H:i:s') . "] Detalle: " . ($error['error']['message'] ?? $raw) . "\n", FILE_APPEND);
+
                 $response->getBody()->write(json_encode([
                     "error" => "Error al enviar correo con Graph API",
                     "http_code" => $http_code,
