@@ -1201,9 +1201,11 @@ return function (App $app) {
             ];
 
             // DEBUG: Guardar que se va a enviar con el token
+            $graph_url = "https://graph.microsoft.com/v1.0/users/noreply-informes@ubiquo.com/sendMail";
             file_put_contents('/var/www/html/tasking_stg/oauth_debug.log', "[" . date('Y-m-d H:i:s') . "] Enviando a Graph API con token: " . substr($access_token, 0, 50) . "...\n", FILE_APPEND);
+            file_put_contents('/var/www/html/tasking_stg/oauth_debug.log', "[" . date('Y-m-d H:i:s') . "] POST URL: " . $graph_url . "\n", FILE_APPEND);
 
-            $ch = curl_init("https://graph.microsoft.com/v1.0/users/noreply-informes@ubiquo.com/sendMail");
+            $ch = curl_init($graph_url);
             curl_setopt_array($ch, [
                 CURLOPT_RETURNTRANSFER => true,
                 CURLOPT_POST => true,
