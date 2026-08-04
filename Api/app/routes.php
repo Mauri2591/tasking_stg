@@ -1127,49 +1127,17 @@ return function (App $app) {
             return $response->withHeader('Content-Type', 'application/json')->withStatus(403);
         }
 
-        // Obtener credenciales del body
+        // Obtener access_token del body
         $data = $request->getParsedBody();
-        $tenant_id = $data['tenant_id'] ?? '';
-        $client_id = $data['client_id'] ?? '';
-        $client_secret = $data['client_secret'] ?? '';
+        $access_token = $data['access_token'] ?? '';
 
-        if (!$tenant_id || !$client_id || !$client_secret) {
-            $response->getBody()->write(json_encode(["error" => "Faltan: tenant_id, client_id, client_secret"]));
+        if (!$access_token) {
+            $response->getBody()->write(json_encode(["error" => "Falta: access_token"]));
             return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
         }
 
-        // Obtener token de Azure
-        $ch = curl_init("https://login.microsoftonline.com/$tenant_id/oauth2/v2.0/token");
-        curl_setopt_array($ch, [
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_POST => true,
-            CURLOPT_POSTFIELDS => http_build_query([
-                'client_id' => $client_id,
-                'client_secret' => $client_secret,
-                'scope' => 'https://graph.microsoft.com/.default',
-                'grant_type' => 'client_credentials',
-            ]),
-            CURLOPT_TIMEOUT => 10,
-        ]);
-
-        $raw = curl_exec($ch);
-        $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        curl_close($ch);
-
-        if ($http_code !== 200) {
-            $error = json_decode($raw, true);
-            $response->getBody()->write(json_encode([
-                "error" => "Fallo OAuth Azure",
-                "detalle" => $error['error_description'] ?? 'Error desconocido'
-            ]));
-            return $response->withHeader('Content-Type', 'application/json')->withStatus(401);
-        }
-
-        $token_data = json_decode($raw, true);
-        $access_token = $token_data['access_token'];
-
         // DEBUG: Guardar token en log
-        file_put_contents('/var/www/html/tasking_stg/oauth_debug.log', "[" . date('Y-m-d H:i:s') . "] Token obtenido: " . substr($access_token, 0, 50) . "...\n", FILE_APPEND);
+        file_put_contents('/var/www/html/tasking_stg/oauth_debug.log', "[" . date('Y-m-d H:i:s') . "] Usando token: " . substr($access_token, 0, 50) . "...\n", FILE_APPEND);
 
         // Enviar correo vía Microsoft Graph API
         try {
