@@ -46,6 +46,8 @@ if (isset($_SESSION['usu_id'])) {
 
                     </tbody>
                 </table>
+                <p class="text-center mt-2"> <span class="text-danger">Desde aqui puede compartir con los Clientes los hosts que utiliza cada sector para realizar sus Proyectos</span>
+                </p>
             </div>
         </div>
     </div>
