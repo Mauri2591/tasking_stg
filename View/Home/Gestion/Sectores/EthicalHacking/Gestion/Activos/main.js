@@ -90,7 +90,7 @@ if (btnCopiarActivos) {
         const data = tabla.api().rows().data();
 
         // Extraer solo los hosts
-        const hosts = Array.from(data).map(row => row.host).join('\n');
+        const hosts = Array.from(data).map(row => `${row.host} - ${row.ambiente}`).join('\n');
 
         // Copiar al clipboard
         navigator.clipboard.writeText(hosts).then(() => {

@@ -89,13 +89,15 @@ if (btnCopiarActivos) {
         // Obtener todos los datos de la tabla
         const data = tabla.api().rows().data();
 
-        // Extraer solo los hosts
-        const hosts = Array.from(data).map(row => row.host).join('\n');
+        // Extraer hosts y sectores
+        const hostsSectores = Array.from(data)
+            .map(row => `${row.host} -${row.ambiente} - ${row.sector}`)
+            .join('\n');
 
         // Copiar al clipboard
-        navigator.clipboard.writeText(hosts).then(() => {
+        navigator.clipboard.writeText(hostsSectores).then(() => {
             Toastify({
-                text: "Hosts copiados!",
+                text: "Hosts y sectores copiados!",
                 duration: 1500,
                 gravity: "top",
                 position: "right",
