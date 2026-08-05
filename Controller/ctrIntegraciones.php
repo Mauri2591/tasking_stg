@@ -298,17 +298,12 @@ switch ($_GET['case']) {
         $proveedor = trim($_POST['proveedor'] ?? 'genia'); // 'genia' | 'claude'
         $prompt_personalizado = trim($_POST['prompt_personalizado'] ?? '');
 
-        // Log para debuggeo
-        error_log("IA Resumen - ID: $id, Modo: $modo, Proveedor: $proveedor, Prompt length: " . strlen($prompt_personalizado));
-
         if (!$id) {
-            error_log("IA Resumen ERROR: Falta id");
             echo json_encode(['error' => 'Falta id']);
             exit;
         }
 
         if ($modo === 'personalizado' && $prompt_personalizado === '') {
-            error_log("IA Resumen ERROR: Modo personalizado pero prompt vacío");
             echo json_encode(['error' => 'Falta el prompt personalizado']);
             exit;
         }
@@ -332,7 +327,6 @@ switch ($_GET['case']) {
         }
 
         $integracion->crear_lock_generacion_ia($id, $_SESSION['usu_id']);
-        error_log("IA Resumen - Lock creado");
 
         $secciones = [
             'RESUMEN'                    => $min_palabras,
@@ -342,11 +336,9 @@ switch ($_GET['case']) {
         ];
 
         $info = $proyecto->get_archivos_por_id_descripciones_proyecto($id);
-        error_log("IA Resumen - Info del proyecto obtenida");
 
         if (!$info || empty($info['carpeta_documentos_proy']) || empty($info['documento'])) {
             $integracion->liberar_lock_generacion_ia($id); // ← agregar esta línea, ya que acá el lock SÍ se creó
-            error_log("IA Resumen ERROR: No se encontraron archivos para id $id");
             echo json_encode(['error' => 'No se encontraron archivos para ese id']);
             exit;
         }
@@ -387,15 +379,12 @@ switch ($_GET['case']) {
         // Instrucción base: la fija del sistema (modo default) o la que escribió el usuario (modo personalizado)
 
         if ($modo === 'personalizado') {
-            error_log("IA Resumen - Modo personalizado, construyendo instrucción con prompt del usuario");
 
             $instruccion_base = "Actuá como analista de ciberseguridad. "
                 . "A continuación tenés el contenido completo de un documento.\n\n"
                 . "Seguí las instrucciones específicas del usuario sobre qué generar:\n"
                 . $prompt_personalizado . "\n"
                 . $guardrails_antialucinacion;
-
-            error_log("IA Resumen - Instrucción base construida, largo: " . strlen($instruccion_base));
         } else {
 
             $instruccion_base = "Actuá como analista de ciberseguridad que realizó el siguiente servicio: $tipo_servicio. "
@@ -496,7 +485,6 @@ switch ($_GET['case']) {
         $kev = new CisaKevChecker(BASE_PATH . "Cache/cisa_kev.json");
 
         $resultados = [];
-        error_log("IA Resumen - Comenzando procesamiento de " . count($archivos) . " archivo(s)");
 
         foreach ($archivos as $archivo) {
             if (connection_aborted()) {

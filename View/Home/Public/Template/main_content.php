@@ -127,6 +127,10 @@
                                             <a href="<?php echo URL . "View/Home/Gestion/Clientes/Proyectos/" ?>"
                                                 class="nav-link" data-key="t-chat">Proyectos</a>
                                         </li>
+                                        <li class="nav-item">
+                                            <a href="<?php echo URL . "View/Home/Gestion/Activos/" ?>"
+                                                class="nav-link" data-key="t-chat">Activos</a>
+                                        </li>
 
                                     </ul>
                                 </div>
@@ -328,6 +332,17 @@
                                             </li>
                                         </ul>
                                     </div>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="#sidebarActivos" class="nav-link collapsed" data-bs-toggle="collapse" role="button"
+                                        aria-expanded="false" aria-controls="sidebarActivos" data-key="t-email">Gestion</a>
+                                    <div class="menu-dropdown collapse" id="sidebarActivos">
+                                        <ul class="nav nav-sm flex-column">
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/EthicalHacking/Gestion/Activos/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Activos</a>
+                                            </li>
+                                        </ul>
                                 </li>
 
                                 <li class="menu-title"><i class="ri-more-fill"></i> <span data-key="t-pages">Apps</span>
@@ -713,11 +728,11 @@
                                                 <a href="<?php echo URL . "View/Home/Gestion/Sectores/Consulting/FirmaElectronica/"; ?>"
                                                     class="nav-link" data-key="t-mailbox">Firma Electronica</a>
                                             </li>
-                                             <li class="nav-item">
+                                            <li class="nav-item">
                                                 <a href="<?php echo URL . "View/Home/Gestion/Sectores/Consulting/FortalecimientoUsuarios/"; ?>"
                                                     class="nav-link" data-key="t-mailbox">Fortalecimiento de Usuarios</a>
                                             </li>
-                                             <li class="nav-item">
+                                            <li class="nav-item">
                                                 <a href="<?php echo URL . "View/Home/Gestion/Sectores/Consulting/Consultoria/"; ?>"
                                                     class="nav-link" data-key="t-mailbox">Consultoria</a>
                                             </li>

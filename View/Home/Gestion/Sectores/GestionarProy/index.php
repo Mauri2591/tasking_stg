@@ -430,6 +430,16 @@ if (isset($_SESSION['usu_id'])) {
                                                 onmouseup="this.style.transform='translateY(-.1px)';">
                                                 <i class="ri-folder-open-line me-1"></i> Ver Adjuntos
                                             </button>
+                                            <button id="btn_generar_resumen_ia"
+                                                class="btn btn-sm btn-warning text-dark"
+                                                style="margin: 0 .5rem; padding: 3px 7px; letter-spacing: 0.3px; transition: all 0.2s ease;"
+                                                onmouseover="this.style.transform='translateY(-.1px)'; this.style.boxShadow='0 4px 8px rgba(255,193,7,0.3)'; this.style.filter='brightness(1.15)';"
+                                                onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'; this.style.filter='brightness(1)';"
+                                                onmousedown="this.style.transform='translateY(.1px)';"
+                                                onmouseup="this.style.transform='translateY(-.1px)';"
+                                                title="Generar resumen de documentos con IA">
+                                                <i class="ri-bilibili-line me-1"></i> Generar Resumen IA
+                                            </button>
                                         </div>
                                         <hr>
                                         <section id="cont_usuario_finalizador" style="font-size: 11px; display: none;"
@@ -1266,6 +1276,14 @@ if (isset($_SESSION['usu_id'])) {
             if (btnAbrirModal) {
                 btnAbrirModal.addEventListener("click", function() {
                     $("#ModalEnviarCorreoCliente").modal("show");
+                });
+            }
+
+            // Event listener para el botón "Generar Resumen IA"
+            const btnGenerarResumenIA = document.getElementById("btn_generar_resumen_ia");
+            if (btnGenerarResumenIA) {
+                btnGenerarResumenIA.addEventListener("click", function() {
+                    btnAbrirModalIa(this, id_proyecto_gestionado);
                 });
             }
 
