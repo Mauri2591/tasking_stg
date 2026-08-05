@@ -2015,26 +2015,60 @@ if (isset($_SESSION['usu_id'])) {
                 generacionIaEnCurso = false;
 
                 let mensaje = 'No se pudo generar el resumen con IA';
-                if (jqXHR.responseJSON && jqXHR.responseJSON.mensaje) {
-                    mensaje = jqXHR.responseJSON.mensaje;
+                let respuestaServidor = null;
+
+                // Intentamos parsear la respuesta en caso que venga como texto
+                if (jqXHR.responseText) {
+                    try {
+                        respuestaServidor = JSON.parse(jqXHR.responseText);
+                        if (respuestaServidor.mensaje) {
+                            mensaje = respuestaServidor.mensaje;
+                        }
+                    } catch (e) {
+                        console.error('Error al parsear respuesta:', jqXHR.responseText);
+                        // Si no se puede parsear, usamos la respuesta como mensaje
+                        if (jqXHR.responseText) {
+                            mensaje = jqXHR.responseText.substring(0, 200);
+                        }
+                    }
                 }
 
-                if (jqXHR.responseJSON && jqXHR.responseJSON.error === 'jwt_caducado') {
+                // Si viene en responseJSON, la usamos
+                if (jqXHR.responseJSON && jqXHR.responseJSON.mensaje) {
+                    mensaje = jqXHR.responseJSON.mensaje;
+                    respuestaServidor = jqXHR.responseJSON;
+                }
+
+                // Log para debuggeo
+                console.error('Error en generación IA:', {
+                    status: jqXHR.status,
+                    statusText: jqXHR.statusText,
+                    responseText: jqXHR.responseText,
+                    responseJSON: respuestaServidor
+                });
+
+                if (respuestaServidor && respuestaServidor.error === 'jwt_caducado') {
                     Swal.fire({
                         icon: 'error',
                         title: 'Token de IA vencido',
                         text: mensaje
                     });
-                } else if (jqXHR.responseJSON && jqXHR.responseJSON.error === 'rate_limit') {
+                } else if (respuestaServidor && respuestaServidor.error === 'rate_limit') {
                     Swal.fire({
                         icon: 'warning',
                         title: 'Límite de solicitudes alcanzado',
                         text: mensaje
                     });
-                } else if (jqXHR.responseJSON && jqXHR.responseJSON.error === 'api_key_invalida') {
+                } else if (respuestaServidor && respuestaServidor.error === 'api_key_invalida') {
                     Swal.fire({
                         icon: 'error',
                         title: 'Problema con la API de Claude',
+                        text: mensaje
+                    });
+                } else if (respuestaServidor && respuestaServidor.error === 'ya_en_curso') {
+                    Swal.fire({
+                        icon: 'info',
+                        title: 'Generación en curso',
                         text: mensaje
                     });
                 } else {
