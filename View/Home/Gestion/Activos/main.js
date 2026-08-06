@@ -86,24 +86,29 @@ $(document).ready(function () {
 
 if (btnCopiarActivos) {
     btnCopiarActivos.addEventListener("click", () => {
-        // Obtener todos los datos de la tabla
         const data = tabla.api().rows().data();
 
-        // Extraer hosts y sectores
-        const hostsSectores = Array.from(data)
-            .map(row => `${row.host} -${row.ambiente} - ${row.sector}`)
-            .join('\n');
+        // Crear tabla HTML
+        let tabla_html = '<p style="font-weight:bold">Desde donde se realizarán las pruebas:</p><table border="1"><tr><th>Host</th><th>Ambiente</th><th>Sector</th></tr>';
+        Array.from(data).forEach(row => {
+            tabla_html += `<tr><td>${row.host}</td><td>${row.ambiente}</td><td>${row.sector}</td></tr>`;
+        });
+        tabla_html += '</table>';
 
-        // Copiar al clipboard
-        navigator.clipboard.writeText(hostsSectores).then(() => {
+        // Copiar al clipboard como HTML
+        navigator.clipboard.write([
+            new ClipboardItem({
+                'text/html': new Blob([tabla_html], { type: 'text/html' }),
+                'text/plain': new Blob([Array.from(data).map(row => `${row.host} - ${row.ambiente} - ${row.sector}`).join('\n')], { type: 'text/plain' })
+            })
+        ]).then(() => {
             Toastify({
-                text: "Hosts y sectores copiados!",
+                text: "Tabla copiada!",
                 duration: 1500,
                 gravity: "top",
                 position: "right",
                 backgroundColor: "#0ab39c",
             }).showToast();
-
         }).catch(() => {
             alert("Error al copiar");
         });
