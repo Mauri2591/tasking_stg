@@ -103,7 +103,7 @@ if (btnCopiarActivos) {
             })
         ]).then(() => {
             Toastify({
-                text: "Tabla copiada!",
+                text: "Datos copiada!",
                 duration: 1500,
                 gravity: "top",
                 position: "right",
