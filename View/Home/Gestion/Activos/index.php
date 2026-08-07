@@ -37,7 +37,7 @@ if (isset($_SESSION['usu_id'])) {
                             <th style="width: 300px;text-align: center;">HOST</th>
                             <th style="width: 30px;text-align: center;">AMBIENTE</th>
                             <th style="width: 300px;text-align: center;">SECTOR</th>
-                            <th style="width: 30px;text-align: center;">ALTA</th>
+                            <th style="width: 30px;text-align: center;">FECHA</th>
                             <th style="width: 30px;text-align: center;">USUARIO</th>
                             <!-- <th style="width: 30px;text-align: center;">ACCION</th> -->
                         </tr>
