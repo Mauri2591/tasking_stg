@@ -18,7 +18,7 @@ class GestionActivos extends Conexion
             FROM gestion_activos 
             INNER JOIN tm_usuario ON tm_usuario.usu_id=gestion_activos.usu_crea 
             WHERE gestion_activos.sector_id=:sector_id AND gestion_activos.est=1 
-            ORDER BY sector ASC";
+            ORDER BY ambiente ASC";
         }
         $stmt = $conn->prepare($sql);
         if ($_SESSION['sector_id'] != 4) {
