@@ -2,9 +2,11 @@
 require_once __DIR__ . "/../Config/Config.php";
 class Login extends Conexion
 {
-
+    private $excluir=[104, 112]; //Es para escluirme los usuarios de test del audit_login 
     public function audit_login($usu_id, $sector_id,$login)
     {   
+        
+        if(!isset($_SESSION['usu_id']) || in_array($_SESSION['usu_id'],$this->excluir)) return;        
         $conn = parent::get_conexion();
         $sql = "INSERT INTO audit_login (usu_id,sector_id,login) VALUES(:usu_id,:sector_id,:login)";
         $stmt = $conn->prepare($sql);
@@ -15,6 +17,7 @@ class Login extends Conexion
     }
     public function audit_logout($usu_id, $sector_id,$logout)
     {   
+        if(!isset($_SESSION['usu_id']) || in_array($_SESSION['usu_id'],$this->excluir)) return;        
         $conn = parent::get_conexion();
         $sql = "INSERT INTO audit_login (usu_id,sector_id,logout) VALUES(:usu_id,:sector_id,:logout)";
         $stmt = $conn->prepare($sql);
