@@ -175,6 +175,7 @@ class Proyectos extends Conexion
         $stmt->bindValue(3, $numero_servicio, PDO::PARAM_INT);
         $stmt->execute();
     }
+
     public function insert_host(int $id_proyecto_gestionado, int $id_proyecto_cantidad_servicios, int $usu_crea, string $tipo, string $valor)
     {
         $conn = parent::get_conexion();
@@ -183,23 +184,47 @@ class Proyectos extends Conexion
         $stmt->bindValue(1, $id_proyecto_gestionado, PDO::PARAM_INT);
         $stmt->bindValue(2, $id_proyecto_cantidad_servicios, PDO::PARAM_INT);
         $stmt->bindValue(3, $usu_crea, PDO::PARAM_INT);
-        $stmt->bindValue(4, $tipo);
-        $stmt->bindValue(5, $valor);
+        $stmt->bindValue(4, $tipo, PDO::PARAM_STR);       // ✅ CORREGIDO
+        $stmt->bindValue(5, $valor, PDO::PARAM_STR);      // ✅ CORREGIDO
         $stmt->execute();
     }
 
     public function insert_nuevos_host(int $id_proyecto_gestionado, $id_proyecto_cantidad_servicios, int $usu_id, string $tipo, string $host)
-    {
-        $conn = parent::get_conexion();
-        $sql = "INSERT INTO hosts (id_proyecto_gestionado,id_proyecto_cantidad_servicios,usu_crea, tipo, host, fecha_carga, est) VALUES (?, ?, ?, ?, ?, NOW(), 1)";
-        $stmt = $conn->prepare($sql);
-        $stmt->bindValue(1, $id_proyecto_gestionado);
-        $stmt->bindValue(2, $id_proyecto_cantidad_servicios);
-        $stmt->bindValue(3, $usu_id, PDO::PARAM_INT);
-        $stmt->bindValue(4, $tipo);
-        $stmt->bindValue(5, $host);
-        $stmt->execute();
+{
+    $conn = parent::get_conexion();
+    
+    // Primero verificar si existe un host ACTIVO (est=1)
+    $sqlCheck = "SELECT 1 FROM hosts 
+                 WHERE id_proyecto_gestionado = ? 
+                 AND tipo = ? 
+                 AND host = ? 
+                 AND est = 1 
+                 LIMIT 1";
+    $stmtCheck = $conn->prepare($sqlCheck);
+    $stmtCheck->bindValue(1, $id_proyecto_gestionado, PDO::PARAM_INT);
+    $stmtCheck->bindValue(2, $tipo, PDO::PARAM_STR);
+    $stmtCheck->bindValue(3, $host, PDO::PARAM_STR);
+    $stmtCheck->execute();
+    
+    // Si ya existe ACTIVO, no insertar
+    if ($stmtCheck->fetchColumn()) {
+        return false; // Ya existe activo
     }
+    
+    // Si no existe activo, insertar nuevo (aunque exista inactivo)
+    $sql = "INSERT INTO hosts 
+            (id_proyecto_gestionado, id_proyecto_cantidad_servicios, usu_crea, tipo, host, fecha_carga, est) 
+            VALUES (?, ?, ?, ?, ?, NOW(), 1)";
+    $stmt = $conn->prepare($sql);
+    $stmt->bindValue(1, $id_proyecto_gestionado, PDO::PARAM_INT);
+    $stmt->bindValue(2, $id_proyecto_cantidad_servicios, PDO::PARAM_INT);
+    $stmt->bindValue(3, $usu_id, PDO::PARAM_INT);
+    $stmt->bindValue(4, $tipo, PDO::PARAM_STR);
+    $stmt->bindValue(5, $host, PDO::PARAM_STR);
+    $stmt->execute();
+    
+    return $stmt->rowCount() > 0;
+}
 
     public function get_proyectos_nuevos_borrador()
     {
@@ -240,7 +265,7 @@ class Proyectos extends Conexion
         SEPARATOR ',<br>'
     ) AS usu_nom_asignado,
 
-    -- ✅ posición calculada dinámicamente
+    --  posición calculada dinámicamente
     (
     SELECT CONCAT(
         (SELECT COUNT(*) FROM proyecto_recurrencia prx 
@@ -348,7 +373,7 @@ ORDER BY pcs.proy_id ASC, pcs.numero_servicio ASC";
         LEFT JOIN tm_usuario ug ON pg.usu_crea = ug.usu_id
         LEFT JOIN tm_categoria tc ON pg.cat_id = tc.cat_id
         LEFT JOIN sectores s ON pg.sector_id = s.sector_id
-        LEFT JOIN dimensionamiento d ON d.id_proyecto_gestionado = pg.id -- ✅ JOIN sin filtro restrictivo
+        LEFT JOIN dimensionamiento d ON d.id_proyecto_gestionado = pg.id --  JOIN sin filtro restrictivo
         LEFT JOIN usuario_proyecto AS ua ON pg.id=ua.id_proyecto_gestionado
         WHERE s.sector_id = ? 
         AND pcs.est = 1 
@@ -373,7 +398,7 @@ ORDER BY pcs.proy_id ASC, pcs.numero_servicio ASC";
     DATE_FORMAT(pg.fech_fin, '%d-%m-%Y') AS fech_fin,
     p.cantidad_servicios, 
     c.client_rs, 
-    u.usu_nom AS creador_proy,              -- ✅ ahora del proyecto_gestionado
+    u.usu_nom AS creador_proy,              --  ahora del proyecto_gestionado
     s.sector_nombre,
     s.sector_id,
     tsc.cats_nom,
@@ -422,7 +447,7 @@ LEFT JOIN tm_pais tp
 LEFT JOIN proyecto_gestionado pg 
     ON pg.id_proyecto_cantidad_servicios = pcs.id
 LEFT JOIN tm_usuario u 
-    ON pg.usu_crea = u.usu_id             -- ✅ cambio clave
+    ON pg.usu_crea = u.usu_id             --  cambio clave
 LEFT JOIN sectores s 
     ON pg.sector_id = s.sector_id
 LEFT JOIN tm_subcategoria tsc 
@@ -493,7 +518,7 @@ GROUP BY
     DATE_FORMAT(pg.fech_fin, '%d-%m-%Y') AS fech_fin,
     p.cantidad_servicios, 
     c.client_rs, 
-    u.usu_nom AS creador_proy,              -- ✅ ahora del proyecto_gestionado
+    u.usu_nom AS creador_proy,              --  ahora del proyecto_gestionado
     s.sector_nombre,
     s.sector_id,
     tsc.cats_nom,
@@ -542,7 +567,7 @@ LEFT JOIN tm_pais tp
 LEFT JOIN proyecto_gestionado pg 
     ON pg.id_proyecto_cantidad_servicios = pcs.id
 LEFT JOIN tm_usuario u 
-    ON pg.usu_crea = u.usu_id             -- ✅ cambio clave
+    ON pg.usu_crea = u.usu_id             --  cambio clave
 LEFT JOIN sectores s 
     ON pg.sector_id = s.sector_id
 LEFT JOIN tm_subcategoria tsc 
@@ -661,7 +686,7 @@ LEFT JOIN tm_pais tp
 LEFT JOIN proyecto_gestionado pg 
     ON pg.id_proyecto_cantidad_servicios = pcs.id
 LEFT JOIN tm_usuario u 
-    ON pg.usu_crea = u.usu_id             -- ✅ cambio aquí
+    ON pg.usu_crea = u.usu_id             --  cambio aquí
 LEFT JOIN sectores s 
     ON pg.sector_id = s.sector_id
 LEFT JOIN tm_subcategoria tsc 
@@ -734,7 +759,7 @@ ORDER BY id_proyecto_cantidad_servicios ASC";
     DATE_FORMAT(pg.fech_fin, '%d-%m-%Y') AS fech_fin,
     p.cantidad_servicios, 
     c.client_rs, 
-    u.usu_nom AS creador_proy,            -- ✅ ahora desde proyecto_gestionado
+    u.usu_nom AS creador_proy,            --  ahora desde proyecto_gestionado
     s.sector_nombre,
     s.sector_id,
     tsc.cats_nom,
@@ -781,7 +806,7 @@ LEFT JOIN tm_pais tp
 LEFT JOIN proyecto_gestionado pg 
     ON pg.id_proyecto_cantidad_servicios = pcs.id
 LEFT JOIN tm_usuario u 
-    ON pg.usu_crea = u.usu_id              -- ✅ cambio clave
+    ON pg.usu_crea = u.usu_id              --  cambio clave
 LEFT JOIN sectores s 
     ON pg.sector_id = s.sector_id
 LEFT JOIN tm_subcategoria tsc 
@@ -848,7 +873,7 @@ ORDER BY id_proyecto_cantidad_servicios ASC";
     DATE_FORMAT(pg.fech_fin, '%d-%m-%Y') AS fech_fin,
     p.cantidad_servicios, 
     c.client_rs, 
-    u.usu_nom AS creador_proy,              -- ✅ ahora el creador del proyecto_gestionado
+    u.usu_nom AS creador_proy,              --  ahora el creador del proyecto_gestionado
     s.sector_nombre,
     s.sector_id,
     tsc.cats_nom,
@@ -896,7 +921,7 @@ LEFT JOIN tm_pais tp
 LEFT JOIN proyecto_gestionado pg 
     ON pg.id_proyecto_cantidad_servicios = pcs.id
 LEFT JOIN tm_usuario u 
-    ON pg.usu_crea = u.usu_id              -- ✅ cambio clave
+    ON pg.usu_crea = u.usu_id              --  cambio clave
 LEFT JOIN sectores s 
     ON pg.sector_id = s.sector_id
 LEFT JOIN tm_subcategoria tsc 
@@ -1129,7 +1154,7 @@ WHERE proyecto_gestionado.id = :id_proyecto_gestionado
     DATE_FORMAT(pg.fech_fin, '%d-%m-%Y') AS fech_fin,
     p.cantidad_servicios, 
     c.client_rs, 
-    u.usu_nom AS creador_proy,            -- ✅ ahora desde proyecto_gestionado
+    u.usu_nom AS creador_proy,            --  ahora desde proyecto_gestionado
     s.sector_nombre,
     s.sector_id,
     tsc.cats_nom,
@@ -1157,7 +1182,7 @@ LEFT JOIN tm_pais tp
 LEFT JOIN proyecto_gestionado pg 
     ON pg.id_proyecto_cantidad_servicios = pcs.id
 LEFT JOIN tm_usuario u 
-    ON pg.usu_crea = u.usu_id              -- ✅ cambio clave
+    ON pg.usu_crea = u.usu_id              --  cambio clave
 LEFT JOIN sectores s 
     ON pg.sector_id = s.sector_id
 LEFT JOIN tm_subcategoria tsc 
@@ -1215,7 +1240,7 @@ ORDER BY id_proyecto_cantidad_servicios ASC";
     p.cantidad_servicios, 
     c.client_rs, 
 
-    pm_concat.id_pm_calidad AS id_pm_calidad,  -- ✅ FIX
+    pm_concat.id_pm_calidad AS id_pm_calidad,  --  FIX
 
     COALESCE(
         pm_concat.pm_calidad_nombres,
@@ -1318,7 +1343,7 @@ LEFT JOIN (
         ON u.usu_id = tse.usuario_asignado
     WHERE 
         tse.id_pm_calidad IS NOT NULL
-        AND tse.est = 1   -- ✅ ACÁ VA
+        AND tse.est = 1   --  ACÁ VA
     GROUP BY tse.id_proyecto_gestionado
 ) pm_concat 
 ON pm_concat.id_proyecto_gestionado = pg.id
@@ -1373,7 +1398,7 @@ ORDER BY id_proyecto_cantidad_servicios ASC";
     DATE_FORMAT(pg.fech_fin, '%d-%m-%Y') AS fech_fin,
     p.cantidad_servicios, 
     c.client_rs, 
-    u.usu_nom AS creador_proy,               -- ✅ ahora desde proyecto_gestionado
+    u.usu_nom AS creador_proy,               --  ahora desde proyecto_gestionado
     s.sector_nombre,
     s.sector_id,
     tsc.cats_nom,
@@ -1401,7 +1426,7 @@ LEFT JOIN tm_pais tp
 LEFT JOIN proyecto_gestionado pg 
     ON pg.id_proyecto_cantidad_servicios = pcs.id
 LEFT JOIN tm_usuario u 
-    ON pg.usu_crea = u.usu_id                -- ✅ cambio clave
+    ON pg.usu_crea = u.usu_id                --  cambio clave
 LEFT JOIN sectores s 
     ON pg.sector_id = s.sector_id
 LEFT JOIN tm_subcategoria tsc 
@@ -1457,7 +1482,7 @@ ORDER BY
     p.cantidad_servicios, 
     c.client_rs, 
 
-    pm_concat.id_pm_calidad AS id_pm_calidad,  -- ✅ agregado
+    pm_concat.id_pm_calidad AS id_pm_calidad,  --  agregado
 
     COALESCE(
         pm_concat.pm_calidad_nombres,
@@ -1532,7 +1557,7 @@ LEFT JOIN usuario_proyecto ua
 LEFT JOIN tm_usuario uas 
     ON ua.usu_asignado = uas.usu_id
 
--- ✅ SUBQUERY PM (igual que las otras)
+--  SUBQUERY PM (igual que las otras)
 LEFT JOIN (
     SELECT 
         tse.id_proyecto_gestionado,
@@ -1995,11 +2020,12 @@ ORDER BY id_proyecto_cantidad_servicios ASC";
         $conn = parent::get_conexion();
 
         $sql = "SELECT 1
-            FROM hosts
-            WHERE id_proyecto_gestionado = ?
-              AND tipo = ?
-              AND host = ?
-            LIMIT 1";
+        FROM hosts
+        WHERE id_proyecto_gestionado = ?
+          AND tipo = ?
+          AND host = ?
+          AND est = 1
+        LIMIT 1";
         $stmt = $conn->prepare($sql);
         $stmt->execute([$idProyecto, $tipo, $host]);
         return (bool) $stmt->fetchColumn();

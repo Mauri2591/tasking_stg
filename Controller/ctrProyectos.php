@@ -101,7 +101,7 @@ switch ($_GET['proy']) {
                 $invalidos[] = $hostRaw;
                 continue;
             }
-            // ✅ VALIDACIÓN DE DUPLICADO (vía modelo)
+            //  VALIDACIÓN DE DUPLICADO (vía modelo)
             if ($proyecto->hostExiste($idProyecto, $tipo, $host)) {
                 $duplicados[] = $host;
                 continue;
@@ -241,7 +241,7 @@ switch ($_GET['proy']) {
             ? Validaciones::subida_archivo($_FILES['archivo'])
             : null;
 
-        $id_proyecto_cantidad_servicios = $_POST['id_proyecto_cantidad_servicios']; // ✅ ACÁ asignás el valor
+        $id_proyecto_cantidad_servicios = $_POST['id_proyecto_cantidad_servicios']; //  ACÁ asignás el valor
 
         $cantidad_recurrencias = $_POST['recurrencia']; //Aca traigo la cantidad de recurrencias
 
@@ -1460,7 +1460,7 @@ switch ($_GET['proy']) {
                 ? 'Sin fecha'
                 : '<span class="badge bg-light text-dark">' . $row['fech_fin'] . '</span>';
 
-            // ✅ Solo mostrar si estados_id = 1
+            //  Solo mostrar si estados_id = 1
             if ($row['estados_id'] == 1) {
                 if (!empty($row['posicion_recurrencia'])) {
                     $sub_array[] = '<span class="badge bg-success text-light border border-success">'
@@ -2501,7 +2501,7 @@ TXT;
         $archivo = $_POST['archivo'];
         $captura_imagen = $_POST['captura_imagen'];
         $dimensionamiento = $_POST['dimensionamiento'];
-        $posicion_recurrencia = $_POST['posicion_recurrencia']; // ✅ ahora lo tomamos del POST
+        $posicion_recurrencia = $_POST['posicion_recurrencia']; //  ahora lo tomamos del POST
 
         try {
             // 1️⃣ Insertamos el nuevo proyecto rechequeo
