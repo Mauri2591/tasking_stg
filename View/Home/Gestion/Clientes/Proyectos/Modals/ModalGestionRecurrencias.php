@@ -15,7 +15,7 @@
                 <button type="button" id="btnPasarRecurrenteABorrador" class="btn btn-sm btn-primary"
                     data-bs-dismiss="modal">Pasar a Borrador</button>
                           <button type="button" id="btnPasarEliminarHistorico" class="btn btn-sm btn-danger"
-                    data-bs-dismiss="modal">Eliminar Historico</button>
+                    data-bs-dismiss="modal">Eliminar del Historico</button>
             </div>
             </form>
         </div>
