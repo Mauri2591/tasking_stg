@@ -663,7 +663,7 @@ if (isset($_SESSION['usu_id'])) {
             },
             eventDrop: function(info) {
                 const EVENTO_ID = info.event.id;
-                const NUEVA_FECHA = toLocalDateStr(info.event.start); // ✅ usa hora LOCAL, no UTC
+                const NUEVA_FECHA = toLocalDateStr(info.event.start); //  usa hora LOCAL, no UTC
                 const NUEVO_INICIO = info.event.start;
                 const NUEVO_FIN = info.event.end;
 
@@ -673,7 +673,7 @@ if (isset($_SESSION['usu_id'])) {
                     let fin = evento.end;
 
                     return (
-                        toLocalDateStr(inicio) === NUEVA_FECHA && // ✅ comparación local
+                        toLocalDateStr(inicio) === NUEVA_FECHA && //  comparación local
                         (
                             (NUEVO_INICIO >= inicio && NUEVO_INICIO < fin) ||
                             (NUEVO_FIN > inicio && NUEVO_FIN <= fin) ||
@@ -702,7 +702,7 @@ if (isset($_SESSION['usu_id'])) {
                         return;
                     }
 
-                    // ✅ Formatear horas a HH:MM
+                    //  Formatear horas a HH:MM
                     let horaDesde = data.hora_desde.slice(0, 5);
                     let horaHasta = data.hora_hasta.slice(0, 5);
 
@@ -711,7 +711,7 @@ if (isset($_SESSION['usu_id'])) {
                         id_producto: data.id_producto,
                         id_tarea: data.id_tarea,
                         es_telecom: data.id_proyecto_gestionado == 0 ? "Telecom" : null,
-                        fecha: NUEVA_FECHA, // ✅ ahora manda la fecha local correcta
+                        fecha: NUEVA_FECHA, //  ahora manda la fecha local correcta
                         hora_desde: horaDesde,
                         hora_hasta: horaHasta,
                         descripcion: data.descripcion,

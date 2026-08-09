@@ -556,7 +556,7 @@ END AS posicion_recurrencia,
             $stmt->bindParam(':usuario_asignado', $usuario_asignado, PDO::PARAM_INT);
             $stmt->execute();
 
-            // ✅ Validación: asegura que solo actualice la tarea del usuario actual
+            //  Validación: asegura que solo actualice la tarea del usuario actual
             if ($stmt->rowCount() === 0) {
                 throw new Exception("No se encontró una tarea asociada al usuario actual.");
             }

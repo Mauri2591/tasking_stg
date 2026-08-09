@@ -38,7 +38,7 @@ switch ($_GET['accion']) {
             "producto" => $_POST['id_producto'] ?? null,
             "id_tarea" => $_POST['id_tarea'] ?? null,
             "es_telecom" => $_POST['es_telecom'] ?? null,
-            "fecha" => $fecha_mysql, // ✅ ya normalizada
+            "fecha" => $fecha_mysql, //  ya normalizada
             "desde" => $hora_desde,
             "hasta" => $hora_hasta
         ];
@@ -74,7 +74,7 @@ switch ($_GET['accion']) {
                 $_POST['id_tarea'] ?? null,
                 $_POST['es_telecom'] ?? null,
                 $_POST['id_pm_calidad'] ?? null,
-                $fecha_mysql,              // ✅ ACÁ
+                $fecha_mysql,            
                 $hora_desde,
                 $hora_hasta,
                 $_POST['descripcion'] ?? null,
@@ -396,10 +396,10 @@ switch ($_GET['accion']) {
 
     case 'cambiar_estado_tarea':
         try {
-            // ✅ Obtener el usuario actual desde la sesión
+            //  Obtener el usuario actual desde la sesión
             $usuario_asignado = $_SESSION['usu_id'];
 
-            // ✅ Llamada al modelo con el filtro por usuario
+            //  Llamada al modelo con el filtro por usuario
             $timesummary->cambiar_estado_tarea(
                 $_POST['id_timesummary_estados'],
                 $_POST['est'],

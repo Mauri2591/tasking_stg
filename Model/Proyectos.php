@@ -184,8 +184,8 @@ class Proyectos extends Conexion
         $stmt->bindValue(1, $id_proyecto_gestionado, PDO::PARAM_INT);
         $stmt->bindValue(2, $id_proyecto_cantidad_servicios, PDO::PARAM_INT);
         $stmt->bindValue(3, $usu_crea, PDO::PARAM_INT);
-        $stmt->bindValue(4, $tipo, PDO::PARAM_STR);       // ✅ CORREGIDO
-        $stmt->bindValue(5, $valor, PDO::PARAM_STR);      // ✅ CORREGIDO
+        $stmt->bindValue(4, $tipo, PDO::PARAM_STR);       //  CORREGIDO
+        $stmt->bindValue(5, $valor, PDO::PARAM_STR);      //  CORREGIDO
         $stmt->execute();
     }
 

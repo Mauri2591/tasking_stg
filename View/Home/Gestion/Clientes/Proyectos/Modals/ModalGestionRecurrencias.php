@@ -6,6 +6,7 @@
             <h5 style="margin-top: .3rem; margin-left: 1rem;"> Proyecto Recurrente</h5>
 
             <div class="card-body">
+                <input type="text" id="cliente">
                 <div id="contenido_proyecto_gestionado_para_insert_recurrente">
 
                 </div>

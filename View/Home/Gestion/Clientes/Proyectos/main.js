@@ -123,8 +123,8 @@ $(document).ready(function () {
     tabla = $("#table_proyectos_total_calidad").DataTable({
         "aProcessing": true,
         "aServerSide": true,
-        "ordering": true, // ✅ respetar el ORDER BY del SQL
-        "lengthChange": false, // ✅ corregido el typo
+        "ordering": true, //  respetar el ORDER BY del SQL
+        "lengthChange": false, //  corregido el typo
         dom: 'Bfrtip',
         "searching": true,
         lenghtChange: false,
@@ -178,8 +178,8 @@ $(document).ready(function () {
     tabla = $("#table_proyectos_realizados").DataTable({
         "aProcessing": true,
         "aServerSide": true,
-        "ordering": true, // ✅ respetar el ORDER BY del SQL
-        "lengthChange": false, // ✅ corregido el typo
+        "ordering": true, //  respetar el ORDER BY del SQL
+        "lengthChange": false, //  corregido el typo
         dom: 'Bfrtip',
         "searching": true,
         lenghtChange: false,
@@ -233,8 +233,8 @@ $(document).ready(function () {
     tabla = $("#table_cross_sell_sectores").DataTable({
         "aProcessing": true,
         "aServerSide": true,
-        "ordering": true, // ✅ respetar el ORDER BY del SQL
-        "lengthChange": false, // ✅ corregido el typo
+        "ordering": true, //  respetar el ORDER BY del SQL
+        "lengthChange": false, //  corregido el typo
         dom: 'Bfrtip',
         "searching": true,
         lenghtChange: false,
@@ -288,8 +288,8 @@ $(document).ready(function () {
     tabla = $("#table_proyectos_en_proceso").DataTable({
         "aProcessing": true,
         "aServerSide": true,
-        "ordering": true, // ✅ respetar el ORDER BY del SQL
-        "lengthChange": false, // ✅ corregido el typo
+        "ordering": true, //  respetar el ORDER BY del SQL
+        "lengthChange": false, //  corregido el typo
         dom: 'Bfrtip',
         "searching": true,
         lenghtChange: false,
@@ -341,8 +341,8 @@ $(document).ready(function () {
     tabla = $("#table_proyectos_recurrencia").DataTable({
         "aProcessing": true,
         "aServerSide": true,
-        "ordering": true, // ✅ respetar el ORDER BY del SQL
-        "lengthChange": false, // ✅ corregido el typo
+        "ordering": true, //  respetar el ORDER BY del SQL
+        "lengthChange": false, //  corregido el typo
         dom: 'Bfrtip',
         "searching": true,
         lenghtChange: false,
@@ -405,8 +405,8 @@ $(document).ready(function () {
             tabla = $("#table_para_rechequeo").DataTable({
                 "aProcessing": true,
                 "aServerSide": true,
-                "ordering": true, // ✅ respetar el ORDER BY del SQL
-                "lengthChange": false, // ✅ corregido el typo
+                "ordering": true, //  respetar el ORDER BY del SQL
+                "lengthChange": false, //  corregido el typo
                 dom: 'Bfrtip',
                 "searching": true,
                 lenghtChange: false,
@@ -1977,7 +1977,7 @@ function eliminarMensajeInvalido() {
     document.getElementById("mje_host_agregar").innerHTML = "";
 }
 
-// ✅ Evento de validación dinámica según opción seleccionada
+//  Evento de validación dinámica según opción seleccionada
 const inputHost = document.getElementById("agregar_nuevo_host");
 
 if (inputHost) {
@@ -2658,7 +2658,7 @@ if (params.get('doc') === "error") {
         timer: 1500
     });
 
-    // ✅ Eliminar el parámetro de la URL sin recargar
+    //  Eliminar el parámetro de la URL sin recargar
     const url = window.location.origin + window.location.pathname;
     history.replaceState({}, document.title, url);
 }
@@ -2682,6 +2682,10 @@ function gestionar_proy_recurrente(id_proyecto_cantidad_servicios, conteo_id_rec
             id_proyecto_cantidad_servicios: id_proyecto_cantidad_servicios
         },
         function (data, textStatus, jqXHR) {
+            let tituloCompleto = $(data).find('li').first().text();
+            clienteRecurrenteNombre = tituloCompleto.split(':')[1].trim();
+            $("#cliente").val(clienteRecurrenteNombre);
+            
             $("#contenido_proyecto_gestionado_para_insert_recurrente").html(data)
         },
         "html"
@@ -2814,7 +2818,7 @@ $("#btnPasarRecurrenteABorrador").off("click").on("click", function () {
                     dataType: "json",
                     success: function (res2) {
 
-                        // ✅ Feedback al usuario
+                        //  Feedback al usuario
                         Swal.fire({
                             icon: "success",
                             title: "Bien",
@@ -2824,12 +2828,12 @@ $("#btnPasarRecurrenteABorrador").off("click").on("click", function () {
                             showConfirmButton: false
                         });
 
-                        // ✅ Refresco tabla si existe
+                        //  Refresco tabla si existe
                         if ($.fn.DataTable.isDataTable('#table_proyectos_recurrencia')) {
                             $('#table_proyectos_recurrencia').DataTable().ajax.reload(null, false);
                         }
 
-                        // ✅ Recarga total de la página
+                        //  Recarga total de la página
                         setTimeout(() => {
                             window.location.reload();
                         }, 1200);
@@ -2852,23 +2856,53 @@ $("#btnPasarEliminarHistorico").off("click").on("click", function () {
         });
         return;
     }
-    $.post("../../../../../Controller/ctrProyectos.php?proy=inactivar_proyecto_recurrencia", {
-        id: idProyectoRecurrenciaEliminar
-    }, function (data) {
-        if (data.status === "success") {
-            Swal.fire({
-                icon: "success",
-                title: "Eliminado correctamente",
-                timer: 1100,
-                showConfirmButton: false
-            });
-            setTimeout(() => {
-                if ($.fn.DataTable.isDataTable('#table_proyectos_recurrencia')) {
-                    $('#table_proyectos_recurrencia').DataTable().ajax.reload(null, false);
+    Swal.fire({
+        icon: "warning",
+        title: `¿Desea eliminar esta recurrencia de ${$("#cliente").val()}?`,
+        showCancelButton: true,
+        confirmButtonText: "Sí, eliminar",
+        cancelButtonText: "Cancelar"
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: "../../../../../Controller/ctrProyectos.php?proy=inactivar_proyecto_recurrencia",
+                type: "POST",
+                data: {
+                    id: idProyectoRecurrenciaEliminar
+                },
+                dataType: "json",
+                success: function (data) {
+                    if (data.status === "success") {
+                        Swal.fire({
+                            icon: "success",
+                            title: "Eliminado correctamente",
+                            timer: 1100,
+                            showConfirmButton: false
+                        });
+                        setTimeout(() => {
+                            if ($.fn.DataTable.isDataTable('#table_proyectos_recurrencia')) {
+                                $('#table_proyectos_recurrencia').DataTable().ajax.reload(null, false);
+                            }
+                        }, 500);
+                    } else {
+                        Swal.fire({
+                            icon: "error",
+                            title: "Error",
+                            text: data.message || "No se pudo eliminar"
+                        });
+                    }
+                },
+                error: function (xhr, status, error) {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Error de conexión",
+                        text: "No se pudo conectar con el servidor"
+                    });
+                    console.error("Error:", error);
                 }
-            }, 500);
+            });
         }
-    }, "json");
+    });
 });
 
 //------------------------------ FIN RECURRENCIAS  -----------------------------------//
