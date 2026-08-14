@@ -22,6 +22,8 @@ class Correo extends Conexion
         tm_categoria.cat_nom AS producto,
         tm_subcategoria.cats_nom AS tipo,
         cli.client_rs AS cliente,
+        cli.pais_id,
+        tm_pais.pais_nombre AS pais_nombre,
         s.sector_nombre AS sector,
         COALESCE(
         GROUP_CONCAT(
@@ -46,6 +48,7 @@ class Correo extends Conexion
             ON tu.usu_id = up.usu_asignado
         INNER JOIN tm_categoria ON pg.cat_id=tm_categoria.cat_id
         INNER JOIN tm_subcategoria ON pg.cats_id=tm_subcategoria.cats_id
+        INNER JOIN tm_pais ON cli.pais_id=tm_pais.pais_id
         WHERE pg.id = :id
         GROUP BY
             pg.id,
@@ -60,6 +63,7 @@ class Correo extends Conexion
     public function enviarCorreoProyectoFinalizado($id)
     {
         $datos = $this->getDatosParaCorreo($id);
+
         if (!$datos) {
             return 'No se encontraron datos del proyecto';
         }
