@@ -667,6 +667,53 @@ $("#combo_sector_proy_nuevo").change(function (e) {
             );
             break;
 
+        case '6': //CONSULTING
+            document.getElementById('container_ips_urls').innerHTML =
+                `<div class="col-sm-3 mr-1">
+                <div class="mb-3">
+                    <span class="badge bg-light fs-10 mb-1 text-dark">Ip's</span>
+                    <input type="hidden" hidden value="IP">
+                    <textarea class="form-control" id="ips_proy_nuevo_eh" rows="3"
+                        placeholder="Engrese las Ips"></textarea>
+                </div>
+                    <div id="mje_ips_proy_nuevo_eh">
+
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="mb-3">
+                        <span class="badge bg-light fs-10 mb-1 text-dark">Url's</span>
+                        <input type="hidden" hidden value="URL">
+                        <textarea class="form-control" id="urls_proy_nuevo_eh" rows="3"
+                            placeholder="Ingrese las URL's"></textarea>
+                    </div>
+                    <div id="mje_urls_proy_nuevo_eh">
+                    </div>
+                </div>
+                <div class="col-sm-3 ml-1">
+                    <div class="mb-3">
+                        <input type="hidden" hidden value="APLICACIONES">
+                        <span class="badge bg-light fs-10 mb-1 text-dark">Aplicaciones</span>
+
+                        <textarea class="form-control" id="aplicaciones_proy_nuevo" rows="3"
+                            placeholder="Aplicaciones"></textarea>
+                    </div>
+                    <div id="mje_aplicaciones_proy_nuevo_otros">
+                    </div>
+                </div>`;
+            activarValidacionTextarea(
+                "ips_proy_nuevo_eh",
+                "mje_ips_proy_nuevo_eh",
+                "IP"
+            );
+
+            activarValidacionTextarea(
+                "urls_proy_nuevo_eh",
+                "mje_urls_proy_nuevo_eh",
+                "URL"
+            );
+            break;
+
         default:
             break;
     }
@@ -1575,6 +1622,7 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
         formData.append('ips', document.getElementById("ips_proy_nuevo_eh")?.value || "");
         formData.append('urls', document.getElementById("urls_proy_nuevo_eh")?.value || "");
         formData.append('otros', document.getElementById("otros_proy_nuevo")?.value || "");
+        formData.append('aplicaciones', document.getElementById("aplicaciones_proy_nuevo")?.value || "");
         formData.append('equipos', document.getElementById("equipos_proy_nuevo_sase")?.value || "");
         formData.append('agentes', document.getElementById("agentes_proy_nuevo_soc")?.value || "");
         formData.append('dispositivos', document.getElementById("dispositivos_proy_nuevo_soc")?.value || "");
@@ -1908,6 +1956,13 @@ function actualizarComboActivos(valor) {
                 <option value="EQUIPO">Equipos</option>
                 <option value="OTRO">Otros</option>
             `;
+
+            case '6':
+            opciones = `
+                <option value="IP">IP's</option>
+                <option value="URL">URL's</option>
+                <option value="APLICACION">Aplicacion</option>
+            `;
             break;
     }
 
@@ -2023,7 +2078,6 @@ if (comboActivo) {
 }
 
 function ver_hosts_eh(id_proyecto_gestionado) {
-
     $("#ModalVerHosts").modal("show");
     $.post("../../../../../Controller/ctrProyectos.php?proy=get_hosts_proy_ip", {
             id_proyecto_gestionado: id_proyecto_gestionado
@@ -2685,7 +2739,7 @@ function gestionar_proy_recurrente(id_proyecto_cantidad_servicios, conteo_id_rec
             let tituloCompleto = $(data).find('li').first().text();
             clienteRecurrenteNombre = tituloCompleto.split(':')[1].trim();
             $("#cliente").val(clienteRecurrenteNombre);
-            
+
             $("#contenido_proyecto_gestionado_para_insert_recurrente").html(data)
         },
         "html"

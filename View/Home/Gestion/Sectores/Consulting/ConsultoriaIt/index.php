@@ -63,7 +63,7 @@ if (isset($_SESSION['usu_id'])) {
                         </ul>
 
                         <?php
-                        include_once __DIR__ . "/../../EthicalHacking/Modals/ModalVerHosts.php";
+                        include_once __DIR__ . "/../../Consulting/Modals/ModalVerHosts.php";
                         ?>
                         <!-- Tab panes -->
                         <div class="tab-content text-muted">

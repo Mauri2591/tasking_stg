@@ -73,6 +73,7 @@ class Reportes
             'DISPOSITIVO',
             'AGENTE',
             'EQUIPO',
+            'APLICACIONES',
             'OTROS',
             'ESTADO'
         ];
@@ -129,6 +130,7 @@ class Reportes
                     $row['dispositivos'] ?? '-',
                     $row['agentes'] ?? '-',
                     $row['equipos'] ?? '-',
+                    $row['aplicaciones'] ?? '-',
                     $row['otros'] ?? '-',
                     $row['estado'] ?? '-'
                 ], NULL, 'A' . $rowNum);

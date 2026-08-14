@@ -419,11 +419,11 @@ function ver_hosts_consulting(id_proyecto_gestionado) {
         },
         "html"
     );
-    $.post("../../../../../../Controller/ctrProyectos.php?proy=get_hosts_proy_otro", {
+    $.post("../../../../../../Controller/ctrProyectos.php?proy=get_hosts_proy_aplicacion", {
             id_proyecto_gestionado: id_proyecto_gestionado
         },
         function (data, textStatus, jqXHR) {
-            $("#cont_otro").html(data)
+            $("#cont_aplicacion").html(data)
         },
         "html"
     );

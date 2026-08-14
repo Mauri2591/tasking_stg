@@ -2398,7 +2398,7 @@ ORDER BY cantidad_proyectos DESC";
         SUM(CASE WHEN hosts.tipo = 'DISPOSITIVO' THEN 1 ELSE 0 END) AS dispositivos,
         SUM(CASE WHEN hosts.tipo = 'AGENTE' THEN 1 ELSE 0 END) AS agentes,
         SUM(CASE WHEN hosts.tipo = 'EQUIPO' THEN 1 ELSE 0 END) AS equipos,
-        SUM(CASE WHEN hosts.tipo NOT IN ('IP','URL','DISPOSITIVO','AGENTE','EQUIPO') THEN 1 ELSE 0 END) AS otros
+        SUM(CASE WHEN hosts.tipo NOT IN ('IP','URL','DISPOSITIVO','AGENTE','EQUIPO', 'APLICACION') THEN 1 ELSE 0 END) AS otros
     FROM proyecto_gestionado pg
     LEFT JOIN sectores s ON pg.sector_id = s.sector_id
     LEFT JOIN tm_categoria c ON pg.cat_id = c.cat_id

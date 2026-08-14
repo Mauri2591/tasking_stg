@@ -218,6 +218,21 @@ switch ($_GET['proy']) {
         echo $sectionOtro;
         break;
 
+    case 'get_hosts_proy_aplicacion':
+        $data = $proyecto->get_hosts_proy($_POST['id_proyecto_gestionado']);
+        $aplicacion = [];
+        $sectionAplicacion = '';
+        foreach ($data as $key => $val) {
+            if ($val['tipo'] == "APLICACION") {
+                $aplicacion[] = $val['host'];
+            }
+        }
+        foreach ($aplicacion as $key => $val) {
+            $sectionAplicacion .= '<section><span class="badge bg-light text-dark">' . $val . '</span></section>';
+        }
+        echo $sectionAplicacion;
+        break;
+
     case 'get_usuarios_x_sector':
         $usuarios = $proyecto->get_usuarios_x_sector($_POST['sector_id']);
         $asignados = [];
@@ -251,6 +266,7 @@ switch ($_GET['proy']) {
         $ips   = $_POST['ips'] ?? '';
         $urls  = $_POST['urls'] ?? '';
         $otros = $_POST['otros'] ?? '';
+        $aplicaciones = $_POST['aplicaciones'] ?? '';
         $dispositivos = $_POST['dispositivos'] ?? '';
         $agentes  = $_POST['agentes'] ?? '';
         $equipos = $_POST['equipos'] ?? '';
@@ -259,6 +275,7 @@ switch ($_GET['proy']) {
             $validacion->parse_hosts($ips, 'IP'),
             $validacion->parse_hosts($urls, 'URL'),
             $validacion->parse_hosts($otros, 'OTRO'),
+            $validacion->parse_hosts($aplicaciones, 'APLICACION'),
             $validacion->parse_hosts($dispositivos, 'DISPOSITIVO'),
             $validacion->parse_hosts($agentes, 'AGENTE'),
             $validacion->parse_hosts($equipos, 'EQUIPO')

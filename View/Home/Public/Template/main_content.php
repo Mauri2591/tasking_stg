@@ -729,12 +729,20 @@
                                                     class="nav-link" data-key="t-mailbox">Firma Electronica</a>
                                             </li>
                                             <li class="nav-item">
-                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/Consulting/FortalecimientoUsuarios/"; ?>"
-                                                    class="nav-link" data-key="t-mailbox">Fortalecimiento de Usuarios</a>
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/Consulting/Ciberawareness/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Ciberawareness</a>
                                             </li>
                                             <li class="nav-item">
-                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/Consulting/Consultoria/"; ?>"
-                                                    class="nav-link" data-key="t-mailbox">Consultoria</a>
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/Consulting/ConsultoriaIt/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Consultoria IT</a>
+                                            </li>
+                                             <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/Consulting/ConsultoriaOt/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Consultoria OT</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/Consulting/Interno/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Interno</a>
                                             </li>
                                         </ul>
                                     </div>
