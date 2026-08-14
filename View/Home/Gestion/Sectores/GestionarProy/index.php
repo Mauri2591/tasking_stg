@@ -164,6 +164,17 @@ if (isset($_SESSION['usu_id'])) {
                                             </div>
                                         </div>
 
+                                         <div id="contenedor_aplicaciones" style="display:none;" class="col-ms-2 col text-center">
+                                            <span type="button"
+                                                onclick="copiar_aplicaciones(<?php echo isset($_GET['p']) ? Openssl::get_ssl_decrypt($_GET['p']) : ''; ?>)"
+                                                class="btn btn-sm py-0 px-1 btn-outline-success waves-effect waves-light mb-2">Aplicaciones<i
+                                                    class=" ri-file-copy-line"></i></span>
+                                            <div style="max-height: 220px;  min-height: 220px; overflow-y: scroll; border-radius: 5px;"
+                                                class=" border border-success">
+                                                <div class="text-center" id="cont_aplicacion"></div>
+                                            </div>
+                                        </div>
+
                                         <div id="contenedor_dispositivos" style="display:none;" class="col-ms-2 col text-center">
                                             <span type="button"
                                                 onclick="copiar_dispositivos(<?php echo isset($_GET['p']) ? Openssl::get_ssl_decrypt($_GET['p']) : ''; ?>)"
@@ -523,10 +534,9 @@ if (isset($_SESSION['usu_id'])) {
                             case 6:
                                 $("#contenedor_ips").show();
                                 $("#contenedor_urls").show();
-                                $("#contenedor_otros").show();
+                                $("#contenedor_aplicaciones").show();
                                 break;
                         }
-                        // 🔥 mostrar recién cuando el layout ya está correcto
                         $("#contenedor_ips_y_descripcion").css("opacity", "1");
                     }
                 });
@@ -804,6 +814,18 @@ if (isset($_SESSION['usu_id'])) {
                         $("#cont_equipos").html(data)
                     } else {
                         $("#cont_equipos").text("No hay equipos")
+                    }
+                }, "html");
+
+
+             $.post("../../../../../Controller/ctrProyectos.php?proy=get_hosts_proy_aplicacion", {
+                    id_proyecto_gestionado: id_proyecto_gestionado
+                },
+                function(data) {
+                    if (data) {
+                        $("#cont_aplicacion").html(data)
+                    } else {
+                        $("#cont_aplicacion").text("No hay aplicaciones")
                     }
                 }, "html");
 
@@ -1646,6 +1668,23 @@ if (isset($_SESSION['usu_id'])) {
             }).showToast();
 
             let contenido = document.getElementById("cont_otro").innerText.trim();
+            navigator.clipboard.writeText(contenido).then(function() {
+                toast.success('Successfully toasted!')
+            }).catch(function(error) {
+                console.error("Error al copiar: ", error);
+            });
+        }
+
+        function copiar_aplicaciones(id_proyecto_cantidad_servicios) {
+            Toastify({
+                text: "¡Activos copiados!",
+                duration: 2000,
+                gravity: "top",
+                position: "right",
+                backgroundColor: "#0ab39c",
+            }).showToast();
+
+            let contenido = document.getElementById("cont_aplicacion").innerText.trim();
             navigator.clipboard.writeText(contenido).then(function() {
                 toast.success('Successfully toasted!')
             }).catch(function(error) {
