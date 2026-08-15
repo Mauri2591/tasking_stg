@@ -1907,7 +1907,7 @@ ORDER BY id_proyecto_cantidad_servicios ASC";
     public function get_combo_subcategorias_x_sector(int $sector_id)
     {
         $conn = parent::get_conexion();
-        $sql = "SELECT * FROM tm_subcategoria WHERE sector_id=?";
+        $sql = "SELECT * FROM tm_subcategoria WHERE sector_id=? AND est=1 ORDER BY cats_nom ASC";
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(1, htmlspecialchars($sector_id, ENT_QUOTES), PDO::PARAM_INT);
         $stmt->execute();
