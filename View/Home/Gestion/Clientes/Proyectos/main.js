@@ -714,6 +714,53 @@ $("#combo_sector_proy_nuevo").change(function (e) {
             );
             break;
 
+        case '7': //FUNCTIONAL SERVICES
+            document.getElementById('container_ips_urls').innerHTML =
+                `<div class="col-sm-3 mr-1">
+                <div class="mb-3">
+                    <span class="badge bg-light fs-10 mb-1 text-dark">Ip's</span>
+                    <input type="hidden" hidden value="IP">
+                    <textarea class="form-control" id="ips_proy_nuevo_eh" rows="3"
+                        placeholder="Engrese las Ips"></textarea>
+                </div>
+                    <div id="mje_ips_proy_nuevo_eh">
+
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="mb-3">
+                        <span class="badge bg-light fs-10 mb-1 text-dark">Url's</span>
+                        <input type="hidden" hidden value="URL">
+                        <textarea class="form-control" id="urls_proy_nuevo_eh" rows="3"
+                            placeholder="Ingrese las URL's"></textarea>
+                    </div>
+                    <div id="mje_urls_proy_nuevo_eh">
+                    </div>
+                </div>
+                <div class="col-sm-3 ml-1">
+                    <div class="mb-3">
+                        <input type="hidden" hidden value="OTROS">
+                        <span class="badge bg-light fs-10 mb-1 text-dark">Otros activos</span>
+
+                        <textarea class="form-control" id="otros_proy_nuevo" rows="3"
+                            placeholder="Otros"></textarea>
+                    </div>
+                    <div id="mje_urls_proy_nuevo_otros">
+                    </div>
+                </div>`;
+            activarValidacionTextarea(
+                "ips_proy_nuevo_eh",
+                "mje_ips_proy_nuevo_eh",
+                "IP"
+            );
+
+            activarValidacionTextarea(
+                "urls_proy_nuevo_eh",
+                "mje_urls_proy_nuevo_eh",
+                "URL"
+            );
+            break;
+
         default:
             break;
     }
@@ -1855,7 +1902,7 @@ function consultar_activos_borrdor(proy_id, numero_proyecto) {
     tabla = $("#table_container_activos_proy_creado").DataTable({
         "aProcessing": true,
         "aServerSide": true,
-        "paging": false, // 👈 Esto elimina la paginación
+        "paging": false, // Esto elimina la paginación
         "searching": true,
         "lengthChange": false,
         "colReorder": true,
@@ -1957,11 +2004,19 @@ function actualizarComboActivos(valor) {
                 <option value="OTRO">Otros</option>
             `;
 
-            case '6':
+        case '6':
             opciones = `
                 <option value="IP">IP's</option>
                 <option value="URL">URL's</option>
                 <option value="APLICACION">Aplicacion</option>
+            `;
+            break;
+
+        case '7':
+            opciones = `
+                <option value="IP">IP's</option>
+                <option value="URL">URL's</option>
+                <option value="OTRO">Otros</option>
             `;
             break;
     }

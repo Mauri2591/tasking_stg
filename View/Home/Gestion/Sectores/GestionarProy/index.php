@@ -536,6 +536,12 @@ if (isset($_SESSION['usu_id'])) {
                                 $("#contenedor_urls").show();
                                 $("#contenedor_aplicaciones").show();
                                 break;
+
+                             case 7:
+                                $("#contenedor_ips").show();
+                                $("#contenedor_urls").show();
+                                $("#contenedor_otros").show();
+                                break;
                         }
                         $("#contenedor_ips_y_descripcion").css("opacity", "1");
                     }

@@ -736,7 +736,7 @@
                                                 <a href="<?php echo URL . "View/Home/Gestion/Sectores/Consulting/ConsultoriaIt/"; ?>"
                                                     class="nav-link" data-key="t-mailbox">Consultoria IT</a>
                                             </li>
-                                             <li class="nav-item">
+                                            <li class="nav-item">
                                                 <a href="<?php echo URL . "View/Home/Gestion/Sectores/Consulting/ConsultoriaOt/"; ?>"
                                                     class="nav-link" data-key="t-mailbox">Consultoria OT</a>
                                             </li>
@@ -786,9 +786,81 @@
                                         </div>
                                     </li>
                                 <?php endif; ?>
-                        <?php
-                                break;
-                        } ?>
+                                <?php break; ?>
+
+                            <?php
+                            case '7':
+                            ?>
+                                <li class="nav-item">
+                                    <a href="#sidebarEmail" class="nav-link collapsed" data-bs-toggle="collapse" role="button"
+                                        aria-expanded="false" aria-controls="sidebarEmail" data-key="t-email">Productos</a>
+                                    <div class="menu-dropdown collapse" id="sidebarEmail">
+                                        <ul class="nav nav-sm flex-column">
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/FunctionalServices&Delivery/eGRCArcher/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">eGRC Archer</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/FunctionalServices&Delivery/DLP_Purview/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">DLP Purview</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/FunctionalServices&Delivery/DLP_Fortra/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">DLP Fortra</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/FunctionalServices&Delivery/DLPFortiDLP/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">DLP FortiDLP</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </li>
+
+                                <li class="menu-title"><i class="ri-more-fill"></i> <span data-key="t-pages">Apps</span>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link collapsed" href="#sidebarTimesummary" data-bs-toggle="collapse"
+                                        role="button" aria-expanded="false" aria-controls="sidebarTimesummary"
+                                        data-key="t-email">Timesummary</a>
+                                    <div class="menu-dropdown collapse" id="sidebarTimesummary">
+                                        <ul class="nav nav-sm flex-column">
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Apps/Timesummary/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Calendario</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Apps/Timesummary/Consultas.php"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Consultas</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </li>
+                                <?php if ($_SESSION['lider'] == "SI"): ?>
+                                    <li class="nav-item">
+                                        <a class="nav-link collapsed" href="#sidebarAuditoria" data-bs-toggle="collapse"
+                                            role="button" aria-expanded="false" aria-controls="sidebarAuditoria"
+                                            data-key="t-email">Auditoria</a>
+                                        <div class="menu-dropdown collapse" id="sidebarAuditoria">
+                                            <ul class="nav nav-sm flex-column">
+                                                <li class="nav-item">
+                                                    <a href="<?php echo URL . "View/Home/Apps/Auditoria/proyectos.php"; ?>"
+                                                        class="nav-link" data-key="t-mailbox">Proyectos</a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a href="<?php echo URL . "View/Home/Apps/Auditoria/sesiones.php"; ?>"
+                                                        class="nav-link" data-key="t-mailbox">Sesiones</a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </li>
+                                <?php endif; ?>
+                                <?php break; ?>
+                            <?php
+                            default:
+                                echo json_encode(["Error" => "Case default"]);
+                                break; ?>
+
+                        <?php } ?>
             </div>
         <?php endif; ?>
 

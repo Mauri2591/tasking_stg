@@ -190,41 +190,41 @@ class Proyectos extends Conexion
     }
 
     public function insert_nuevos_host(int $id_proyecto_gestionado, $id_proyecto_cantidad_servicios, int $usu_id, string $tipo, string $host)
-{
-    $conn = parent::get_conexion();
-    
-    // Primero verificar si existe un host ACTIVO (est=1)
-    $sqlCheck = "SELECT 1 FROM hosts 
+    {
+        $conn = parent::get_conexion();
+
+        // Primero verificar si existe un host ACTIVO (est=1)
+        $sqlCheck = "SELECT 1 FROM hosts 
                  WHERE id_proyecto_gestionado = ? 
                  AND tipo = ? 
                  AND host = ? 
                  AND est = 1 
                  LIMIT 1";
-    $stmtCheck = $conn->prepare($sqlCheck);
-    $stmtCheck->bindValue(1, $id_proyecto_gestionado, PDO::PARAM_INT);
-    $stmtCheck->bindValue(2, $tipo, PDO::PARAM_STR);
-    $stmtCheck->bindValue(3, $host, PDO::PARAM_STR);
-    $stmtCheck->execute();
-    
-    // Si ya existe ACTIVO, no insertar
-    if ($stmtCheck->fetchColumn()) {
-        return false; // Ya existe activo
-    }
-    
-    // Si no existe activo, insertar nuevo (aunque exista inactivo)
-    $sql = "INSERT INTO hosts 
+        $stmtCheck = $conn->prepare($sqlCheck);
+        $stmtCheck->bindValue(1, $id_proyecto_gestionado, PDO::PARAM_INT);
+        $stmtCheck->bindValue(2, $tipo, PDO::PARAM_STR);
+        $stmtCheck->bindValue(3, $host, PDO::PARAM_STR);
+        $stmtCheck->execute();
+
+        // Si ya existe ACTIVO, no insertar
+        if ($stmtCheck->fetchColumn()) {
+            return false; // Ya existe activo
+        }
+
+        // Si no existe activo, insertar nuevo (aunque exista inactivo)
+        $sql = "INSERT INTO hosts 
             (id_proyecto_gestionado, id_proyecto_cantidad_servicios, usu_crea, tipo, host, fecha_carga, est) 
             VALUES (?, ?, ?, ?, ?, NOW(), 1)";
-    $stmt = $conn->prepare($sql);
-    $stmt->bindValue(1, $id_proyecto_gestionado, PDO::PARAM_INT);
-    $stmt->bindValue(2, $id_proyecto_cantidad_servicios, PDO::PARAM_INT);
-    $stmt->bindValue(3, $usu_id, PDO::PARAM_INT);
-    $stmt->bindValue(4, $tipo, PDO::PARAM_STR);
-    $stmt->bindValue(5, $host, PDO::PARAM_STR);
-    $stmt->execute();
-    
-    return $stmt->rowCount() > 0;
-}
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue(1, $id_proyecto_gestionado, PDO::PARAM_INT);
+        $stmt->bindValue(2, $id_proyecto_cantidad_servicios, PDO::PARAM_INT);
+        $stmt->bindValue(3, $usu_id, PDO::PARAM_INT);
+        $stmt->bindValue(4, $tipo, PDO::PARAM_STR);
+        $stmt->bindValue(5, $host, PDO::PARAM_STR);
+        $stmt->execute();
+
+        return $stmt->rowCount() > 0;
+    }
 
     public function get_proyectos_nuevos_borrador()
     {
@@ -505,8 +505,128 @@ GROUP BY
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    // FINALIZAN servicios ETHICAL HACKING VAS
+    // FINALIZAN servicios ETHICAL HACKING
 
+    // INICIAN SERVICIOS DE FUNCTIONAL SERVICES & DELIVERY
+    public function get_proyectos_functional_services_y_delivery($sector_id, $cat_id, $estados_id)
+    {
+        $conn = parent::get_conexion();
+        $sql = "SELECT 
+    pcs.id AS id_proyecto_cantidad_servicios,
+    pcs.proy_id, 
+    pcs.numero_servicio, 
+    DATE_FORMAT(pg.fech_inicio, '%d-%m-%Y') AS fech_inicio,
+    DATE_FORMAT(pg.fech_fin, '%d-%m-%Y') AS fech_fin,
+    p.cantidad_servicios, 
+    c.client_rs, 
+    u.usu_nom AS creador_proy,              --  ahora del proyecto_gestionado
+    s.sector_nombre,
+    s.sector_id,
+    tsc.cats_nom,
+    tp.pais_nombre,
+    pg.id AS id_proyecto_gestionado,
+    pg.cat_id,
+    pg.estados_id,
+    pg.titulo,
+    prio.id AS prioridad,
+    prio.prioridad AS prioridad_nom,
+    CASE 
+        WHEN pr.id IS NOT NULL THEN
+            CONCAT(
+                (SELECT COUNT(*) FROM proyecto_recurrencia prx 
+                WHERE prx.id_proyecto_cantidad_servicios = pr.id_proyecto_cantidad_servicios
+                AND prx.est = 1 
+                AND prx.id <= pr.id),
+                '/',
+                (SELECT COUNT(*) FROM proyecto_recurrencia prx 
+                WHERE prx.id_proyecto_cantidad_servicios = pr.id_proyecto_cantidad_servicios
+                AND prx.est = 1)
+            )
+        ELSE NULL
+    END AS posicion_recurrencia,
+    CASE 
+        WHEN pg.id_proyecto_recurrencia IS NULL THEN 0 
+        ELSE pg.id_proyecto_recurrencia 
+    END AS id_proyecto_recurrencia,
+    IF(proyecto_rechequeo.id IS NOT NULL, 'SI', 'NO') AS rechequeo,
+    GROUP_CONCAT(uas.usu_nom SEPARATOR ',<br>') AS usu_nom_asignado,
+    GROUP_CONCAT(uas.usu_id SEPARATOR ',') AS usu_id_asignado,
+    (
+        SELECT SUM(d.hs_dimensionadas)
+        FROM dimensionamiento d
+        WHERE d.id_proyecto_gestionado = pg.id
+    ) AS hs_dimensionadas,
+    tmc.cat_nom AS categoria
+
+FROM proyecto_cantidad_servicios pcs
+JOIN proyectos p 
+    ON pcs.proy_id = p.proy_id
+LEFT JOIN clientes c 
+    ON p.client_id = c.client_id
+LEFT JOIN tm_pais tp 
+    ON c.pais_id = tp.pais_id
+LEFT JOIN proyecto_gestionado pg 
+    ON pg.id_proyecto_cantidad_servicios = pcs.id
+LEFT JOIN tm_usuario u 
+    ON pg.usu_crea = u.usu_id             --  cambio clave
+LEFT JOIN sectores s 
+    ON pg.sector_id = s.sector_id
+LEFT JOIN tm_subcategoria tsc 
+    ON pg.cats_id = tsc.cats_id
+LEFT JOIN tm_categoria tmc 
+    ON pg.cat_id = tmc.cat_id
+LEFT JOIN prioridad prio 
+    ON pg.prioridad_id = prio.id
+LEFT JOIN usuario_proyecto ua 
+    ON pg.id = ua.id_proyecto_gestionado
+LEFT JOIN tm_usuario uas 
+    ON ua.usu_asignado = uas.usu_id
+LEFT JOIN proyecto_recurrencia pr 
+    ON pg.id_proyecto_recurrencia = pr.id
+LEFT JOIN proyecto_rechequeo 
+    ON pg.id = proyecto_rechequeo.id_proyecto_gestionado
+
+WHERE 
+    s.sector_id = ? 
+    AND pcs.est = 1 
+    AND pg.cat_id = ? 
+    AND pg.estados_id = ?
+
+GROUP BY 
+    pcs.id,
+    pcs.proy_id, 
+    pcs.numero_servicio, 
+    pg.fech_inicio,
+    pg.fech_fin,
+    p.cantidad_servicios, 
+    c.client_rs, 
+    u.usu_nom,
+    s.sector_nombre,
+    s.sector_id,
+    tsc.cats_nom,
+    tp.pais_nombre,
+    pg.id,
+    pg.cat_id,
+    pg.estados_id,
+    pg.titulo,
+    prio.id,
+    prio.prioridad,
+    tmc.cat_nom,
+    pr.id,
+    pr.id_proyecto_cantidad_servicios,
+    pg.id_proyecto_recurrencia,
+    proyecto_rechequeo.id
+    ORDER BY 
+    id_proyecto_cantidad_servicios ASC";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue(1, $sector_id, PDO::PARAM_INT);
+        $stmt->bindValue(2, $cat_id, PDO::PARAM_INT);
+        $stmt->bindValue(3, $estados_id, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    //INICIAN SERVICIOS CONSULTING
     public function get_proyectos_consulting($sector_id, $cat_id, $estados_id)
     {
         $conn = parent::get_conexion();
