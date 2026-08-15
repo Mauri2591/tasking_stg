@@ -158,6 +158,10 @@
                                             <a href="<?php echo URL . "View/Home/Gestion/Sectores/Consulting/"; ?>"
                                                 class="nav-link" data-key="t-mailbox">Consulting</a>
                                         </li>
+                                        <li class="nav-item">
+                                            <a href="<?php echo URL . "View/Home/Gestion/Sectores/FunctionalServices&Delivery/"; ?>"
+                                                class="nav-link" data-key="t-mailbox">Functional Services & Delivery</a>
+                                        </li>
                                     </ul>
                                 </div>
                             </li>
