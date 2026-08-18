@@ -73,12 +73,12 @@ class Correo extends Conexion
         $mail = new PHPMailer(true);
         try {
             $mail->isSMTP();
-            $mail->Host       = $_ENV['SMTP_HOST'];
+            $mail->Host       = SMTP_HOST;
             $mail->SMTPAuth   = true;
-            $mail->Username   = $_ENV['SMTP_FROM_ARG'];      // usuario de red ARGENTINA
-            $mail->Password   = $_ENV['SMTP_FROM_ARG_PASS'];      // clave de red ARGENTINA
+            $mail->Username   = SMTP_USER_ARG;      // usuario de red ARGENTINA
+            $mail->Password   = SMTP_FROM_ARG_PASS;      // clave de red ARGENTINA
             $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-            $mail->Port       = (int)$_ENV['SMTP_PORT'];
+            $mail->Port       = (int)SMTP_PORT;
             $mail->SMTPOptions = [
                 'ssl' => [
                     'verify_peer'       => false,
@@ -194,7 +194,7 @@ class Correo extends Conexion
             $mail->isSMTP();
             $mail->Host       = SMTP_HOST;
             $mail->SMTPAuth   = true;
-            $mail->Username   = SMTP_FROM_ARG;
+            $mail->Username   = SMTP_USER_ARG;
             $mail->Password   = SMTP_FROM_ARG_PASS;
             $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
             $mail->Port       = (int)SMTP_PORT;
