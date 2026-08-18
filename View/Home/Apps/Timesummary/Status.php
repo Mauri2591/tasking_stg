@@ -40,6 +40,7 @@ if (isset($_SESSION['usu_id'])) {
                             <th style="text-align: center;">Producto</th>
                             <th style="text-align: center;">Fecha fin</th>
                             <th style="text-align: center;">Sector</th>
+                            <th style="text-align: center;">Dimensionamiento</th>
                             <th style="text-align: center;">Avances</th>
                             <th style="text-align: center;">Usuarios</th>
                             <th style="text-align: center;">Estado</th>
@@ -103,20 +104,28 @@ if (isset($_SESSION['usu_id'])) {
                     className: 'text-center'
                 },
                 {
-                    data: 'porcentaje_avance',
+                    data: 'dimensionamiento',
                     className: 'text-center',
                     render: function(data) {
-                        return `<div style="display: flex; align-items: center; gap: 8px; justify-content: center;">
-            <div class="progress" style="height: 15px; flex: 1; min-width: 120px;">
-                <div class="progress-bar bg-info" role="progressbar" 
-                     style="width: ${data}%;" 
-                     aria-valuenow="${data}" 
-                     aria-valuemin="0" 
-                     aria-valuemax="100">
+                        return `${data} hs`
+                    }
+                },
+                {
+                    data: 'porcentaje_avance',
+                    className: 'text-center',
+                    render: function(data, type, row) {
+                        return `
+            <div style="display: flex; align-items: center; gap: 8px; justify-content: center;">
+                <div class="progress" title="${row.horas_consumidas_total}hs" style="height: 15px; flex: 1; min-width: 120px; cursor: text;">
+                    <div class="progress-bar bg-info" role="progressbar" 
+                         style="width: ${data}%;" 
+                         aria-valuenow="${data}" 
+                         aria-valuemin="0" 
+                         aria-valuemax="100">
+                    </div>
                 </div>
-            </div>
-            <span style="min-width: 35px; font-weight: bold;">${data}%</span>
-        </div>`;
+                <span style="min-width: 35px; font-weight: bold;">${data}%</span>
+            </div>`;
                     }
                 },
                 {
