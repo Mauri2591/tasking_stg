@@ -192,7 +192,7 @@ class Correo extends Conexion
         // SMTP base
         $smtpConfig = function (PHPMailer $mail) {
             $mail->isSMTP();
-            $mail->Host       = SMTP_FROM_ARG;
+            $mail->Host       = SMTP_HOST;
             $mail->SMTPAuth   = true;
             $mail->Username   = SMTP_USER;
             $mail->Password   = SMTP_FROM_ARG_PASS;
