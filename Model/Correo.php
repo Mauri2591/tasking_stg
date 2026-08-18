@@ -194,7 +194,7 @@ class Correo extends Conexion
             $mail->isSMTP();
             $mail->Host       = SMTP_HOST;
             $mail->SMTPAuth   = true;
-            $mail->Username   = SMTP_USER;
+            $mail->Username   = SMTP_FROM_ARG;
             $mail->Password   = SMTP_FROM_ARG_PASS;
             $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
             $mail->Port       = (int)SMTP_PORT;
