@@ -33,6 +33,9 @@ if (isset($_SESSION['usu_id'])) {
 
             <!-- Contenido principal -->
             <div class="card">
+                <?php if($_SESSION['sector_id'] == 1): ?>
+                <p class="text-danger text-center my-2">asdadsadasdasd</p>
+                <?php endif; ?>
                 <table id="tableStatus">
                     <thead>
                         <tr>
