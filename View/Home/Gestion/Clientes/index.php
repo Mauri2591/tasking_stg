@@ -2,13 +2,11 @@
 require_once __DIR__ . "/../../../../Config/Conexion.php";
 require_once __DIR__ . "/../../../../Config/Config.php";
 if (isset($_SESSION['usu_id'])) {
-    require_once __DIR__ . "/../../../../Config/Config.php";
     require_once __DIR__ . "/../../../../Model/Clases/Headers.php";
     Headers::get_cors();
 ?>
 
     <?php
-    include_once __DIR__ . "/../../Public/Template/head.php";
     include_once __DIR__ . "/../../Public/Template/head.php";
     include_once __DIR__ . "/../../Public/Template/main_content.php";
     ?>
