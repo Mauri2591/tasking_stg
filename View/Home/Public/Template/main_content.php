@@ -243,6 +243,10 @@
                                                 class="nav-link" data-key="t-mailbox">Calendario</a>
                                         </li>
                                         <li class="nav-item">
+                                            <a href="<?php echo URL . "View/Home/Apps/Timesummary/Status.php"; ?>"
+                                                class="nav-link" data-key="t-mailbox">Status</a>
+                                        </li>
+                                        <li class="nav-item">
                                             <a href="<?php echo URL . "View/Home/Apps/Timesummary/Consultas.php"; ?>"
                                                 class="nav-link" data-key="t-mailbox">Consultas</a>
                                         </li>
@@ -362,6 +366,10 @@
                                                     class="nav-link" data-key="t-mailbox">Calendario</a>
                                             </li>
                                             <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Apps/Timesummary/Status.php"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Status</a>
+                                            </li>
+                                            <li class="nav-item">
                                                 <a href="<?php echo URL . "View/Home/Apps/Timesummary/Consultas.php"; ?>"
                                                     class="nav-link" data-key="t-mailbox">Consultas</a>
                                             </li>
@@ -444,6 +452,10 @@
                                             <li class="nav-item">
                                                 <a href="<?php echo URL . "View/Home/Apps/Timesummary/"; ?>"
                                                     class="nav-link" data-key="t-mailbox">Calendario</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Apps/Timesummary/Status.php"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Status</a>
                                             </li>
                                             <li class="nav-item">
                                                 <a href="<?php echo URL . "View/Home/Apps/Timesummary/Consultas.php"; ?>"
@@ -574,6 +586,10 @@
                                             <li class="nav-item">
                                                 <a href="<?php echo URL . "View/Home/Apps/Timesummary/"; ?>"
                                                     class="nav-link" data-key="t-mailbox">Calendario</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Apps/Timesummary/Status.php"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Status</a>
                                             </li>
                                             <li class="nav-item">
                                                 <a href="<?php echo URL . "View/Home/Apps/Timesummary/Consultas.php"; ?>"
@@ -712,6 +728,10 @@
                                                         class="nav-link" data-key="t-mailbox">Calendario</a>
                                                 </li>
                                                 <li class="nav-item">
+                                                    <a href="<?php echo URL . "View/Home/Apps/Timesummary/Status.php"; ?>"
+                                                        class="nav-link" data-key="t-mailbox">Status</a>
+                                                </li>
+                                                <li class="nav-item">
                                                     <a href="<?php echo URL . "View/Home/Apps/Timesummary/Consultas.php"; ?>"
                                                         class="nav-link" data-key="t-mailbox">Consultas</a>
                                                 </li>
@@ -763,6 +783,10 @@
                                             <li class="nav-item">
                                                 <a href="<?php echo URL . "View/Home/Apps/Timesummary/"; ?>"
                                                     class="nav-link" data-key="t-mailbox">Calendario</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Apps/Timesummary/Status.php"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Status</a>
                                             </li>
                                             <li class="nav-item">
                                                 <a href="<?php echo URL . "View/Home/Apps/Timesummary/Consultas.php"; ?>"
@@ -831,6 +855,10 @@
                                             <li class="nav-item">
                                                 <a href="<?php echo URL . "View/Home/Apps/Timesummary/"; ?>"
                                                     class="nav-link" data-key="t-mailbox">Calendario</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Apps/Timesummary/Status.php"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Status</a>
                                             </li>
                                             <li class="nav-item">
                                                 <a href="<?php echo URL . "View/Home/Apps/Timesummary/Consultas.php"; ?>"

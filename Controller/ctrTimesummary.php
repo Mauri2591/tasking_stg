@@ -563,6 +563,11 @@ switch ($_GET['accion']) {
         "data"            => $registros
     ]);
     break;
+
+    case 'getProyectosStatus':
+            echo json_encode($timesummary->getProyectosStatus($_SESSION['sector_id']));
+        break;
+
     default:
         http_response_code(404);
         echo json_encode(["Error" => "Acción no reconocida"]);

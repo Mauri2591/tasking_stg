@@ -1305,4 +1305,185 @@ ORDER BY clientes.client_rs";
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    public function getProyectosStatus(int $sector_id = 4)
+    {
+        $conn = parent::get_conexion();
+        $sector_id = $_SESSION['sector_id'];
+        if ($sector_id == 4) {
+            $sql = "SELECT
+                clientes.client_id,
+                clientes.client_rs,
+                proyecto_gestionado.fech_inicio,
+                CASE 
+                    WHEN proyecto_gestionado.fech_fin = '' THEN 'No posee'
+                    WHEN proyecto_gestionado.fech_fin IS NULL THEN 'No posee'
+                    WHEN proyecto_gestionado.fech_fin IS NOT NULL THEN proyecto_gestionado.fech_fin
+                END AS fech_fin,
+                dimensionamiento.hs_dimensionadas AS dimensionamiento,
+                CASE 
+                    WHEN (SUM(DISTINCT CASE WHEN horas_usuarios.es_pm = 0 THEN horas_usuarios.total_segundos ELSE 0 END) / 3600) >= dimensionamiento.hs_dimensionadas
+                    THEN ''
+                    ELSE CONCAT(
+                        LPAD(FLOOR(ROUND((
+                            dimensionamiento.hs_dimensionadas - 
+                            (SUM(DISTINCT CASE WHEN horas_usuarios.es_pm = 0 THEN horas_usuarios.total_segundos ELSE 0 END) / 3600)
+                        ), 2)), 2, '0'), ':',
+                        LPAD(ROUND((ROUND((
+                            dimensionamiento.hs_dimensionadas - 
+                            (SUM(DISTINCT CASE WHEN horas_usuarios.es_pm = 0 THEN horas_usuarios.total_segundos ELSE 0 END) / 3600)
+                        ), 2) - FLOOR(ROUND((
+                            dimensionamiento.hs_dimensionadas - 
+                            (SUM(DISTINCT CASE WHEN horas_usuarios.es_pm = 0 THEN horas_usuarios.total_segundos ELSE 0 END) / 3600)
+                        ), 2))) * 60), 2, '0')
+                    )
+                END AS hs_restante,
+                TIME_FORMAT(
+                    SEC_TO_TIME(SUM(CASE WHEN horas_usuarios.es_pm = 1 THEN horas_usuarios.total_segundos ELSE 0 END)),
+                    '%H:%i'
+                ) AS horas_pm,
+                TIME_FORMAT(
+                    SEC_TO_TIME(SUM(DISTINCT CASE WHEN horas_usuarios.es_pm = 0 THEN horas_usuarios.total_segundos ELSE 0 END)),
+                    '%H:%i'
+                ) AS horas_consumidas_total,
+                GROUP_CONCAT(
+                    DISTINCT CASE WHEN horas_usuarios.es_pm = 0 THEN
+                        CONCAT(horas_usuarios.usu_nom, ' ', TIME_FORMAT(SEC_TO_TIME(horas_usuarios.total_segundos), '%H:%i'))
+                    END SEPARATOR ', '
+                ) AS horas_consumidas_por_usuario,
+                ROUND(
+                        ((SUM(DISTINCT CASE WHEN horas_usuarios.es_pm = 0 THEN horas_usuarios.total_segundos ELSE 0 END) / 3600) 
+                        / dimensionamiento.hs_dimensionadas) * 100, 2
+                    ) AS porcentaje_avance,
+                GROUP_CONCAT(DISTINCT tm_usuario.usu_nom SEPARATOR ', ') AS usuarios_asignados,
+                tm_categoria.cat_nom AS producto,
+                sectores.sector_nombre AS sector,
+                tm_estados.estados_nombre AS estado,
+                tm_estados.CatColor AS estado_color
+            FROM proyectos
+            INNER JOIN clientes ON proyectos.client_id = clientes.client_id
+            LEFT JOIN proyecto_cantidad_servicios ON proyecto_cantidad_servicios.proy_id = proyectos.proy_id
+            LEFT JOIN proyecto_gestionado ON proyecto_gestionado.id_proyecto_cantidad_servicios = proyecto_cantidad_servicios.id
+            LEFT JOIN tm_categoria ON proyecto_gestionado.cat_id = tm_categoria.cat_id
+            LEFT JOIN sectores ON sectores.sector_id = proyecto_gestionado.sector_id
+            LEFT JOIN dimensionamiento ON proyecto_gestionado.id = dimensionamiento.id_proyecto_gestionado
+            LEFT JOIN usuario_proyecto ON proyecto_gestionado.id = usuario_proyecto.id_proyecto_gestionado
+            LEFT JOIN tm_usuario ON tm_usuario.usu_id = usuario_proyecto.usu_asignado
+            LEFT JOIN pm_calidad ON pm_calidad.id_proyecto_gestionado = proyecto_gestionado.id
+            LEFT JOIN (
+                SELECT 
+                    tc.id_proyecto_gestionado,
+                    tc.usu_id,
+                    tm_usuario.usu_nom,
+                    SUM(TIME_TO_SEC(tc.horas_consumidas)) AS total_segundos,
+                    MAX(CASE WHEN tc.id_pm_calidad IS NOT NULL AND tc.id_pm_calidad != 0 THEN 1 ELSE 0 END) AS es_pm
+                FROM timesummary_carga tc
+                INNER JOIN tm_usuario ON tm_usuario.usu_id = tc.usu_id
+                GROUP BY tc.id_proyecto_gestionado, tc.usu_id, tm_usuario.usu_nom
+            ) AS horas_usuarios ON horas_usuarios.id_proyecto_gestionado = proyecto_gestionado.id
+            LEFT JOIN tm_estados ON proyecto_gestionado.estados_id = tm_estados.estados_id
+            WHERE proyecto_gestionado.estados_id IN (1,2,3,4,14)
+            GROUP BY 
+                clientes.client_id,
+                clientes.client_rs,
+                tm_categoria.cat_nom,
+                sectores.sector_nombre,
+                proyecto_gestionado.fech_inicio,
+                proyecto_gestionado.fech_fin,
+                dimensionamiento.hs_dimensionadas
+                HAVING hs_restante != ''  AND usuarios_asignados != ''
+            ORDER BY clientes.client_rs";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+        } else {
+            $sql = "SELECT
+                clientes.client_id,
+                clientes.client_rs,
+                proyecto_gestionado.fech_inicio,
+                CASE 
+                    WHEN proyecto_gestionado.fech_fin = '' THEN 'No posee'
+                    WHEN proyecto_gestionado.fech_fin IS NULL THEN 'No posee'
+                    WHEN proyecto_gestionado.fech_fin IS NOT NULL THEN proyecto_gestionado.fech_fin
+                END AS fech_fin,
+                dimensionamiento.hs_dimensionadas AS dimensionamiento,
+                CASE 
+                    WHEN (SUM(DISTINCT CASE WHEN horas_usuarios.es_pm = 0 THEN horas_usuarios.total_segundos ELSE 0 END) / 3600) >= dimensionamiento.hs_dimensionadas
+                    THEN ''
+                    ELSE CONCAT(
+                        LPAD(FLOOR(ROUND((
+                            dimensionamiento.hs_dimensionadas - 
+                            (SUM(DISTINCT CASE WHEN horas_usuarios.es_pm = 0 THEN horas_usuarios.total_segundos ELSE 0 END) / 3600)
+                        ), 2)), 2, '0'), ':',
+                        LPAD(ROUND((ROUND((
+                            dimensionamiento.hs_dimensionadas - 
+                            (SUM(DISTINCT CASE WHEN horas_usuarios.es_pm = 0 THEN horas_usuarios.total_segundos ELSE 0 END) / 3600)
+                        ), 2) - FLOOR(ROUND((
+                            dimensionamiento.hs_dimensionadas - 
+                            (SUM(DISTINCT CASE WHEN horas_usuarios.es_pm = 0 THEN horas_usuarios.total_segundos ELSE 0 END) / 3600)
+                        ), 2))) * 60), 2, '0')
+                    )
+                END AS hs_restante,
+                TIME_FORMAT(
+                    SEC_TO_TIME(SUM(CASE WHEN horas_usuarios.es_pm = 1 THEN horas_usuarios.total_segundos ELSE 0 END)),
+                    '%H:%i'
+                ) AS horas_pm,
+                TIME_FORMAT(
+                    SEC_TO_TIME(SUM(DISTINCT CASE WHEN horas_usuarios.es_pm = 0 THEN horas_usuarios.total_segundos ELSE 0 END)),
+                    '%H:%i'
+                ) AS horas_consumidas_total,
+                GROUP_CONCAT(
+                    DISTINCT CASE WHEN horas_usuarios.es_pm = 0 THEN
+                        CONCAT(horas_usuarios.usu_nom, ' ', TIME_FORMAT(SEC_TO_TIME(horas_usuarios.total_segundos), '%H:%i'))
+                    END SEPARATOR ', '
+                ) AS horas_consumidas_por_usuario,
+                ROUND(
+                        ((SUM(DISTINCT CASE WHEN horas_usuarios.es_pm = 0 THEN horas_usuarios.total_segundos ELSE 0 END) / 3600) 
+                        / dimensionamiento.hs_dimensionadas) * 100, 2
+                    ) AS porcentaje_avance,
+                GROUP_CONCAT(DISTINCT tm_usuario.usu_nom SEPARATOR ', ') AS usuarios_asignados,
+                tm_categoria.cat_nom AS producto,
+                sectores.sector_nombre AS sector,
+                sectores.sector_id,
+                tm_estados.estados_nombre AS estado,
+                tm_estados.CatColor AS estado_color
+            FROM proyectos
+            INNER JOIN clientes ON proyectos.client_id = clientes.client_id
+            LEFT JOIN proyecto_cantidad_servicios ON proyecto_cantidad_servicios.proy_id = proyectos.proy_id
+            LEFT JOIN proyecto_gestionado ON proyecto_gestionado.id_proyecto_cantidad_servicios = proyecto_cantidad_servicios.id
+            LEFT JOIN tm_categoria ON proyecto_gestionado.cat_id = tm_categoria.cat_id
+            LEFT JOIN sectores ON sectores.sector_id = proyecto_gestionado.sector_id
+            LEFT JOIN dimensionamiento ON proyecto_gestionado.id = dimensionamiento.id_proyecto_gestionado
+            LEFT JOIN usuario_proyecto ON proyecto_gestionado.id = usuario_proyecto.id_proyecto_gestionado
+            LEFT JOIN tm_usuario ON tm_usuario.usu_id = usuario_proyecto.usu_asignado
+            LEFT JOIN pm_calidad ON pm_calidad.id_proyecto_gestionado = proyecto_gestionado.id
+            LEFT JOIN (
+                SELECT 
+                    tc.id_proyecto_gestionado,
+                    tc.usu_id,
+                    tm_usuario.usu_nom,
+                    SUM(TIME_TO_SEC(tc.horas_consumidas)) AS total_segundos,
+                    MAX(CASE WHEN tc.id_pm_calidad IS NOT NULL AND tc.id_pm_calidad != 0 THEN 1 ELSE 0 END) AS es_pm
+                FROM timesummary_carga tc
+                INNER JOIN tm_usuario ON tm_usuario.usu_id = tc.usu_id
+                GROUP BY tc.id_proyecto_gestionado, tc.usu_id, tm_usuario.usu_nom
+            ) AS horas_usuarios ON horas_usuarios.id_proyecto_gestionado = proyecto_gestionado.id
+            LEFT JOIN tm_estados ON proyecto_gestionado.estados_id = tm_estados.estados_id
+            WHERE sectores.sector_id=:sector_id AND proyecto_gestionado.estados_id IN (1,2,3,4,14)
+            GROUP BY 
+                clientes.client_id,
+                clientes.client_rs,
+                tm_categoria.cat_nom,
+                sectores.sector_nombre,
+                proyecto_gestionado.fech_inicio,
+                proyecto_gestionado.fech_fin,
+                dimensionamiento.hs_dimensionadas
+                HAVING hs_restante != '' AND usuarios_asignados != ''
+            ORDER BY clientes.client_rs";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue(":sector_id", $sector_id, PDO::PARAM_INT);
+        $stmt->execute();
+        }
+        $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return count($data) > 0 ? $data : [];
+    }
 }
