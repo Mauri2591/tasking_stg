@@ -192,10 +192,10 @@ class Correo extends Conexion
         // SMTP base
         $smtpConfig = function (PHPMailer $mail) {
             $mail->isSMTP();
-            $mail->Host       = SMTP_HOST;
+            $mail->Host       = SMTP_FROM_ARG;
             $mail->SMTPAuth   = true;
             $mail->Username   = SMTP_USER;
-            $mail->Password   = SMTP_PASS;
+            $mail->Password   = SMTP_FROM_ARG_PASS;
             $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
             $mail->Port       = (int)SMTP_PORT;
             $mail->SMTPOptions = [
@@ -206,7 +206,7 @@ class Correo extends Conexion
                 ],
             ];
             $mail->CharSet = 'UTF-8';
-            $mail->setFrom(SMTP_FROM, SMTP_FROM_NAME);
+            $mail->setFrom(SMTP_FROM_ARG, SMTP_FROM_NAME);
             $mail->isHTML(true);
         };
 
