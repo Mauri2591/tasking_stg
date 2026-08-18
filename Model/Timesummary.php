@@ -1382,7 +1382,7 @@ ORDER BY clientes.client_rs";
                 GROUP BY tc.id_proyecto_gestionado, tc.usu_id, tm_usuario.usu_nom
             ) AS horas_usuarios ON horas_usuarios.id_proyecto_gestionado = proyecto_gestionado.id
             LEFT JOIN tm_estados ON proyecto_gestionado.estados_id = tm_estados.estados_id
-            WHERE proyecto_gestionado.estados_id IN (1,2,3,14)
+            WHERE proyecto_gestionado.estados_id IN (1,2,14)
             GROUP BY 
                 clientes.client_id,
                 clientes.client_rs,
@@ -1468,7 +1468,7 @@ ORDER BY clientes.client_rs";
                 GROUP BY tc.id_proyecto_gestionado, tc.usu_id, tm_usuario.usu_nom
             ) AS horas_usuarios ON horas_usuarios.id_proyecto_gestionado = proyecto_gestionado.id
             LEFT JOIN tm_estados ON proyecto_gestionado.estados_id = tm_estados.estados_id
-            WHERE sectores.sector_id=:sector_id AND proyecto_gestionado.estados_id IN (1,2,3,14)
+            WHERE sectores.sector_id=:sector_id AND proyecto_gestionado.estados_id IN (1,2,14)
             GROUP BY 
                 clientes.client_id,
                 clientes.client_rs,
