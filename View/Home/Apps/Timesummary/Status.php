@@ -100,21 +100,21 @@ if (isset($_SESSION['usu_id'])) {
                     data: 'sector',
                     className: 'text-center'
                 },
-                {
-                    data: 'porcentaje_avance',
-                    className: 'text-center',
-                    render: function(data) {
-                        return `<div class="progress" style="height: 15px;">
+               {
+    data: 'porcentaje_avance',
+    className: 'text-center',
+    render: function(data) {
+        return `<div class="progress" style="height: 15px;">
             <div class="progress-bar bg-info" role="progressbar" 
-                 style="width: ${data}%; padding: 0 8px; min-width: 50px;" 
+                 style="width: ${data}%; min-width: 35px; display: flex; align-items: center; justify-content: center;" 
                  aria-valuenow="${data}" 
                  aria-valuemin="0" 
                  aria-valuemax="100">
                 ${data}%
             </div>
         </div>`;
-                    }
-                },
+    }
+},
                 {
                     data: 'usuarios_asignados',
                     className: 'text-center',
