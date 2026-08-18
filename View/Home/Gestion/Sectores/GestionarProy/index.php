@@ -469,10 +469,10 @@ if (isset($_SESSION['usu_id'])) {
         var ESTADO_PROYECTO = <?php echo $estado_id; ?>;
 
         var id_proyecto_gestionado =
-            "<?php echo isset($_GET['pg']) ? Openssl::get_ssl_decrypt($_GET['pg']) : ''; ?>"
+            "<?php echo isset($_GET['pg']) ? Openssl::get_ssl_decrypt($_GET['pg']) : ''; ?>";
 
         var pg =
-            "<?php echo isset($_GET['pg']) ? $_GET['pg'] : ''; ?>"
+            "<?php echo isset($_GET['pg']) ? $_GET['pg'] : ''; ?>";
 
         var sector_usu_id =
             "<?php echo isset($_SESSION['sector_id']) ? $_SESSION['sector_id'] : "" ?>";
