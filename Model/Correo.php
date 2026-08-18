@@ -75,8 +75,8 @@ class Correo extends Conexion
             $mail->isSMTP();
             $mail->Host       = $_ENV['SMTP_HOST'];
             $mail->SMTPAuth   = true;
-            $mail->Username   = $_ENV['SMTP_USER'];      // usuario de red
-            $mail->Password   = $_ENV['SMTP_PASS'];      // clave de red
+            $mail->Username   = $_ENV['SMTP_FROM_ARG'];      // usuario de red ARGENTINA
+            $mail->Password   = $_ENV['SMTP_FROM_ARG_PASS'];      // clave de red ARGENTINA
             $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
             $mail->Port       = (int)$_ENV['SMTP_PORT'];
             $mail->SMTPOptions = [
