@@ -335,7 +335,7 @@ class Correo extends Conexion
                     $mailCopia->addAddress($correo_copia);
                     $mailCopia->Subject = 'Copia - Documentos enviados al cliente: ' . $doc['cliente'];
                     $mailCopia->Body = "
-            <p>Estimados,</p>
+            <p>Estimado/a.</p>
             <p>Se realizó el envío de documentación al cliente <strong>{$cliente}</strong> al email <strong>{$correo_destino}</strong> acorde al servicio <strong>{$producto}</strong> - bajo la referencia <strong>{$refProy}</strong>.</p>
             <p>Saludos.</p>";
                     $mailCopia->send();
