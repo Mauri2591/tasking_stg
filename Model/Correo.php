@@ -278,7 +278,7 @@ class Correo extends Conexion
             return 'No se encontraron archivos físicos en el servidor';
         }
 
-        // CORREO AL CLIENTE (con ZIP y clave)
+        // CORREO 1 AL CLIENTE (con ZIP, sin clave en el texto)
         $mailCliente = new PHPMailer(true);
         try {
             if (SMTP_ENABLED === 'true') {
@@ -288,13 +288,29 @@ class Correo extends Conexion
                 $mailCliente->Body = "
         <p>Estimado/a cliente,</p>
         <p>Adjuntamos la documentación correspondiente a su servicio de <strong>{$doc['producto']}</strong> bajo la referencia <strong>" . ($doc['referencia'] ?: 'N/A') . "</strong> en formato ZIP protegido.</p>
-        <p><strong>Clave para abrir el archivo:</strong> {$clave}</p>
         <p>Saludos.</p>";
                 $mailCliente->addAttachment($ruta_zip, $nombre_zip);
                 $mailCliente->send();
             } else {
                 throw new Exception('SMTP deshabilitado');
             }
+
+            // CORREO 2 AL CLIENTE (con la clave)
+            $mailClave = new PHPMailer(true);
+            if (SMTP_ENABLED === 'true') {
+                $smtpConfig($mailClave);
+                $mailClave->addAddress($correo_destino);
+                $mailClave->Subject = 'Clave de acceso - Documentos del Servicio ' . $doc['producto'];
+                $mailClave->Body = "
+        <p>Estimado/a cliente,</p>
+        <p><strong>Clave para abrir el archivo:</strong></p>
+        <p style=\"font-size: 1.2rem; font-weight: bold; background: #f0f0f0; padding: 10px; border-radius: 5px;\">{$clave}</p>
+        <p>Saludos.</p>";
+                $mailClave->send();
+            } else {
+                throw new Exception('SMTP deshabilitado');
+            }
+
             $id_ecc = $this->registrarEnvio($id_proyecto_gestionado, $pais_id == 1 ? SMTP_FROM_ARG : SMTP_FROM_INT, 'OK', $ruta_zip, $clave, $id_descripciones_proyecto, $correo_destino);
         } catch (Exception $e) {
             $id_ecc = $this->registrarEnvio($id_proyecto_gestionado, $pais_id == 1 ? SMTP_FROM_ARG : SMTP_FROM_INT, 'ERROR', $ruta_zip, $clave, $id_descripciones_proyecto, $correo_destino);
