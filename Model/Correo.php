@@ -238,7 +238,7 @@ class Correo extends Conexion
         $doc = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if (!$doc || empty($doc['documento'])) {
-            $this->registrarEnvio($id_proyecto_gestionado,$pais_id == 1 ? SMTP_FROM_ARG : SMTP_FROM_INT, 'ERROR');
+            $this->registrarEnvio($id_proyecto_gestionado, $pais_id == 1 ? SMTP_FROM_ARG : SMTP_FROM_INT, 'ERROR');
             return 'Sin documentos para enviar';
         }
 
@@ -270,7 +270,7 @@ class Correo extends Conexion
         $zip->close();
 
         if ($archivos_encontrados === 0) {
-            $this->registrarEnvio($id_proyecto_gestionado,$pais_id == 1 ? SMTP_FROM_ARG : SMTP_FROM_INT, 'ERROR');
+            $this->registrarEnvio($id_proyecto_gestionado, $pais_id == 1 ? SMTP_FROM_ARG : SMTP_FROM_INT, 'ERROR');
             return 'No se encontraron archivos físicos en el servidor';
         }
 
@@ -291,13 +291,20 @@ class Correo extends Conexion
             } else {
                 throw new Exception('SMTP deshabilitado');
             }
-            $id_ecc = $this->registrarEnvio($id_proyecto_gestionado,$pais_id == 1 ? SMTP_FROM_ARG : SMTP_FROM_INT, 'OK', $ruta_zip, $clave, $id_descripciones_proyecto, $correo_destino);
+            $id_ecc = $this->registrarEnvio($id_proyecto_gestionado, $pais_id == 1 ? SMTP_FROM_ARG : SMTP_FROM_INT, 'OK', $ruta_zip, $clave, $id_descripciones_proyecto, $correo_destino);
         } catch (Exception $e) {
-            $id_ecc = $this->registrarEnvio($id_proyecto_gestionado,$pais_id == 1 ? SMTP_FROM_ARG : SMTP_FROM_INT, 'ERROR', $ruta_zip, $clave, $id_descripciones_proyecto, $correo_destino);
+            $id_ecc = $this->registrarEnvio($id_proyecto_gestionado, $pais_id == 1 ? SMTP_FROM_ARG : SMTP_FROM_INT, 'ERROR', $ruta_zip, $clave, $id_descripciones_proyecto, $correo_destino);
             foreach ($correos_copia as $correo_copia) {
-                $this->registrarEnvioInterno($id_proyecto_gestionado,$pais_id == 1 ? SMTP_FROM_ARG : SMTP_FROM_INT, $id_descripciones_proyecto, trim($correo_copia), 'PENDIENTE', 'Envío al cliente fallido', $id_ecc);
+                $this->registrarEnvioInterno(
+                    $id_proyecto_gestionado,
+                    $id_descripciones_proyecto,
+                    trim($correo_copia),
+                    'PENDIENTE',
+                    'Envío al cliente fallido',
+                    $id_ecc
+                );
             }
-            return 'ERROR - '.'Pais ID='.$pais_id.' - SMTP (cliente): ' . $mailCliente->ErrorInfo;
+            return 'ERROR - ' . 'Pais ID=' . $pais_id . ' - SMTP (cliente): ' . $mailCliente->ErrorInfo;
         }
 
         // COPIAS INTERNAS (sin ZIP, sin clave)
@@ -336,7 +343,7 @@ class Correo extends Conexion
     {
         $conn = $this->get_conexion();
         $sql  = "INSERT INTO envio_correo_cliente (id_descripciones_proyecto, correo, id_proyecto_gestionado, smtp_user, usu_crea, sector_id, status_envio, ruta_comprimido, clave_comprimido, fech_crea) 
-         VALUES (:id_desc, :correo, :smtp_user, :id, :usu, :sector, :status, :ruta, :clave, now())";
+         VALUES (:id_desc, :correo, :id, :smtp_user, :usu, :sector, :status, :ruta, :clave, now())";
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(':id_desc', $id_descripciones_proyecto,  PDO::PARAM_INT);
         $stmt->bindValue(':smtp_user',  $smtp_user,               PDO::PARAM_STR);
