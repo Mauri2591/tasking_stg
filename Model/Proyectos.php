@@ -3227,6 +3227,7 @@ WHERE pg.id_proyecto_cantidad_servicios = :id_proyecto_cantidad_servicios";
         $conn = $this->get_conexion();
         $sql = "SELECT 
                 ecc.id,
+                ecc.smtp_user,
                 ecc.id_descripciones_proyecto,
                 ecc.id_proyecto_gestionado,
                 ecc.usu_crea,
@@ -3238,7 +3239,8 @@ WHERE pg.id_proyecto_cantidad_servicios = :id_proyecto_cantidad_servicios";
                 ecc.fech_crea,
                 ecc.fech_actualizacion,
                 tu.usu_correo,
-                s.sector_nombre
+                s.sector_nombre,
+                tu.usu_nom
             FROM envio_correo_cliente ecc
             LEFT JOIN tm_usuario tu ON tu.usu_id = ecc.usu_crea
             LEFT JOIN sectores s ON s.sector_id = ecc.sector_id
