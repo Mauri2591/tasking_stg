@@ -1306,6 +1306,22 @@ if (isset($_SESSION['usu_id'])) {
                     const inputCorreo = document.getElementById("correo_envio_email");
                     const inputPaisIdValor = document.getElementById("pais_id_valor");
 
+                    // Validar correos de copia
+                    const correos_copia = document.getElementById('correo_envio_email_copias')?.value.trim() ?? '';
+                    if (correos_copia) {
+                        const emails = correos_copia.split(',').map(e => e.trim());
+                        for (let email of emails) {
+                            if (!email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Correo inválido',
+                                    text: `"${email}" no es un correo válido`
+                                });
+                                return;
+                            }
+                        }
+                    }
+
                     if (!inputCorreo) {
                         Swal.fire({
                             icon: 'error',
@@ -1334,22 +1350,6 @@ if (isset($_SESSION['usu_id'])) {
                     document.getElementById('btn_enviar_texto').textContent = 'Enviando...';
                     document.getElementById('btn_enviar_spinner').classList.remove('d-none');
                     btnEnviar.disabled = true;
-
-                    // Validar correos de copia
-                    const correos_copia = document.getElementById('correo_envio_email_copias')?.value.trim() ?? '';
-                    if (correos_copia) {
-                        const emails = correos_copia.split(',').map(e => e.trim());
-                        for (let email of emails) {
-                            if (!email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
-                                Swal.fire({
-                                    icon: 'error',
-                                    title: 'Correo inválido',
-                                    text: `"${email}" no es un correo válido`
-                                });
-                                return;
-                            }
-                        }
-                    }
 
                     $.post("../../../../../Controller/ctrCorreo.php?correo=enviar_correo_cliente", {
                         pais_id_valor: paisId,
