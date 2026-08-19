@@ -287,8 +287,7 @@ class Correo extends Conexion
                 $mailCliente->Subject = 'Documentos del Servicio ' . $doc['producto'] . ' - Personal Tech';
                 $mailCliente->Body = "
         <p>Estimado/a cliente,</p>
-        <p>Adjuntamos la documentación correspondiente a su servicio de <strong>{$doc['producto']}</strong> bajo la referencia <strong>" . ($doc['referencia'] ?: 'N/A') . "</strong> en formato ZIP protegido.</p>
-        <p>Saludos.</p>";
+                Adjuntamos la documentación correspondiente a su servicio de <strong>{$doc['producto']}</strong> bajo la referencia <strong>" . ($doc['referencia'] ?: 'N/A') . "</strong> en formato ZIP protegido. En otro correo le enviamos la clave para descifrar.<p>Saludos.</p>";
                 $mailCliente->addAttachment($ruta_zip, $nombre_zip);
                 $mailCliente->send();
             } else {
