@@ -303,7 +303,7 @@ class Correo extends Conexion
                 $mailClave->Subject = 'Clave de acceso - Documentos del Servicio ' . $doc['producto'];
                 $mailClave->Body = "
         <p>Estimado/a cliente,</p>
-        <p><strong>Clave para abrir el archivo:</strong></p>
+        <p><strong>Le compartimos la clave para abrir el archivo correspondiente a su servicio de {$doc['producto']}:</strong></p>
         <p style=\"font-size: 1.2rem; font-weight: bold; background: #f0f0f0; padding: 10px; border-radius: 5px;\">{$clave}</p>
         <p>Saludos.</p>";
                 $mailClave->send();
