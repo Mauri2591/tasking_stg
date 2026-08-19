@@ -47,8 +47,7 @@ if (isset($_SESSION['usu_id'])) {
                         </tr>
                     </thead>
                 </table>
-                <?php if ($_SESSION['sector_id'] == 4): ?>
-                    <p style="width: 75%; font-size: .8rem; margin: 0 auto;" class="text-danger text-center my-3">Estos datos corresponden al progreso de carga de horas en <strong>Timessumary</strong> para aquellos proyectos que aún no han completado el <strong>100%</strong> de la carga y cuyo estado es <strong>NUEVO o ABIERTO</strong>.</p> <?php endif; ?>
+                    <p style="width: 75%; font-size: .8rem; margin: 0 auto;" class="text-danger text-center my-3">La siguiente información corresponde al progreso de carga de horas en <strong>Timessumary</strong> para aquellos proyectos que aún no han completado el <strong>100%</strong> de la carga y cuyo estado es <strong>NUEVO o ABIERTO</strong>.</p>
             </div>
             <!-- Fin contenido principal -->
         </div>
