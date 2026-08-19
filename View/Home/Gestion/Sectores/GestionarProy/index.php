@@ -1306,12 +1306,16 @@ if (isset($_SESSION['usu_id'])) {
                     const inputCorreo = document.getElementById("correo_envio_email");
                     const inputPaisIdValor = document.getElementById("pais_id_valor");
 
-                    // Validar correos de copia
                     const correos_copia = document.getElementById('correo_envio_email_copias')?.value.trim() ?? '';
                     if (correos_copia) {
                         const emails = correos_copia.split(',').map(e => e.trim());
                         for (let email of emails) {
                             if (!email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+                                // Restaurar botón
+                                document.getElementById('btn_enviar_texto').textContent = 'Enviar Correo';
+                                document.getElementById('btn_enviar_spinner').classList.add('d-none');
+                                btnEnviar.disabled = false;
+
                                 Swal.fire({
                                     icon: 'error',
                                     title: 'Correo inválido',

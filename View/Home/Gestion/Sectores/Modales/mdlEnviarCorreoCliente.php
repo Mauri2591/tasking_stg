@@ -54,6 +54,12 @@
                                     name="correo_envio_email_copias"
                                     style="width: 16rem; height: 3rem;"><?= htmlspecialchars($correo_envio_cliente_copias ?? '') ?></textarea>
                             </div>
+                            <div class="alert alert-info alert-dismissible fade show" role="alert" style="margin-top: 0.1rem; margin-bottom: 0.1rem; font-size: 0.75rem;">
+                                <strong>Múltiples correos se deben separar con coma (,)</strong> 
+                                <br>
+                                <code style="background: rgba(0,0,0,0.1); padding: 2px 6px; border-radius: 3px; font-size: .9rem;">prueba@gmail.com, prueba2@gmail.com</code>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
                             <hr>
                         <?php endif; ?>
                         <?php
@@ -124,7 +130,7 @@
                                                 <span class="badge bg-success text-light fs-10 mt-1 d-inline-block">
                                                     <i class="ri-mail-check-line"></i> Enviado por otro medio
                                                 </span>
-                                                <span class="text-muted fs-10"><?= htmlspecialchars(date("d-m-Y", strtotime($val['fech_actualizacion']))." ".date("H:m", strtotime($val['fech_actualizacion']))."hs") ?></span>                                            <?php elseif ($_SESSION['sector_id'] == '4' && $val['status_envio'] == 'ERROR'): ?>
+                                                <span class="text-muted fs-10"><?= htmlspecialchars(date("d-m-Y", strtotime($val['fech_actualizacion'])) . " " . date("H:m", strtotime($val['fech_actualizacion'])) . "hs") ?></span> <?php elseif ($_SESSION['sector_id'] == '4' && $val['status_envio'] == 'ERROR'): ?>
                                                 <span><strong class="fs-11">Reenviar por otro medio: </strong>
                                                     <i class="ri-mail-send-line"
                                                         type="button"
@@ -216,8 +222,8 @@
             </div>
             <?php if ($_SESSION['sector_id'] == '4'  && !empty($archivos)): ?>
                 <div class="modal-footer">
-                    <input type="text" name="pais_id_valor"  id="pais_id_valor" value="<?php echo $pais_id ?? 0 ?>">
-                    
+                    <input type="text" name="pais_id_valor" id="pais_id_valor" value="<?php echo $pais_id ?? 0 ?>">
+
                     <button class="btn btn-sm btn-primary" id="btn_enviar_correo_cliente">
                         <span id="btn_enviar_texto">Enviar Correo</span>
                         <span id="btn_enviar_spinner" class="spinner-border spinner-border-sm ms-1 d-none" role="status" aria-hidden="true"></span>
