@@ -2122,7 +2122,7 @@ switch ($_GET['proy']) {
                         $icono_correo_enviado = '';
                         if ($val['envio_correo_cliente'] == 'SI') {
                             if ($val['status_envio'] == 'OK') {
-                                $icono_correo_enviado = '<i class="ri-mail-send-line fs-18 text-success" title="' . htmlspecialchars($val['smtp_user']) . '" style="font-size:1rem;"></i>';
+                                $icono_correo_enviado = '<i class="ri-mail-send-line fs-18 text-success" title="Enviado desde: ' . htmlspecialchars($val['smtp_user']) . '" style="font-size:1rem;"></i>';
                             } elseif ($val['status_envio'] == 'ERROR') {
                                 $icono_correo_enviado = '<i class="ri-mail-close-line fs-18" title="Error al enviar correo" style="font-size:1rem; color:#dc3545;"></i>';
                             }
