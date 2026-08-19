@@ -165,7 +165,7 @@ if (isset($_SESSION['usu_id'])) {
                                             </div>
                                         </div>
 
-                                         <div id="contenedor_aplicaciones" style="display:none;" class="col-ms-2 col text-center">
+                                        <div id="contenedor_aplicaciones" style="display:none;" class="col-ms-2 col text-center">
                                             <span type="button"
                                                 onclick="copiar_aplicaciones(<?php echo isset($_GET['p']) ? Openssl::get_ssl_decrypt($_GET['p']) : ''; ?>)"
                                                 class="btn btn-sm py-0 px-1 btn-outline-success waves-effect waves-light mb-2">Aplicaciones<i
@@ -442,7 +442,7 @@ if (isset($_SESSION['usu_id'])) {
                                                 onmouseup="this.style.transform='translateY(-.1px)';">
                                                 <i class="ri-folder-open-line me-1"></i> Ver Adjuntos
                                             </button>
-                                        
+
                                         </div>
                                         <hr>
                                         <section id="cont_usuario_finalizador" style="font-size: 11px; display: none;"
@@ -538,7 +538,7 @@ if (isset($_SESSION['usu_id'])) {
                                 $("#contenedor_aplicaciones").show();
                                 break;
 
-                             case 7:
+                            case 7:
                                 $("#contenedor_ips").show();
                                 $("#contenedor_urls").show();
                                 $("#contenedor_otros").show();
@@ -825,7 +825,7 @@ if (isset($_SESSION['usu_id'])) {
                 }, "html");
 
 
-             $.post("../../../../../Controller/ctrProyectos.php?proy=get_hosts_proy_aplicacion", {
+            $.post("../../../../../Controller/ctrProyectos.php?proy=get_hosts_proy_aplicacion", {
                     id_proyecto_gestionado: id_proyecto_gestionado
                 },
                 function(data) {
@@ -1329,14 +1329,30 @@ if (isset($_SESSION['usu_id'])) {
                         $("#correo_envio_email").focus();
                         return;
                     }
-                        
+
                     // Mostrar spinner
                     document.getElementById('btn_enviar_texto').textContent = 'Enviando...';
                     document.getElementById('btn_enviar_spinner').classList.remove('d-none');
                     btnEnviar.disabled = true;
 
+                    // Validar correos de copia
+                    const correos_copia = document.getElementById('correo_envio_email_copias')?.value.trim() ?? '';
+                    if (correos_copia) {
+                        const emails = correos_copia.split(',').map(e => e.trim());
+                        for (let email of emails) {
+                            if (!email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Correo inválido',
+                                    text: `"${email}" no es un correo válido`
+                                });
+                                return;
+                            }
+                        }
+                    }
+
                     $.post("../../../../../Controller/ctrCorreo.php?correo=enviar_correo_cliente", {
-                        pais_id_valor:paisId,
+                        pais_id_valor: paisId,
                         id_proyecto_gestionado: id_proyecto_gestionado,
                         correo_destino: correo,
                         correos_copia_input: document.getElementById('correo_envio_email_copias')?.value.trim() ?? ''

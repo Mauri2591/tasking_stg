@@ -164,6 +164,10 @@ class Correo extends Conexion
         $copias_str = !empty($correos_override) ? $correos_override : ($proy['correo_envio_cliente_copias'] ?? '');
         if (!empty($copias_str)) {
             $copias = array_filter(array_map('trim', explode(',', $copias_str)));
+            // ← AGREGAR VALIDACIÓN
+            $copias = array_filter($copias, function ($email) {
+                return filter_var($email, FILTER_VALIDATE_EMAIL);
+            });
             $correos = array_merge($correos, $copias);
         }
 
