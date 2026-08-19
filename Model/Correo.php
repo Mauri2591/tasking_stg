@@ -74,9 +74,7 @@ class Correo extends Conexion
         try {
             $mail->isSMTP();
             $mail->Host       = SMTP_HOST;
-            $mail->SMTPAuth   = true;
-            $mail->Username   = SMTP_USER_ARG;      // usuario de red ARGENTINA
-            $mail->Password   = SMTP_FROM_ARG_PASS;      // clave de red ARGENTINA
+            $mail->SMTPAuth   = false;
             $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
             $mail->Port       = (int)SMTP_PORT;
             $mail->SMTPOptions = [
@@ -87,7 +85,7 @@ class Correo extends Conexion
                 ],
             ];
             $mail->CharSet = 'UTF-8';
-            $mail->setFrom('vulma-mssp@teco.com.ar', 'Tasking MSSP');
+            $mail->setFrom(SMTP_FROM_ARG, SMTP_FROM_NAME);
             $mail->addAddress('mssp-calidad@personal.com.ar');
             // Agregar usuarios en copia
             if (!empty($datos->usuarios) && $datos->usuarios !== 'Sin usuarios asignados') {
@@ -193,9 +191,7 @@ class Correo extends Conexion
         $smtpConfig = function (PHPMailer $mail) {
             $mail->isSMTP();
             $mail->Host       = SMTP_HOST;
-            $mail->SMTPAuth   = true;
-            $mail->Username   = SMTP_USER_ARG;
-            $mail->Password   = SMTP_FROM_ARG_PASS;
+            $mail->SMTPAuth   = false;
             $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
             $mail->Port       = (int)SMTP_PORT;
             $mail->SMTPOptions = [
