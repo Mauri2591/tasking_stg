@@ -25,6 +25,7 @@ if (isset($_SESSION['usu_id'])) {
     $documentos_envio_cliente = $proyecto->get_documentos_para_envio_correo_cliente($pg_id);
 
     $client_rs                = $proyecto->get_datos_cliente_para_envio_correo($pg_id)['client_rs'];
+    $pais_id                  = $proyecto->get_datos_cliente_para_envio_correo($pg_id)['pais_id']; //<id:1> es Argentina
     $correo_envio_cliente     = $proyecto->get_datos_cliente_para_envio_correo($pg_id)['correo_envio_cliente'];
     $correo_envio_cliente_copias     = $proyecto->get_datos_cliente_para_envio_correo($pg_id)['correo_envio_cliente_copias'];
     $datos_envios_agrupados   = $proyecto->get_datos_envios_agrupados($pg_id);
@@ -1303,6 +1304,8 @@ if (isset($_SESSION['usu_id'])) {
                 btnEnviar.addEventListener("click", function() {
 
                     const inputCorreo = document.getElementById("correo_envio_email");
+                    const inputPaisIdValor = document.getElementById("pais_id_valor");
+
                     if (!inputCorreo) {
                         Swal.fire({
                             icon: 'error',
@@ -1313,6 +1316,8 @@ if (isset($_SESSION['usu_id'])) {
                     }
 
                     const correo = inputCorreo.value.trim();
+                    const paisId = inputPaisIdValor.value.trim();
+
                     if (!correo) {
                         Swal.fire({
                             icon: 'warning',
@@ -1324,13 +1329,14 @@ if (isset($_SESSION['usu_id'])) {
                         $("#correo_envio_email").focus();
                         return;
                     }
-
+                        
                     // Mostrar spinner
                     document.getElementById('btn_enviar_texto').textContent = 'Enviando...';
                     document.getElementById('btn_enviar_spinner').classList.remove('d-none');
                     btnEnviar.disabled = true;
 
                     $.post("../../../../../Controller/ctrCorreo.php?correo=enviar_correo_cliente", {
+                        pais_id_valor:paisId,
                         id_proyecto_gestionado: id_proyecto_gestionado,
                         correo_destino: correo,
                         correos_copia_input: document.getElementById('correo_envio_email_copias')?.value.trim() ?? ''

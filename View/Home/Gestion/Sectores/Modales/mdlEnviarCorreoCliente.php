@@ -216,6 +216,8 @@
             </div>
             <?php if ($_SESSION['sector_id'] == '4'  && !empty($archivos)): ?>
                 <div class="modal-footer">
+                    <input type="text" name="pais_id_valor"  id="pais_id_valor" value="<?php echo $pais_id ?? 0 ?>">
+                    
                     <button class="btn btn-sm btn-primary" id="btn_enviar_correo_cliente">
                         <span id="btn_enviar_texto">Enviar Correo</span>
                         <span id="btn_enviar_spinner" class="spinner-border spinner-border-sm ms-1 d-none" role="status" aria-hidden="true"></span>

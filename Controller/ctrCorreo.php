@@ -31,6 +31,8 @@ switch ($case) {
         exit;
 
     case 'enviar_correo_cliente':
+
+        $pais_id= isset($_POST['pais_id_valor']) ? (int)$_POST['pais_id_valor'] : 0;
         $id_proyecto_gestionado = isset($_POST['id_proyecto_gestionado']) ? (int)$_POST['id_proyecto_gestionado'] : 0;
         $correo_destino         = $_POST['correo_destino'] ?? '';
 
@@ -39,12 +41,18 @@ switch ($case) {
             exit;
         }
 
+        
+        if ($pais_id == 0) {
+            echo json_encode(['status' => 'ERROR', 'error' => 'Pais ID inválido']);
+            exit;
+        }
+
         if (!filter_var($correo_destino, FILTER_VALIDATE_EMAIL)) {
             echo json_encode(['status' => 'ERROR', 'error' => 'Correo destino inválido']);
             exit;
         }
 
-        $result = $correo->enviarCorreoCliente($id_proyecto_gestionado, $correo_destino, $_POST['correos_copia_input'] ?? '');
+        $result = $correo->enviarCorreoCliente($id_proyecto_gestionado, $correo_destino, $pais_id, $_POST['correos_copia_input'] ?? '');
 
         if (is_array($result)) {
             $auditoria->insert_audit_estados_proyecto($_POST['id_proyecto_gestionado'], 21, $_SESSION['usu_id'], $_SESSION['sector_id']);

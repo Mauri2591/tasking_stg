@@ -105,7 +105,7 @@ class Correo extends Conexion
                 <p><b>Sector:</b> {$datos->sector}</p>
                 <p><b>Producto:</b> {$producto}</p>
                 <p><b>Tipo:</b> {$datos->tipo}</p>
-                <p><b>Usuarios asignados:</b><br>{$datos->usuarios}</p>
+                <p><b>Usuarios asignados al proyecto:</b><br>{$datos->usuarios}</p>
                 <p>
                 <b>Envío al cliente:</b><br>
                 Los informes fueron cargados en <strong>Tasking</strong>.<br>
@@ -183,7 +183,7 @@ class Correo extends Conexion
         return array_unique($correos);
     }
 
-    public function enviarCorreoCliente(int $id_proyecto_gestionado, string $correo_destino, string $correos_copia_input = '')
+    public function enviarCorreoCliente(int $id_proyecto_gestionado, string $correo_destino, int $pais_id, string $correos_copia_input = '')
     {
         $correos_copia = $this->getCorreosCopia($id_proyecto_gestionado, $correos_copia_input);
 
@@ -202,7 +202,11 @@ class Correo extends Conexion
                 ],
             ];
             $mail->CharSet = 'UTF-8';
+            if($pais_id == 1){ //Si es Argentina
             $mail->setFrom(SMTP_FROM_ARG, SMTP_FROM_NAME);
+            }else{            //Si es otro Pais
+            $mail->setFrom(SMTP_FROM_INT, SMTP_FROM_NAME);
+            }
             $mail->isHTML(true);
         };
 
@@ -295,7 +299,7 @@ class Correo extends Conexion
             foreach ($correos_copia as $correo_copia) {
                 $this->registrarEnvioInterno($id_proyecto_gestionado, $id_descripciones_proyecto, trim($correo_copia), 'PENDIENTE', 'Envío al cliente fallido', $id_ecc);
             }
-            return 'ERROR SMTP (cliente): ' . $mailCliente->ErrorInfo;
+            return 'ERROR - '.'Pais ID='.$pais_id.' - SMTP (cliente): ' . $mailCliente->ErrorInfo;
         }
 
         // COPIAS INTERNAS (sin ZIP, sin clave)

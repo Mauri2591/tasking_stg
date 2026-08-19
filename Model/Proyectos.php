@@ -3281,11 +3281,12 @@ WHERE pg.id_proyecto_cantidad_servicios = :id_proyecto_cantidad_servicios";
     public function get_datos_cliente_para_envio_correo($id)
     {
         $conn = parent::get_conexion();
-        $sql = "SELECT proyecto_gestionado.id, proyecto_gestionado.refProy,proyecto_gestionado.correo_envio_cliente,proyecto_gestionado.correo_envio_cliente_copias, clientes.client_rs 
+        $sql = "SELECT proyecto_gestionado.id, proyecto_gestionado.refProy,proyecto_gestionado.correo_envio_cliente,proyecto_gestionado.correo_envio_cliente_copias, clientes.client_rs, tm_pais.pais_id, tm_pais.pais_nombre  
         FROM proyecto_gestionado LEFT JOIN proyecto_cantidad_servicios 
         ON proyecto_gestionado.id_proyecto_cantidad_servicios = proyecto_cantidad_servicios.id 
         LEFT JOIN proyectos ON proyecto_cantidad_servicios.proy_id = proyectos.proy_id 
-        LEFT JOIN clientes ON proyectos.client_id = clientes.client_id 
+        LEFT JOIN clientes ON proyectos.client_id = clientes.client_id
+        INNER JOIN tm_pais ON tm_pais.pais_id=clientes.pais_id
         WHERE proyecto_gestionado.id = :id";
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(":id", $id, PDO::PARAM_INT);
