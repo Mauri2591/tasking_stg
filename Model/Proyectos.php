@@ -3271,13 +3271,18 @@ WHERE pg.id_proyecto_cantidad_servicios = :id_proyecto_cantidad_servicios";
     public function get_documentos_para_envio_correo_cliente(int $id_proyecto_gestionado)
     {
         $conn = parent::get_conexion();
-        $sql = "SELECT descripciones_proyecto.id, envio_correo_cliente.id_descripciones_proyecto,
+        $sql = "SELECT descripciones_proyecto.id, 
+            envio_correo_cliente.id_descripciones_proyecto,
             descripciones_proyecto.carpeta_documentos_proy, 
             descripciones_proyecto.documento, 
             DATE_FORMAT(descripciones_proyecto.fech_crea, '%d-%m-%Y %H:%i') AS fech_crea 
-            FROM descripciones_proyecto LEFT JOIN envio_correo_cliente ON envio_correo_cliente.id_proyecto_gestionado=descripciones_proyecto.id_proyecto_gestionado
+            FROM descripciones_proyecto 
+            LEFT JOIN envio_correo_cliente ON envio_correo_cliente.id_proyecto_gestionado=descripciones_proyecto.id_proyecto_gestionado
             WHERE descripciones_proyecto.id_proyecto_gestionado=:id_proyecto_gestionado 
-            ORDER BY descripciones_proyecto.id DESC LIMIT 1";
+            AND descripciones_proyecto.documento IS NOT NULL 
+            AND TRIM(descripciones_proyecto.documento) != ''
+            ORDER BY descripciones_proyecto.id DESC 
+            LIMIT 1";
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(":id_proyecto_gestionado", $id_proyecto_gestionado, PDO::PARAM_INT);
         $stmt->execute();
