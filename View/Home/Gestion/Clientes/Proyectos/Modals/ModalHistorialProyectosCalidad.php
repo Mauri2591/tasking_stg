@@ -34,7 +34,9 @@
                                     <th style="width: 5px;text-align: center;">EST</th>
                                     <th style="width: 5px;text-align: center;">AGREGAR <br>RETEST</th>
                                     <th style="width: 5px;text-align: center;"></th>
+                                    <?php if($_SESSION['usu_id'] == 104): ?>
                                     <th style="width: 5px;text-align: center;"></th>
+                                    <?php endif; ?>
                                 </tr>
                             </thead>
                             <tbody style="text-align: center;">
@@ -51,7 +53,9 @@
                                     <td style="width: 5%;"></td>
                                     <td style="width: 5%;"></td>
                                     <td style="width: 5%;"></td>
+                                     <?php if($_SESSION['usu_id'] == 104): ?>
                                     <td style="width: 5%;"></td>
+                                    <?php endif; ?>
                                 </tr>
                             </tbody>
                         </table>

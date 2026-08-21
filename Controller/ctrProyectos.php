@@ -821,7 +821,7 @@ switch ($_GET['proy']) {
             "SASE" => "bg-info text-light",
             "CALIDAD Y PROCESOS" => "bg-light text-dark",
             "INCIDENT RESPONSE" => "bg-danger text-light",
-            "CONSULTING" => "style='background-color:#F88163; color:#FFF;'",
+            "CONSULTING&GRC" => "style='background-color:#F88163; color:#FFF;'",
             "FUNCTIONAL SERVICES & DELIVERY" => "style='background-color:#8F6B32; color:#FFF;'"
         );
         foreach ($datos as $row) {
@@ -978,7 +978,7 @@ switch ($_GET['proy']) {
             "SASE" => "bg-info text-light",
             "CALIDAD Y PROCESOS" => "bg-light text-dark",
             "INCIDENT RESPONSE" => "bg-danger text-light",
-            "CONSULTING" => "style='background-color:#F88163; color:#FFF;'",
+            "CONSULTING&GRC" => "style='background-color:#F88163; color:#FFF;'",
             "FUNCTIONAL SERVICES & DELIVERY" => "style='background-color:#8F6B32; color:#FFF;'"
         );
         foreach ($datos as $row) {
@@ -1135,7 +1135,7 @@ switch ($_GET['proy']) {
             "SASE" => "bg-info text-light",
             "CALIDAD Y PROCESOS" => "bg-light text-dark",
             "INCIDENT RESPONSE" => "bg-danger text-light",
-            "CONSULTING" => "style='background-color:#F88163; color:#FFF;'",
+            "CONSULTING&GRC" => "style='background-color:#F88163; color:#FFF;'",
             "FUNCTIONAL SERVICES & DELIVERY" => "style='background-color:#8F6B32; color:#FFF;'"
         );
         foreach ($datos as $row) {
@@ -1292,7 +1292,7 @@ switch ($_GET['proy']) {
             "SASE" => "bg-info text-light",
             "CALIDAD Y PROCESOS" => "bg-light text-dark",
             "INCIDENT RESPONSE" => "bg-danger text-light",
-            "CONSULTING" => "style='background-color:#F88163; color:#FFF;'",
+            "CONSULTING&GRC" => "style='background-color:#F88163; color:#FFF;'",
             "FUNCTIONAL SERVICES & DELIVERY" => "style='background-color:#8F6B32; color:#FFF;'"
         );
         foreach ($datos as $row) {
@@ -1449,7 +1449,7 @@ switch ($_GET['proy']) {
             "SASE" => "bg-info text-light",
             "CALIDAD Y PROCESOS" => "bg-light text-dark",
             "INCIDENT RESPONSE" => "bg-danger text-light",
-            "CONSULTING" => "style='background-color:#F88163; color:#FFF;'",
+            "CONSULTING&GRC" => "style='background-color:#F88163; color:#FFF;'",
             "FUNCTIONAL SERVICES & DELIVERY" => "style='background-color:#8F6B32; color:#FFF;'"
         );
         foreach ($datos as $row) {
@@ -1604,7 +1604,7 @@ switch ($_GET['proy']) {
             "SASE" => "bg-info text-light",
             "CALIDAD Y PROCESOS" => "bg-light text-dark",
             "INCIDENT RESPONSE" => "bg-danger text-light",
-            "CONSULTING" => "style='background-color:#F88163; color:#FFF;'",
+            "CONSULTING&GRC" => "style='background-color:#F88163; color:#FFF;'",
             "FUNCTIONAL SERVICES & DELIVERY" => "style='background-color:#8F6B32; color:#FFF;'"
         );
 
@@ -1739,7 +1739,7 @@ switch ($_GET['proy']) {
     case 'get_proyectos_nuevos_vista_calidad':
         $datos = $proyecto->get_proyectos_nuevos_vista_calidad($_POST['sector_id'], $_POST['estados_id']);
         $data = array();
-        $colores = array("ETHICAL HACKING" => "bg-warning text-dark", "SOC" => "bg-dark text-light", "SASE" => "bg-info text-light", "CALIDAD Y PROCESOS" => "bg-light text-dark", "INCIDENT RESPONSE" => "bg-danger text-light",     "CONSULTING" => "style='background-color:#F88163; color:#FFF;'", "FUNCTIONAL SERVICES & DELIVERY" => "style='background-color:#8F6B32; color:#FFF;'");
+        $colores = array("ETHICAL HACKING" => "bg-warning text-dark", "SOC" => "bg-dark text-light", "SASE" => "bg-info text-light", "CALIDAD Y PROCESOS" => "bg-light text-dark", "INCIDENT RESPONSE" => "bg-danger text-light", "CONSULTING&GRC" => "style='background-color:#F88163; color:#FFF;'", "FUNCTIONAL SERVICES & DELIVERY" => "style='background-color:#8F6B32; color:#FFF;'");
         foreach ($datos as $row) {
             $sub_array = array();
             $sub_array[] = $row['titulo'];
@@ -2385,13 +2385,13 @@ switch ($_GET['proy']) {
 
         $data = [];
         $colores = [
-            "ETHICAL HACKING" => "bg-warning text-dark",
-            "SOC" => "bg-dark text-light",
-            "SASE" => "bg-info text-light",
-            "CALIDAD Y PROCESOS" => "bg-light text-dark",
-            "INCIDENT RESPONSE" => "bg-danger text-light",
-            "CONSULTING" => "style='background-color:#F88163; color:#FFF;'",
-            "FUNCTIONAL SERVICES & DELIVERY" => "style='background-color:#8F6B32; color:#FFF;'"
+            "ETHICAL HACKING" => ["clase" => "bg-warning text-dark", "style" => ""],
+            "SOC" => ["clase" => "bg-dark text-light", "style" => ""],
+            "SASE" => ["clase" => "bg-info text-light", "style" => ""],
+            "CALIDAD Y PROCESOS" => ["clase" => "bg-light text-dark", "style" => ""],
+            "INCIDENT RESPONSE" => ["clase" => "bg-danger text-light", "style" => ""],
+            "CONSULTING&GRC" => ["clase" => "", "style" => "background-color:#F88163; color:#FFF;"],
+            "FUNCTIONAL SERVICES & DELIVERY" => ["clase" => "", "style" => "background-color:#8F6B32; color:#FFF;"]
         ];
 
         foreach ($datos as $key => $row) {
@@ -2429,8 +2429,15 @@ switch ($_GET['proy']) {
                 ? '<p class="text-center m-0 p-0">' . date('d/m/Y', strtotime($fech_crea)) . '</p>'
                 : '<p class="text-center m-0 p-0">SIN FECHA</p>';
 
-            $clase = array_key_exists($sector_nombre, $colores) ? $colores[$sector_nombre] : "bg-secondary text-light";
-            $sub_array[] = '<p class="text-center m-0 p-0"><span class="badge ' . $clase . ' border border-dark">' . htmlspecialchars($sector_nombre) . '</span></p>';
+            // ✅ CORREGIDO: Separar clase de style
+            $color_config = array_key_exists($sector_nombre, $colores)
+                ? $colores[$sector_nombre]
+                : ["clase" => "bg-secondary text-light", "style" => ""];
+
+            $clase = $color_config["clase"];
+            $style_attr = $color_config["style"] ? 'style="' . $color_config["style"] . '"' : '';
+
+            $sub_array[] = '<p class="text-center m-0 p-0"><span class="badge border border-dark ' . $clase . '" ' . $style_attr . '>' . htmlspecialchars($sector_nombre) . '</span></p>';
 
             $sub_array[] = '<span class="badge bg-light border border-dark text-dark">' . htmlspecialchars($producto) . '</span>';
             $sub_array[] = '<p class="text-center p-0 m-0"><span class="badge bg-light border border-dark text-dark">' . $dimensionamiento . '</span></p>';
@@ -2454,19 +2461,19 @@ switch ($_GET['proy']) {
                     '&pg=' . Openssl::set_ssl_encrypt($id) .
                     '" target="_blank" rel="noopener noreferrer" title="Ver proyecto"><i class="ri-send-plane-fill text-primary fs-18"></i></a>';
             }
-
-            $sub_array[] = '<div class="btn-group btn-group-sm p-0" role="group" aria-label="Button group with nested dropdown">
-                                <div class="btn-group p-0" role="group">
-                                    <button id="btnGroupDrop1" type="button" class="btn btn-primary btn-sm dropdown-toggle py-0" data-bs-toggle="dropdown" aria-expanded="false">
-                                        Estado
-                                    </button>
-                                    <ul class="dropdown-menu" aria-labelledby="btnGroupDrop1">
-                                        <li><a class="dropdown-item" type="button" onclick="cambiar_proy_a_nuevo(' . $id . ')">Nuevo</a></li>
-                                        <li><a class="dropdown-item" type="button" onclick="cambiar_proy_a_borrador(' . $id . ')">Borrador</a></li>
-                                    </ul>
-                                </div>
-                            </div>';
-
+            if ($_SESSION['usu_id'] == 104) {
+                $sub_array[] = '<div class="btn-group btn-group-sm p-0" role="group" aria-label="Button group with nested dropdown">
+                            <div class="btn-group p-0" role="group">
+                                <button id="btnGroupDrop1" type="button" class="btn btn-primary btn-sm dropdown-toggle py-0" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Estado
+                                </button>
+                                <ul class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+                                    <li><a class="dropdown-item" type="button" onclick="cambiar_proy_a_nuevo(' . $id . ')">Nuevo</a></li>
+                                    <li><a class="dropdown-item" type="button" onclick="cambiar_proy_a_borrador(' . $id . ')">Borrador</a></li>
+                                </ul>
+                            </div>
+                        </div>';
+            }
             $data[] = $sub_array;
         }
 
