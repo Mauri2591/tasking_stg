@@ -3,26 +3,28 @@ require_once __DIR__ . "/../Config/Config.php";
 class Login extends Conexion
 {
     private $excluir=[104, 112]; //Es para escluirme los usuarios de test del audit_login 
-    public function audit_login($usu_id, $sector_id,$login)
-    {   
-        
-        if(!isset($_SESSION['usu_id']) || in_array($_SESSION['usu_id'],$this->excluir)) return;        
+
+    public function audit_login($usu_id, $sector_id, $ip, $login)
+    {           
+        if(!isset($_SESSION['usu_id']) || in_array($_SESSION['usu_id'],$this->excluir)) return;
         $conn = parent::get_conexion();
-        $sql = "INSERT INTO audit_login (usu_id,sector_id,login) VALUES(:usu_id,:sector_id,:login)";
+        $sql = "INSERT INTO audit_login (usu_id,sector_id,ip,login) VALUES(:usu_id,:sector_id,:ip,:login)";
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(':usu_id', $usu_id, PDO::PARAM_INT);
         $stmt->bindValue(':sector_id', $sector_id, PDO::PARAM_INT);
+        $stmt->bindValue(':ip', $ip, PDO::PARAM_STR);
         $stmt->bindValue(':login', $login, PDO::PARAM_STR);
         $stmt->execute();
     }
-    public function audit_logout($usu_id, $sector_id,$logout)
+    public function audit_logout($usu_id, $sector_id, $ip, $logout)
     {   
-        if(!isset($_SESSION['usu_id']) || in_array($_SESSION['usu_id'],$this->excluir)) return;        
+        if(!isset($_SESSION['usu_id']) || in_array($_SESSION['usu_id'],$this->excluir)) return;      
         $conn = parent::get_conexion();
-        $sql = "INSERT INTO audit_login (usu_id,sector_id,logout) VALUES(:usu_id,:sector_id,:logout)";
+        $sql = "INSERT INTO audit_login (usu_id,sector_id,ip,logout) VALUES(:usu_id,:sector_id,:ip,:logout)";
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(':usu_id', $usu_id, PDO::PARAM_INT);
         $stmt->bindValue(':sector_id', $sector_id, PDO::PARAM_INT);
+        $stmt->bindValue(':ip', $ip, PDO::PARAM_STR);
         $stmt->bindValue(':logout', $logout, PDO::PARAM_STR);
         $stmt->execute();
     }
@@ -55,7 +57,7 @@ class Login extends Conexion
                     $_SESSION['sector_nombre'] = $resul['sector_nombre'];
                     $_SESSION['lider'] = $resul['lider'];
                     $_SESSION['bienvenido'] = "Bienvenido " . $resul['usu_nom'];
-                    $this->audit_login($_SESSION['usu_id'], $_SESSION['sector_id'],"SI"); //Inserto en tabla audit el login
+                    $this->audit_login($_SESSION['usu_id'], $_SESSION['sector_id'],$_SERVER['REMOTE_ADDR'],"SI"); //Inserto en tabla audit el login
                     header("Location:" . URL . "View/Home/");
                     exit;
                 } else {

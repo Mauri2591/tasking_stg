@@ -2,7 +2,6 @@
 require_once "../../Config/Conexion.php";
 require_once __DIR__ . "/../../Config/Config.php";
 if (isset($_SESSION['usu_id'])) {
-    require_once __DIR__ . "/../../Config/Config.php";
     require_once __DIR__ . "/../../Model/Clases/Headers.php";
 ?>
     <?php
