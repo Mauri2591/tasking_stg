@@ -45,7 +45,7 @@ if (isset($_SESSION['usu_id'])) {
             </div>
         </div>
     </div>
-<?php include_once __DIR__."/Modals/mdlSesiones.php"; ?>
+    <?php include_once __DIR__ . "/Modals/mdlSesiones.php"; ?>
     <?php
     include_once __DIR__ . "/../../Public/Template/footer.php";
     ?>
@@ -58,7 +58,46 @@ if (isset($_SESSION['usu_id'])) {
 <script>
     var tabla;
     var URL = "<?php echo URL ?>";
+    const modalDescargar = document.getElementById('ModalDescargarPdfSesiones');
+    const formReporte = modalDescargar?.querySelector('form');
+
     document.addEventListener("DOMContentLoaded", function() {
+        if (modalDescargar) {
+            modalDescargar.addEventListener('show.bs.modal', () => {
+                const hoy = new Date();
+                const año = hoy.getFullYear();
+                const mes = String(hoy.getMonth() + 1).padStart(2, '0');
+
+                const primerDia = `${año}-${mes}-01`;
+                const ultimoDia = new Date(año, hoy.getMonth() + 1, 0);
+                const ultimoDiaFormato = ultimoDia.toISOString().split('T')[0];
+
+                document.getElementById('inputDesde').value = primerDia;
+                document.getElementById('inputHasta').value = ultimoDiaFormato;
+            });
+        }
+
+        if (formReporte) {
+            formReporte.addEventListener('submit', (e) => {
+                const desde = new Date(document.getElementById('inputDesde').value);
+                const hasta = new Date(document.getElementById('inputHasta').value);
+
+                const diffMeses = (hasta.getFullYear() - desde.getFullYear()) * 12 +
+                    (hasta.getMonth() - desde.getMonth());
+
+                if (diffMeses > 1) {
+                    e.preventDefault();
+                    Swal.fire({
+                        icon: "warning",
+                        title: "Atención",
+                        text: "La descarga está limitada a 1 mes máximo",
+                        timer: 1500,
+                        showConfirmButton: false
+                    });
+                    return false;
+                }
+            });
+        }
         tabla = $("#tablaUsuariosSesiones").dataTable({
             "ajax": {
                 url: URL + "Controller/ctrAuditoria.php?case=get_audit_sesiones",
@@ -98,6 +137,9 @@ if (isset($_SESSION['usu_id'])) {
                 }
             }
         });
+
+
+
     });
 
     function mdlReportePdfSesiones() {
