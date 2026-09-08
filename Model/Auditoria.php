@@ -39,6 +39,7 @@ class Auditoria extends Conexion
         END AS evento,
         DATE_FORMAT(l.fecha, '%d-%m-%Y %H:%i:%s') AS fecha,
         u.usu_correo,
+        l.ip,
         IF(u.est = 1, 'ACTIVO', 'INACTIVO') AS estado_usuario,
         s.sector_nombre
     FROM audit_login l
