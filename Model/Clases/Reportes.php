@@ -885,7 +885,7 @@ class Reportes
                         <th style='width:12%; text-align:center;'>Evento</th>
                         <th style='width:20%; text-align:center;'>Fecha y Hora</th>
                         <th style='width:30%; text-align:center;'>Usuario</th>
-                        <th style='width:10%; text-align:center;'>Ip Addr</th>
+                        <th style='width:20%; text-align:center;'>Ip Addr</th>
                         <th style='width:10%; text-align:center;'>Estado</th>
                         <th style='width:23%; text-align:center;'>Sector</th>
                     </tr>
