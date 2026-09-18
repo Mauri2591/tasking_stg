@@ -146,6 +146,30 @@ class Correo extends Conexion
         $stmt->execute();
     }
 
+    private function getCorreosClienteCopia(int $id_proyecto_gestionado, string $correos_override = ''): array
+    {
+        $conn = $this->get_conexion();
+        $sql = "SELECT correo_envio_cliente_copias FROM proyecto_gestionado WHERE id = :id";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue(':id', $id_proyecto_gestionado, PDO::PARAM_INT);
+        $stmt->execute();
+        $proy = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        // Usa el override si viene, sino las de la DB
+        $copias_str = !empty($correos_override) ? $correos_override : ($proy['correo_envio_cliente_copias'] ?? '');
+
+        if (!empty($copias_str)) {
+            $copias = array_filter(array_map('trim', explode(',', $copias_str)));
+            $copias = array_filter($copias, function ($email) {
+                return filter_var($email, FILTER_VALIDATE_EMAIL);
+            });
+            return $copias;
+        }
+
+        return [];
+    }
+
+
     private function getCorreosCopia(int $id_proyecto_gestionado, string $correos_override = ''): array
     {
         $conn = $this->get_conexion();
@@ -190,7 +214,7 @@ class Correo extends Conexion
     public function enviarCorreoCliente(int $id_proyecto_gestionado, string $correo_destino, int $pais_id, string $correos_copia_input = '')
     {
         $correos_copia = $this->getCorreosCopia($id_proyecto_gestionado, $correos_copia_input);
-        //Si es 1 es con noreply@informes-cybersecurity.personal.com.ar y sino noreply@informes-cybersecurity.ubiquo.com.ar
+        $correos_cliente_copia = $this->getCorreosClienteCopia($id_proyecto_gestionado, $correos_copia_input);
         $remitente = $pais_id == 1 ? SMTP_FROM_ARG : SMTP_FROM_INT;
 
         // SMTP base
@@ -348,8 +372,8 @@ class Correo extends Conexion
                     $mailCopia->Body = "
             <p>Estimado/a.</p>
             <p>
-                Se realizó envío de Informes al cliente por el servicio <strong>{$producto}</strong> ID: {$refProy} a los siguientes emails:<br>
-                <strong>" . implode(', ', $correos_copia) . "</strong><br>
+                Se realizó envío de Informes al cliente <strong>{$cliente}</strong> por el servicio <strong>{$producto} - {$tipo}</strong> ID: {$refProy} a los siguientes emails:<br>
+                <strong>" . implode(', ', $correos_cliente_copia) . "</strong><br>
                 Cualquier comentario por favor contactarse con Calidad-MSSP@personal.com.ar.<br>
                 Saludos.
             </p>";
