@@ -216,9 +216,9 @@ class Correo extends Conexion
         $correos_copia = $this->getCorreosCopia($id_proyecto_gestionado, $correos_copia_input);
         $correos_cliente_copia = $this->getCorreosClienteCopia($id_proyecto_gestionado, $correos_copia_input);
         $remitente = $pais_id == 1 ? SMTP_FROM_ARG : SMTP_FROM_INT;
-
+        $nombre_remitente = $pais_id == 1 ? SMTP_FROM_NAME_ARG : SMTP_FROM_NAME_INT;
         // SMTP base
-        $smtpConfig = function (PHPMailer $mail) use ($remitente) {
+        $smtpConfig = function (PHPMailer $mail) use ($remitente, $nombre_remitente) {
             $mail->isSMTP();
             $mail->Host       = SMTP_HOST;
             $mail->SMTPAuth   = false;
@@ -232,7 +232,7 @@ class Correo extends Conexion
                 ],
             ];
             $mail->CharSet = 'UTF-8';
-            $mail->setFrom($remitente, SMTP_FROM_NAME);  // ← Sin condicional            
+            $mail->setFrom($remitente, $nombre_remitente);
             $mail->isHTML(true);
         };
 
@@ -319,10 +319,18 @@ class Correo extends Conexion
             if (SMTP_ENABLED === 'true') {
                 $smtpConfig($mailCliente);
                 $mailCliente->addAddress($correo_destino);
-                $mailCliente->Subject = 'Documentos del Servicio ' . $doc['producto'] . ' - Personal Tech';
+                $mailCliente->Subject = $pais_id == 1 ? $cliente . '|' . 'Informe del Servicio' . $producto . $tipo . 'ID: ' . $refProy  : $cliente . '|' . 'Informe del Servicio' . $producto . $tipo;
                 $mailCliente->Body = "
         <p>Estimado/a cliente,</p>
-                Adjuntamos la documentación correspondiente a su servicio de <strong>{$doc['producto']}</strong> bajo la referencia <strong>" . ($doc['referencia'] ?: 'N/A') . "</strong> en formato ZIP protegido. En otro correo le enviamos la clave para descifrar.<p>Saludos.</p>";
+               <p>
+                    Adjuntamos la documentación correspondiente a su servicio de <strong>{$doc['producto']}</strong> 
+                    bajo la referencia <strong>" . ($doc['referencia'] ?: 'N/A') . "</strong> en formato ZIP protegido.<br> 
+                    En otro correo le enviamos la clave para descifrar.<br>
+                    Saludos<br>
+                    Equipo de Calidad y Procesos<br>
+                    Delivery Services – Cybersecurity Solutions<br>
+                    " . ($pais_id == 1 ? '<strong>Personal Tech</strong>' : '<strong>Ubiquo</strong>') . "
+                </p>";
                 $mailCliente->addAttachment($ruta_zip, $nombre_zip);
                 $mailCliente->send();
             } else {
@@ -336,12 +344,50 @@ class Correo extends Conexion
                 $mailClave->addAddress($correo_destino);
                 $mailClave->Subject = 'Clave de acceso - Documentos del Servicio ' . $doc['producto'];
                 $mailClave->Body = "
-        <p>Le compartimos la clave para abrir el archivo correspondiente a su servicio de <strong>{$doc['producto']}:</strong></p>
-        <p style=\"font-size: 1.2rem; font-weight: bold; background: #f0f0f0; padding: 10px; border-radius: 5px;\">{$clave}</p>
-        <p>Saludos.</p>";
+                <p>Le compartimos la clave para abrir el archivo correspondiente a su servicio de <strong>{$doc['producto']}:</strong></p>
+                <p style=\"font-size: 1.2rem; font-weight: bold; background: #f0f0f0; padding: 10px; border-radius: 5px;\">{$clave}</p>
+                <p>Saludos.</p>";
                 $mailClave->send();
             } else {
                 throw new Exception('SMTP deshabilitado');
+            }
+
+            // CORREO 3 Y 4: ENVÍO DE ZIP Y CLAVE A MSSP-CALIDAD
+            $correos_sectores = array_filter(array_map('trim', explode(',', MAIL_COPIA_SECTORES)));
+
+            foreach ($correos_sectores as $correo_sector) {
+                // ZIP a mssp-calidad
+                $mailSectorZip = new PHPMailer(true);
+                try {
+                    if (SMTP_ENABLED === 'true') {
+                        $smtpConfig($mailSectorZip);
+                        $mailSectorZip->addAddress($correo_sector);
+                        $mailSectorZip->Subject = '[Copia] Informe enviado al cliente - ' . $doc['producto'];
+                        $mailSectorZip->Body = "
+            <p>Se ha enviado documentación al cliente <strong>{$cliente}</strong> por el servicio <strong>{$producto} - {$tipo}</strong> ID: {$refProy}.</p>
+            <p>Adjunto copia del ZIP enviado.</p>";
+                        $mailSectorZip->addAttachment($ruta_zip, $nombre_zip);
+                        $mailSectorZip->send();
+                    }
+                } catch (Exception $e) {
+                    error_log("Error enviando ZIP a sector: " . $mailSectorZip->ErrorInfo);
+                }
+
+                // Clave a mssp-calidad
+                $mailSectorClave = new PHPMailer(true);
+                try {
+                    if (SMTP_ENABLED === 'true') {
+                        $smtpConfig($mailSectorClave);
+                        $mailSectorClave->addAddress($correo_sector);
+                        $mailSectorClave->Subject = '[Copia] Clave de acceso - ' . $doc['producto'];
+                        $mailSectorClave->Body = "
+            <p>Clave para abrir el ZIP enviado al cliente <strong>{$cliente}</strong>:</p>
+            <p style=\"font-size: 1.2rem; font-weight: bold; background: #f0f0f0; padding: 10px; border-radius: 5px;\">{$clave}</p>";
+                        $mailSectorClave->send();
+                    }
+                } catch (Exception $e) {
+                    error_log("Error enviando clave a sector: " . $mailSectorClave->ErrorInfo);
+                }
             }
 
             $id_ecc = $this->registrarEnvio($id_proyecto_gestionado, $pais_id == 1 ? SMTP_FROM_ARG : SMTP_FROM_INT, 'OK', $ruta_zip, $clave, $id_descripciones_proyecto, $correo_destino);
@@ -368,7 +414,7 @@ class Correo extends Conexion
                 if (SMTP_ENABLED === 'true') {
                     $smtpConfig($mailCopia);
                     $mailCopia->addAddress($correo_copia);
-                    $mailCopia->Subject = 'Copia -'  .$doc['cliente']. '| Informe del Servicio '. $producto.' - '.$tipo .' ID: '.$refProy ;
+                    $mailCopia->Subject = 'Copia -'  . $doc['cliente'] . '| Informe del Servicio ' . $producto . ' - ' . $tipo . ' ID: ' . $refProy;
                     $mailCopia->Body = "
             <p>Estimado/a.</p>
             <p>
