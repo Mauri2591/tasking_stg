@@ -321,7 +321,7 @@ class Correo extends Conexion
                     $mailCliente->addBCC($correo_sector);
                 }
 
-                $mailCliente->Subject = $pais_id == 1 ? $cliente . '|' . 'Informe del Servicio' . $producto . $tipo . 'ID: ' . $refProy  : $cliente . '|' . 'Informe del Servicio' . $producto . $tipo;
+                $mailCliente->Subject = $pais_id == 1 ? $cliente . '|' . ' Informe del Servicio ' . $producto .' - '. $tipo . 'ID: ' . $refProy  : $cliente . ' | ' . ' Informe del Servicio ' . $producto .' - '. $tipo;
                 $mailCliente->Body = "
         <p>Estimado/a cliente,</p>
                <p>
@@ -329,7 +329,7 @@ class Correo extends Conexion
                     En otro correo le enviamos la clave para descifrar.<br><br>
                     Saludos,<br><br><br>
                     Equipo de Calidad y Procesos<br>
-                    Delivery Services – Cybersecurity Solutions<br>
+                    Delivery Services – Cybersecurity Solutions<br><br>
                     " . ($pais_id == 1 ? '<strong>Personal Tech</strong>' : '<strong>Ubiquo</strong>') . "
                 </p>";
                 $mailCliente->addAttachment($ruta_zip, $nombre_zip);
@@ -391,12 +391,12 @@ class Correo extends Conexion
                         $mailCopia->addBCC($correo_bcc);
                     }
 
-                    $mailCopia->Subject = 'Copia -'  . $doc['cliente'] . '| Informe del Servicio ' . $producto . ' - ' . $tipo . ' ID: ' . $refProy;
+                    $mailCopia->Subject = 'Copia - '  . $doc['cliente'] . ' | Informe del Servicio ' . $producto . ' - ' . $tipo . ' ID: ' . $refProy;
                     $mailCopia->Body = "
             <p>Estimado/a.</p>
             <p>
-                Se enviaron los informes al cliente <strong>{$cliente}</strong> por el servicio <strong>{$producto} - {$tipo}</strong> ID: {$refProy} a los siguientes emails:<br>
-                <strong>" . implode(', ', $correos_cliente_copia) . "</strong><br><br>
+                Se enviaron los informes al cliente <strong>{$cliente}</strong> por el servicio <strong>{$producto} - {$tipo}</strong> ID: {$refProy} a los siguientes emails:
+                <strong> " . implode(', ', $correos_cliente_copia) . "</strong><br><br>
                 Cualquier comentario por favor contactarse con Calidad-MSSP@personal.com.ar.<br><br>
                 Saludos.<br><br>
                 Equipo de Calidad y Procesos<br>
