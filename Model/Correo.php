@@ -266,8 +266,8 @@ class Correo extends Conexion
             $ruta_archivo = BASE_PATH . "View/Home/Public/Uploads/Proyectos/" . $carpeta . "/" . trim($archivo);
             if (file_exists($ruta_archivo)) {
                 $zip->addFile($ruta_archivo, trim($archivo));
-                $zip->setEncryptionIndex($archivos_encontrados, ZipArchive::EM_AES_256, $clave);
-                $archivos_encontrados++;
+                $encryption = defined('ZipArchive::EM_TRADITIONAL') ? ZipArchive::EM_TRADITIONAL : 0;
+                $zip->setEncryptionIndex($archivos_encontrados, $encryption, $clave);                $archivos_encontrados++;
             }
         }
         $zip->close();
