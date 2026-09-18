@@ -146,120 +146,97 @@ class Correo extends Conexion
         $stmt->execute();
     }
 
-   private function getCorreosClienteCopia(int $id_proyecto_gestionado, string $correos_override = ''): array
-{
-    $conn = $this->get_conexion();
-    $sql = "SELECT correo_envio_cliente_copias FROM proyecto_gestionado WHERE id = :id";
-    $stmt = $conn->prepare($sql);
-    $stmt->bindValue(':id', $id_proyecto_gestionado, PDO::PARAM_INT);
-    $stmt->execute();
-    $proy = $stmt->fetch(PDO::FETCH_ASSOC);
+    private function getCorreosClienteCopia(int $id_proyecto_gestionado, string $correos_override = ''): array
+    {
+        $conn = $this->get_conexion();
+        $sql = "SELECT correo_envio_cliente_copias FROM proyecto_gestionado WHERE id = :id";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue(':id', $id_proyecto_gestionado, PDO::PARAM_INT);
+        $stmt->execute();
+        $proy = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    // Usa el override si viene, sino las de la DB
-    $copias_str = !empty($correos_override) ? $correos_override : ($proy['correo_envio_cliente_copias'] ?? '');
+        // Usa el override si viene, sino las de la DB
+        $copias_str = !empty($correos_override) ? $correos_override : ($proy['correo_envio_cliente_copias'] ?? '');
 
-    if (!empty($copias_str)) {
-        $copias = array_filter(array_map('trim', explode(',', $copias_str)));
-        $copias = array_filter($copias, function ($email) {
-            return filter_var($email, FILTER_VALIDATE_EMAIL);
-        });
-        return $copias;
+        if (!empty($copias_str)) {
+            $copias = array_filter(array_map('trim', explode(',', $copias_str)));
+            $copias = array_filter($copias, function ($email) {
+                return filter_var($email, FILTER_VALIDATE_EMAIL);
+            });
+            return $copias;
+        }
+
+        return [];
     }
 
-    return [];
-}
+    private function getCorreosCopia(int $id_proyecto_gestionado, string $correos_override = ''): array
+    {
+        // BCC: Solo mssp-calidad (sin líderes)
+        $correos = array_filter(array_map('trim', explode(',', MAIL_COPIA_SECTORES)));
+        return array_unique($correos);
+    }
 
-private function getCorreosCopia(int $id_proyecto_gestionado, string $correos_override = ''): array
-{
-    $conn = $this->get_conexion();
-    $sql = "SELECT cat_id, sector_id FROM proyecto_gestionado WHERE id = :id";
-    $stmt = $conn->prepare($sql);
-    $stmt->bindValue(':id', $id_proyecto_gestionado, PDO::PARAM_INT);
-    $stmt->execute();
-    $proy = $stmt->fetch(PDO::FETCH_ASSOC);
-    $cat_id    = (int)$proy['cat_id'];
-    $sector_id = (int)$proy['sector_id'];
+    private function getLideresDelSector(int $id_proyecto_gestionado): array
+    {
+        $conn = $this->get_conexion();
+        $sql = "SELECT cat_id, sector_id FROM proyecto_gestionado WHERE id = :id";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue(':id', $id_proyecto_gestionado, PDO::PARAM_INT);
+        $stmt->execute();
+        $proy = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    // BCC: Siempre mssp-calidad
-    $correos = array_filter(array_map('trim', explode(',', MAIL_COPIA_SECTORES)));
+        $cat_id    = (int)$proy['cat_id'];
+        $sector_id = (int)$proy['sector_id'];
 
-    // Líderes del sector solo si NO es INCIDENT RESPONSE (cat_id = 26)
-    if ($cat_id !== 26) {
-        $sql2 = "SELECT usu_correo FROM tm_usuario 
+        // Solo si NO es INCIDENT RESPONSE (cat_id = 26)
+        if ($cat_id !== 26) {
+            $sql2 = "SELECT usu_correo FROM tm_usuario 
                  WHERE sector_id = :sector_id 
                  AND lider = 'SI' 
                  AND est = 1";
-        $stmt2 = $conn->prepare($sql2);
-        $stmt2->bindValue(':sector_id', $sector_id, PDO::PARAM_INT);
-        $stmt2->execute();
-        $lideres = array_column($stmt2->fetchAll(PDO::FETCH_ASSOC), 'usu_correo');
-        $correos = array_merge($correos, $lideres);
+            $stmt2 = $conn->prepare($sql2);
+            $stmt2->bindValue(':sector_id', $sector_id, PDO::PARAM_INT);
+            $stmt2->execute();
+            return array_column($stmt2->fetchAll(PDO::FETCH_ASSOC), 'usu_correo');
+        }
+
+        return [];
     }
 
-    return array_unique($correos);
-}
+    public function enviarCorreoCliente(int $id_proyecto_gestionado, string $correo_destino, int $pais_id, string $correos_copia_input = '')
+    {
+        $correos_copia = $this->getCorreosCopia($id_proyecto_gestionado, $correos_copia_input);
+        $correos_cliente_copia = $this->getCorreosClienteCopia($id_proyecto_gestionado, $correos_copia_input);
+        $remitente = $pais_id == 1 ? SMTP_FROM_ARG : SMTP_FROM_INT;
+        $nombre_remitente = $pais_id == 1 ? SMTP_FROM_NAME_ARG : SMTP_FROM_NAME_INT;
 
-private function getLideresDelSector(int $id_proyecto_gestionado): array
-{
-    $conn = $this->get_conexion();
-    $sql = "SELECT cat_id, sector_id FROM proyecto_gestionado WHERE id = :id";
-    $stmt = $conn->prepare($sql);
-    $stmt->bindValue(':id', $id_proyecto_gestionado, PDO::PARAM_INT);
-    $stmt->execute();
-    $proy = $stmt->fetch(PDO::FETCH_ASSOC);
-    
-    $cat_id    = (int)$proy['cat_id'];
-    $sector_id = (int)$proy['sector_id'];
-    
-    // Solo si NO es INCIDENT RESPONSE (cat_id = 26)
-    if ($cat_id !== 26) {
-        $sql2 = "SELECT usu_correo FROM tm_usuario 
-                 WHERE sector_id = :sector_id 
-                 AND lider = 'SI' 
-                 AND est = 1";
-        $stmt2 = $conn->prepare($sql2);
-        $stmt2->bindValue(':sector_id', $sector_id, PDO::PARAM_INT);
-        $stmt2->execute();
-        return array_column($stmt2->fetchAll(PDO::FETCH_ASSOC), 'usu_correo');
-    }
-    
-    return [];
-}
+        // SMTP base
+        $smtpConfig = function (PHPMailer $mail) use ($remitente, $nombre_remitente) {
+            $mail->isSMTP();
+            $mail->Host       = SMTP_HOST;
+            $mail->SMTPAuth   = false;
+            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+            $mail->Port       = (int)SMTP_PORT;
+            $mail->SMTPOptions = [
+                'ssl' => [
+                    'verify_peer'       => false,
+                    'verify_peer_name'  => false,
+                    'allow_self_signed' => true,
+                ],
+            ];
+            $mail->CharSet = 'UTF-8';
+            $mail->setFrom($remitente, $nombre_remitente);
+            $mail->isHTML(true);
+        };
 
-public function enviarCorreoCliente(int $id_proyecto_gestionado, string $correo_destino, int $pais_id, string $correos_copia_input = '')
-{
-    $correos_copia = $this->getCorreosCopia($id_proyecto_gestionado, $correos_copia_input);
-    $correos_cliente_copia = $this->getCorreosClienteCopia($id_proyecto_gestionado, $correos_copia_input);
-    $remitente = $pais_id == 1 ? SMTP_FROM_ARG : SMTP_FROM_INT;
-    $nombre_remitente = $pais_id == 1 ? SMTP_FROM_NAME_ARG : SMTP_FROM_NAME_INT;
+        $datos    = $this->getDatosParaCorreo($id_proyecto_gestionado);
+        $refProy  = $datos->refProy  ?: 'N/A';
+        $producto = $datos->producto ?: 'N/A';
+        $tipo = $datos->tipo ?: 'N/A';
+        $cliente  = $datos->cliente  ?: 'N/A';
 
-    // SMTP base
-    $smtpConfig = function (PHPMailer $mail) use ($remitente, $nombre_remitente) {
-        $mail->isSMTP();
-        $mail->Host       = SMTP_HOST;
-        $mail->SMTPAuth   = false;
-        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-        $mail->Port       = (int)SMTP_PORT;
-        $mail->SMTPOptions = [
-            'ssl' => [
-                'verify_peer'       => false,
-                'verify_peer_name'  => false,
-                'allow_self_signed' => true,
-            ],
-        ];
-        $mail->CharSet = 'UTF-8';
-        $mail->setFrom($remitente, $nombre_remitente);
-        $mail->isHTML(true);
-    };
-
-    $datos    = $this->getDatosParaCorreo($id_proyecto_gestionado);
-    $refProy  = $datos->refProy  ?: 'N/A';
-    $producto = $datos->producto ?: 'N/A';
-    $tipo = $datos->tipo ?: 'N/A';
-    $cliente  = $datos->cliente  ?: 'N/A';
-
-    $conn = $this->get_conexion();
-    $sql  = "SELECT descripciones_proyecto.id, 
+        $conn = $this->get_conexion();
+        $sql  = "SELECT descripciones_proyecto.id, 
         descripciones_proyecto.carpeta_documentos_proy, 
         descripciones_proyecto.documento, 
         tm_categoria.cat_nom AS producto,
@@ -279,73 +256,73 @@ public function enviarCorreoCliente(int $id_proyecto_gestionado, string $correo_
         WHERE descripciones_proyecto.id_proyecto_gestionado = :id
         ORDER BY descripciones_proyecto.id DESC 
         LIMIT 1";
-    $stmt = $conn->prepare($sql);
-    $stmt->bindValue(':id', $id_proyecto_gestionado, PDO::PARAM_INT);
-    $stmt->execute();
-    $doc = $stmt->fetch(PDO::FETCH_ASSOC);
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue(':id', $id_proyecto_gestionado, PDO::PARAM_INT);
+        $stmt->execute();
+        $doc = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    if (!$doc || empty($doc['documento'])) {
-        $this->registrarEnvio($id_proyecto_gestionado, $pais_id == 1 ? SMTP_FROM_ARG : SMTP_FROM_INT, 'ERROR');
-        return 'Sin documentos para enviar';
-    }
-
-    $id_descripciones_proyecto = $doc['id'];
-    $carpeta  = $doc['carpeta_documentos_proy'];
-    $archivos = array_filter(explode(',', $doc['documento']));
-    $clave    = strtoupper(bin2hex(random_bytes(6)));
-
-    $carpeta_zip = ZIP_PATH;
-    if (!file_exists($carpeta_zip)) {
-        mkdir($carpeta_zip, 0755, true);
-    }
-    $nombre_zip = 'informe_' . $id_proyecto_gestionado . '_' . date('Ymd_His') . '.zip';
-    $ruta_zip   = $carpeta_zip . $nombre_zip;
-
-    $zip = new ZipArchive();
-    $resultado = $zip->open($ruta_zip, ZipArchive::CREATE);
-
-    if ($resultado !== true) {
-        return 'Error abriendo ZIP: ' . $resultado;
-    }
-
-    $archivos_encontrados = 0;
-    foreach ($archivos as $archivo) {
-        $ruta_archivo = BASE_PATH . "View/Home/Public/Uploads/Proyectos/" . $carpeta . "/" . trim($archivo);
-        if (file_exists($ruta_archivo)) {
-            $nombre_archivo = trim($archivo);
-            $zip->addFile($ruta_archivo, $nombre_archivo);
-            $resultado_enc = $zip->setEncryptionName($nombre_archivo, 1, $clave);
-
-            if ($resultado_enc === false) {
-                error_log("Error encriptando {$nombre_archivo}: " . $zip->getStatusString());
-            }
-            $archivos_encontrados++;
+        if (!$doc || empty($doc['documento'])) {
+            $this->registrarEnvio($id_proyecto_gestionado, $pais_id == 1 ? SMTP_FROM_ARG : SMTP_FROM_INT, 'ERROR');
+            return 'Sin documentos para enviar';
         }
-    }
-    $zip->close();
 
-    if ($archivos_encontrados === 0) {
-        $this->registrarEnvio($id_proyecto_gestionado, $pais_id == 1 ? SMTP_FROM_ARG : SMTP_FROM_INT, 'ERROR');
-        return 'No se encontraron archivos físicos en el servidor';
-    }
+        $id_descripciones_proyecto = $doc['id'];
+        $carpeta  = $doc['carpeta_documentos_proy'];
+        $archivos = array_filter(explode(',', $doc['documento']));
+        $clave    = strtoupper(bin2hex(random_bytes(6)));
 
-    // Preparar BCC a Calidad
-    $correos_sectores = array_filter(array_map('trim', explode(',', MAIL_COPIA_SECTORES)));
+        $carpeta_zip = ZIP_PATH;
+        if (!file_exists($carpeta_zip)) {
+            mkdir($carpeta_zip, 0755, true);
+        }
+        $nombre_zip = 'informe_' . $id_proyecto_gestionado . '_' . date('Ymd_His') . '.zip';
+        $ruta_zip   = $carpeta_zip . $nombre_zip;
 
-    // CORREO 1 AL CLIENTE (con ZIP) + BCC a Calidad
-    $mailCliente = new PHPMailer(true);
-    try {
-        if (SMTP_ENABLED === 'true') {
-            $smtpConfig($mailCliente);
-            $mailCliente->addAddress($correo_destino);
+        $zip = new ZipArchive();
+        $resultado = $zip->open($ruta_zip, ZipArchive::CREATE);
 
-            // BCC a Calidad
-            foreach ($correos_sectores as $correo_sector) {
-                $mailCliente->addBCC($correo_sector);
+        if ($resultado !== true) {
+            return 'Error abriendo ZIP: ' . $resultado;
+        }
+
+        $archivos_encontrados = 0;
+        foreach ($archivos as $archivo) {
+            $ruta_archivo = BASE_PATH . "View/Home/Public/Uploads/Proyectos/" . $carpeta . "/" . trim($archivo);
+            if (file_exists($ruta_archivo)) {
+                $nombre_archivo = trim($archivo);
+                $zip->addFile($ruta_archivo, $nombre_archivo);
+                $resultado_enc = $zip->setEncryptionName($nombre_archivo, 1, $clave);
+
+                if ($resultado_enc === false) {
+                    error_log("Error encriptando {$nombre_archivo}: " . $zip->getStatusString());
+                }
+                $archivos_encontrados++;
             }
+        }
+        $zip->close();
 
-            $mailCliente->Subject = $pais_id == 1 ? $cliente . '|' . 'Informe del Servicio' . $producto . $tipo . 'ID: ' . $refProy  : $cliente . '|' . 'Informe del Servicio' . $producto . $tipo;
-            $mailCliente->Body = "
+        if ($archivos_encontrados === 0) {
+            $this->registrarEnvio($id_proyecto_gestionado, $pais_id == 1 ? SMTP_FROM_ARG : SMTP_FROM_INT, 'ERROR');
+            return 'No se encontraron archivos físicos en el servidor';
+        }
+
+        // Preparar BCC a Calidad
+        $correos_sectores = array_filter(array_map('trim', explode(',', MAIL_COPIA_SECTORES)));
+
+        // CORREO 1 AL CLIENTE (con ZIP) + BCC a Calidad
+        $mailCliente = new PHPMailer(true);
+        try {
+            if (SMTP_ENABLED === 'true') {
+                $smtpConfig($mailCliente);
+                $mailCliente->addAddress($correo_destino);
+
+                // BCC a Calidad
+                foreach ($correos_sectores as $correo_sector) {
+                    $mailCliente->addBCC($correo_sector);
+                }
+
+                $mailCliente->Subject = $pais_id == 1 ? $cliente . '|' . 'Informe del Servicio' . $producto . $tipo . 'ID: ' . $refProy  : $cliente . '|' . 'Informe del Servicio' . $producto . $tipo;
+                $mailCliente->Body = "
         <p>Estimado/a cliente,</p>
                <p>
                     En el marco del servicio contratado <strong>{$doc['producto']} + {$doc['tipo']}</strong><strong> ID: " . ($doc['referencia'] ?: 'N/A') . "</strong> adjuntamos el informe correspondiente en formato ZIP protegido.<br><br> 
@@ -355,67 +332,67 @@ public function enviarCorreoCliente(int $id_proyecto_gestionado, string $correo_
                     Delivery Services – Cybersecurity Solutions<br>
                     " . ($pais_id == 1 ? '<strong>Personal Tech</strong>' : '<strong>Ubiquo</strong>') . "
                 </p>";
-            $mailCliente->addAttachment($ruta_zip, $nombre_zip);
-            $mailCliente->send();
-        } else {
-            throw new Exception('SMTP deshabilitado');
-        }
-
-        // CORREO 2 AL CLIENTE (con clave) + BCC a Calidad
-        $mailClave = new PHPMailer(true);
-        if (SMTP_ENABLED === 'true') {
-            $smtpConfig($mailClave);
-            $mailClave->addAddress($correo_destino);
-
-            // BCC a Calidad
-            foreach ($correos_sectores as $correo_sector) {
-                $mailClave->addBCC($correo_sector);
+                $mailCliente->addAttachment($ruta_zip, $nombre_zip);
+                $mailCliente->send();
+            } else {
+                throw new Exception('SMTP deshabilitado');
             }
 
-            $mailClave->Subject = 'Clave de acceso - Documentos del Servicio ' . $doc['producto'];
-            $mailClave->Body = "
+            // CORREO 2 AL CLIENTE (con clave) + BCC a Calidad
+            $mailClave = new PHPMailer(true);
+            if (SMTP_ENABLED === 'true') {
+                $smtpConfig($mailClave);
+                $mailClave->addAddress($correo_destino);
+
+                // BCC a Calidad
+                foreach ($correos_sectores as $correo_sector) {
+                    $mailClave->addBCC($correo_sector);
+                }
+
+                $mailClave->Subject = 'Clave de acceso - Documentos del Servicio ' . $doc['producto'];
+                $mailClave->Body = "
                 <p>Le compartimos la clave para abrir el archivo correspondiente a su servicio de <strong>{$doc['producto']}:</strong></p>
                 <p style=\"font-size: 1.2rem; font-weight: bold; background: #f0f0f0; padding: 10px; border-radius: 5px;\">{$clave}</p>
                 <p>Saludos.</p>";
-            $mailClave->send();
-        } else {
-            throw new Exception('SMTP deshabilitado');
+                $mailClave->send();
+            } else {
+                throw new Exception('SMTP deshabilitado');
+            }
+
+            $id_ecc = $this->registrarEnvio($id_proyecto_gestionado, $pais_id == 1 ? SMTP_FROM_ARG : SMTP_FROM_INT, 'OK', $ruta_zip, $clave, $id_descripciones_proyecto, $correo_destino);
+        } catch (Exception $e) {
+            $id_ecc = $this->registrarEnvio($id_proyecto_gestionado, $pais_id == 1 ? SMTP_FROM_ARG : SMTP_FROM_INT, 'ERROR', $ruta_zip, $clave, $id_descripciones_proyecto, $correo_destino);
+            foreach ($correos_cliente_copia as $correo_copia) {
+                $this->registrarEnvioInterno(
+                    $id_proyecto_gestionado,
+                    $id_descripciones_proyecto,
+                    trim($correo_copia),
+                    'PENDIENTE',
+                    'Envío al cliente fallido',
+                    $id_ecc
+                );
+            }
+            return 'ERROR - ' . 'Pais ID=' . $pais_id . ' - SMTP (cliente): ' . $mailCliente->ErrorInfo;
         }
 
-        $id_ecc = $this->registrarEnvio($id_proyecto_gestionado, $pais_id == 1 ? SMTP_FROM_ARG : SMTP_FROM_INT, 'OK', $ruta_zip, $clave, $id_descripciones_proyecto, $correo_destino);
-    } catch (Exception $e) {
-        $id_ecc = $this->registrarEnvio($id_proyecto_gestionado, $pais_id == 1 ? SMTP_FROM_ARG : SMTP_FROM_INT, 'ERROR', $ruta_zip, $clave, $id_descripciones_proyecto, $correo_destino);
+        // COPIAS INTERNAS (sin ZIP, sin clave) + BCC a Calidad
+        $bcc_array = $this->getCorreosCopia($id_proyecto_gestionado);
+
         foreach ($correos_cliente_copia as $correo_copia) {
-            $this->registrarEnvioInterno(
-                $id_proyecto_gestionado,
-                $id_descripciones_proyecto,
-                trim($correo_copia),
-                'PENDIENTE',
-                'Envío al cliente fallido',
-                $id_ecc
-            );
-        }
-        return 'ERROR - ' . 'Pais ID=' . $pais_id . ' - SMTP (cliente): ' . $mailCliente->ErrorInfo;
-    }
+            $correo_copia = trim($correo_copia);
+            $mailCopia = new PHPMailer(true);
+            try {
+                if (SMTP_ENABLED === 'true') {
+                    $smtpConfig($mailCopia);
+                    $mailCopia->addAddress($correo_copia); // Destinatario principal
 
-    // COPIAS INTERNAS (sin ZIP, sin clave) + BCC a Calidad y Líderes
-    $bcc_array = $this->getCorreosCopia($id_proyecto_gestionado);
+                    // BCC solo a Calidad
+                    foreach ($bcc_array as $correo_bcc) {
+                        $mailCopia->addBCC($correo_bcc);
+                    }
 
-    foreach ($correos_cliente_copia as $correo_copia) {
-        $correo_copia = trim($correo_copia);
-        $mailCopia = new PHPMailer(true);
-        try {
-            if (SMTP_ENABLED === 'true') {
-                $smtpConfig($mailCopia);
-                $mailCopia->addAddress($correo_copia); // Destinatario principal
-
-                // BCC a Calidad + Líderes
-                foreach ($bcc_array as $correo_bcc) {
-                    $mailCopia->addBCC($correo_bcc);
-                }
-
-                $mailCopia->Subject = 'Copia -'  . $doc['cliente'] . '| Informe del Servicio ' . $producto . ' - ' . $tipo . ' ID: ' . $refProy;
-                $mailCopia->Body = "
+                    $mailCopia->Subject = 'Copia -'  . $doc['cliente'] . '| Informe del Servicio ' . $producto . ' - ' . $tipo . ' ID: ' . $refProy;
+                    $mailCopia->Body = "
             <p>Estimado/a.</p>
             <p>
                 Se enviaron los informes al cliente <strong>{$cliente}</strong> por el servicio <strong>{$producto} - {$tipo}</strong> ID: {$refProy} a los siguientes emails:<br>
@@ -425,61 +402,59 @@ public function enviarCorreoCliente(int $id_proyecto_gestionado, string $correo_
                 Equipo de Calidad y Procesos<br>
                 Delivery Services – Cybersecurity Solutions
             </p>";
-                $mailCopia->send();
-            } else {
-                throw new Exception('SMTP deshabilitado');
-            }
-            $this->registrarEnvioInterno($id_proyecto_gestionado, $id_descripciones_proyecto, $correo_copia, 'OK', '', $id_ecc);
-        } catch (Exception $e) {
-            $this->registrarEnvioInterno($id_proyecto_gestionado, $id_descripciones_proyecto, $correo_copia, 'ERROR', $mailCopia->ErrorInfo, $id_ecc);
-        }
-    }
-
-    // ENVÍO AL LÍDER DEL SECTOR + BCC a Calidad
-    $lideres = $this->getLideresDelSector($id_proyecto_gestionado);
-    
-    foreach ($lideres as $correo_lider) {
-        $correo_lider = trim($correo_lider);
-        $mailLider = new PHPMailer(true);
-        try {
-            if (SMTP_ENABLED === 'true') {
-                $smtpConfig($mailLider);
-                $mailLider->addAddress($correo_lider); // Destinatario principal
-                
-                // BCC a Calidad
-                foreach ($correos_sectores as $correo_sector) {
-                    $mailLider->addBCC($correo_sector);
+                    $mailCopia->send();
+                } else {
+                    throw new Exception('SMTP deshabilitado');
                 }
+                $this->registrarEnvioInterno($id_proyecto_gestionado, $id_descripciones_proyecto, $correo_copia, 'OK', '', $id_ecc);
+            } catch (Exception $e) {
+                $this->registrarEnvioInterno($id_proyecto_gestionado, $id_descripciones_proyecto, $correo_copia, 'ERROR', $mailCopia->ErrorInfo, $id_ecc);
+            }
+        }
+        // ENVÍO AL LÍDER DEL SECTOR + BCC a Calidad
+        $lideres = $this->getLideresDelSector($id_proyecto_gestionado);
 
-                $mailLider->Subject = 'Informe enviado al cliente - ' . $doc['cliente'] . ' | ' . $producto . ' - ' . $tipo . ' ID: ' . $refProy;
-                $mailLider->Body = "
+        foreach ($lideres as $correo_lider) {
+            $correo_lider = trim($correo_lider);
+            $mailLider = new PHPMailer(true);
+            try {
+                if (SMTP_ENABLED === 'true') {
+                    $smtpConfig($mailLider);
+                    $mailLider->addAddress($correo_lider); // Destinatario principal
+
+                    // BCC a Calidad
+                    foreach ($correos_sectores as $correo_sector) {
+                        $mailLider->addBCC($correo_sector);
+                    }
+
+                    $mailLider->Subject = 'Informe enviado al cliente - ' . $doc['cliente'] . ' | ' . $producto . ' - ' . $tipo . ' ID: ' . $refProy;
+                    $mailLider->Body = "
                 <p>Estimado/a Líder,</p>
                 <p>
                     Se ha enviado el informe correspondiente al cliente <strong>{$cliente}</strong> por el servicio <strong>{$producto} - {$tipo}</strong> ID: {$refProy}.<br><br>
-                    Clientes que recibieron el informe:<br>
-                    <strong>" . implode(', ', $correos_cliente_copia) . "</strong><br><br>
+                    <br><br>
                     Saludos.<br><br>
                     Equipo de Calidad y Procesos<br>
                     Delivery Services – Cybersecurity Solutions
                 </p>";
-                $mailLider->send();
-            } else {
-                throw new Exception('SMTP deshabilitado');
+                    $mailLider->send();
+                } else {
+                    throw new Exception('SMTP deshabilitado');
+                }
+                $this->registrarEnvioInterno($id_proyecto_gestionado, $id_descripciones_proyecto, $correo_lider, 'OK', '', $id_ecc);
+            } catch (Exception $e) {
+                $this->registrarEnvioInterno($id_proyecto_gestionado, $id_descripciones_proyecto, $correo_lider, 'ERROR', $mailLider->ErrorInfo, $id_ecc);
             }
-            $this->registrarEnvioInterno($id_proyecto_gestionado, $id_descripciones_proyecto, $correo_lider, 'OK', '', $id_ecc);
-        } catch (Exception $e) {
-            $this->registrarEnvioInterno($id_proyecto_gestionado, $id_descripciones_proyecto, $correo_lider, 'ERROR', $mailLider->ErrorInfo, $id_ecc);
         }
-    }
 
-    return [
-        'status'               => 'OK',
-        'clave'                => $clave,
-        'zip'                  => $ruta_zip,
-        'url_descarga'         => ZIP_URL . $nombre_zip,
-        'archivos_encontrados' => $archivos_encontrados
-    ];
-}
+        return [
+            'status'               => 'OK',
+            'clave'                => $clave,
+            'zip'                  => $ruta_zip,
+            'url_descarga'         => ZIP_URL . $nombre_zip,
+            'archivos_encontrados' => $archivos_encontrados
+        ];
+    }
 
     private function registrarEnvio(int $id_proyecto_gestionado, string $smtp_user, string $status, string $ruta_zip = '', string $clave = '', ?int $id_descripciones_proyecto = null, string $correo_destino = ''): int
     {
