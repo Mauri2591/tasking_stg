@@ -368,7 +368,7 @@ class Correo extends Conexion
                 if (SMTP_ENABLED === 'true') {
                     $smtpConfig($mailCopia);
                     $mailCopia->addAddress($correo_copia);
-                    $mailCopia->Subject = 'Copia - Documentos enviados al cliente: ' . $doc['cliente'];
+                    $mailCopia->Subject = 'Copia -'  .$doc['cliente']. '| Informe del Servicio'. $producto.' - '.$tipo .'ID: '.$refProy ;
                     $mailCopia->Body = "
             <p>Estimado/a.</p>
             <p>
