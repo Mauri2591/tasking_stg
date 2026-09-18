@@ -323,11 +323,11 @@ class Correo extends Conexion
                 $mailCliente->Body = "
         <p>Estimado/a cliente,</p>
                <p>
-                    En el marco del servicio contratado <strong>{$doc['producto']} + {$doc['tipo']}</strong><strong> ID: " . ($doc['referencia'] ?: 'N/A') . "</strong> adjuntamos el informe correspondiente en formato ZIP protegido.<br> 
-                    En otro correo le enviamos la clave para descifrar.<br>
-                    Saludos<br>
-                    Equipo de Calidad y Procesos<br>
-                    Delivery Services – Cybersecurity Solutions<br>
+                    En el marco del servicio contratado <strong>{$doc['producto']} + {$doc['tipo']}</strong><strong> ID: " . ($doc['referencia'] ?: 'N/A') . "</strong> adjuntamos el informe correspondiente en formato ZIP protegido.<br><br> 
+                    En otro correo le enviamos la clave para descifrar.<br><br>
+                    Saludos,<br><br>
+                    Equipo de Calidad y Procesos<br><br>
+                    Delivery Services – Cybersecurity Solutions<br><br>
                     " . ($pais_id == 1 ? '<strong>Personal Tech</strong>' : '<strong>Ubiquo</strong>') . "
                 </p>";
                 $mailCliente->addAttachment($ruta_zip, $nombre_zip);
@@ -431,7 +431,6 @@ class Correo extends Conexion
                 $this->registrarEnvioInterno($id_proyecto_gestionado, $id_descripciones_proyecto, $correo_copia, 'ERROR', $mailCopia->ErrorInfo, $id_ecc);
             }
         }
-
         return [
             'status'               => 'OK',
             'clave'                => $clave,
