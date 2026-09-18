@@ -368,13 +368,13 @@ class Correo extends Conexion
                 if (SMTP_ENABLED === 'true') {
                     $smtpConfig($mailCopia);
                     $mailCopia->addAddress($correo_copia);
-                    $mailCopia->Subject = 'Copia -'  .$doc['cliente']. '| Informe del Servicio'. $producto.' - '.$tipo .'ID: '.$refProy ;
+                    $mailCopia->Subject = 'Copia -'  .$doc['cliente']. '| Informe del Servicio '. $producto.' - '.$tipo .' ID: '.$refProy ;
                     $mailCopia->Body = "
             <p>Estimado/a.</p>
             <p>
-                Se realizó envío de Informes al cliente <strong>{$cliente}</strong> por el servicio <strong>{$producto} - {$tipo}</strong> ID: {$refProy} a los siguientes emails:<br>
-                <strong>" . implode(', ', $correos_cliente_copia) . "</strong><br>
-                Cualquier comentario por favor contactarse con Calidad-MSSP@personal.com.ar.<br>
+                Se enviaron los informes al cliente <strong>{$cliente}</strong> por el servicio <strong>{$producto} - {$tipo}</strong> ID: {$refProy} a los siguientes emails:<br>
+                <strong>" . implode(', ', $correos_cliente_copia) . "</strong><br><br>
+                Cualquier comentario por favor contactarse con Calidad-MSSP@personal.com.ar.<br><br>
                 Saludos.
             </p>";
                     $mailCopia->send();
