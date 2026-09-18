@@ -259,20 +259,28 @@ class Correo extends Conexion
         $ruta_zip   = $carpeta_zip . $nombre_zip;
 
         $zip = new ZipArchive();
-        $zip->open($ruta_zip, ZipArchive::CREATE);
+        $resultado = $zip->open($ruta_zip, ZipArchive::CREATE);
+
+        if ($resultado !== true) {
+            die('Error abriendo ZIP: ' . $resultado);
+        }
+
         $archivos_encontrados = 0;
         foreach ($archivos as $archivo) {
             $ruta_archivo = BASE_PATH . "View/Home/Public/Uploads/Proyectos/" . $carpeta . "/" . trim($archivo);
             if (file_exists($ruta_archivo)) {
                 $nombre_archivo = trim($archivo);
                 $zip->addFile($ruta_archivo, $nombre_archivo);
-                // Encriptá con el nombre del archivo, método y contraseña
-                $zip->setEncryptionName($nombre_archivo, 0, $clave); // 0 = EM_TRADITIONAL
+                $resultado_enc = $zip->setEncryptionName($nombre_archivo, 1, $clave); // 1 = EM_DEFLATED
+
+                if ($resultado_enc === false) {
+                    error_log("Error encriptando {$nombre_archivo}: " . $zip->getStatusString());
+                }
                 $archivos_encontrados++;
             }
         }
         $zip->close();
-        
+
         if ($archivos_encontrados === 0) {
             $this->registrarEnvio($id_proyecto_gestionado, $pais_id == 1 ? SMTP_FROM_ARG : SMTP_FROM_INT, 'ERROR');
             return 'No se encontraron archivos físicos en el servidor';
