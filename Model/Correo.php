@@ -260,14 +260,13 @@ class Correo extends Conexion
 
         $zip = new ZipArchive();
         $zip->open($ruta_zip, ZipArchive::CREATE);
-        $zip->setPassword($clave);
 
         $archivos_encontrados = 0;
         foreach ($archivos as $archivo) {
             $ruta_archivo = BASE_PATH . "View/Home/Public/Uploads/Proyectos/" . $carpeta . "/" . trim($archivo);
             if (file_exists($ruta_archivo)) {
                 $zip->addFile($ruta_archivo, trim($archivo));
-                $zip->setEncryptionName(trim($archivo), ZipArchive::EM_AES_256);
+                $zip->setEncryptionIndex($archivos_encontrados, ZipArchive::EM_AES_256, $clave);
                 $archivos_encontrados++;
             }
         }
