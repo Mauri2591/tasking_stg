@@ -420,7 +420,9 @@ class Correo extends Conexion
                 Se enviaron los informes al cliente <strong>{$cliente}</strong> por el servicio <strong>{$producto} - {$tipo}</strong> ID: {$refProy} a los siguientes emails:<br>
                 <strong>" . implode(', ', $correos_cliente_copia) . "</strong><br><br>
                 Cualquier comentario por favor contactarse con Calidad-MSSP@personal.com.ar.<br><br>
-                Saludos.
+                Saludos.<br><br>
+                Equipo de Calidad y Procesos<br>
+                Delivery Services – Cybersecurity Solutions
             </p>";
                     $mailCopia->send();
                 } else {
