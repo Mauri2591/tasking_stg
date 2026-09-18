@@ -260,18 +260,19 @@ class Correo extends Conexion
 
         $zip = new ZipArchive();
         $zip->open($ruta_zip, ZipArchive::CREATE);
-        $zip->setPassword($clave); // ← Establecé la contraseña ANTES de agregar archivos
-
         $archivos_encontrados = 0;
         foreach ($archivos as $archivo) {
             $ruta_archivo = BASE_PATH . "View/Home/Public/Uploads/Proyectos/" . $carpeta . "/" . trim($archivo);
             if (file_exists($ruta_archivo)) {
-                $zip->addFile($ruta_archivo, trim($archivo));
+                $nombre_archivo = trim($archivo);
+                $zip->addFile($ruta_archivo, $nombre_archivo);
+                // Encriptá con el nombre del archivo, método y contraseña
+                $zip->setEncryptionName($nombre_archivo, 0, $clave); // 0 = EM_TRADITIONAL
                 $archivos_encontrados++;
             }
         }
         $zip->close();
-
+        
         if ($archivos_encontrados === 0) {
             $this->registrarEnvio($id_proyecto_gestionado, $pais_id == 1 ? SMTP_FROM_ARG : SMTP_FROM_INT, 'ERROR');
             return 'No se encontraron archivos físicos en el servidor';
