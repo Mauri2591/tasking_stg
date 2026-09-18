@@ -173,7 +173,7 @@ class Correo extends Conexion
     private function getCorreosCopia(int $id_proyecto_gestionado, string $correos_override = ''): array
     {
         $conn = $this->get_conexion();
-        $sql = "SELECT cat_id, sector_id, correo_envio_cliente_copias FROM proyecto_gestionado WHERE id = :id";
+        $sql = "SELECT cat_id, sector_id FROM proyecto_gestionado WHERE id = :id";
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(':id', $id_proyecto_gestionado, PDO::PARAM_INT);
         $stmt->execute();
@@ -181,19 +181,8 @@ class Correo extends Conexion
         $cat_id    = (int)$proy['cat_id'];
         $sector_id = (int)$proy['sector_id'];
 
-        // Siempre mssp-calidad
+        // BCC: Siempre mssp-calidad
         $correos = array_filter(array_map('trim', explode(',', MAIL_COPIA_SECTORES)));
-
-        // Copias: usa el override del input si viene, sino las de la DB
-        $copias_str = !empty($correos_override) ? $correos_override : ($proy['correo_envio_cliente_copias'] ?? '');
-        if (!empty($copias_str)) {
-            $copias = array_filter(array_map('trim', explode(',', $copias_str)));
-            // ← AGREGAR VALIDACIÓN
-            $copias = array_filter($copias, function ($email) {
-                return filter_var($email, FILTER_VALIDATE_EMAIL);
-            });
-            $correos = array_merge($correos, $copias);
-        }
 
         // Líderes del sector solo si NO es INCIDENT RESPONSE (cat_id = 26)
         if ($cat_id !== 26) {
@@ -370,7 +359,7 @@ class Correo extends Conexion
             $id_ecc = $this->registrarEnvio($id_proyecto_gestionado, $pais_id == 1 ? SMTP_FROM_ARG : SMTP_FROM_INT, 'OK', $ruta_zip, $clave, $id_descripciones_proyecto, $correo_destino);
         } catch (Exception $e) {
             $id_ecc = $this->registrarEnvio($id_proyecto_gestionado, $pais_id == 1 ? SMTP_FROM_ARG : SMTP_FROM_INT, 'ERROR', $ruta_zip, $clave, $id_descripciones_proyecto, $correo_destino);
-            foreach ($correos_copia as $correo_copia) {
+            foreach ($correos_cliente_copia  as $correo_copia) {
                 $this->registrarEnvioInterno(
                     $id_proyecto_gestionado,
                     $id_descripciones_proyecto,
@@ -384,17 +373,19 @@ class Correo extends Conexion
         }
 
         // COPIAS INTERNAS (sin ZIP, sin clave) + BCC a Calidad
-        foreach ($correos_copia as $correo_copia) {
+        $bcc_array = $this->getCorreosCopia($id_proyecto_gestionado);
+
+        foreach ($correos_cliente_copia as $correo_copia) {
             $correo_copia = trim($correo_copia);
             $mailCopia = new PHPMailer(true);
             try {
                 if (SMTP_ENABLED === 'true') {
                     $smtpConfig($mailCopia);
-                    $mailCopia->addAddress($correo_copia);
+                    $mailCopia->addAddress($correo_copia); // Destinatario principal
 
-                    // BCC a sectores Calidad
-                    foreach ($correos_sectores as $correo_sector) {
-                        $mailCopia->addBCC($correo_sector);
+                    // BCC a Calidad + Líderes
+                    foreach ($bcc_array as $correo_bcc) {
+                        $mailCopia->addBCC($correo_bcc);
                     }
 
                     $mailCopia->Subject = 'Copia -'  . $doc['cliente'] . '| Informe del Servicio ' . $producto . ' - ' . $tipo . ' ID: ' . $refProy;
