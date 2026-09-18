@@ -323,8 +323,7 @@ class Correo extends Conexion
                 $mailCliente->Body = "
         <p>Estimado/a cliente,</p>
                <p>
-                    Adjuntamos la documentación correspondiente a su servicio de <strong>{$doc['producto']}</strong> 
-                    bajo la referencia <strong>" . ($doc['referencia'] ?: 'N/A') . "</strong> en formato ZIP protegido.<br> 
+                    En el marco del servicio contratado <strong>{$doc['producto']} + {$doc['tipo']}</strong><strong> ID: " . ($doc['referencia'] ?: 'N/A') . "</strong> adjuntamos el informe correspondiente en formato ZIP protegido.<br> 
                     En otro correo le enviamos la clave para descifrar.<br>
                     Saludos<br>
                     Equipo de Calidad y Procesos<br>
