@@ -215,6 +215,7 @@ class Correo extends Conexion
         $datos    = $this->getDatosParaCorreo($id_proyecto_gestionado);
         $refProy  = $datos->refProy  ?: 'N/A';
         $producto = $datos->producto ?: 'N/A';
+        $tipo = $datos->tipo ?: 'N/A';
         $cliente  = $datos->cliente  ?: 'N/A';
 
         $conn = $this->get_conexion();
@@ -222,20 +223,22 @@ class Correo extends Conexion
             descripciones_proyecto.carpeta_documentos_proy, 
             descripciones_proyecto.documento, 
             tm_categoria.cat_nom AS producto,
+            tm_subcategoria.cats_nom AS tipo,
             proyecto_gestionado.refProy AS referencia,
             clientes.client_rs AS cliente,
             tm_usuario.usu_correo
         FROM descripciones_proyecto 
-        INNER JOIN proyecto_gestionado ON proyecto_gestionado.id = descripciones_proyecto.id_proyecto_gestionado
-        INNER JOIN tm_categoria ON tm_categoria.cat_id = proyecto_gestionado.cat_id
-        INNER JOIN proyecto_cantidad_servicios ON proyecto_cantidad_servicios.id = proyecto_gestionado.id_proyecto_cantidad_servicios
-        INNER JOIN proyectos ON proyectos.proy_id = proyecto_cantidad_servicios.proy_id
-        INNER JOIN clientes ON clientes.client_id = proyectos.client_id
-        LEFT JOIN usuario_proyecto ON usuario_proyecto.id_proyecto_gestionado = proyecto_gestionado.id
-        LEFT JOIN tm_usuario ON usuario_proyecto.usu_asignado = tm_usuario.usu_id
-        WHERE descripciones_proyecto.id_proyecto_gestionado = :id
-        ORDER BY descripciones_proyecto.id DESC 
-        LIMIT 1";
+            INNER JOIN proyecto_gestionado ON proyecto_gestionado.id = descripciones_proyecto.id_proyecto_gestionado
+            INNER JOIN tm_categoria ON tm_categoria.cat_id = proyecto_gestionado.cat_id
+            INNER JOIN proyecto_cantidad_servicios ON proyecto_cantidad_servicios.id = proyecto_gestionado.id_proyecto_cantidad_servicios
+            INNER JOIN proyectos ON proyectos.proy_id = proyecto_cantidad_servicios.proy_id
+            INNER JOIN clientes ON clientes.client_id = proyectos.client_id
+            LEFT JOIN usuario_proyecto ON usuario_proyecto.id_proyecto_gestionado = proyecto_gestionado.id
+            LEFT JOIN tm_usuario ON usuario_proyecto.usu_asignado = tm_usuario.usu_id
+            INNER JOIN tm_subcategoria ON tm_subcategoria.cats_id=proyecto_gestionado.cats_id
+            WHERE descripciones_proyecto.id_proyecto_gestionado = :id
+            ORDER BY descripciones_proyecto.id DESC 
+            LIMIT 1";
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(':id', $id_proyecto_gestionado, PDO::PARAM_INT);
         $stmt->execute();
@@ -262,7 +265,7 @@ class Correo extends Conexion
         $resultado = $zip->open($ruta_zip, ZipArchive::CREATE);
 
         if ($resultado !== true) {
-            die('Error abriendo ZIP: ' . $resultado);
+            return 'Error abriendo ZIP: ' . $resultado;
         }
 
         $archivos_encontrados = 0;
@@ -344,8 +347,12 @@ class Correo extends Conexion
                     $mailCopia->Subject = 'Copia - Documentos enviados al cliente: ' . $doc['cliente'];
                     $mailCopia->Body = "
             <p>Estimado/a.</p>
-            <p>Se realizó el envío de documentación al cliente <strong>{$cliente}</strong> al email <strong>{$correo_destino}</strong> acorde al servicio <strong>{$producto}</strong> - bajo la referencia <strong>{$refProy}</strong>.</p>
-            <p>Saludos.</p>";
+            <p>
+                Se realizó envío de Informes al cliente por el servicio <strong>{$producto}</strong> ID: {$refProy} a los siguientes emails:<br>
+                <strong>" . implode(', ', $correos_copia) . "</strong><br>
+                Cualquier comentario por favor contactarse con Calidad-MSSP@personal.com.ar.<br>
+                Saludos.
+            </p>";
                     $mailCopia->send();
                 } else {
                     throw new Exception('SMTP deshabilitado');
