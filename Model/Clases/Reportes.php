@@ -945,7 +945,6 @@ class Reportes
 
             $filas .= "
             <tr>
-                <td>{$row['id_audit_estados_proyecto']}</td>
                 <td>{$row['refProy']}</td>
                 <td>{$row['titulo']}</td>
                 <td>
@@ -1029,7 +1028,6 @@ class Reportes
             <table>
                 <thead>
                     <tr>
-                        <th style='width:4%'>#</th>
                         <th style='width:10%'>Referencia</th>
                         <th style='width:22%'>Proyecto</th>
                         <th style='width:12%'>Estado</th>
