@@ -112,25 +112,41 @@ class Auditoria extends Conexion
         $conn = parent::get_conexion();
         $conn->exec("SET time_zone = '-03:00'");
         $sql = "SELECT 
-        audit_estados_proyecto.id AS id_audit_estados_proyecto, 
-        audit_estados_proyecto.id_proyecto_gestionado, 
-        DATE_FORMAT(audit_estados_proyecto.fecha, '%d-%m-%Y %H:%i:%s') AS fecha, 
-        tm_usuario.usu_correo, 
-        tm_usuario.est,
-        sectores.sector_nombre, 
-        tm_estados.estados_nombre AS evento, 
-        tm_estados.catColor AS color_estado, 
-        tm_estados.icono AS icono,
-        proyecto_gestionado.titulo, 
-        proyecto_gestionado.refProy 
-    FROM audit_estados_proyecto 
-    INNER JOIN tm_usuario ON tm_usuario.usu_id = audit_estados_proyecto.usu_id 
-    INNER JOIN tm_estados ON tm_estados.estados_id = audit_estados_proyecto.estados_id
-    LEFT JOIN proyecto_gestionado ON proyecto_gestionado.id = audit_estados_proyecto.id_proyecto_gestionado
-    INNER JOIN sectores ON sectores.sector_id = proyecto_gestionado.sector_id 
-    WHERE audit_estados_proyecto.fecha >= :desde 
-    AND audit_estados_proyecto.fecha < :hasta
-    ORDER BY audit_estados_proyecto.fecha DESC";
+                audit_estados_proyecto.id AS id_audit_estados_proyecto, 
+                audit_estados_proyecto.id_proyecto_gestionado, 
+                DATE_FORMAT(audit_estados_proyecto.fecha, '%d-%m-%Y %H:%i:%s') AS fecha, 
+                tm_usuario.usu_correo, 
+                tm_usuario.est,
+                sectores.sector_nombre, 
+                tm_estados.estados_nombre AS evento, 
+                tm_estados.catColor AS color_estado, 
+                tm_estados.icono AS icono,
+                proyecto_gestionado.titulo, 
+                proyecto_gestionado.refProy,
+                (
+                    SELECT CONCAT(
+                        (SELECT COUNT(*) FROM proyecto_recurrencia prx 
+                        WHERE prx.id_proyecto_cantidad_servicios = pcs.id 
+                        AND prx.est = 1 
+                        AND prx.id <= prc.id),
+                        '/',
+                        (SELECT COUNT(*) FROM proyecto_recurrencia prx 
+                        WHERE prx.id_proyecto_cantidad_servicios = pcs.id 
+                        AND prx.est = 1)
+                    )
+                    FROM DUAL
+                    WHERE prc.id IS NOT NULL
+                ) AS posicion_recurrencia
+            FROM audit_estados_proyecto 
+            INNER JOIN tm_usuario ON tm_usuario.usu_id = audit_estados_proyecto.usu_id 
+            INNER JOIN tm_estados ON tm_estados.estados_id = audit_estados_proyecto.estados_id
+            LEFT JOIN proyecto_gestionado ON proyecto_gestionado.id = audit_estados_proyecto.id_proyecto_gestionado
+            LEFT JOIN proyecto_cantidad_servicios pcs ON proyecto_gestionado.id_proyecto_cantidad_servicios = pcs.id
+            LEFT JOIN proyecto_recurrencia prc ON proyecto_gestionado.id = prc.id_proyecto_gestionado
+            INNER JOIN sectores ON sectores.sector_id = proyecto_gestionado.sector_id 
+            WHERE audit_estados_proyecto.fecha >= :desde 
+            AND audit_estados_proyecto.fecha < :hasta
+            ORDER BY audit_estados_proyecto.fecha DESC";
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(":desde", $desde, PDO::PARAM_STR);
         $stmt->bindValue(":hasta", $hasta, PDO::PARAM_STR);
