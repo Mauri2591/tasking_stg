@@ -945,7 +945,7 @@ class Reportes
 
             $filas .= "
             <tr>
-                <td>{$row['refProy']}</td>
+                <td>" . ($row['refProy'] ?? 'N/A') . "</td>
                 <td>{$row['titulo']}</td>
                 <td>
                     <span style='background:{$color_evento};color:#fff;padding:2px 8px;border-radius:4px;font-size:11px;'>
