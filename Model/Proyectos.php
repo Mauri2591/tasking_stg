@@ -1518,8 +1518,29 @@ ORDER BY id_proyecto_cantidad_servicios ASC";
     tm_estados.estados_nombre AS estado,
     tm_estados.CatColor AS color_estado,
     pm_concat.id_pm_calidad AS id_pm_calidad,
-
-    COALESCE(
+    s.sector_nombre,
+    s.sector_id,
+    tsc.cats_nom,
+    tp.pais_nombre,
+    pg.id AS id_proyecto_gestionado,
+    pg.cat_id,
+    pg.estados_id,
+    IF(proyecto_rechequeo.id,'SI','NO') AS rechequeo,
+(
+    SELECT CONCAT(
+        (SELECT COUNT(*) FROM proyecto_recurrencia prx 
+         WHERE prx.id_proyecto_cantidad_servicios = pcs.id 
+           AND prx.est = 1 
+           AND prx.id <= pg.id_proyecto_recurrencia),
+        '/',
+        (SELECT COUNT(*) FROM proyecto_recurrencia prx 
+         WHERE prx.id_proyecto_cantidad_servicios = pcs.id 
+           AND prx.est = 1)
+    )
+    FROM DUAL
+    WHERE pg.id_proyecto_recurrencia IS NOT NULL
+) AS posicion_recurrencia,
+ COALESCE(
         pm_concat.pm_calidad_nombres,
         GROUP_CONCAT(
             DISTINCT CONCAT(
@@ -1528,25 +1549,10 @@ ORDER BY id_proyecto_cantidad_servicios ASC";
             )
             SEPARATOR ',<br>'
         )
-    ) AS creador_proy,  
-
-    s.sector_nombre,
-    s.sector_id,
-    tsc.cats_nom,
-    tp.pais_nombre,
-    pg.id AS id_proyecto_gestionado,
-    pg.cat_id,
-    pg.estados_id,
-    proyecto_recurrencia.posicion_recurrencia,
+    ) AS creador_proy,
     pg.titulo,
     prio.prioridad AS prioridad,
     prio.prioridad AS prioridad_nom,
-
-    CASE 
-        WHEN proyecto_rechequeo.id_proyecto_gestionado IS NOT NULL THEN 'SI'
-        ELSE 'NO'
-    END AS rechequeo,
-
     GROUP_CONCAT(
         CONCAT(
             UPPER(LEFT(uas.usu_nom, 1)),
