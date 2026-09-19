@@ -943,7 +943,7 @@ class Reportes
             $fecha_fmt   = $fecha_parts[0] ?? $row['fecha'];
             $hora_fmt    = $fecha_parts[1] ?? '';
 
-            $posicion_recurrencia=($row['posicion_recurrencia'] != null || $row['posicion_recurrencia'] != '') ? ' - '.$row['posicion_recurrencia'] : '';
+            $posicion_recurrencia=($row['posicion_recurrencia'] != null || $row['posicion_recurrencia'] != '') ? ' Recurrente Si - '.$row['posicion_recurrencia'] : '';
             $filas .= "
             <tr>
                 <td style=text-align:center>{$row['refProy']}</td>
