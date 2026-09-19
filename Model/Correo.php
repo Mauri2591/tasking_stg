@@ -236,24 +236,23 @@ class Correo extends Conexion
         $cliente  = $datos->cliente  ?: 'N/A';
 
         $conn = $this->get_conexion();
-        $sql  = "SELECT descripciones_proyecto.id, 
-        descripciones_proyecto.carpeta_documentos_proy, 
-        descripciones_proyecto.documento, 
-        tm_categoria.cat_nom AS producto,
-        tm_subcategoria.cats_nom AS tipo,
-        proyecto_gestionado.refProy AS referencia,
-        clientes.client_rs AS cliente,
-        tm_usuario.usu_correo
-    FROM descripciones_proyecto 
+        $sql  = "SELECT 
+            descripciones_proyecto.id, 
+            descripciones_proyecto.carpeta_documentos_proy, 
+            descripciones_proyecto.documento, 
+            tm_categoria.cat_nom AS producto,
+            tm_subcategoria.cats_nom AS tipo,
+            proyecto_gestionado.refProy AS referencia,
+            clientes.client_rs AS cliente
+        FROM descripciones_proyecto 
         INNER JOIN proyecto_gestionado ON proyecto_gestionado.id = descripciones_proyecto.id_proyecto_gestionado
         INNER JOIN tm_categoria ON tm_categoria.cat_id = proyecto_gestionado.cat_id
         INNER JOIN proyecto_cantidad_servicios ON proyecto_cantidad_servicios.id = proyecto_gestionado.id_proyecto_cantidad_servicios
         INNER JOIN proyectos ON proyectos.proy_id = proyecto_cantidad_servicios.proy_id
         INNER JOIN clientes ON clientes.client_id = proyectos.client_id
-        LEFT JOIN usuario_proyecto ON usuario_proyecto.id_proyecto_gestionado = proyecto_gestionado.id
-        LEFT JOIN tm_usuario ON usuario_proyecto.usu_asignado = tm_usuario.usu_id
-        INNER JOIN tm_subcategoria ON tm_subcategoria.cats_id=proyecto_gestionado.cats_id
+        INNER JOIN tm_subcategoria ON tm_subcategoria.cats_id = proyecto_gestionado.cats_id
         WHERE descripciones_proyecto.id_proyecto_gestionado = :id
+        AND TRIM(descripciones_proyecto.documento) != ''
         ORDER BY descripciones_proyecto.id DESC 
         LIMIT 1";
         $stmt = $conn->prepare($sql);
