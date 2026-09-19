@@ -15,11 +15,11 @@
                                 <div class="row g-3">
                                     <div class="col-md-6">
                                         <label class="form-label fw-semibold">Desde</label>
-                                        <input type="date" name="desde" class="form-control form-control-sm">
+                                        <input type="date" name="desde" id="inputDesde" class="form-control form-control-sm">
                                     </div>
                                     <div class="col-md-6">
                                         <label class="form-label fw-semibold">Hasta</label>
-                                        <input type="date" name="hasta" class="form-control form-control-sm">
+                                        <input type="date" name="hasta" id="inputHasta" class="form-control form-control-sm">
                                     </div>
                                 </div>
                                 <div class="mt-4 d-flex justify-content-end gap-2">
