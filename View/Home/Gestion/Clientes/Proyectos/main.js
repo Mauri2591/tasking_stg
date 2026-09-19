@@ -285,6 +285,59 @@ $(document).ready(function () {
         }
     });
 
+     tabla = $("#table_bitacora").DataTable({
+        "aProcessing": true,
+        "aServerSide": true,
+        "ordering": true, //  respetar el ORDER BY del SQL
+        "lengthChange": false, //  corregido el typo
+        dom: 'Bfrtip',
+        "searching": true,
+        lenghtChange: false,
+        colReorder: true,
+        buttons: [
+            'copyHtml5',
+            'excelHtml5',
+            'csvHtml5',
+            'pdfHtml5'
+        ],
+        "ajax": {
+            url: "../../../../../Controller/ctrProyectos.php?proy=get_proyectos_bitacora",
+            type: "post",
+            dataType: "json",
+            data: {},
+            error: function (e) {}
+        },
+        "bDestroy": true,
+        "responsive": true,
+        "bInfo": true,
+        "iDisplayLength": 13, //cantidad de tuplas o filas a mostrar
+        "autoWith": false,
+        "language": {
+            "sProcessing": "Procesando..",
+            "sLengthMenu": "Mostrar _MENU_ registros",
+            "sZeroRecords": "No se encontraron resultados..",
+            "sEmptyTable": "Ninguna tarea disponible en esta tabla",
+            "sInfo": "Mostrando un total de _TOTAL_ registros",
+            "sInfoEmpty": "Mostrando un total de 0 registros",
+            "sInfoFiltered": "(Filtrado de un total de _MAX_ registros)",
+            "sInfoPostFix": "",
+            "sSearch": "Buscar: ",
+            "sUrl": "",
+            "sInfoThousands": ",",
+            "sLoadingRecords": "Cargando",
+            "oPaginate": {
+                "sFirst": "Primero",
+                "sLast": "Ùltimo",
+                "sNext": "Siguiente",
+                "sPrevious": "Anterior"
+            },
+            "oAria": {
+                "sSortAscending": ":Activar para ordenar la columna de manera ascendiente",
+                "sSortDescending": ":Activar para ordenar la columna de manera descendiente"
+            }
+        }
+    });
+
     tabla = $("#table_proyectos_en_proceso").DataTable({
         "aProcessing": true,
         "aServerSide": true,

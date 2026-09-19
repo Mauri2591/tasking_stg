@@ -1363,8 +1363,9 @@ ORDER BY id_proyecto_cantidad_servicios ASC";
     DATE_FORMAT(pg.fech_fin, '%d-%m-%Y') AS fech_fin,
     p.cantidad_servicios, 
     c.client_rs, 
-
-    pm_concat.id_pm_calidad AS id_pm_calidad,  --  FIX
+    tm_estados.estados_nombre AS estado,
+    tm_estados.CatColor AS color_estado,
+    pm_concat.id_pm_calidad AS id_pm_calidad,
 
     COALESCE(
         pm_concat.pm_calidad_nombres,
@@ -1451,6 +1452,8 @@ LEFT JOIN proyecto_rechequeo
 LEFT JOIN proyecto_recurrencia 
     ON pg.id = proyecto_recurrencia.id_proyecto_gestionado
 
+INNER JOIN tm_estados ON tm_estados.estados_id=pg.estados_id
+
 LEFT JOIN (
     SELECT 
         tse.id_proyecto_gestionado,
@@ -1474,7 +1477,7 @@ ON pm_concat.id_proyecto_gestionado = pg.id
 
 WHERE 
     pcs.est = 1 
-    AND (pg.estados_id = 1 OR pg.estados_id = 2)
+    AND (pg.estados_id = 1 OR pg.estados_id = 2 OR pg.estados_id = 3 OR pg.estados_id = 14)
 GROUP BY 
     pcs.id,
     pcs.proy_id, 

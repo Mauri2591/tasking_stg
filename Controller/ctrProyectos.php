@@ -1929,6 +1929,53 @@ switch ($_GET['proy']) {
         echo json_encode($results);
         break;
 
+    case 'get_proyectos_bitacora':
+        $datos = $proyecto->get_proyectos_en_proceso_vista_calidad();
+        $data = array();
+        $colores = array("ETHICAL HACKING" => "bg-warning text-dark", "SOC" => "bg-dark text-light", "SASE" => "bg-info text-light", "CALIDAD Y PROCESOS" => "bg-light text-dark", "INCIDENT RESPONSE" => "bg-danger text-light");
+        $colores_prioridad = array("BAJO" => "badge border border-success text-success", "MEDIO" => "badge border border-warning text-warning", "ALTO" => "badge border border-danger text-danger");
+        foreach ($datos as $row) {
+            $sub_array = array();
+            $color_clase = isset($colores[$row['sector_nombre']]) ? $colores[$row['sector_nombre']] : 'bg-light text-dark';
+
+            $sub_array[] = '<span class="badge bg-light text-dark badge-wrap" data-placement="top" title="' . $row['fech_inicio'] . '">' . $row['fech_inicio'] . '</span>';
+            $sub_array[] = '<span class="badge bg-light text-dark badge-wrap" data-placement="top" title="' . $row['fech_fin'] . '">' . $row['fech_fin'] . '</span>';
+            $sub_array[] = $row['client_rs'];
+            $sub_array[] = empty($row['sector_nombre'])
+                ? '<span>Sin asignar</span>'
+                : '<span class="badge ' . $color_clase . '">' . $row['sector_nombre'] . '</span>';
+                
+            $sub_array[] = '<span class="badge bg-light text-dark badge-wrap" data-placement="top" title="' . $row['cat_nom'] . '">' . $row['cat_nom'] . '</span>';
+            $sub_array[] = '<span class="badge bg-light text-dark badge-wrap" data-placement="top" title="' . $row['cats_nom'] . '">' . $row['cats_nom'] . '</span>'; 
+                
+            $sub_array[] = $_SESSION['sector_id'] == "4" ? '<span class="badge bg-light text-dark" title="Asignarme como PM" type="button" onclick="asignarPm(' . $row['id_proyecto_gestionado'] . "," . $row['id_pm_calidad'] . ')">' . $row['creador_proy'] . '</span>' : '<span class="badge bg-light text-dark">' . $row['creador_proy'] . '</span>';
+            $sub_array[] = $row['posicion_recurrencia'] == '' ? '-' : '<span class="badge bg-success">' . $row['posicion_recurrencia'] . '</span>';
+            $sub_array[] = $row['rechequeo'] == 'NO' ? '-' : '<span class="badge bg-danger">SI</span>';
+           
+            $sub_array[] = $row['hs_dimensionadas'] == "" ? "Sin hs" : '<span class="badge bg-light text-dark">' . $row['hs_dimensionadas'] . '</span';
+$sub_array[] = '<span style="background-color:' . $row['color_estado'] . '" class="badge text-light">' . $row['estado'] . '</span>';
+            $color_clase = isset($colores[$row['sector_nombre']]) ? $colores[$row['sector_nombre']] : 'bg-light text-dark';
+            $sub_array[] = '<div class="btn-group btn-group-sm p-0" role="group" aria-label="Button group with nested dropdown">
+                                <div class="btn-group p-0" role="group">
+                                    <button id="btnGroupDrop1" type="button" class="btn btn-primary btn-sm dropdown-toggle py-0" data-bs-toggle="dropdown" aria-expanded="false">
+                                        Estado
+                                    </button>
+                                    <ul class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+                                        <li><a class="dropdown-item" type="button" onclick="cambiar_a_borrador(' . $row['id_proyecto_gestionado'] . ')">Borrador</a></li>
+                                    </ul>
+                                </div>
+                            </div>';
+            $data[] = $sub_array;
+        }
+        $results = array(
+            "sEcho" => 1,
+            "iTotalRecords" => count($data),
+            "iTotalDisplayRecords" => count($data),
+            "aaData" => $data
+        );
+        echo json_encode($results);
+        break;
+
     case 'insert_nuevo_pm':
         $proyecto->insert_nuevo_pm($_POST['id_pm_calidad'], $_SESSION['usu_id'], $_POST['id_proyecto_gestionado']);
         break;

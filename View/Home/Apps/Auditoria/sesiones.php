@@ -74,9 +74,6 @@ if (isset($_SESSION['usu_id'])) {
 
                 document.getElementById('inputDesde').value = primerDia;
                 document.getElementById('inputHasta').value = ultimoDiaFormato;
-
-                document.getElementById('inputDesde').value = primerDia;
-                document.getElementById('inputHasta').value = ultimoDiaFormato;
             });
         }
 

@@ -9,7 +9,6 @@ if (isset($_SESSION['usu_id'])) {
 
     Headers::get_cors();
 ?>
-
     <?php
     include_once __DIR__ . "/../../../Public/Template/head.php";
     include_once __DIR__ . "/../../../Public/Template/main_content.php";
@@ -75,6 +74,12 @@ if (isset($_SESSION['usu_id'])) {
                             <a class="nav-link" data-bs-toggle="tab" href="#tab_cross_sell_sectores" role="tab" aria-selected="false">
                                 <span class="d-block d-sm-none"><i class="mdi mdi-account"></i></span>
                                 <span class="d-none d-sm-block">Cross-Sell</span>
+                            </a>
+                        </li>
+                         <li class="nav-item">
+                            <a class="nav-link" data-bs-toggle="tab" href="#tab_bitacora" role="tab" aria-selected="false">
+                                <span class="d-block d-sm-none"><i class="mdi mdi-account"></i></span>
+                                <span class="d-none d-sm-block">Bitacora</span>
                             </a>
                         </li>
                         <li class="nav-item">
@@ -280,6 +285,45 @@ if (isset($_SESSION['usu_id'])) {
                                             <td style="width: 30px;"></td>
                                             <td style="width: 30px;"></td>
                                             <td style="width: 15px;"></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <p style="font-style: italic;" class="text-center mt-5 mx-3 text-danger">Este reporte identifica <strong>Clientes</strong> con servicios contratados en el <strong>año en curso (<?php echo date('Y') ?>) </strong> que aún no tienen cobertura completa en todos los sectores <strong>(Ethical Hacking</strong>, <strong>SOC</strong> y <strong>SASE)</strong>, representando una oportunidad de expansión comercial.</p>
+                            </div>
+                        </div>
+
+                         <div class="tab-pane" id="tab_bitacora" role="tabpanel">
+                            <div class="card card-body">
+                                <table id="table_bitacora" style="text-align: center; width: 100%;">
+                                    <thead style="text-align: center;">
+                                        <tr style="text-align: center;">
+                                            <th style="width: 300px;text-align: center;">INICIO</th>
+                                            <th style="width: 300px;text-align: center;">FIN</th>
+                                            <th style="width: 500px;text-align: center;">CLIENTE</th>
+                                            <th style="width: 300px;text-align: center;">SECTOR</th>
+                                            <th style="width: 300px;text-align: center;">PRODUCTO</th>
+                                            <th style="width: 300px;text-align: center;">TIPO</th>
+                                            <th style="width: 300px;text-align: center;">PM</th>
+                                            <th style="width: 300px;text-align: center;">RECURRENCIA</th>
+                                            <th style="width: 300px;text-align: center;">RECHEQ</th>
+                                            <th style="width: 300px;text-align: center;">HORAS</th>
+                                            <th style="width: 300px;text-align: center;">ESTADO</th>
+                                            <th style="width: 300px;text-align: center;">ACCION</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody style="text-align: center;">
+                                        <tr style="text-align: center;">
+                                            <td style="width: 300px;"></td>
+                                            <td style="width: 30px;"></td>
+                                            <td style="width: 30px;"></td>
+                                            <td style="width: 30px;"></td>
+                                            <td style="width: 15px;"></td>
+                                            <td style="width: 300px;"></td>
+                                            <td style="width: 300px;"></td>
+                                            <td style="width: 300px;"></td>
+                                            <td style="width: 300px;"></td>
+                                            <td style="width: 300px;"></td>
+                                            <td style="width: 300px;"></td>
                                         </tr>
                                     </tbody>
                                 </table>
