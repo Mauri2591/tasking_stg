@@ -1981,19 +1981,15 @@ switch ($_GET['proy']) {
         foreach ($datos as $row) {
             $sub_array = array();
             $color_clase = isset($colores[$row['sector_nombre']]) ? $colores[$row['sector_nombre']] : 'bg-light text-dark';
-            $sub_array[] = $row['fech_inicio'] == '' ? 'Sin fecha' : '<span class="badge bg-light text-dark">' . $row['fech_inicio'] . '</span>';
-            $sub_array[] = $row['fech_fin'] == '' ? 'Sin fecha' : '<span class="badge bg-light text-dark">' . $row['fech_fin'] . '</span>';
+            $sub_array[] = $row['fech_inicio'];
+            $sub_array[] = $row['fech_fin'];
             $sub_array[] = $row['titulo'];
             $sub_array[] = $_SESSION['sector_id'] == "4" ? '<span class="badge bg-light text-dark" title="Asignarme como PM" type="button" onclick="asignarPm(' . $row['id_proyecto_gestionado'] . "," . $row['id_pm_calidad'] . ')">' . $row['creador_proy'] . '</span>' : '<span class="badge bg-light text-dark">' . $row['creador_proy'] . '</span>';
             $sub_array[] = empty($row['sector_nombre'])
                 ? '<span>Sin asignar</span>'
                 : '<span class="badge ' . $color_clase . '">' . $row['sector_nombre'] . '</span>';
-            $sub_array[] = strlen($row['categoria']) > 10
-                ? '<span class="badge bg-light text-dark" data-placement="top" title="' . $row['categoria'] . '">' . substr($row['categoria'], 0, 10) . '...' . '</span>'
-                : '<span class="badge bg-light text-dark" data-placement="top" title="' . $row['categoria'] . '">' . $row['categoria'] . '</span>';
-            $sub_array[] = strlen($row['cats_nom']) > 10
-                ? '<span class="badge bg-light text-dark" data-placement="top" title="' . $row['cats_nom'] . '">' . substr($row['cats_nom'], 0, 10) . '...' . '</span>'
-                : '<span class="badge bg-light text-dark" data-placement="top" title="' . $row['cats_nom'] . '">' . $row['cats_nom'] . '</span>';
+            $sub_array[] = '<span class="badge bg-light text-dark" data-placement="top" title="' . $row['categoria'] . '">' .$row['categoria']. '</span>';
+            $sub_array[] ='<span class="badge bg-light text-dark" data-placement="top" title="' . $row['cats_nom'] . '">' .$row['cats_nom']. '</span>';
             $sub_array[] = $row['hs_dimensionadas'] == "" ? "Sin hs" : '<span class="badge bg-light text-dark">' . $row['hs_dimensionadas'] . '</span';
             switch ($_SESSION['sector_id']) {
                 case '1':
