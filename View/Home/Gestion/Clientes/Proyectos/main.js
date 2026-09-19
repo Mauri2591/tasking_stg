@@ -310,7 +310,7 @@ $(document).ready(function () {
         "bDestroy": true,
         "responsive": true,
         "bInfo": true,
-        // "iDisplayLength": 13, //cantidad de tuplas o filas a mostrar
+        "iDisplayLength": 20, //cantidad de tuplas o filas a mostrar
         "autoWith": false,
         "language": {
             "sProcessing": "Procesando..",
