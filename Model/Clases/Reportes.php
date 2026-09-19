@@ -993,7 +993,7 @@ class Reportes
                     table-layout: fixed;
                 }
                 thead tr { background-color: #405189; color: #fff; }
-                thead th { padding: 7px 6px; text-align: left; font-size: 11px; }
+                thead th { padding: 7px 6px; text-align: center; font-size: 11px; }
                 tbody td {
                     padding: 5px 6px;
                     border-bottom: 1px solid #dee2e6;
