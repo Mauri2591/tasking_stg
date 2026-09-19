@@ -285,58 +285,58 @@ $(document).ready(function () {
         }
     });
 
-     tabla = $("#table_bitacora").DataTable({
-        "aProcessing": true,
-        "aServerSide": true,
-        "ordering": true, //  respetar el ORDER BY del SQL
-        "lengthChange": false, //  corregido el typo
-        dom: 'Bfrtip',
-        "searching": true,
-        lenghtChange: false,
-        colReorder: true,
-        buttons: [
-            'copyHtml5',
-            'excelHtml5',
-            'csvHtml5',
-            'pdfHtml5'
-        ],
-        "ajax": {
-            url: "../../../../../Controller/ctrProyectos.php?proy=get_proyectos_bitacora",
-            type: "post",
-            dataType: "json",
-            data: {},
-            error: function (e) {}
+    tabla = $("#table_bitacora").DataTable({
+    "aProcessing": true,
+    "aServerSide": true,
+    "ordering": true,
+    "lengthChange": true,  // Cambiar a true
+    "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "Todas"]],  // Agregar esto
+    dom: 'lBfrtip',  // Agregar 'l' al inicio
+    "searching": true,
+    colReorder: true,
+    buttons: [
+        'copyHtml5',
+        'excelHtml5',
+        'csvHtml5',
+        'pdfHtml5'
+    ],
+    "ajax": {
+        url: "../../../../../Controller/ctrProyectos.php?proy=get_proyectos_bitacora",
+        type: "post",
+        dataType: "json",
+        data: {},
+        error: function (e) {}
+    },
+    "bDestroy": true,
+    "responsive": true,
+    "bInfo": true,
+    "iDisplayLength": 20,
+    "autoWith": false,
+    "language": {
+        "sProcessing": "Procesando..",
+        "sLengthMenu": "Mostrar _MENU_ registros",
+        "sZeroRecords": "No se encontraron resultados..",
+        "sEmptyTable": "Ninguna tarea disponible en esta tabla",
+        "sInfo": "Mostrando un total de _TOTAL_ registros",
+        "sInfoEmpty": "Mostrando un total de 0 registros",
+        "sInfoFiltered": "(Filtrado de un total de _MAX_ registros)",
+        "sInfoPostFix": "",
+        "sSearch": "Buscar: ",
+        "sUrl": "",
+        "sInfoThousands": ",",
+        "sLoadingRecords": "Cargando",
+        "oPaginate": {
+            "sFirst": "Primero",
+            "sLast": "Último",
+            "sNext": "Siguiente",
+            "sPrevious": "Anterior"
         },
-        "bDestroy": true,
-        "responsive": true,
-        "bInfo": true,
-        "iDisplayLength": 20, //cantidad de tuplas o filas a mostrar
-        "autoWith": false,
-        "language": {
-            "sProcessing": "Procesando..",
-            "sLengthMenu": "Mostrar _MENU_ registros",
-            "sZeroRecords": "No se encontraron resultados..",
-            "sEmptyTable": "Ninguna tarea disponible en esta tabla",
-            "sInfo": "Mostrando un total de _TOTAL_ registros",
-            "sInfoEmpty": "Mostrando un total de 0 registros",
-            "sInfoFiltered": "(Filtrado de un total de _MAX_ registros)",
-            "sInfoPostFix": "",
-            "sSearch": "Buscar: ",
-            "sUrl": "",
-            "sInfoThousands": ",",
-            "sLoadingRecords": "Cargando",
-            "oPaginate": {
-                "sFirst": "Primero",
-                "sLast": "Ùltimo",
-                "sNext": "Siguiente",
-                "sPrevious": "Anterior"
-            },
-            "oAria": {
-                "sSortAscending": ":Activar para ordenar la columna de manera ascendiente",
-                "sSortDescending": ":Activar para ordenar la columna de manera descendiente"
-            }
+        "oAria": {
+            "sSortAscending": ":Activar para ordenar la columna de manera ascendiente",
+            "sSortDescending": ":Activar para ordenar la columna de manera descendiente"
         }
-    });
+    }
+});
 
     tabla = $("#table_proyectos_en_proceso").DataTable({
         "aProcessing": true,
