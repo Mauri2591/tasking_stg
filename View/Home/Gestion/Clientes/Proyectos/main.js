@@ -286,57 +286,60 @@ $(document).ready(function () {
     });
 
     tabla = $("#table_bitacora").DataTable({
-    "aProcessing": true,
-    "aServerSide": true,
-    "ordering": true,
-    "lengthChange": true,  // Cambiar a true
-    "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, "Todas"]],  // Agregar esto
-    dom: 'lBfrtip',  // Agregar 'l' al inicio
-    "searching": true,
-    colReorder: true,
-    buttons: [
-        'copyHtml5',
-        'excelHtml5',
-        'csvHtml5',
-        'pdfHtml5'
-    ],
-    "ajax": {
-        url: "../../../../../Controller/ctrProyectos.php?proy=get_proyectos_bitacora",
-        type: "post",
-        dataType: "json",
-        data: {},
-        error: function (e) {}
-    },
-    "bDestroy": true,
-    "responsive": true,
-    "bInfo": true,
-    "iDisplayLength": 20,
-    "autoWith": false,
-    "language": {
-        "sProcessing": "Procesando..",
-        "sLengthMenu": "Mostrar _MENU_ registros",
-        "sZeroRecords": "No se encontraron resultados..",
-        "sEmptyTable": "Ninguna tarea disponible en esta tabla",
-        "sInfo": "Mostrando un total de _TOTAL_ registros",
-        "sInfoEmpty": "Mostrando un total de 0 registros",
-        "sInfoFiltered": "(Filtrado de un total de _MAX_ registros)",
-        "sInfoPostFix": "",
-        "sSearch": "Buscar: ",
-        "sUrl": "",
-        "sInfoThousands": ",",
-        "sLoadingRecords": "Cargando",
-        "oPaginate": {
-            "sFirst": "Primero",
-            "sLast": "Último",
-            "sNext": "Siguiente",
-            "sPrevious": "Anterior"
+        "aProcessing": true,
+        "aServerSide": true,
+        "ordering": true,
+        "lengthChange": true, // Cambiar a true
+        "lengthMenu": [
+            [10, 20, 50, -1],
+            [10, 20, 50, "Todas"]
+        ], // Agregar esto
+        dom: 'lBfrtip', // Agregar 'l' al inicio
+        "searching": true,
+        colReorder: true,
+        buttons: [
+            'copyHtml5',
+            'excelHtml5',
+            'csvHtml5',
+            'pdfHtml5'
+        ],
+        "ajax": {
+            url: "../../../../../Controller/ctrProyectos.php?proy=get_proyectos_bitacora",
+            type: "post",
+            dataType: "json",
+            data: {},
+            error: function (e) {}
         },
-        "oAria": {
-            "sSortAscending": ":Activar para ordenar la columna de manera ascendiente",
-            "sSortDescending": ":Activar para ordenar la columna de manera descendiente"
+        "bDestroy": true,
+        "responsive": true,
+        "bInfo": true,
+        "iDisplayLength": 20,
+        "autoWith": false,
+        "language": {
+            "sProcessing": "Procesando..",
+            "sLengthMenu": "Mostrar _MENU_ registros",
+            "sZeroRecords": "No se encontraron resultados..",
+            "sEmptyTable": "Ninguna tarea disponible en esta tabla",
+            "sInfo": "Mostrando un total de _TOTAL_ registros",
+            "sInfoEmpty": "Mostrando un total de 0 registros",
+            "sInfoFiltered": "(Filtrado de un total de _MAX_ registros)",
+            "sInfoPostFix": "",
+            "sSearch": "Buscar: ",
+            "sUrl": "",
+            "sInfoThousands": ",",
+            "sLoadingRecords": "Cargando",
+            "oPaginate": {
+                "sFirst": "Primero",
+                "sLast": "Último",
+                "sNext": "Siguiente",
+                "sPrevious": "Anterior"
+            },
+            "oAria": {
+                "sSortAscending": ":Activar para ordenar la columna de manera ascendiente",
+                "sSortDescending": ":Activar para ordenar la columna de manera descendiente"
+            }
         }
-    }
-});
+    });
 
     tabla = $("#table_proyectos_en_proceso").DataTable({
         "aProcessing": true,
@@ -2241,13 +2244,9 @@ function cambiar_a_borrador(id_proyecto_gestionado) {
             setTimeout(() => {
                 if ($.fn.DataTable.isDataTable('#table_proyectos_borrador')) {
                     $('#table_proyectos_borrador').DataTable().ajax.reload(null, false);
+                    $('#table_bitacora').DataTable().ajax.reload(null, false);
                 }
             }, 500);
-            // $('#table_proyectos_nuevos_eh_pentest').DataTable().ajax.reload(null, false);
-            // $('#table_proyectos_borrador').DataTable().ajax.reload(null, false);
-            // $('#table_proyectos_abiertos_eh_wireless').DataTable().ajax.reload(null, false);
-            // $('#table_proyectos_nuevos_eh_wireless').DataTable().ajax.reload(null, false);
-            // $('#table_proyectos_en_proceso').DataTable().ajax.reload(null, false);
             Swal.fire({
                 icon: "success",
                 title: "Bien",
@@ -2372,8 +2371,18 @@ function cambiar_proy_a_borrador(id_proyecto_gestionado) {
                     $('#table_proyectos_realizados').DataTable().ajax.reload(null, false);
                     $('#table_proyectos_total').DataTable().ajax.reload(null, false);
                     $('#tablelHistorialProyectosCalidad').DataTable().ajax.reload(null, false);
+                    $('#table_bitacora').DataTable().ajax.reload(null, false);
                 }
+            }, 500);
 
+             setTimeout(() => {
+                if ($.fn.DataTable.isDataTable('#table_bitacora')) {
+                    $('#table_bitacora').DataTable().ajax.reload(null, false);
+                     $('#table_proyectos_borrador').DataTable().ajax.reload(null, false);
+                    $('#table_proyectos_realizados').DataTable().ajax.reload(null, false);
+                    $('#table_proyectos_total').DataTable().ajax.reload(null, false);
+                    $('#tablelHistorialProyectosCalidad').DataTable().ajax.reload(null, false);
+                }
             }, 500);
 
         }
@@ -2416,11 +2425,16 @@ function cambiar_proy_a_nuevo(id_proyecto_gestionado) {
                 if ($.fn.DataTable.isDataTable('#table_proyectos_en_proceso')) {
                     $('#table_proyectos_en_proceso').DataTable().ajax.reload(null, false);
                 }
+                if ($.fn.DataTable.isDataTable('#table_bitacora')) {
+                    $('#table_bitacora').DataTable().ajax.reload(null, false);
+                    $('#table_proyectos_en_proceso').DataTable().ajax.reload(null, false);
+                }
                 if ($.fn.DataTable.isDataTable('#table_proyectos_borrador')) {
                     $('#table_proyectos_borrador').DataTable().ajax.reload(null, false);
                     $('#table_proyectos_realizados').DataTable().ajax.reload(null, false);
                     $('#table_proyectos_total').DataTable().ajax.reload(null, false);
                     $('#tablelHistorialProyectosCalidad').DataTable().ajax.reload(null, false);
+                    $('#table_bitacora').DataTable().ajax.reload(null, false);
                 }
 
             }, 500);
@@ -2458,6 +2472,7 @@ function cerrar_proyecto(id_proyecto_gestionado) {
                 if ($.fn.DataTable.isDataTable('#table_proyectos_realizados')) {
                     $('#table_proyectos_realizados').DataTable().ajax.reload(null, false);
                     $('#table_proyectos_borrador').DataTable().ajax.reload(null, false);
+                    $('#table_bitacora').DataTable().ajax.reload(null, false);
                 }
             }, 500);
 
@@ -3006,6 +3021,13 @@ $("#btnPasarRecurrenteABorrador").off("click").on("click", function () {
         error: function (xhr, status, error) {
             console.error("Error al insertar:", error);
         }
+    });
+});
+
+document.querySelectorAll('[data-bs-toggle="tab"]').forEach(tab => {
+    tab.addEventListener('show.bs.tab', function(e) {
+        let url = this.getAttribute('href');
+        window.location.href = url;
     });
 });
 

@@ -223,7 +223,7 @@ if (isset($_SESSION['usu_id'])) {
                                         <div class="col-xl-5 bg-success" style="border:.1rem solid gray;margin-right: 2px; border-radius: 5px;">
                                             <div class="d-flex align-items-center">
                                                 <div class="d-flex align-items-center mt-1">
-                                                    <span style="width: 4.5rem;" id="estadoProyecto" class="badge mx-1 text-primary bg-light"></span>
+                                                    <span class="p-0 border border-light badge bg-light"><span style="width: 4.5rem; font-size: .6rem;" id="estadoProyecto" class="badge mx-1 text-light"></span></span>
                                                     <span style="width: 3.5rem;" id="prioridad" class="badge mx-1" style="width: 3rem;"></span>
                                                     <span style="width: 10rem;" id="titulo_categoria"
                                                         class="badge bg-light text-dark mx-1"></span>
@@ -636,42 +636,7 @@ if (isset($_SESSION['usu_id'])) {
                     $("#referencia_proy").text(data.refProy)
                     $("#dimensionamiento").text(data.dimensionamiento)
                     $("#estadoProyecto").text(data.estado)
-                    switch (data.estado) {
-                        case 'BORRADOR':
-                            $("#estadoProyecto").addClass('badge mx-1 text-dark bg-light')
-                            break;
-
-                        case 'NUEVO':
-                            $("#estadoProyecto").addClass('badge mx-1 fw-bold text-info border border-info bg-light')
-                            break;
-
-                        case 'ABIERTO':
-                            $("#estadoProyecto").addClass('badge mx-1 fw-bold text-info border border-info bg-light')
-                            break;
-
-                        case 'REALIZADO':
-                            $("#estadoProyecto").addClass('badge mx-1 fw-bold text-success border border-success bg-light')
-                            break;
-
-                        case 'CERRADO CALIDAD':
-                            $("#estadoProyecto").addClass('badge mx-1 fw-bold text-success border border-success bg-light')
-                            break;
-
-                        case 'FIN SIN IMPLEM':
-                            $("#estadoProyecto").addClass('badge mx-1 text-dark bg-light')
-                            break;
-
-                        case 'ELIMINADO':
-                            $("#estadoProyecto").addClass('badge mx-1 text-danger bg-light border border-danger')
-                            break;
-
-                        case 'CANCELADO':
-                            $("#estadoProyecto").addClass('badge mx-1 text-danger bg-light border border-danger')
-                            break;
-
-                        default:
-                            break;
-                    }
+                    document.getElementById("estadoProyecto").style.backgroundColor = data.color_estado;
 
                     if (data.estado == 'REALIZADO' || data.estado == 'CERRADO CALIDAD')
 

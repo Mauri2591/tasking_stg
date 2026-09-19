@@ -1868,17 +1868,7 @@ switch ($_GET['proy']) {
                     break;
             }
 
-            switch ((string) $row['estados_id']) {
-                case '1':
-                    $sub_array[] = '<span class="badge border border-success text-dark">NUEVO</span>';
-                    break;
-                case '2':
-                    $sub_array[] = '<span class="badge bg-success text-light">ABIERTO</span>';
-                    break;
-                default:
-                    $sub_array[] = '<span class="badge bg-light text-muted">N/A</span>';
-                    break;
-            }
+            $sub_array[] = '<span style="background-color:' . $row['color_estado'] . '" class="badge text-light">' . $row['estado'] . '</span>';
 
             $color_clase = isset($colores[$row['sector_nombre']]) ? $colores[$row['sector_nombre']] : 'bg-light text-dark';
             $sub_array[] = empty($row['sector_nombre'])
@@ -1930,7 +1920,7 @@ switch ($_GET['proy']) {
         break;
 
     case 'get_proyectos_bitacora':
-        $datos = $proyecto->get_proyectos_en_proceso_vista_calidad();
+        $datos = $proyecto->get_proyectos_bitacora();
         $data = array();
         $colores = array("ETHICAL HACKING" => "bg-warning text-dark", "SOC" => "bg-dark text-light", "SASE" => "bg-info text-light", "CALIDAD Y PROCESOS" => "bg-light text-dark", "INCIDENT RESPONSE" => "bg-danger text-light");
         $colores_prioridad = array("BAJO" => "badge border border-success text-success", "MEDIO" => "badge border border-warning text-warning", "ALTO" => "badge border border-danger text-danger");
@@ -1961,8 +1951,9 @@ switch ($_GET['proy']) {
                                         Estado
                                     </button>
                                     <ul class="dropdown-menu" aria-labelledby="btnGroupDrop1">
-                                        <li><a class="dropdown-item" type="button" onclick="cambiar_a_borrador(' . $row['id_proyecto_gestionado'] . ')">Borrador</a></li>
-                                    </ul>
+                                       <li><a class="dropdown-item" type="button" onclick="cambiar_proy_a_nuevo(' . $row['id_proyecto_gestionado'] . ')">Nuevo</a></li>
+                                        <li><a class="dropdown-item" type="button" onclick="cambiar_proy_a_borrador(' . $row['id_proyecto_gestionado'] . ')">Borrador</a></li>
+                                        <li><a class="dropdown-item" type="button" onclick="cerrar_proyecto(' . $row['id_proyecto_gestionado'] . ')">Cerrar proyecto</a></li>                                    </ul>
                                 </div>
                             </div>';
             $data[] = $sub_array;
