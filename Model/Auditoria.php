@@ -55,7 +55,7 @@ class Auditoria extends Conexion
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-   public function insert_audit_estados_proyecto(string $id_proyecto_gestionado, int $estados_id, int $usu_id, int $sector_id)
+   public function insert_audit_estados_proyecto(int $id_proyecto_gestionado, int $estados_id, int $usu_id, int $sector_id)
         {
             $conn = parent::get_conexion();
             
