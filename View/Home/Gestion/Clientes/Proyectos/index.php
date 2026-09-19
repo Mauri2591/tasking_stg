@@ -85,7 +85,7 @@ if (isset($_SESSION['usu_id'])) {
                         <li class="nav-item">
                             <a class="nav-link" data-bs-toggle="tab" href="#tab_total" role="tab" aria-selected="false">
                                 <span class="d-block d-sm-none"><i class="mdi mdi-account"></i></span>
-                                <span class="d-none d-sm-block">Total</span>
+                                <span class="d-none d-sm-block">Total Clientes</span>
                             </a>
                         </li>
                     </ul>
