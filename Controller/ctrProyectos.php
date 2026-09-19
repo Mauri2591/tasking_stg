@@ -1941,6 +1941,8 @@ switch ($_GET['proy']) {
             $sub_array[] = '<span class="badge bg-light text-dark badge-wrap" data-placement="top" title="' . $row['fech_inicio'] . '">' . $row['fech_inicio'] . '</span>';
             $sub_array[] = '<span class="badge bg-light text-dark badge-wrap" data-placement="top" title="' . $row['fech_fin'] . '">' . $row['fech_fin'] . '</span>';
             $sub_array[] = $row['client_rs'];
+            $sub_array[] = $row['posicion_recurrencia'] == '' ? '-' : '<span class="badge bg-success">' . $row['posicion_recurrencia'] . '</span>';
+            $sub_array[] = $row['rechequeo'] == 'NO' ? '-' : '<span class="badge bg-danger">SI</span>';
             $sub_array[] = empty($row['sector_nombre'])
                 ? '<span>Sin asignar</span>'
                 : '<span class="badge ' . $color_clase . '">' . $row['sector_nombre'] . '</span>';
@@ -1949,11 +1951,9 @@ switch ($_GET['proy']) {
             $sub_array[] = '<span class="badge bg-light text-dark badge-wrap" data-placement="top" title="' . $row['cats_nom'] . '">' . $row['cats_nom'] . '</span>'; 
                 
             $sub_array[] = $_SESSION['sector_id'] == "4" ? '<span class="badge bg-light text-dark" title="Asignarme como PM" type="button" onclick="asignarPm(' . $row['id_proyecto_gestionado'] . "," . $row['id_pm_calidad'] . ')">' . $row['creador_proy'] . '</span>' : '<span class="badge bg-light text-dark">' . $row['creador_proy'] . '</span>';
-            $sub_array[] = $row['posicion_recurrencia'] == '' ? '-' : '<span class="badge bg-success">' . $row['posicion_recurrencia'] . '</span>';
-            $sub_array[] = $row['rechequeo'] == 'NO' ? '-' : '<span class="badge bg-danger">SI</span>';
            
             $sub_array[] = $row['hs_dimensionadas'] == "" ? "Sin hs" : '<span class="badge bg-light text-dark">' . $row['hs_dimensionadas'] . '</span';
-$sub_array[] = '<span style="background-color:' . $row['color_estado'] . '" class="badge text-light">' . $row['estado'] . '</span>';
+            $sub_array[] = '<span style="background-color:' . $row['color_estado'] . '" class="badge text-light">' . $row['estado'] . '</span>';
             $color_clase = isset($colores[$row['sector_nombre']]) ? $colores[$row['sector_nombre']] : 'bg-light text-dark';
             $sub_array[] = '<div class="btn-group btn-group-sm p-0" role="group" aria-label="Button group with nested dropdown">
                                 <div class="btn-group p-0" role="group">
