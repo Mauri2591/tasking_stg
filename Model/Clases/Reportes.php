@@ -946,7 +946,7 @@ class Reportes
             $filas .= "
             <tr>
                 <td style=text-align:center>{$row['refProy']}</td>
-                <td style=text-align:center>{$row['titulo']}</td>
+                <td style=text-align:justify>{$row['titulo']}</td>
                 <td style=text-align:center>
                     <span style='background:{$color_evento};color:#fff;padding:2px 8px;border-radius:4px;font-size:11px;'>
                         {$row['evento']}
@@ -954,7 +954,7 @@ class Reportes
                 </td>
                 <td style=text-align:center>{$row['sector_nombre']}</td>
                 <td style=text-align:center>{$fecha_fmt}<br>{$hora_fmt}</td>
-                <td style=text-align:center>" . strtolower($row['usu_correo']) . "</td>
+                <td style=text-align:justify>" . strtolower($row['usu_correo']) . "</td>
             </tr>";
         }
 
@@ -1027,12 +1027,12 @@ class Reportes
             <table>
                 <thead>
                     <tr>
-                        <th style='width:10%'>Referencia</th>
-                        <th style='width:30%'>Proyecto</th>
-                        <th style='width:12%'>Estado</th>
-                        <th style='width:13%'>Sector</th>
-                        <th style='width:10%'>Fecha y hora</th>
-                        <th style='width:20%'>Usuario</th>
+                        <th style='width:10%; text-alight:center'>Referencia</th>
+                        <th style='width:30%; text-alight:center'>Proyecto</th>
+                        <th style='width:12%; text-alight:center'>Estado</th>
+                        <th style='width:13%; text-alight:center'>Sector</th>
+                        <th style='width:10%; text-alight:center'>Fecha y hora</th>
+                        <th style='width:20%; text-alight:center'>Usuario</th>
                     </tr>
                 </thead>
                 <tbody>
