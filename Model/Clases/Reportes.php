@@ -945,16 +945,16 @@ class Reportes
 
             $filas .= "
             <tr>
-                <td>{$row['refProy']}</td>
-                <td>{$row['titulo']}</td>
-                <td>
+                <td style=text-align:center>{$row['refProy']}</td>
+                <td style=text-align:center>{$row['titulo']}</td>
+                <td style=text-align:center>
                     <span style='background:{$color_evento};color:#fff;padding:2px 8px;border-radius:4px;font-size:11px;'>
                         {$row['evento']}
                     </span>
                 </td>
-                <td>{$row['sector_nombre']}</td>
-                <td>{$fecha_fmt}<br>{$hora_fmt}</td>
-                <td>" . strtolower($row['usu_correo']) . "</td>
+                <td style=text-align:center>{$row['sector_nombre']}</td>
+                <td style=text-align:center>{$fecha_fmt}<br>{$hora_fmt}</td>
+                <td style=text-align:center>" . strtolower($row['usu_correo']) . "</td>
             </tr>";
         }
 
@@ -1031,7 +1031,7 @@ class Reportes
                         <th style='width:30%'>Proyecto</th>
                         <th style='width:12%'>Estado</th>
                         <th style='width:13%'>Sector</th>
-                        <th style='width:10%'>Fecha</th>
+                        <th style='width:10%'>Fecha y hora</th>
                         <th style='width:20%'>Usuario</th>
                     </tr>
                 </thead>
