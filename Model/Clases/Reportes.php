@@ -952,10 +952,11 @@ class Reportes
                         {$row['evento']}
                     </span>
                 </td>
+                <td>{$row['sector_nombre']}</td>
                 <td>{$fecha_fmt}<br>{$hora_fmt}</td>
                 <td>" . strtolower($row['usu_correo']) . "</td>
                 <td style='text-align:center'>{$estado_badge}</td>
-                <td>{$row['sector_nombre']}</td>
+
             </tr>";
         }
 

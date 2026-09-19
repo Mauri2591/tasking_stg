@@ -55,20 +55,37 @@ class Auditoria extends Conexion
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function insert_audit_estados_proyecto(string $id_proyecto_gestionado, int $estados_id, int $usu_id, int $sector_id)
-    {
-        $conn = parent::get_conexion();
-        $sql = "INSERT IGNORE INTO audit_estados_proyecto 
-                (id_proyecto_gestionado, estados_id, usu_id, sector_id, fecha) 
-            VALUES 
-                (:id_proyecto_gestionado, :estados_id, :usu_id, :sector_id, NOW())";
-        $stmt = $conn->prepare($sql);
-        $stmt->bindValue(":id_proyecto_gestionado", $id_proyecto_gestionado, PDO::PARAM_INT);
-        $stmt->bindValue(":estados_id", $estados_id, PDO::PARAM_INT);
-        $stmt->bindValue(":usu_id", $usu_id, PDO::PARAM_INT);
-        $stmt->bindValue(":sector_id", $sector_id, PDO::PARAM_INT);
-        $stmt->execute();
-    }
+   public function insert_audit_estados_proyecto(string $id_proyecto_gestionado, int $estados_id, int $usu_id, int $sector_id)
+        {
+            $conn = parent::get_conexion();
+            
+            // Verificar si ya existe antes de insertar
+            $sql_check = "SELECT id FROM audit_estados_proyecto 
+                        WHERE id_proyecto_gestionado = :id_proyecto_gestionado 
+                        AND estados_id = :estados_id 
+                        AND usu_id = :usu_id 
+                        AND sector_id = :sector_id";
+            $stmt_check = $conn->prepare($sql_check);
+            $stmt_check->bindValue(":id_proyecto_gestionado", $id_proyecto_gestionado, PDO::PARAM_INT);
+            $stmt_check->bindValue(":estados_id", $estados_id, PDO::PARAM_INT);
+            $stmt_check->bindValue(":usu_id", $usu_id, PDO::PARAM_INT);
+            $stmt_check->bindValue(":sector_id", $sector_id, PDO::PARAM_INT);
+            $stmt_check->execute();
+            
+            // Solo insertar si no existe
+            if ($stmt_check->rowCount() === 0) {
+                $sql = "INSERT INTO audit_estados_proyecto 
+                        (id_proyecto_gestionado, estados_id, usu_id, sector_id, fecha) 
+                        VALUES 
+                        (:id_proyecto_gestionado, :estados_id, :usu_id, :sector_id, NOW())";
+                $stmt = $conn->prepare($sql);
+                $stmt->bindValue(":id_proyecto_gestionado", $id_proyecto_gestionado, PDO::PARAM_INT);
+                $stmt->bindValue(":estados_id", $estados_id, PDO::PARAM_INT);
+                $stmt->bindValue(":usu_id", $usu_id, PDO::PARAM_INT);
+                $stmt->bindValue(":sector_id", $sector_id, PDO::PARAM_INT);
+                $stmt->execute();
+            }
+        }
 
     public function get_auditoria_proyectos()
     {
@@ -108,9 +125,9 @@ class Auditoria extends Conexion
         proyecto_gestionado.refProy 
     FROM audit_estados_proyecto 
     INNER JOIN tm_usuario ON tm_usuario.usu_id = audit_estados_proyecto.usu_id 
-    INNER JOIN sectores ON sectores.sector_id = audit_estados_proyecto.sector_id 
     INNER JOIN tm_estados ON tm_estados.estados_id = audit_estados_proyecto.estados_id
     LEFT JOIN proyecto_gestionado ON proyecto_gestionado.id = audit_estados_proyecto.id_proyecto_gestionado
+    INNER JOIN sectores ON sectores.sector_id = proyecto_gestionado.sector_id 
     WHERE audit_estados_proyecto.fecha >= :desde 
     AND audit_estados_proyecto.fecha < :hasta
     ORDER BY audit_estados_proyecto.fecha DESC";
