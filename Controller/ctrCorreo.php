@@ -41,7 +41,6 @@
                 exit;
             }
 
-            
             if ($pais_id == 0) {
                 echo json_encode(['status' => 'ERROR', 'error' => 'Pais ID inválido']);
                 exit;
@@ -54,11 +53,17 @@
 
             $result = $correo->enviarCorreoCliente($id_proyecto_gestionado, $correo_destino, $pais_id, $_POST['correos_copia_input'] ?? '');
 
-            if (is_array($result)) {
-                $auditoria->insert_audit_estados_proyecto($_POST['id_proyecto_gestionado'], 21, $_SESSION['usu_id'], $_SESSION['sector_id']);
+            // Debug
+            error_log('Result type: ' . gettype($result));
+            error_log('Result content: ' . print_r($result, true));
+
+            // Verificar si fue exitoso
+            if (is_array($result) && isset($result['status']) && $result['status'] === 'OK') {
+                $auditoria->insert_audit_estados_proyecto($id_proyecto_gestionado, 21, $_SESSION['usu_id'], $_SESSION['sector_id']);
                 echo json_encode($result);
             } else {
-                echo json_encode(['status' => 'ERROR', 'error' => $result]);
+                $error_msg = is_string($result) ? $result : (isset($result['error']) ? $result['error'] : 'Error desconocido');
+                echo json_encode(['status' => 'ERROR', 'error' => $error_msg]);
             }
             exit;
 
