@@ -64,22 +64,22 @@ if (isset($_SESSION['usu_id'])) {
                                 <span class="d-none d-sm-block">En Curso</span>
                             </a>
                         </li>
+                          <li class="nav-item">
+                            <a class="nav-link" data-bs-toggle="tab" href="#tab_bitacora" role="tab" aria-selected="false">
+                                <span class="d-block d-sm-none"><i class="mdi mdi-account"></i></span>
+                                <span class="d-none d-sm-block">Bitacora</span>
+                            </a>
+                        </li>
                         <li class="nav-item">
                             <a class="nav-link" data-bs-toggle="tab" href="#tab_realizados" role="tab" aria-selected="false">
                                 <span class="d-block d-sm-none"><i class="mdi mdi-account"></i></span>
                                 <span class="d-none d-sm-block">Realizados por Sector</span>
                             </a>
                         </li>
-                        <li class="nav-item">
+                          <li class="nav-item">
                             <a class="nav-link" data-bs-toggle="tab" href="#tab_cross_sell_sectores" role="tab" aria-selected="false">
                                 <span class="d-block d-sm-none"><i class="mdi mdi-account"></i></span>
                                 <span class="d-none d-sm-block">Cross-Sell</span>
-                            </a>
-                        </li>
-                         <li class="nav-item">
-                            <a class="nav-link" data-bs-toggle="tab" href="#tab_bitacora" role="tab" aria-selected="false">
-                                <span class="d-block d-sm-none"><i class="mdi mdi-account"></i></span>
-                                <span class="d-none d-sm-block">Bitacora</span>
                             </a>
                         </li>
                         <li class="nav-item">
@@ -231,10 +231,11 @@ if (isset($_SESSION['usu_id'])) {
                                 <table id="table_proyectos_realizados" style="text-align: center; width: 100%;">
                                     <thead style="text-align: center;">
                                         <tr style="text-align: center;">
-                                            <th style="width: 300px;text-align: center;">TITULO</th>
                                             <th style="width: 300px;text-align: center;">INICIO</th>
-                                            <th style="width: 30px;text-align: center;">FIN</th>
+                                            <th style="width: 30px;text-align: center;">FINAL</th>
+                                            <th style="width: 300px;text-align: center;">TITULO</th>
                                             <th style="width: 100px;text-align: center;">PM</th>
+                                            <th style="width: 100px;text-align: center;">SECTOR</th>
                                             <th style="width: 30px;text-align: center;">PRODUCTO</th>
                                             <th style="width: 30px;text-align: center;">TIPO</th>
                                             <th style="width: 30px;text-align: center;">HS</th>
@@ -247,6 +248,7 @@ if (isset($_SESSION['usu_id'])) {
                                     <tbody style="text-align: center;">
                                         <tr style="text-align: center;">
                                             <td style="width: 300px;"></td>
+                                            <td style="width: 30px;"></td>
                                             <td style="width: 30px;"></td>
                                             <td style="width: 30px;"></td>
                                             <td style="width: 30px;"></td>

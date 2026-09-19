@@ -1951,9 +1951,12 @@ switch ($_GET['proy']) {
                                         Estado
                                     </button>
                                     <ul class="dropdown-menu" aria-labelledby="btnGroupDrop1">
-                                       <li><a class="dropdown-item" type="button" onclick="cambiar_proy_a_nuevo(' . $row['id_proyecto_gestionado'] . ')">Nuevo</a></li>
                                         <li><a class="dropdown-item" type="button" onclick="cambiar_proy_a_borrador(' . $row['id_proyecto_gestionado'] . ')">Borrador</a></li>
-                                        <li><a class="dropdown-item" type="button" onclick="cerrar_proyecto(' . $row['id_proyecto_gestionado'] . ')">Cerrar proyecto</a></li>                                    </ul>
+                                        <li><a class="dropdown-item" type="button" onclick="cambiar_proy_a_nuevo(' . $row['id_proyecto_gestionado'] . ')">Nuevo</a></li>
+                                        <li><a class="dropdown-item" type="button" onclick="cambiar_a_abierto('. $row['id_proyecto_gestionado'] . ')">Abierto</a></li>
+                                        <li><a class="dropdown-item" type="button" onclick="cambiar_a_realizado('. $row['id_proyecto_gestionado'] . ')">Realizado</a></li>
+                                        <li><a class="dropdown-item" type="button" onclick="cerrar_proyecto(' . $row['id_proyecto_gestionado'] . ')">Cerrar proyecto</a></li>                                    
+                                    </ul>
                                 </div>
                             </div>';
             $data[] = $sub_array;
@@ -1977,10 +1980,14 @@ switch ($_GET['proy']) {
         $colores = array("ETHICAL HACKING" => "bg-warning text-dark", "SOC" => "bg-dark text-light", "SASE" => "bg-info text-light", "CALIDAD Y PROCESOS" => "bg-light text-dark", "INCIDENT RESPONSE" => "bg-danger text-light");
         foreach ($datos as $row) {
             $sub_array = array();
-            $sub_array[] = $row['titulo'];
+            $color_clase = isset($colores[$row['sector_nombre']]) ? $colores[$row['sector_nombre']] : 'bg-light text-dark';
             $sub_array[] = $row['fech_inicio'] == '' ? 'Sin fecha' : '<span class="badge bg-light text-dark">' . $row['fech_inicio'] . '</span>';
             $sub_array[] = $row['fech_fin'] == '' ? 'Sin fecha' : '<span class="badge bg-light text-dark">' . $row['fech_fin'] . '</span>';
+            $sub_array[] = $row['titulo'];
             $sub_array[] = $_SESSION['sector_id'] == "4" ? '<span class="badge bg-light text-dark" title="Asignarme como PM" type="button" onclick="asignarPm(' . $row['id_proyecto_gestionado'] . "," . $row['id_pm_calidad'] . ')">' . $row['creador_proy'] . '</span>' : '<span class="badge bg-light text-dark">' . $row['creador_proy'] . '</span>';
+            $sub_array[] = empty($row['sector_nombre'])
+                ? '<span>Sin asignar</span>'
+                : '<span class="badge ' . $color_clase . '">' . $row['sector_nombre'] . '</span>';
             $sub_array[] = strlen($row['categoria']) > 10
                 ? '<span class="badge bg-light text-dark" data-placement="top" title="' . $row['categoria'] . '">' . substr($row['categoria'], 0, 10) . '...' . '</span>'
                 : '<span class="badge bg-light text-dark" data-placement="top" title="' . $row['categoria'] . '">' . $row['categoria'] . '</span>';

@@ -1,6 +1,7 @@
 var tabla;
 var VALIDAR_SI_HAY_FECHA_INICIO = false;
-
+var VALIDAR_SI_HAY_FECHA_INICIO = false;
+const tablas = {};
 //***************  Borradores  *****************************
 $(document).ready(function () {
 
@@ -512,6 +513,26 @@ $(document).ready(function () {
             });
         });
     }
+
+
+    $('[data-bs-toggle="tab"]').on('shown.bs.tab', function (e) {
+        const target = $(e.target).attr('href');
+
+        const tablaMap = {
+            '#tab_borradores': '#table_proyectos_borrador',
+            '#tab_recurrencia': '#table_proyectos_recurrencia',
+            '#tab_en_proceso': '#table_proyectos_en_proceso',
+            '#tab_realizados': '#table_proyectos_realizados',
+            '#tab_bitacora': '#table_bitacora',
+            '#tab_cross_sell_sectores': '#table_cross_sell_sectores',
+            '#tab_total': '#table_proyectos_total_calidad'
+        };
+
+        const tablaId = tablaMap[target];
+        if (tablaId && $.fn.DataTable.isDataTable(tablaId)) {
+            $(tablaId).DataTable().ajax.reload(null, false);
+        }
+    });
 });
 
 $("#combo_sector_proy_nuevo").change(function (e) {
@@ -2216,6 +2237,48 @@ function ver_hosts_eh(id_proyecto_gestionado) {
     );
 }
 
+
+function cambiar_a_abierto(id_proyecto_gestionado) {
+    Swal.fire({
+        icon: "info",
+        title: "Desea pasar el proyecto a Abierto?",
+        showConfirmButton: true,
+        showCancelButton: true
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.post("../../../../../Controller/ctrProyectos.php?proy=update_estado_proy", {
+                    id: id_proyecto_gestionado,
+                    estados_id: 2
+                },
+                function (data, textStatus, jqXHR) {
+
+                },
+                "json"
+            );
+
+            $.post(
+                "../../../../../Controller/ctrAuditoria.php?case=insert_audit_estados_proyecto", {
+                    id_proyecto_gestionado: id_proyecto_gestionado,
+                    estados_id: 2
+                }
+            );
+
+            setTimeout(() => {
+                if ($.fn.DataTable.isDataTable('#table_bitacora')) {
+                    $('#table_bitacora').DataTable().ajax.reload(null, false);
+                }
+            }, 500);
+            Swal.fire({
+                icon: "success",
+                title: "Bien",
+                text: "Proyecto pasado a Nuevo!",
+                timer: 1500,
+                showConfirmButton: false
+            });
+        }
+    })
+}
+
 function cambiar_a_borrador(id_proyecto_gestionado) {
     Swal.fire({
         icon: "info",
@@ -2251,6 +2314,47 @@ function cambiar_a_borrador(id_proyecto_gestionado) {
                 icon: "success",
                 title: "Bien",
                 text: "Proyecto pasado a Nuevo!",
+                timer: 1500,
+                showConfirmButton: false
+            });
+        }
+    })
+}
+
+function cambiar_a_realizado(id_proyecto_gestionado) {
+    Swal.fire({
+        icon: "info",
+        title: "Desea pasar el proyecto a Realizado?",
+        showConfirmButton: true,
+        showCancelButton: true
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.post("../../../../../Controller/ctrProyectos.php?proy=update_estado_proy", {
+                    id: id_proyecto_gestionado,
+                    estados_id: 3
+                },
+                function (data, textStatus, jqXHR) {
+
+                },
+                "json"
+            );
+
+            $.post(
+                "../../../../../Controller/ctrAuditoria.php?case=insert_audit_estados_proyecto", {
+                    id_proyecto_gestionado: id_proyecto_gestionado,
+                    estados_id: 3
+                }
+            );
+
+            setTimeout(() => {
+                if ($.fn.DataTable.isDataTable('#table_bitacora')) {
+                    $('#table_bitacora').DataTable().ajax.reload(null, false);
+                }
+            }, 500);
+            Swal.fire({
+                icon: "success",
+                title: "Bien",
+                text: "Proyecto pasado a Realizado!",
                 timer: 1500,
                 showConfirmButton: false
             });
@@ -2375,10 +2479,10 @@ function cambiar_proy_a_borrador(id_proyecto_gestionado) {
                 }
             }, 500);
 
-             setTimeout(() => {
+            setTimeout(() => {
                 if ($.fn.DataTable.isDataTable('#table_bitacora')) {
                     $('#table_bitacora').DataTable().ajax.reload(null, false);
-                     $('#table_proyectos_borrador').DataTable().ajax.reload(null, false);
+                    $('#table_proyectos_borrador').DataTable().ajax.reload(null, false);
                     $('#table_proyectos_realizados').DataTable().ajax.reload(null, false);
                     $('#table_proyectos_total').DataTable().ajax.reload(null, false);
                     $('#tablelHistorialProyectosCalidad').DataTable().ajax.reload(null, false);
@@ -3021,13 +3125,6 @@ $("#btnPasarRecurrenteABorrador").off("click").on("click", function () {
         error: function (xhr, status, error) {
             console.error("Error al insertar:", error);
         }
-    });
-});
-
-document.querySelectorAll('[data-bs-toggle="tab"]').forEach(tab => {
-    tab.addEventListener('show.bs.tab', function(e) {
-        let url = this.getAttribute('href');
-        window.location.href = url;
     });
 });
 
