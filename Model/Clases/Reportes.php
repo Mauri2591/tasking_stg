@@ -943,10 +943,11 @@ class Reportes
             $fecha_fmt   = $fecha_parts[0] ?? $row['fecha'];
             $hora_fmt    = $fecha_parts[1] ?? '';
 
+            $posicion_recurrencia=($row['posicion_recurrencia'] != null || $row['posicion_recurrencia'] != '') ? ' - '.$row['posicion_recurrencia'] : '';
             $filas .= "
             <tr>
                 <td style=text-align:center>{$row['refProy']}</td>
-                <td style=text-align:center>{$row['titulo']}{$row['posicion_recurrencia']}</td>
+                <td style=text-align:center>{$row['titulo']}{$posicion_recurrencia}</td>
                 <td style=text-align:center>
                     <span style='background:{$color_evento};color:#fff;padding:2px 8px;border-radius:4px;font-size:11px;'>
                         {$row['evento']}
