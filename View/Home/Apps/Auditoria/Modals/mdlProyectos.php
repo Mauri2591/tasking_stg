@@ -31,6 +31,7 @@
                             </form>
                         </div>
                     </div>
+                        <p class="text-danger text-center">La descarga está limitada a 1 mes máximo.<br> Para varios meses, descargue mes a mes.</p>                
                 </div>
             </div>
         </div>
