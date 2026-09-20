@@ -20,7 +20,7 @@ if (isset($_SESSION['usu_id'])) {
             <div class="row">
                 <div class="col-12">
                     <div class="page-title-box d-sm-flex align-items-center justify-content-between bg-light">
-                        <h4 class="mb-sm-0"><span class="badge bg-dark text-light border mx-1 border-dark">INCIDENT
+                        <h4 class="mb-sm-0"><span class="badge bg-danger text-light mx-1">INCIDENT
                                 RESPONSE</span>
                         </h4>
                     </div>

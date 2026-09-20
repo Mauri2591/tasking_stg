@@ -815,7 +815,7 @@ switch ($_GET['proy']) {
             "SASE" => "bg-info text-light",
             "CALIDAD Y PROCESOS" => "bg-light text-dark",
             "INCIDENT RESPONSE" => "bg-danger text-light",
-            "CONSULTING&GRC" => "style='background-color:#F88163; color:#FFF;'",
+            "CONSULTING&GRC" => "style='background-color:#912334; color:#FFF;'",
             "FUNCTIONAL SERVICES & DELIVERY" => "style='background-color:#8F6B32; color:#FFF;'"
         );
         foreach ($datos as $row) {
@@ -972,7 +972,7 @@ switch ($_GET['proy']) {
             "SASE" => "bg-info text-light",
             "CALIDAD Y PROCESOS" => "bg-light text-dark",
             "INCIDENT RESPONSE" => "bg-danger text-light",
-            "CONSULTING&GRC" => "style='background-color:#F88163; color:#FFF;'",
+            "CONSULTING&GRC" => "style='background-color:#912334; color:#FFF;'",
             "FUNCTIONAL SERVICES & DELIVERY" => "style='background-color:#8F6B32; color:#FFF;'"
         );
         foreach ($datos as $row) {
@@ -1129,7 +1129,7 @@ switch ($_GET['proy']) {
             "SASE" => "bg-info text-light",
             "CALIDAD Y PROCESOS" => "bg-light text-dark",
             "INCIDENT RESPONSE" => "bg-danger text-light",
-            "CONSULTING&GRC" => "style='background-color:#F88163; color:#FFF;'",
+            "CONSULTING&GRC" => "style='background-color:#912334; color:#FFF;'",
             "FUNCTIONAL SERVICES & DELIVERY" => "style='background-color:#8F6B32; color:#FFF;'"
         );
         foreach ($datos as $row) {
@@ -1286,7 +1286,7 @@ switch ($_GET['proy']) {
             "SASE" => "bg-info text-light",
             "CALIDAD Y PROCESOS" => "bg-light text-dark",
             "INCIDENT RESPONSE" => "bg-danger text-light",
-            "CONSULTING&GRC" => "style='background-color:#F88163; color:#FFF;'",
+            "CONSULTING&GRC" => "style='background-color:#912334; color:#FFF;'",
             "FUNCTIONAL SERVICES & DELIVERY" => "style='background-color:#8F6B32; color:#FFF;'"
         );
         foreach ($datos as $row) {
@@ -1443,7 +1443,7 @@ switch ($_GET['proy']) {
             "SASE" => "bg-info text-light",
             "CALIDAD Y PROCESOS" => "bg-light text-dark",
             "INCIDENT RESPONSE" => "bg-danger text-light",
-            "CONSULTING&GRC" => "style='background-color:#F88163; color:#FFF;'",
+            "CONSULTING&GRC" => "style='background-color:#912334; color:#FFF;'",
             "FUNCTIONAL SERVICES & DELIVERY" => "style='background-color:#8F6B32; color:#FFF;'"
         );
         foreach ($datos as $row) {
@@ -1598,7 +1598,7 @@ switch ($_GET['proy']) {
             "SASE" => "bg-info text-light",
             "CALIDAD Y PROCESOS" => "bg-light text-dark",
             "INCIDENT RESPONSE" => "bg-danger text-light",
-            "CONSULTING&GRC" => "style='background-color:#F88163; color:#FFF;'",
+            "CONSULTING&GRC" => "style='background-color:#912334; color:#FFF;'",
             "FUNCTIONAL SERVICES & DELIVERY" => "style='background-color:#8F6B32; color:#FFF;'"
         );
 
@@ -1733,7 +1733,7 @@ switch ($_GET['proy']) {
     case 'get_proyectos_nuevos_vista_calidad':
         $datos = $proyecto->get_proyectos_nuevos_vista_calidad($_POST['sector_id'], $_POST['estados_id']);
         $data = array();
-        $colores = array("ETHICAL HACKING" => "bg-warning text-dark", "SOC" => "bg-dark text-light", "SASE" => "bg-info text-light", "CALIDAD Y PROCESOS" => "bg-light text-dark", "INCIDENT RESPONSE" => "bg-danger text-light", "CONSULTING&GRC" => "style='background-color:#F88163; color:#FFF;'", "FUNCTIONAL SERVICES & DELIVERY" => "style='background-color:#8F6B32; color:#FFF;'");
+        $colores = array("ETHICAL HACKING" => "bg-warning text-dark", "SOC" => "bg-dark text-light", "SASE" => "bg-info text-light", "CALIDAD Y PROCESOS" => "bg-light text-dark", "INCIDENT RESPONSE" => "bg-danger text-light", "CONSULTING&GRC" => "style='background-color:#912334; color:#FFF;'", "FUNCTIONAL SERVICES & DELIVERY" => "style='background-color:#8F6B32; color:#FFF;'");
         foreach ($datos as $row) {
             $sub_array = array();
             $sub_array[] = $row['titulo'];
