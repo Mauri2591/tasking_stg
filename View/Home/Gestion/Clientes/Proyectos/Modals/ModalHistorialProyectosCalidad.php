@@ -25,16 +25,16 @@
                                     <tr style="text-align: center;">
                                         <th style="width: 5%;text-align: center;">ID</th>
                                         <th style="width: 5%px;text-align: center;">CREACION</th>
-                                        <th style="width: 5%px;text-align: center;">INICIO</th>
-                                        <th style="width: 5%;text-align: center;">FINAL</th>
+                                        <th style="width: 15%;text-align: center;">INICIO</th>
+                                        <th style="width: 15%;text-align: center;">FINAL</th>
                                         <th style="width: 45%;text-align: center;">TITULO</th>
-                                        <th style="width: 5%;text-align: center;">REC</th>
+                                        <th style="width: 5%;text-align: center;">REFERENCIA</th>
+                                        <th style="width: 5%;text-align: center;">RECURRENCIA</th>
                                         <th style="width: 5%;text-align: center;">RETEST</th>
-                                        <th style="width: 5%;text-align: center;">REF</th>
                                         <th style="width: 5%px;text-align: center;">SECTOR</th>
                                         <th style="width: 5px;text-align: center;">PROD</th>
                                         <th style="width: 5px;text-align: center;">HS</th>
-                                        <th style="width: 5px;text-align: center;">EST</th>
+                                        <th style="width: 5px;text-align: center;">ESTADO</th>
                                         <th style="width: 5px;text-align: center;">AGREGAR <br>RETEST</th>
                                         <th style="width: 5px;text-align: center;"></th>
                                         <?php if ($_SESSION['usu_id'] == 104): ?>
@@ -46,8 +46,8 @@
                                     <tr style="text-align: center;">
                                         <td style="width: 5%;"></td>
                                         <td style="width: 5%;"></td>
-                                        <td style="width: 5%;"></td>
-                                        <td style="width: 5%;"></td>
+                                        <td style="width: 15%;"></td>
+                                        <td style="width: 15%;"></td>
                                         <td style="width: 5%;"></td>
                                         <td style="width: 5%;"></td>
                                         <td style="width: 5%;"></td>
@@ -75,16 +75,16 @@
                                     <tr style="text-align: center;">
                                         <th style="width: 5%;text-align: center;">ID</th>
                                         <th style="width: 5%px;text-align: center;">CREACION</th>
-                                        <th style="width: 5%px;text-align: center;">INICIO</th>
-                                        <th style="width: 5%px;text-align: center;">FINAL</th>
+                                        <th style="width: 15%;text-align: center;">INICIO</th>
+                                        <th style="width: 15%;text-align: center;">FINAL</th>
                                         <th style="width: 45%;text-align: center;">TITULO</th>
-                                        <th style="width: 5%;text-align: center;">REC</th>
+                                        <th style="width: 5%;text-align: center;">REFERENCIA</th>
+                                        <th style="width: 5%;text-align: center;">RECURRENCIA</th>
                                         <th style="width: 5%;text-align: center;">RETEST</th>
-                                        <th style="width: 5%;text-align: center;">REF</th>
                                         <th style="width: 5%px;text-align: center;">SECTOR</th>
                                         <th style="width: 5px;text-align: center;">PROD</th>
                                         <th style="width: 5px;text-align: center;">HS</th>
-                                        <th style="width: 5px;text-align: center;">EST</th>
+                                        <th style="width: 5px;text-align: center;">ESTADO</th>
                                         <th style="width: 5px;text-align: center;"></th>
                                     </tr>
                                 </thead>
@@ -92,8 +92,8 @@
                                     <tr style="text-align: center;">
                                         <td style="width: 5%;"></td>
                                         <td style="width: 5%;"></td>
-                                        <td style="width: 5%;"></td>
-                                        <td style="width: 5%;"></td>
+                                        <td style="width: 15%;"></td>
+                                        <td style="width: 15%;"></td>
                                         <td style="width: 5%;"></td>
                                         <td style="width: 5%;"></td>
                                         <td style="width: 5%;"></td>

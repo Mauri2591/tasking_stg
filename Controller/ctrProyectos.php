@@ -2419,19 +2419,23 @@ switch ($_GET['proy']) {
 
             $sub_array[] = '<span class="badge bg-light text-dark">' . ($key + 1) . '</span>';
             $sub_array[] = !empty($fech_crea)
-                ? '<p class="text-center m-0 p-0 badge bg-light text-dark">' . date('d/m/Y', strtotime($fech_crea)) . '</p>'
-                : '<p class="text-center m-0 p-0">SIN FECHA</p>';
+                ? '<p class="text-center my-0 badge bg-light text-dark fs-10">' . date('d/m/Y', strtotime($fech_crea)) . '</p>'
+                : '<p class="text-center my-0 badge bg-light text-dark fs-10">SIN FECHA</p>';
 
             $sub_array[] = !empty($fech_inicio)
-                ? '<p class="text-center m-0 p-0 badge bg-light text-dark">' . date('d/m/Y', strtotime($fech_inicio)) . '</p>'
-                : '<p class="text-center m-0 p-0">SIN FECHA</p>';
+                ? '<p class="text-center my-0 badge bg-light text-dark fs-10">' . date('d/m/Y', strtotime($fech_inicio)) . '</p>'
+                : '<p class="text-center my-0 badge bg-light text-dark fs-10">SIN FECHA</p>';
 
             $sub_array[] = !empty($fech_fin)
-                ? '<p class="text-center m-0 p-0 badge bg-light text-dark">' . date('d/m/Y', strtotime($fech_fin)) . '</p>'
-                : '<p class="text-center m-0 p-0">SIN FECHA</p>';
+                ? '<p class="text-center my-0 badge bg-light text-dark fs-10">' . date('d/m/Y', strtotime($fech_fin)) . '</p>'
+                : '<p class="text-center my-0 badge bg-light text-dark fs-10">SIN FECHA</p>';
 
             $sub_array[] = htmlspecialchars($titulo);
             $sub_array[] = $posicion_recurrencia === '' ? '-' : '<span class="badge bg-success">' . htmlspecialchars($posicion_recurrencia) . '</span>';
+
+            $sub_array[] = strlen($refProy) > 20
+                ? '<p class="text-center m-0 p-0">' . wordwrap(htmlspecialchars($refProy), 20, '<br>', true) . '</p>'
+                : '<p class="text-center m-0 p-0">' . htmlspecialchars($refProy) . '</p>';
 
             if ($rechequeo === "SI") {
                 $num_rechequeo_de = isset($id_to_pos[$rechequeo_de]) ? $id_to_pos[$rechequeo_de] : $rechequeo_de;
@@ -2440,14 +2444,10 @@ switch ($_GET['proy']) {
                 $sub_array[] = '-';
             }
 
-            $sub_array[] = strlen($refProy) > 20
-                ? '<p class="text-center m-0 p-0">' . wordwrap(htmlspecialchars($refProy), 20, '<br>', true) . '</p>'
-                : '<p class="text-center m-0 p-0">' . htmlspecialchars($refProy) . '</p>';
-
             $sub_array[] = '<p class="text-center m-0 p-0"><span class="badge" style="background-color:' . $sector_color . '">' . htmlspecialchars($sector_nombre) . '</span></p>';
             $sub_array[] = '<span class="badge bg-light border border-dark text-dark">' . htmlspecialchars($producto) . '</span>';
             $sub_array[] = '<p class="text-center p-0 m-0"><span class="badge bg-light border border-dark text-dark">' . $dimensionamiento . '</span></p>';
-            $sub_array[] = $estado == "FIN SIN IMPLEM" || $estado == "ELIMINADO" || $estado == "CANCELADO" || $estado == "BORRADOR" ? '<p class="p-0 m-0 text-center" style="color:#CCC">' . htmlspecialchars($estado) . '</p>' : '<p class="p-0 m-0 text-center text-secondary fw-bold">' . htmlspecialchars($estado) . '</p>';
+            $sub_array[] = '<p class="badge" style="background-color:' . $row['estado_color'] . '">' . $estado . '</p>';
 
             if ($_SESSION['sector_id'] == "4") {
                 if ($estado != "FIN SIN IMPLEM" && $estado != "ELIMINADO" && $estado != "CANCELADO" && $estado != "BORRADOR" && $rechequeo != "SI") {

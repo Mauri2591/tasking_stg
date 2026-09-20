@@ -2667,6 +2667,7 @@ ORDER BY cantidad_proyectos DESC";
         cl.client_cuit AS cuit,
         cl.client_rs AS cliente,
         tm_estados.estados_nombre AS estado,
+        tm_estados.CatColor AS estado_color,
         pcs.id AS id_proyecto_cantidad_servicios,
         (
             SELECT CONCAT(
