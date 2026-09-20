@@ -162,6 +162,10 @@
                                             <a href="<?php echo URL . "View/Home/Gestion/Sectores/FunctionalServices&Delivery/"; ?>"
                                                 class="nav-link" data-key="t-mailbox">Functional Services & Delivery</a>
                                         </li>
+                                        <li class="nav-item">
+                                            <a href="<?php echo URL . "View/Home/Gestion/Sectores/Platforms&Architecture/"; ?>"
+                                                class="nav-link" data-key="t-mailbox">Platforms Y Architecture</a>
+                                        </li>
                                     </ul>
                                 </div>
                             </li>
@@ -847,6 +851,116 @@
                                             <li class="nav-item">
                                                 <a href="<?php echo URL . "View/Home/Gestion/Sectores/FunctionalServices&Delivery/DLPFortiDLP/"; ?>"
                                                     class="nav-link" data-key="t-mailbox">DLP FortiDLP</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </li>
+
+                                <li class="menu-title"><i class="ri-more-fill"></i> <span data-key="t-pages">Apps</span>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link collapsed" href="#sidebarTimesummary" data-bs-toggle="collapse"
+                                        role="button" aria-expanded="false" aria-controls="sidebarTimesummary"
+                                        data-key="t-email">Timesummary</a>
+                                    <div class="menu-dropdown collapse" id="sidebarTimesummary">
+                                        <ul class="nav nav-sm flex-column">
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Apps/Timesummary/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Calendario</a>
+                                            </li>
+                                            <?php if ($_SESSION['lider'] == "SI"): ?>
+                                                <li class="nav-item">
+                                                    <a href="<?php echo URL . "View/Home/Apps/Timesummary/Status.php"; ?>"
+                                                        class="nav-link" data-key="t-mailbox">Status</a>
+                                                </li>
+                                            <?php endif; ?>
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Apps/Timesummary/Consultas.php"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Consultas</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </li>
+                                <?php if ($_SESSION['lider'] == "SI"): ?>
+                                    <li class="nav-item">
+                                        <a class="nav-link collapsed" href="#sidebarAuditoria" data-bs-toggle="collapse"
+                                            role="button" aria-expanded="false" aria-controls="sidebarAuditoria"
+                                            data-key="t-email">Auditoria</a>
+                                        <div class="menu-dropdown collapse" id="sidebarAuditoria">
+                                            <ul class="nav nav-sm flex-column">
+                                                <li class="nav-item">
+                                                    <a href="<?php echo URL . "View/Home/Apps/Auditoria/proyectos.php"; ?>"
+                                                        class="nav-link" data-key="t-mailbox">Proyectos</a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a href="<?php echo URL . "View/Home/Apps/Auditoria/sesiones.php"; ?>"
+                                                        class="nav-link" data-key="t-mailbox">Sesiones</a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </li>
+                                <?php endif; ?>
+                                <?php break; ?>
+
+                                <?php
+                            case '8':
+                            ?>
+                                <li class="nav-item">
+                                    <a href="#sidebarEmail" class="nav-link collapsed" data-bs-toggle="collapse" role="button"
+                                        aria-expanded="false" aria-controls="sidebarEmail" data-key="t-email">Productos</a>
+                                    <div class="menu-dropdown collapse" id="sidebarEmail">
+                                        <ul class="nav nav-sm flex-column">
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/Platforms&Architecture/CloudSecurity/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Cloud Security</a>
+                                            </li>
+                                             <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/Platforms&Architecture/Consultoria/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Consultoria</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/Platforms&Architecture/DesarrolloInterno/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Desarrollo Interno</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/Platforms&Architecture/ClasificacionActivos/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Clasificación Activos</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/Platforms&Architecture/eGRC/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">eGRC</a>
+                                            </li>
+                                             <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/Platforms&Architecture/DigitalSecurity/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Digital Security</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/Platforms&Architecture/FirmaDigital/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Firma Digital</a>
+                                            </li>
+                                             <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/Platforms&Architecture/Forcepoint/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Forcepoint</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/Platforms&Architecture/Fortalecimiento/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Fortalecimiento</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/Platforms&Architecture/IdentidadDigital/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Identidad Digital</a>
+                                            </li>
+                                             <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/Platforms&Architecture/PasswordLess/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">PasswordLess</a>
+                                            </li>
+                                             <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/Platforms&Architecture/Qualys/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Qualys</a>
+                                            </li>
+                                             <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/Platforms&Architecture/Uem/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Uem</a>
                                             </li>
                                         </ul>
                                     </div>
