@@ -316,10 +316,10 @@ if (isset($_SESSION['usu_id'])) {
                                     <tbody style="text-align: center;">
                                         <tr style="text-align: center;">
                                             <td style="width: 300px;"></td>
-                                            <td style="width: 30px;"></td>
-                                            <td style="width: 30px;"></td>
-                                            <td style="width: 30px;"></td>
-                                            <td style="width: 15px;"></td>
+                                            <td style="width: 300px;"></td>
+                                            <td style="width: 500px;"></td>
+                                            <td style="width: 300px;"></td>
+                                            <td style="width: 300px;"></td>
                                             <td style="width: 300px;"></td>
                                             <td style="width: 300px;"></td>
                                             <td style="width: 300px;"></td>
