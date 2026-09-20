@@ -1,7 +1,7 @@
 <!-- Modal -->
 <div class="modal fade show" id="ModalHistorialProyectosCalidad" data-bs-keyboard="false" tabindex="-1"
     aria-labelledby="staticBackdropLabel" aria-hidden="true">
-    <div class="modal-dialog modal-xl">
+    <div class="modal-dialog modal-xl" style="max-width: 95vw;">
         <div class="modal-content">
             <div class="card-body">
                 <div class="p-2 border bg-light" style="margin-bottom: .5rem;">
@@ -19,89 +19,100 @@
                 <?php if ($_SESSION['sector_id'] == "4"): ?>
 
                     <div class="card card-body">
-                        <table id="tablelHistorialProyectosCalidad" style="text-align: center; width: 100%;">
-                            <thead style="text-align: center;">
-                                <tr style="text-align: center;">
-                                    <th style="width: 5%;text-align: center;">ID</th>
-                                    <th style="width: 45%;text-align: center;">TITULO</th>
-                                    <th style="width: 5%;text-align: center;">REC</th>
-                                    <th style="width: 5%;text-align: center;">RETEST</th>
-                                    <th style="width: 5%;text-align: center;">REF</th>
-                                    <th style="width: 5%px;text-align: center;">FECHA</th>
-                                    <th style="width: 5%px;text-align: center;">SECTOR</th>
-                                    <th style="width: 5px;text-align: center;">PROD</th>
-                                    <th style="width: 5px;text-align: center;">HS</th>
-                                    <th style="width: 5px;text-align: center;">EST</th>
-                                    <th style="width: 5px;text-align: center;">AGREGAR <br>RETEST</th>
-                                    <th style="width: 5px;text-align: center;"></th>
-                                    <?php if($_SESSION['usu_id'] == 104): ?>
-                                    <th style="width: 5px;text-align: center;"></th>
-                                    <?php endif; ?>
-                                </tr>
-                            </thead>
-                            <tbody style="text-align: center;">
-                                <tr style="text-align: center;">
-                                    <td style="width: 5%;"></td>
-                                    <td style="width: 45%;"></td>
-                                    <td style="width: 5%;"></td>
-                                    <td style="width: 5%;"></td>
-                                    <td style="width: 5%;"></td>
-                                    <td style="width: 5%;"></td>
-                                    <td style="width: 5%;"></td>
-                                    <td style="width: 5%;"></td>
-                                    <td style="width: 5%;"></td>
-                                    <td style="width: 5%;"></td>
-                                    <td style="width: 5%;"></td>
-                                    <td style="width: 5%;"></td>
-                                     <?php if($_SESSION['usu_id'] == 104): ?>
-                                    <td style="width: 5%;"></td>
-                                    <?php endif; ?>
-                                </tr>
-                            </tbody>
-                        </table>
+                        <div class="table-responsive">
+                            <table id="tablelHistorialProyectosCalidad" style="text-align: center; width: 100%;">
+                                <thead style="text-align: center;">
+                                    <tr style="text-align: center;">
+                                        <th style="width: 5%;text-align: center;">ID</th>
+                                        <th style="width: 5%px;text-align: center;">CREACION</th>
+                                        <th style="width: 5%px;text-align: center;">INICIO</th>
+                                        <th style="width: 5%;text-align: center;">FINAL</th>
+                                        <th style="width: 45%;text-align: center;">TITULO</th>
+                                        <th style="width: 5%;text-align: center;">REC</th>
+                                        <th style="width: 5%;text-align: center;">RETEST</th>
+                                        <th style="width: 5%;text-align: center;">REF</th>
+                                        <th style="width: 5%px;text-align: center;">SECTOR</th>
+                                        <th style="width: 5px;text-align: center;">PROD</th>
+                                        <th style="width: 5px;text-align: center;">HS</th>
+                                        <th style="width: 5px;text-align: center;">EST</th>
+                                        <th style="width: 5px;text-align: center;">AGREGAR <br>RETEST</th>
+                                        <th style="width: 5px;text-align: center;"></th>
+                                        <?php if ($_SESSION['usu_id'] == 104): ?>
+                                            <th style="width: 5px;text-align: center;"></th>
+                                        <?php endif; ?>
+                                    </tr>
+                                </thead>
+                                <tbody style="text-align: center;">
+                                    <tr style="text-align: center;">
+                                        <td style="width: 5%;"></td>
+                                        <td style="width: 5%;"></td>
+                                        <td style="width: 5%;"></td>
+                                        <td style="width: 5%;"></td>
+                                        <td style="width: 5%;"></td>
+                                        <td style="width: 5%;"></td>
+                                        <td style="width: 5%;"></td>
+                                        <td style="width: 5%;"></td>
+                                        <td style="width: 5%;"></td>
+                                        <td style="width: 5%;"></td>
+                                        <td style="width: 5%;"></td>
+                                        <td style="width: 5%;"></td>
+                                        <td style="width: 5%;"></td>
+                                        <?php if ($_SESSION['usu_id'] == 104): ?>
+                                            <td style="width: 5%;"></td>
+                                        <?php endif; ?>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
 
                 <?php else: ?>
 
                     <div class="card card-body">
-                        <table id="tablelHistorialProyectosCalidad" style="text-align: center; width: 100%;">
-                            <thead style="text-align: center;">
-                                <tr style="text-align: center;">
-                                    <th style="width: 5%;text-align: center;">ID</th>
-                                    <th style="width: 45%;text-align: center;">TITULO</th>
-                                    <th style="width: 5%;text-align: center;">REC</th>
-                                    <th style="width: 5%;text-align: center;">RETEST</th>
-                                    <th style="width: 5%;text-align: center;">REF</th>
-                                    <th style="width: 5%px;text-align: center;">FECHA</th>
-                                    <th style="width: 5%px;text-align: center;">SECTOR</th>
-                                    <th style="width: 5px;text-align: center;">PROD</th>
-                                    <th style="width: 5px;text-align: center;">HS</th>
-                                    <th style="width: 5px;text-align: center;">EST</th>
-                                    <th style="width: 5px;text-align: center;"></th>
-                                </tr>
-                            </thead>
-                            <tbody style="text-align: center;">
-                                <tr style="text-align: center;">
-                                    <td style="width: 5%;"></td>
-                                    <td style="width: 45%;"></td>
-                                    <td style="width: 5%;"></td>
-                                    <td style="width: 5%;"></td>
-                                    <td style="width: 5%;"></td>
-                                    <td style="width: 5%;"></td>
-                                    <td style="width: 5%;"></td>
-                                    <td style="width: 5%;"></td>
-                                    <td style="width: 5%;"></td>
-                                    <td style="width: 5%;"></td>
-                                    <td style="width: 5%;"></td>
-                                </tr>
-                            </tbody>
-                        </table>
+                        <div class="table-responsive">
+                            <table id="tablelHistorialProyectosCalidad" style="text-align: center; width: 100%;">
+                                <thead style="text-align: center;">
+                                    <tr style="text-align: center;">
+                                        <th style="width: 5%;text-align: center;">ID</th>
+                                        <th style="width: 5%px;text-align: center;">CREACION</th>
+                                        <th style="width: 5%px;text-align: center;">INICIO</th>
+                                        <th style="width: 5%px;text-align: center;">FINAL</th>
+                                        <th style="width: 45%;text-align: center;">TITULO</th>
+                                        <th style="width: 5%;text-align: center;">REC</th>
+                                        <th style="width: 5%;text-align: center;">RETEST</th>
+                                        <th style="width: 5%;text-align: center;">REF</th>
+                                        <th style="width: 5%px;text-align: center;">SECTOR</th>
+                                        <th style="width: 5px;text-align: center;">PROD</th>
+                                        <th style="width: 5px;text-align: center;">HS</th>
+                                        <th style="width: 5px;text-align: center;">EST</th>
+                                        <th style="width: 5px;text-align: center;"></th>
+                                    </tr>
+                                </thead>
+                                <tbody style="text-align: center;">
+                                    <tr style="text-align: center;">
+                                        <td style="width: 5%;"></td>
+                                        <td style="width: 5%;"></td>
+                                        <td style="width: 5%;"></td>
+                                        <td style="width: 5%;"></td>
+                                        <td style="width: 5%;"></td>
+                                        <td style="width: 5%;"></td>
+                                        <td style="width: 5%;"></td>
+                                        <td style="width: 5%;"></td>
+                                        <td style="width: 5%;"></td>
+                                        <td style="width: 5%;"></td>
+                                        <td style="width: 5%;"></td>
+                                        <td style="width: 5%;"></td>
+                                        <td style="width: 5%;"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
 
                 <?php endif; ?>
                 <div class="text-center p-2 border bg-light">
                     <small class="text-danger mt-0 fs-14">
-                        Este reporte muestra la Informacion de todos los <strong>Proyectos por Cliente.</strong><br> Se excluyen aquellos que hayan sido <strong>Borrados</strong>.
+                        Este reporte muestra la Informacion de todos los <strong>Proyectos por Cliente.</strong>.
                     </small>
                 </div>
             </div>

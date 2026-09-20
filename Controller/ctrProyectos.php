@@ -2399,18 +2399,7 @@ switch ($_GET['proy']) {
         foreach ($datos as $index => $fila) {
             $id_to_pos[$fila['id']] = $index + 1;
         }
-
         $data = [];
-        $colores = [
-            "ETHICAL HACKING" => ["clase" => "bg-warning text-dark", "style" => ""],
-            "SOC" => ["clase" => "bg-dark text-light", "style" => ""],
-            "SASE" => ["clase" => "bg-info text-light", "style" => ""],
-            "CALIDAD Y PROCESOS" => ["clase" => "bg-light text-dark", "style" => ""],
-            "INCIDENT RESPONSE" => ["clase" => "bg-danger text-light", "style" => ""],
-            "CONSULTING&GRC" => ["clase" => "", "style" => "background-color:#F88163; color:#FFF;"],
-            "FUNCTIONAL SERVICES & DELIVERY" => ["clase" => "", "style" => "background-color:#8F6B32; color:#FFF;"]
-        ];
-
         foreach ($datos as $key => $row) {
             $titulo = $row['titulo'] ?? '-';
             $posicion_recurrencia = $row['posicion_recurrencia'] ?? '';
@@ -2419,6 +2408,7 @@ switch ($_GET['proy']) {
             $refProy = $row['referencia'] ?? '';
             $fech_crea = $row['fech_crea'] ?? '';
             $sector_nombre = $row['sector_nombre'] ?? '';
+            $sector_color = $row['sector_color'] ?? '';
             $producto = $row['producto'] ?? '';
             $dimensionamiento = $row['dimensionamiento'] ?? 0;
             $estado = $row['estado'] ?? '';
@@ -2428,6 +2418,18 @@ switch ($_GET['proy']) {
             $sub_array = [];
 
             $sub_array[] = '<span class="badge bg-light text-dark">' . ($key + 1) . '</span>';
+            $sub_array[] = !empty($fech_crea)
+                ? '<p class="text-center m-0 p-0 badge bg-light text-dark">' . date('d/m/Y', strtotime($fech_crea)) . '</p>'
+                : '<p class="text-center m-0 p-0">SIN FECHA</p>';
+
+            $sub_array[] = !empty($fech_inicio)
+                ? '<p class="text-center m-0 p-0 badge bg-light text-dark">' . date('d/m/Y', strtotime($fech_inicio)) . '</p>'
+                : '<p class="text-center m-0 p-0">SIN FECHA</p>';
+
+            $sub_array[] = !empty($fech_fin)
+                ? '<p class="text-center m-0 p-0 badge bg-light text-dark">' . date('d/m/Y', strtotime($fech_fin)) . '</p>'
+                : '<p class="text-center m-0 p-0">SIN FECHA</p>';
+
             $sub_array[] = htmlspecialchars($titulo);
             $sub_array[] = $posicion_recurrencia === '' ? '-' : '<span class="badge bg-success">' . htmlspecialchars($posicion_recurrencia) . '</span>';
 
@@ -2442,20 +2444,7 @@ switch ($_GET['proy']) {
                 ? '<p class="text-center m-0 p-0">' . wordwrap(htmlspecialchars($refProy), 20, '<br>', true) . '</p>'
                 : '<p class="text-center m-0 p-0">' . htmlspecialchars($refProy) . '</p>';
 
-            $sub_array[] = !empty($fech_crea)
-                ? '<p class="text-center m-0 p-0">' . date('d/m/Y', strtotime($fech_crea)) . '</p>'
-                : '<p class="text-center m-0 p-0">SIN FECHA</p>';
-
-            // ✅ CORREGIDO: Separar clase de style
-            $color_config = array_key_exists($sector_nombre, $colores)
-                ? $colores[$sector_nombre]
-                : ["clase" => "bg-secondary text-light", "style" => ""];
-
-            $clase = $color_config["clase"];
-            $style_attr = $color_config["style"] ? 'style="' . $color_config["style"] . '"' : '';
-
-            $sub_array[] = '<p class="text-center m-0 p-0"><span class="badge border border-dark ' . $clase . '" ' . $style_attr . '>' . htmlspecialchars($sector_nombre) . '</span></p>';
-
+            $sub_array[] = '<p class="text-center m-0 p-0"><span class="badge" style="background-color:' . $sector_color . '">' . htmlspecialchars($sector_nombre) . '</span></p>';
             $sub_array[] = '<span class="badge bg-light border border-dark text-dark">' . htmlspecialchars($producto) . '</span>';
             $sub_array[] = '<p class="text-center p-0 m-0"><span class="badge bg-light border border-dark text-dark">' . $dimensionamiento . '</span></p>';
             $sub_array[] = $estado == "FIN SIN IMPLEM" || $estado == "ELIMINADO" || $estado == "CANCELADO" || $estado == "BORRADOR" ? '<p class="p-0 m-0 text-center" style="color:#CCC">' . htmlspecialchars($estado) . '</p>' : '<p class="p-0 m-0 text-center text-secondary fw-bold">' . htmlspecialchars($estado) . '</p>';

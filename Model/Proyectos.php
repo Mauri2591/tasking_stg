@@ -2662,6 +2662,7 @@ ORDER BY cantidad_proyectos DESC";
         pg.fech_inicio,
         dimensionamiento.hs_dimensionadas AS dimensionamiento,
         s.sector_nombre,
+        s.color AS sector_color,
         c.cat_nom AS producto,
         cl.client_cuit AS cuit,
         cl.client_rs AS cliente,
