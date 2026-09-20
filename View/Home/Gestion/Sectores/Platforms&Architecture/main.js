@@ -17,7 +17,7 @@ $(document).ready(function () {
             type: "post",
             dataType: "json",
             data: {
-                sector_id: 1,
+                sector_id: 8,
                 estados_id: 1
             },
             error: function (e) {}
@@ -75,7 +75,7 @@ $(document).ready(function () {
             type: "post",
             dataType: "json",
             data: {
-                sector_id: 1,
+                sector_id: 8,
                 estados_id: 2
             },
             error: function (e) {}
@@ -132,7 +132,7 @@ $(document).ready(function () {
             type: "post",
             dataType: "json",
             data: {
-                sector_id: 1,
+                sector_id: 8,
                 estados_id: 3
             },
             error: function (e) {}
