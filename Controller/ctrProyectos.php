@@ -398,7 +398,6 @@ switch ($_GET['proy']) {
     case 'get_proyectos_nuevos_borrador':
         $datos = $proyecto->get_proyectos_nuevos_borrador();
         $data = array();
-        $colores = array("ETHICAL HACKING" => "bg-warning text-dark", "SOC" => "bg-dark text-light", "SASE" => "bg-info text-light", "CALIDAD Y PROCESOS" => "bg-light text-dark", "INCIDENT RESPONSE" => "bg-danger text-light");
         $colores_prioridad = array("BAJO" => "badge border border-success text-success", "MEDIO" => "badge border border-warning text-warning", "ALTO" => "badge border border-danger text-danger");
         foreach ($datos as $row) {
             $sub_array = array();
@@ -420,10 +419,9 @@ switch ($_GET['proy']) {
                 $sub_array[] = '-';
             }
             $sub_array[] = $row['rechequeo'] == "SI" ? '<span class="badge bg-danger">SI</span>' : '-';
-            $color_clase = isset($colores[$row['sector_nombre']]) ? $colores[$row['sector_nombre']] : 'bg-light text-dark';
             $sub_array[] = empty($row['sector_nombre'])
                 ? '<span>Sin asignar</span>'
-                : '<span class="badge ' . $color_clase . '">' . $row['sector_nombre'] . '</span>';
+                : '<span style="background-color:' . $row['sector_color'] . '" class="badge">' . $row['sector_nombre'] . '</span>';
             $sub_array[] = isset($row['cat_nom']) == '' ? '<span>Sin asignar</span>' : '<span class="badge bg-light text-dark">' . $row['cat_nom'] . '</span>';
             $sub_array[] = isset($row['usu_nom_asignado']) == '' ? '<span>Sin asignar</span>' : '<span class="badge bg-info text-light">' . $row['usu_nom_asignado'] . '</span>';
             $sub_array[] = '<span type="button" onclick="gestionar_proy_borrador(' . $row['proy_id'] . ',' . $row['id_proyecto_cantidad_servicios'] . ',' . $row['id_proyecto_gestionado'] . ')" data-placement="top" title="Gestionar Borrador"><i class="ri-send-plane-fill text-primary fs-16"></i></span>';
@@ -665,17 +663,13 @@ switch ($_GET['proy']) {
 
 
     case 'get_proyectos_recurrentes':
-        $colores = array("ETHICAL HACKING" => "bg-warning text-dark", "SOC" => "bg-dark text-light", "SASE" => "bg-info text-light", "CALIDAD Y PROCESOS" => "bg-light text-dark", "INCIDENT RESPONSE" => "bg-danger text-light");
         $datos = $proyecto->get_proyectos_recurrentes();
         $data = array();
         foreach ($datos as $row) {
             $sub_array = array();
             $sub_array[] = $row['client_rs'];
-
             $sector = $row['sector'];
-            $claseSector = $colores[$sector] ?? 'bg-secondary text-light';
-            $sub_array[] = '<span class="badge ' . $claseSector . '">' . $sector . '</span>';
-
+            $sub_array[] = '<span style="background-color:' . $row['sector_color'] . '" class="badge">' . $sector . '</span>';
             $sub_array[] = '<span class="badge bg-light text-dark">' . $row['cat_nom'] . '</span>';
             $sub_array[] = '<p class="text-center py-0"><span class="badge border border-dark bg-primary fw-bold fs-10 text-light">' . $row['recurrencias_total'] . '</span></p>';
             $sub_array[] = '<p class="text-center py-0"><span class="badge border border-dark bg-success fw-bold fs-10 text-light">' . $row['recurrencias_utilizadas'] . '</span></p>';
@@ -1837,7 +1831,6 @@ switch ($_GET['proy']) {
     case 'get_proyectos_en_proceso_vista_calidad':
         $datos = $proyecto->get_proyectos_en_proceso_vista_calidad();
         $data = array();
-        $colores = array("ETHICAL HACKING" => "bg-warning text-dark", "SOC" => "bg-dark text-light", "SASE" => "bg-info text-light", "CALIDAD Y PROCESOS" => "bg-light text-dark", "INCIDENT RESPONSE" => "bg-danger text-light");
         $colores_prioridad = array("BAJO" => "badge border border-success text-success", "MEDIO" => "badge border border-warning text-warning", "ALTO" => "badge border border-danger text-danger");
         foreach ($datos as $row) {
             $sub_array = array();
@@ -1851,13 +1844,11 @@ switch ($_GET['proy']) {
             $sub_array[] = $row['posicion_recurrencia'] == '' ? '-' : '<span class="badge bg-success">' . $row['posicion_recurrencia'] . '</span>';
 
             $sub_array[] = $row['rechequeo'] == 'NO' ? '-' : '<span class="badge bg-danger">SI</span>';
-
-            $sub_array[] = strlen($row['cat_nom']) > 10
-                ? '<span class="badge bg-light text-dark" data-placement="top" title="' . $row['cat_nom'] . '">' . substr($row['cat_nom'], 0, 10) . '...' . '</span>'
-                : '<span class="badge bg-light text-dark" data-placement="top" title="' . $row['cat_nom'] . '">' . $row['cat_nom'] . '</span>';
-            $sub_array[] = strlen($row['cats_nom']) > 8
-                ? '<span class="badge bg-light text-dark" data-placement="top" title="' . $row['cats_nom'] . '">' . substr($row['cats_nom'], 0, 8) . '...' . '</span>'
-                : '<span class="badge bg-light text-dark" data-placement="top" title="' . $row['cats_nom'] . '">' . $row['cats_nom'] . '</span>';
+            $sub_array[] = empty($row['sector_nombre'])
+                ? '<span>Sin asignar</span>'
+                : '<span style="background-color:' . $row['sector_color'] . '" class="badge">' . $row['sector_nombre'] . '</span>';
+            $sub_array[] = '<span class="badge bg-light text-dark" data-placement="top" title="' . $row['cat_nom'] . '">' . $row['cat_nom'] . '</span>';
+            $sub_array[] = '<span class="badge bg-light text-dark" data-placement="top" title="' . $row['cats_nom'] . '">' . $row['cats_nom'] . '</span>';
             $sub_array[] = $row['hs_dimensionadas'] == "" ? "Sin hs" : '<span class="badge bg-light text-dark">' . $row['hs_dimensionadas'] . '</span';
             switch ($_SESSION['sector_id']) {
                 case '1':
@@ -1867,15 +1858,7 @@ switch ($_GET['proy']) {
                     $sub_array[] = isset($row['usu_nom_asignado']) == '' ? '<span class="badge bg-light text-dark">Sin asignar</span>' : '<span class="badge bg-info text-light">' . $row['usu_nom_asignado'] . '</span>';
                     break;
             }
-
             $sub_array[] = '<span style="background-color:' . $row['color_estado'] . '" class="badge text-light">' . $row['estado'] . '</span>';
-
-            $color_clase = isset($colores[$row['sector_nombre']]) ? $colores[$row['sector_nombre']] : 'bg-light text-dark';
-            $sub_array[] = empty($row['sector_nombre'])
-                ? '<span>Sin asignar</span>'
-                : '<span class="badge ' . $color_clase . '">' . $row['sector_nombre'] . '</span>';
-
-            // $sub_array[] = '<span type="button" onclick="ver_hosts_eh(' . $row['id_proyecto_gestionado'] . ' )"><i class="text-secondary fs-18 ri-global-line" data-placement="top" title="Ver hosts"></i></span>';
 
             switch ($row['sector_id']) {
                 case '1':
@@ -1922,29 +1905,24 @@ switch ($_GET['proy']) {
     case 'get_proyectos_bitacora':
         $datos = $proyecto->get_proyectos_bitacora();
         $data = array();
-        $colores = array("ETHICAL HACKING" => "bg-warning text-dark", "SOC" => "bg-dark text-light", "SASE" => "bg-info text-light", "CALIDAD Y PROCESOS" => "bg-light text-dark", "INCIDENT RESPONSE" => "bg-danger text-light");
         $colores_prioridad = array("BAJO" => "badge border border-success text-success", "MEDIO" => "badge border border-warning text-warning", "ALTO" => "badge border border-danger text-danger");
         foreach ($datos as $row) {
             $sub_array = array();
-            $color_clase = isset($colores[$row['sector_nombre']]) ? $colores[$row['sector_nombre']] : 'bg-light text-dark';
-
             $sub_array[] = '<span class="badge bg-light text-dark badge-wrap" data-placement="top" title="' . $row['fech_inicio'] . '">' . $row['fech_inicio'] . '</span>';
             $sub_array[] = '<span class="badge bg-light text-dark badge-wrap" data-placement="top" title="' . $row['fech_fin'] . '">' . $row['fech_fin'] . '</span>';
             $sub_array[] = $row['client_rs'];
+            $sub_array[] = $_SESSION['sector_id'] == "4" ? '<span class="badge bg-light text-dark" title="Asignarme como PM" type="button" onclick="asignarPm(' . $row['id_proyecto_gestionado'] . "," . $row['id_pm_calidad'] . ')">' . $row['creador_proy'] . '</span>' : '<span class="badge bg-light text-dark">' . $row['creador_proy'] . '</span>';
             $sub_array[] = $row['posicion_recurrencia'] == '' ? '-' : '<span class="badge bg-success">' . $row['posicion_recurrencia'] . '</span>';
             $sub_array[] = $row['rechequeo'] == 'NO' ? '-' : '<span class="badge bg-danger">SI</span>';
             $sub_array[] = empty($row['sector_nombre'])
                 ? '<span>Sin asignar</span>'
-                : '<span class="badge ' . $color_clase . '">' . $row['sector_nombre'] . '</span>';
-                
+                : '<span style="background-color:' . $row['sector_color'] . '" class="badge">' . $row['sector_nombre'] . '</span>';
+
             $sub_array[] = '<span class="badge bg-light text-dark badge-wrap" data-placement="top" title="' . $row['cat_nom'] . '">' . $row['cat_nom'] . '</span>';
-            $sub_array[] = '<span class="badge bg-light text-dark badge-wrap" data-placement="top" title="' . $row['cats_nom'] . '">' . $row['cats_nom'] . '</span>'; 
-                
-            $sub_array[] = $_SESSION['sector_id'] == "4" ? '<span class="badge bg-light text-dark" title="Asignarme como PM" type="button" onclick="asignarPm(' . $row['id_proyecto_gestionado'] . "," . $row['id_pm_calidad'] . ')">' . $row['creador_proy'] . '</span>' : '<span class="badge bg-light text-dark">' . $row['creador_proy'] . '</span>';
-           
+            $sub_array[] = '<span class="badge bg-light text-dark badge-wrap" data-placement="top" title="' . $row['cats_nom'] . '">' . $row['cats_nom'] . '</span>';
+
             $sub_array[] = $row['hs_dimensionadas'] == "" ? "Sin hs" : '<span class="badge bg-light text-dark">' . $row['hs_dimensionadas'] . '</span';
             $sub_array[] = '<span style="background-color:' . $row['color_estado'] . '" class="badge text-light">' . $row['estado'] . '</span>';
-            $color_clase = isset($colores[$row['sector_nombre']]) ? $colores[$row['sector_nombre']] : 'bg-light text-dark';
             $sub_array[] = '<div class="btn-group btn-group-sm p-0" role="group" aria-label="Button group with nested dropdown">
                                 <div class="btn-group p-0" role="group">
                                     <button id="btnGroupDrop1" type="button" class="btn btn-primary btn-sm dropdown-toggle py-0" data-bs-toggle="dropdown" aria-expanded="false">
@@ -1953,8 +1931,8 @@ switch ($_GET['proy']) {
                                     <ul class="dropdown-menu" aria-labelledby="btnGroupDrop1">
                                         <li><a class="dropdown-item" type="button" onclick="cambiar_proy_a_borrador(' . $row['id_proyecto_gestionado'] . ')">Borrador</a></li>
                                         <li><a class="dropdown-item" type="button" onclick="cambiar_proy_a_nuevo(' . $row['id_proyecto_gestionado'] . ')">Nuevo</a></li>
-                                        <li><a class="dropdown-item" type="button" onclick="cambiar_a_abierto('. $row['id_proyecto_gestionado'] . ')">Abierto</a></li>
-                                        <li><a class="dropdown-item" type="button" onclick="cambiar_a_realizado('. $row['id_proyecto_gestionado'] . ')">Realizado</a></li>
+                                        <li><a class="dropdown-item" type="button" onclick="cambiar_a_abierto(' . $row['id_proyecto_gestionado'] . ')">Abierto</a></li>
+                                        <li><a class="dropdown-item" type="button" onclick="cambiar_a_realizado(' . $row['id_proyecto_gestionado'] . ')">Realizado</a></li>
                                         <li><a class="dropdown-item" type="button" onclick="cerrar_proyecto(' . $row['id_proyecto_gestionado'] . ')">Cerrar proyecto</a></li>                                    
                                     </ul>
                                 </div>
@@ -1977,19 +1955,17 @@ switch ($_GET['proy']) {
     case 'get_proyectos_realizados_vista_calidad':
         $datos = $proyecto->get_proyectos_realizados_vista_calidad($_POST['estados_id']);
         $data = array();
-        $colores = array("ETHICAL HACKING" => "bg-warning text-dark", "SOC" => "bg-dark text-light", "SASE" => "bg-info text-light", "CALIDAD Y PROCESOS" => "bg-light text-dark", "INCIDENT RESPONSE" => "bg-danger text-light");
         foreach ($datos as $row) {
             $sub_array = array();
-            $color_clase = isset($colores[$row['sector_nombre']]) ? $colores[$row['sector_nombre']] : 'bg-light text-dark';
-            $sub_array[] = $row['fech_inicio'];
-            $sub_array[] = $row['fech_fin'];
+            $sub_array[] = '<span class="badge bg-light text-dark">' . $row['fech_inicio'] . '</span>';
+            $sub_array[] = '<span class="badge bg-light text-dark">' . $row['fech_fin'] . '</span>';
             $sub_array[] = $row['titulo'];
             $sub_array[] = $_SESSION['sector_id'] == "4" ? '<span class="badge bg-light text-dark" title="Asignarme como PM" type="button" onclick="asignarPm(' . $row['id_proyecto_gestionado'] . "," . $row['id_pm_calidad'] . ')">' . $row['creador_proy'] . '</span>' : '<span class="badge bg-light text-dark">' . $row['creador_proy'] . '</span>';
             $sub_array[] = empty($row['sector_nombre'])
                 ? '<span>Sin asignar</span>'
-                : '<span class="badge ' . $color_clase . '">' . $row['sector_nombre'] . '</span>';
-            $sub_array[] = '<span class="badge bg-light text-dark" data-placement="top" title="' . $row['categoria'] . '">' .$row['categoria']. '</span>';
-            $sub_array[] ='<span class="badge bg-light text-dark" data-placement="top" title="' . $row['cats_nom'] . '">' .$row['cats_nom']. '</span>';
+                : '<span style="background-color:' . $row['sector_color'] . '" class="badge">' . $row['sector_nombre'] . '</span>';
+            $sub_array[] = '<span class="badge bg-light text-dark" data-placement="top" title="' . $row['categoria'] . '">' . $row['categoria'] . '</span>';
+            $sub_array[] = '<span class="badge bg-light text-dark" data-placement="top" title="' . $row['cats_nom'] . '">' . $row['cats_nom'] . '</span>';
             $sub_array[] = $row['hs_dimensionadas'] == "" ? "Sin hs" : '<span class="badge bg-light text-dark">' . $row['hs_dimensionadas'] . '</span';
             switch ($_SESSION['sector_id']) {
                 case '1':
@@ -2777,31 +2753,25 @@ TXT;
     case 'getClientesConSectorSinContratar':
         $datos = $proyecto->getClientesConSectorSinContratar();
         $data = array();
-        $colores = array(
-            "ETHICAL HACKING" => "bg-warning text-dark",
-            "SOC" => "bg-dark text-light",
-            "SASE" => "bg-info text-light"
-        );
-
         foreach ($datos as $row) {
             $sub_array = array();
             $sub_array[] = '<span>' . strtoupper($row['client_rs']) . '</span>';
             $sub_array[] = '<span>' . $row['cuit'] . '</span>';
-            // Sectores contratados
-            $badges_contratados = '';
-            foreach (explode(', ', $row['sectores_contratados']) as $sector) {
-                $sector = trim($sector);
-                $clase = isset($colores[$sector]) ? $colores[$sector] : 'bg-secondary text-light';
-                $badges_contratados .= '<span class="badge ' . $clase . '">' . $sector . '</span> ';
-            }
-            $sub_array[] = $badges_contratados;
+            $sub_array[] = '<span style="background-color:' . $row['sector_color'] . '" class="badge">' . $row['sectores_contratados'] . '</span>';
 
             // Sectores faltantes
             $badges_faltantes = '';
-            foreach (explode(', ', $row['sectores_faltantes']) as $sector) {
-                $sector = trim($sector);
-                $clase = isset($colores[$sector]) ? $colores[$sector] : 'bg-secondary text-light';
-                $badges_faltantes .= '<span class="badge ' . $clase . '">' . $sector . '</span> ';
+            if (!empty($row['sectores_faltantes'])) {
+                $sectores = explode(', ', $row['sectores_faltantes']);
+                $colores = explode(', ', $row['sectores_faltantes_colores']);
+
+                foreach ($sectores as $index => $sector) {
+                    $sector = trim($sector);
+                    $color = trim($colores[$index] ?? '#cccccc');
+                    if (!empty($sector)) {
+                        $badges_faltantes .= '<span style="background-color:' . $color . '" class="badge">' . $sector . '</span> ';
+                    }
+                }
             }
             $sub_array[] = $badges_faltantes;
             $sub_array[] = '<p class="text-center align-item-center"><span class="badge bg-light border border-dark text-dark fs-11 fw-bold">' . date('Y', strtotime($row['fech_crea'])) . '</span></p>';

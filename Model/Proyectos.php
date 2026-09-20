@@ -248,6 +248,7 @@ class Proyectos extends Conexion
         )
     ) AS creador_proy,
     s.sector_nombre,
+    s.color AS sector_color,
     tc.cat_nom,
     tp.pais_nombre,
     pg.id AS id_proyecto_gestionado,
@@ -1379,6 +1380,7 @@ ORDER BY id_proyecto_cantidad_servicios ASC";
     ) AS creador_proy,  
 
     s.sector_nombre,
+    s.color AS sector_color,
     s.sector_id,
     tsc.cats_nom,
     tp.pais_nombre,
@@ -1519,6 +1521,7 @@ ORDER BY id_proyecto_cantidad_servicios ASC";
     tm_estados.CatColor AS color_estado,
     pm_concat.id_pm_calidad AS id_pm_calidad,
     s.sector_nombre,
+    s.color AS sector_color,
     s.sector_id,
     tsc.cats_nom,
     tp.pais_nombre,
@@ -1781,6 +1784,7 @@ ORDER BY
     ) AS creador_proy,
 
     s.sector_nombre,
+    s.color AS sector_color,
     s.sector_id,
     tsc.cats_nom,
     tp.pais_nombre,
@@ -2804,6 +2808,7 @@ ORDER BY cantidad_proyectos DESC";
     tc.cat_nom, 
     c.client_rs, 
     sectores.sector_nombre AS sector,
+    sectores.color AS sector_color,
     MAX(pg.id) AS id_proyecto_gestionado,  
     pcs.id AS id_proyecto_cantidad_servicios,
 
@@ -3290,9 +3295,11 @@ WHERE pg.id_proyecto_cantidad_servicios = :id_proyecto_cantidad_servicios";
     c.client_rs,
     c.client_cuit AS cuit,
     pg.fech_crea,
+    s.color AS sector_color,
     GROUP_CONCAT(DISTINCT s.sector_nombre ORDER BY s.sector_nombre SEPARATOR ', ') AS sectores_contratados,
     COUNT(DISTINCT pg.sector_id) AS cantidad_sectores,
-    GROUP_CONCAT(DISTINCT sf.sector_nombre ORDER BY sf.sector_nombre SEPARATOR ', ') AS sectores_faltantes
+    GROUP_CONCAT(DISTINCT sf.sector_nombre ORDER BY sf.sector_nombre SEPARATOR ', ') AS sectores_faltantes,
+    GROUP_CONCAT(DISTINCT sf.color ORDER BY sf.sector_nombre SEPARATOR ', ') AS sectores_faltantes_colores
     FROM clientes c
     INNER JOIN proyectos p ON p.client_id = c.client_id
     INNER JOIN proyecto_cantidad_servicios pcs ON pcs.proy_id = p.proy_id

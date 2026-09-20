@@ -192,17 +192,17 @@ if (isset($_SESSION['usu_id'])) {
                                 <table id="table_proyectos_en_proceso" style="text-align: center; width: 100%;">
                                     <thead style="text-align: center;">
                                         <tr style="text-align: center;">
-                                            <th style="width: 10px;text-align: center;">PRIO</th>
+                                            <th style="width: 10px;text-align: center;">PRIORIDAD</th>
                                             <th style="width: 200px;text-align: center;">CLIENTE</th>
                                             <th style="width: 100px;text-align: center;">PM</th>
                                             <th style="width: 10px;text-align: center;">REC</th>
                                             <th style="width: 10px;text-align: center;">RETEST</th>
+                                            <th style="width: 10px;text-align: center;">SECTOR</th>
                                             <th style="width: 10px;text-align: center;">PROD</th>
                                             <th style="width: 10px;text-align: center;">TIPO</th>
                                             <th style="width: 10px;text-align: center;">HS</th>
                                             <th style="width: 10px;text-align: center;">ASIGNADO</th>
                                             <th style="width: 10px; text-align: center;">ESTADO</th>
-                                            <th style="width: 10px;text-align: center;">SECTOR</th>
                                             <th style="width: 10px;text-align: center;"></th>
                                         </tr>
                                     </thead>
@@ -302,12 +302,12 @@ if (isset($_SESSION['usu_id'])) {
                                             <th style="width: 300px;text-align: center;">INICIO</th>
                                             <th style="width: 300px;text-align: center;">FINAL</th>
                                             <th style="width: 500px;text-align: center;">CLIENTE</th>
+                                            <th style="width: 300px;text-align: center;">PM</th>
                                             <th style="width: 300px;text-align: center;">RECURRENCIA</th>
                                             <th style="width: 300px;text-align: center;">RECHEQ</th>
                                             <th style="width: 300px;text-align: center;">SECTOR</th>
                                             <th style="width: 300px;text-align: center;">PRODUCTO</th>
                                             <th style="width: 300px;text-align: center;">TIPO</th>
-                                            <th style="width: 300px;text-align: center;">PM</th>
                                             <th style="width: 300px;text-align: center;">HORAS</th>
                                             <th style="width: 300px;text-align: center;">ESTADO</th>
                                             <th style="width: 300px;text-align: center;">ACCION</th>
