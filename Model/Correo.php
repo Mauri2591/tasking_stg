@@ -309,7 +309,7 @@ class Correo extends Conexion
         }
 
         try {
-            // ========== CORREO 1: AL CLIENTE CON ZIP + CC a copias + CC a líderes + BCC a sectores ==========
+            // ========== CORREO 1: AL CLIENTE CON ZIP + CC a copias + CC a líderes + CC a sectores ==========
             $mailCliente = new PHPMailer(true);
             if (SMTP_ENABLED === 'true') {
                 $smtpConfig($mailCliente);
@@ -325,9 +325,9 @@ class Correo extends Conexion
                     $mailCliente->addCC(trim($correo_lider));
                 }
 
-                // BCC a sectores
+                // CC a sectores (visible en el correo)
                 foreach ($correos_sectores as $correo_sector) {
-                    $mailCliente->addBCC($correo_sector);
+                    $mailCliente->addCC($correo_sector);
                 }
 
                 $mailCliente->Subject = $pais_id == 1
@@ -335,15 +335,15 @@ class Correo extends Conexion
                     : $cliente . ' | Informe del Servicio ' . $producto . ' - ' . $tipo;
 
                 $mailCliente->Body = "
-                <p>Estimado/a cliente,</p>
-                <p>
-                    En el marco del servicio contratado <strong>{$doc['producto']} + {$doc['tipo']}</strong> <strong>ID: " . ($doc['referencia'] ?: 'N/A') . "</strong> adjuntamos el informe correspondiente en formato ZIP protegido.<br><br> 
-                    <strong>La clave para descifrar se le enviará por separado en otro correo.</strong><br><br>
-                    Saludos,<br><br><br>
-                    Equipo de Calidad y Procesos<br>
-                    Delivery Services – Cybersecurity Solutions<br><br>
-                    " . ($pais_id == 1 ? '<strong>Personal Tech</strong>' : '<strong>Ubiquo</strong>') . "
-                </p>";
+        <p>Estimado/a cliente,</p>
+        <p>
+            En el marco del servicio contratado <strong>{$doc['producto']} + {$doc['tipo']}</strong> <strong>ID: " . ($doc['referencia'] ?: 'N/A') . "</strong> adjuntamos el informe correspondiente en formato ZIP protegido.<br><br> 
+            <strong>La clave para descifrar se le enviará por separado en otro correo.</strong><br><br>
+            Saludos,<br><br><br>
+            Equipo de Calidad y Procesos<br>
+            Delivery Services – Cybersecurity Solutions<br><br>
+            " . ($pais_id == 1 ? '<strong>Personal Tech</strong>' : '<strong>Ubiquo</strong>') . "
+        </p>";
                 $mailCliente->addAttachment($ruta_zip, $nombre_zip);
                 $mailCliente->send();
             } else {
@@ -358,9 +358,9 @@ class Correo extends Conexion
 
                 $mailClave->Subject = 'Clave de acceso - Documentos del Servicio ' . $doc['producto'];
                 $mailClave->Body = "
-                <p>Le compartimos la clave para abrir el archivo correspondiente a su servicio de <strong>{$doc['producto']}:</strong></p>
-                <p style=\"font-size: 1.2rem; font-weight: bold; background: #f0f0f0; padding: 10px; border-radius: 5px;\">{$clave}</p>
-                <p>Saludos.</p>";
+        <p>Le compartimos la clave para abrir el archivo correspondiente a su servicio de <strong>{$doc['producto']}:</strong></p>
+        <p style=\"font-size: 1.2rem; font-weight: bold; background: #f0f0f0; padding: 10px; border-radius: 5px;\">{$clave}</p>
+        <p>Saludos.</p>";
                 $mailClave->send();
             } else {
                 throw new Exception('SMTP deshabilitado');
