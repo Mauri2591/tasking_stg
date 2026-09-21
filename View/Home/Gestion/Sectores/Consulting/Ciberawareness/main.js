@@ -397,33 +397,31 @@ function asignar_proyecto(id_proyecto_gestionado) {
             }, 500);
         }
     })
-
 }
-
 
 function ver_hosts_consulting(id_proyecto_gestionado) {
     $("#ModalVerHosts").modal("show");
-    $.post("../../../../../../Controller/ctrProyectos.php?proy=get_hosts_proy_ip", {
+    $.post("../../../../../../Controller/ctrProyectos.php?proy=get_hosts_proy_casillas", {
             id_proyecto_gestionado: id_proyecto_gestionado
         },
         function (data, textStatus, jqXHR) {
-            $("#cont_ip").html(data)
+            $("#cont_casillas").html(data)
         },
         "html"
     );
-    $.post("../../../../../../Controller/ctrProyectos.php?proy=get_hosts_proy_url", {
+    $.post("../../../../../../Controller/ctrProyectos.php?proy=get_hosts_proy_tematicas", {
             id_proyecto_gestionado: id_proyecto_gestionado
         },
         function (data, textStatus, jqXHR) {
-            $("#cont_url").html(data)
+            $("#cont_tematicas").html(data)
         },
         "html"
     );
-    $.post("../../../../../../Controller/ctrProyectos.php?proy=get_hosts_proy_aplicacion", {
+    $.post("../../../../../../Controller/ctrProyectos.php?proy=get_hosts_proy_campanias", {
             id_proyecto_gestionado: id_proyecto_gestionado
         },
         function (data, textStatus, jqXHR) {
-            $("#cont_aplicacion").html(data)
+            $("#cont_campanias").html(data)
         },
         "html"
     );

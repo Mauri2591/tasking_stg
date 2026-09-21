@@ -124,6 +124,7 @@ switch ($_GET['proy']) {
         ]);
         exit;
 
+        //ETHICAL HACKING ---------------------------------
     case 'get_hosts_proy_ip':
         $data = $proyecto->get_hosts_proy($_POST['id_proyecto_gestionado']);
         $ip = [];
@@ -139,6 +140,23 @@ switch ($_GET['proy']) {
         echo $sectionIps;
         break;
 
+    case 'get_hosts_proy_url':
+        $data = $proyecto->get_hosts_proy($_POST['id_proyecto_gestionado']);
+        $url = [];
+        $sectionUrl = '';
+        foreach ($data as $key => $val) {
+            if ($val['tipo'] == "URL") {
+                $url[] = $val['host'];
+            }
+        }
+        foreach ($url as $key => $val) {
+            $sectionUrl .= '<section><span class="badge bg-light text-dark">' . $val . '</span></section>';
+        }
+        echo $sectionUrl;
+        break;
+    //ETHICAL HACKING ---------------------------------
+
+    //SOC --------------------------------------------
     case 'get_hosts_proy_agente':
         $data = $proyecto->get_hosts_proy($_POST['id_proyecto_gestionado']);
         $ip = [];
@@ -168,55 +186,128 @@ switch ($_GET['proy']) {
         }
         echo $sectionIps;
         break;
+    //SOC --------------------------------------------
+
 
     case 'get_hosts_proy_equipo':
         $data = $proyecto->get_hosts_proy($_POST['id_proyecto_gestionado']);
-        $ip = [];
-        $sectionIps = '';
+        $equipos = [];
+        $sectionEquipos = '';
         foreach ($data as $key => $val) {
             if ($val['tipo'] == "EQUIPO") {
-                $ip[] = $val['host'];
+                $equipos[] = $val['host'];
             }
         }
-        foreach ($ip as $key => $val) {
-            $sectionIps .= '<section><span class="badge bg-light text-dark">' . $val . '</span></section>';
+        foreach ($equipos as $key => $val) {
+            $sectionEquipos .= '<section><span class="badge bg-light text-dark">' . $val . '</span></section>';
         }
-        echo $sectionIps;
+        echo $sectionEquipos;
         break;
 
     case 'get_si_proy_recurrencia_is_null':
         echo json_encode($proyecto->get_si_proy_recurrencia_is_null($_POST['id']));
         break;
 
-    case 'get_hosts_proy_url':
+    //CONSULTING-------------------------------------------------
+    case 'get_hosts_proy_casillas':
         $data = $proyecto->get_hosts_proy($_POST['id_proyecto_gestionado']);
-        $url = [];
-        $sectionUrl = '';
-        foreach ($data as $key => $val) {
-            if ($val['tipo'] == "URL") {
-                $url[] = $val['host'];
-            }
-        }
-        foreach ($url as $key => $val) {
-            $sectionUrl .= '<section><span class="badge bg-light text-dark">' . $val . '</span></section>';
-        }
-        echo $sectionUrl;
-        break;
+        $sectionCasillas = '';
 
-    case 'get_hosts_proy_otro':
-        $data = $proyecto->get_hosts_proy($_POST['id_proyecto_gestionado']);
-        $otro = [];
-        $sectionOtro = '';
-        foreach ($data as $key => $val) {
-            if ($val['tipo'] == "OTRO") {
-                $otro[] = $val['host'];
+        foreach ($data as $val) {
+            if ($val['tipo'] == "CASILLAS") {  
+                $sectionCasillas .= '<section><span class="badge bg-light text-dark">' . htmlspecialchars($val['host']) . '</span></section>';
             }
         }
-        foreach ($otro as $key => $val) {
-            $sectionOtro .= '<section><span class="badge bg-light text-dark">' . $val . '</span></section>';
-        }
-        echo $sectionOtro;
+        echo $sectionCasillas;
         break;
+    case 'get_hosts_proy_tematicas':
+        $data = $proyecto->get_hosts_proy($_POST['id_proyecto_gestionado']);
+        $sectionTematicas = '';
+        foreach ($data as $val) {
+            if ($val['tipo'] == "TEMATICAS") {  
+                $sectionTematicas .= '<section><span class="badge bg-light text-dark">' . htmlspecialchars($val['host']) . '</span></section>';
+            }
+        }
+        echo $sectionTematicas;
+        break;
+    case 'get_hosts_proy_campanias':
+        $data = $proyecto->get_hosts_proy($_POST['id_proyecto_gestionado']);
+        $sectionTematicas = '';
+        foreach ($data as $val) {
+            if ($val['tipo'] == "CAMPANIAS") {  // CASILLAS con S
+                $sectionTematicas .= '<section><span class="badge bg-light text-dark">' . htmlspecialchars($val['host']) . '</span></section>';
+            }
+        }
+        echo $sectionTematicas;
+        break;
+    //CONSULTING-------------------------------------------------
+
+
+    //FUNCTIONAL SERVICES-------------------------------------------------
+    case 'get_hosts_proy_servidores_on_prem':
+        $data = $proyecto->get_hosts_proy($_POST['id_proyecto_gestionado']);
+        $sectionServidores_on_prem = '';
+
+        foreach ($data as $val) {
+            if ($val['tipo'] == "SERVIDOR_ON_PREM") {
+                $sectionServidores_on_prem .= '<section><span class="badge bg-light text-dark">' . htmlspecialchars($val['host']) . '</span></section>';
+            }
+        }
+        echo $sectionServidores_on_prem;
+        break;
+    case 'get_hosts_proy_servidores_cloud':
+        $data = $proyecto->get_hosts_proy($_POST['id_proyecto_gestionado']);
+        $sectionServidores_cloud = '';
+        foreach ($data as $val) {
+            if ($val['tipo'] == "SERVIDOR_CLOUD") {
+                $sectionServidores_cloud .= '<section><span class="badge bg-light text-dark">' . htmlspecialchars($val['host']) . '</span></section>';
+            }
+        }
+        echo $sectionServidores_cloud;
+        break;
+    case 'get_hosts_proy_licencias_on_prem':
+        $data = $proyecto->get_hosts_proy($_POST['id_proyecto_gestionado']);
+        $sectionLicencias_on_prem = '';
+        foreach ($data as $val) {
+            if ($val['tipo'] == "LICENCIAS_ON_PREM") {  
+                $sectionLicencias_on_prem .= '<section><span class="badge bg-light text-dark">' . htmlspecialchars($val['host']) . '</span></section>';
+            }
+        }
+        echo $sectionLicencias_on_prem;
+        break;
+    case 'get_hosts_proy_licencias_cloud':
+        $data = $proyecto->get_hosts_proy($_POST['id_proyecto_gestionado']);
+        $sectionLicencias_cloud = '';
+        foreach ($data as $val) {
+            if ($val['tipo'] == "LICENCIAS_CLOUD") {  
+                $sectionLicencias_cloud .= '<section><span class="badge bg-light text-dark">' . htmlspecialchars($val['host']) . '</span></section>';
+            }
+        }
+        echo $sectionLicencias_cloud;
+        break;
+    case 'get_hosts_proy_modulos_on_prem':
+        $data = $proyecto->get_hosts_proy($_POST['id_proyecto_gestionado']);
+        $sectionModulos_on_prem = '';
+        foreach ($data as $val) {
+            if ($val['tipo'] == "MODULOS_ON_PREM") { 
+                $sectionModulos_on_prem .= '<section><span class="badge bg-light text-dark">' . htmlspecialchars($val['host']) . '</span></section>';
+            }
+        }
+        echo $sectionModulos_on_prem;
+        break;
+    case 'get_hosts_proy_modulos_cloud':
+        $data = $proyecto->get_hosts_proy($_POST['id_proyecto_gestionado']);
+        $sectionModulos_cloud = '';
+        foreach ($data as $val) {
+            if ($val['tipo'] == "MODULOS_CLOUD") { 
+                $sectionModulos_cloud .= '<section><span class="badge bg-light text-dark">' . htmlspecialchars($val['host']) . '</span></section>';
+            }
+        }
+        echo $sectionModulos_cloud;
+        break;
+    //FUNCTIONAL SERVICES-------------------------------------------------
+
+
 
     case 'get_hosts_proy_aplicacion':
         $data = $proyecto->get_hosts_proy($_POST['id_proyecto_gestionado']);
@@ -231,6 +322,21 @@ switch ($_GET['proy']) {
             $sectionAplicacion .= '<section><span class="badge bg-light text-dark">' . $val . '</span></section>';
         }
         echo $sectionAplicacion;
+        break;
+
+    case 'get_hosts_proy_otro':
+        $data = $proyecto->get_hosts_proy($_POST['id_proyecto_gestionado']);
+        $otro = [];
+        $sectionOtro = '';
+        foreach ($data as $key => $val) {
+            if ($val['tipo'] == "OTROS") {
+                $otro[] = $val['host'];
+            }
+        }
+        foreach ($otro as $key => $val) {
+            $sectionOtro .= '<section><span class="badge bg-light text-dark">' . $val . '</span></section>';
+        }
+        echo $sectionOtro;
         break;
 
     case 'get_usuarios_x_sector':
@@ -255,30 +361,56 @@ switch ($_GET['proy']) {
         $archivo_subido = (isset($_FILES['archivo']) && $_FILES['archivo']['error'] === 0)
             ? Validaciones::subida_archivo($_FILES['archivo'])
             : null;
-
         $id_proyecto_cantidad_servicios = $_POST['id_proyecto_cantidad_servicios']; //  ACÁ asignás el valor
-
         $cantidad_recurrencias = $_POST['recurrencia']; //Aca traigo la cantidad de recurrencias
-
         $longitud_usu_asignado = isset($_POST['usu_asignado']) ? count($_POST['usu_asignado']) : null;
 
-        //Procesás activos usando la clase Validaciones
         $ips   = $_POST['ips'] ?? '';
         $urls  = $_POST['urls'] ?? '';
         $otros = $_POST['otros'] ?? '';
+
         $aplicaciones = $_POST['aplicaciones'] ?? '';
         $dispositivos = $_POST['dispositivos'] ?? '';
         $agentes  = $_POST['agentes'] ?? '';
         $equipos = $_POST['equipos'] ?? '';
 
+        $servidores_on_prem = $_POST['servidores_on_prem'] ?? '';
+        $servidores_cloud = $_POST['servidores_cloud'] ?? '';
+        $licencias_on_prem = $_POST['licencias_on_prem'] ?? '';
+        $licencias_cloud = $_POST['licencias_cloud'] ?? '';
+        $modulos_on_prem = $_POST['modulos_on_prem'] ?? '';
+        $modulos_cloud = $_POST['modulos_cloud'] ?? '';
+
+        $campanias = $_POST['campanias'] ?? '';
+        $tematicas = $_POST['tematicas'] ?? '';
+        $casillas = $_POST['casillas'] ?? '';
+
+
         $hosts = array_merge(
             $validacion->parse_hosts($ips, 'IP'),
             $validacion->parse_hosts($urls, 'URL'),
-            $validacion->parse_hosts($otros, 'OTRO'),
+            $validacion->parse_hosts($otros, 'OTROS'),
+
             $validacion->parse_hosts($aplicaciones, 'APLICACION'),
             $validacion->parse_hosts($dispositivos, 'DISPOSITIVO'),
+
             $validacion->parse_hosts($agentes, 'AGENTE'),
-            $validacion->parse_hosts($equipos, 'EQUIPO')
+            $validacion->parse_hosts($equipos, 'EQUIPO'),
+
+            //Functional Services
+            $validacion->parse_hosts($servidores_on_prem, 'SERVIDOR_ON_PREM'),
+            $validacion->parse_hosts($servidores_cloud, 'SERVIDOR_CLOUD'),
+            $validacion->parse_hosts($licencias_on_prem, 'LICENCIAS_ON_PREM'),
+            $validacion->parse_hosts($licencias_cloud, 'LICENCIAS_CLOUD'),
+            $validacion->parse_hosts($modulos_on_prem, 'MODULOS_ON_PREM'),
+            $validacion->parse_hosts($modulos_cloud, 'MODULOS_CLOUD'),
+            //Functional Services
+
+            //CONSULTING
+            $validacion->parse_hosts($campanias, 'CAMPANIAS'),
+            $validacion->parse_hosts($tematicas, 'TEMATICAS'),
+            $validacion->parse_hosts($casillas, 'CASILLAS')
+            //CONSULTING
         );
 
         for ($i = 1; $i <= $cantidad_recurrencias; $i++) {
@@ -1044,10 +1176,10 @@ switch ($_GET['proy']) {
                     . $row['id_proyecto_gestionado']
                     . ')" title="Asignarme el proyecto" class="badge bg-light border border-dark text-dark">Sin asignar</span>';
             }
-            $sub_array[] = '<span type="button" onclick="ver_hosts_eh('
+            $sub_array[] = '<span type="button" onclick="ver_activos('
                 . $row['id_proyecto_gestionado']
                 . ')">
-            <i class="text-secondary fs-18 ri-global-line" title="Ver hosts"></i>
+            <i class="text-secondary fs-18 ri-global-line" title="Ver activos"></i>
         </span>';
 
             if ($row['estados_id'] == 4) {
@@ -1434,6 +1566,163 @@ switch ($_GET['proy']) {
         echo json_encode($results);
         break;
 
+    case 'get_proyectos_platforms_architecture':
+        $datos = $proyecto->get_proyectos_platforms_architecture($_POST['sector_id'], $_POST['cat_id'], $_POST['estados_id']);
+        $data = array();
+        $colores = array(
+            "ETHICAL HACKING" => "bg-warning text-dark",
+            "SOC" => "bg-dark text-light",
+            "SASE" => "bg-info text-light",
+            "CALIDAD Y PROCESOS" => "bg-light text-dark",
+            "INCIDENT RESPONSE" => "bg-danger text-light",
+            "CONSULTING&GRC" => "style='background-color:#912334; color:#FFF;'",
+            "FUNCTIONAL SERVICES & DELIVERY" => "style='background-color:#8F6B32; color:#FFF;'"
+        );
+        foreach ($datos as $row) {
+            $sub_array = array();
+            $session_usu_id = $_SESSION['usu_id'];
+            $session_sector_id = $_SESSION['sector_id'];
+            $ids_asignados = explode(',', $row['usu_id_asignado'] ?? '');
+            $puede_cambiar_estado = in_array($session_usu_id, $ids_asignados) || $session_sector_id == "4";
+
+            $sub_array[] = $row['titulo'];
+
+            $fecha = $row['fech_inicio'];
+            if ($fecha == '') {
+                $sub_array[] = 'Sin fecha';
+            } else {
+                $hoy = new DateTime('today');
+                $fechaRow = new DateTime($fecha);
+                if ($fechaRow == $hoy) {
+                    if ($row['estados_id'] == 1 || $row['estados_id'] == 2) {
+                        $sub_array[] = '<span class="badge border border-warning text-dark">' . $fecha . '</span>';
+                    } else {
+                        $sub_array[] = '<span class="badge bg-light text-dark">' . $fecha . '</span>';
+                    }
+                } elseif ($fechaRow < $hoy) {
+                    if ($row['estados_id'] == 1 || $row['estados_id'] == 2) {
+                        $sub_array[] = '<span class="badge text-dark" style="border:.13rem solid red">' . $fecha . '</span>';
+                    } else {
+                        $sub_array[] = '<span class="badge bg-light text-dark">' . $fecha . '</span>';
+                    }
+                } else {
+                    $sub_array[] = '<span class="badge bg-light text-dark">' . $fecha . '</span>';
+                }
+            }
+
+            $sub_array[] = $row['fech_fin'] == ''
+                ? 'Sin fecha'
+                : '<span class="badge bg-light text-dark">' . $row['fech_fin'] . '</span>';
+
+            // 🔹 Mostrar solo si estado_id = 1 → rechequeo y posicion_recurrencia
+            if ($row['estados_id'] == 1) {
+                // Posición recurrencia
+                if (!empty($row['posicion_recurrencia'])) {
+                    $sub_array[] = '<span class="badge bg-success text-light border border-success">'
+                        . $row['posicion_recurrencia'] . '</span>';
+                } else if (is_null($row['posicion_recurrencia']) && $row['id_proyecto_recurrencia'] > 0) {
+                    $sub_array[] = '<span class="badge bg-light text-success border border-success">Actualizar<br>Recurrente</span>';
+                } else {
+                    $sub_array[] = '-';
+                }
+
+                // Rechequeo
+                $sub_array[] = $row['rechequeo'] == "SI"
+                    ? '<span class="badge bg-danger">SI</span>'
+                    : '-';
+            }
+
+            $sub_array[] = '<span class="badge bg-light text-dark">' . $row['creador_proy'] . '</span>';
+            $sub_array[] = strlen($row['cats_nom']) > 20
+                ? '<span class="badge bg-light text-dark">' . substr($row['cats_nom'], 0, 17) . '...</span>'
+                : '<span class="badge bg-light text-dark">' . $row['cats_nom'] . '</span>';
+            $sub_array[] = $row['hs_dimensionadas'] == ""
+                ? "Sin hs"
+                : '<span class="badge bg-light text-dark">' . $row['hs_dimensionadas'] . '</span>';
+
+            if (!empty($row['usu_nom_asignado'])) {
+                $sub_array[] = '<span class="badge bg-info text-light">' . $row['usu_nom_asignado'] . '</span>';
+            } else {
+                $sub_array[] = '<span type="button" onclick="asignar_proyecto('
+                    . $row['id_proyecto_gestionado']
+                    . ')" title="Asignarme el proyecto" class="badge bg-light border border-dark text-dark">Sin asignar</span>';
+            }
+            $sub_array[] = '<span type="button" onclick="ver_hosts_eh('
+                . $row['id_proyecto_gestionado']
+                . ')">
+            <i class="text-secondary fs-18 ri-global-line" title="Ver hosts"></i>
+        </span>';
+
+            if ($row['estados_id'] == 4) {
+                $sub_array[] = '<a href="' . URL . 'View/Home/Gestion/Sectores/GestionarProy/?p='
+                    . Openssl::set_ssl_encrypt($row['id_proyecto_cantidad_servicios'])
+                    . '&pg=' . Openssl::set_ssl_encrypt($row['id_proyecto_gestionado'])
+                    . '" title="Ver proyecto">
+                <i class="ri-send-plane-fill text-primary fs-18"></i>
+            </a>';
+            }
+
+            if (in_array($row['estados_id'], [2, 3, 4])) {
+                $sub_array[] = '<a href="' . URL . 'View/Home/Gestion/Sectores/GestionarProy/?p='
+                    . Openssl::set_ssl_encrypt($row['id_proyecto_cantidad_servicios'])
+                    . '&pg=' . Openssl::set_ssl_encrypt($row['id_proyecto_gestionado'])
+                    . '" title="Ver proyecto">
+                <i class="ri-send-plane-fill text-primary fs-18"></i>
+            </a>';
+            }
+
+            if ($puede_cambiar_estado) {
+                switch ($row['estados_id']) {
+                    case '1':
+                        $sub_array[] = '<div class="btn-group btn-group-sm p-0" role="group">
+                        <button class="btn btn-primary btn-sm dropdown-toggle py-0" data-bs-toggle="dropdown" aria-expanded="false">Estado</button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" onclick="cambiar_a_abierto('
+                            . $row['id_proyecto_gestionado'] . ')">Abierto</a></li>
+                            <li><a class="dropdown-item" onclick="cambiar_a_borrador('
+                            . $row['id_proyecto_gestionado'] . ')">Borrador</a></li>
+                        </ul>
+                    </div>';
+                        break;
+                    case '2':
+                        $sub_array[] = '<div class="btn-group btn-group-sm p-0" role="group">
+                        <button class="btn btn-primary btn-sm dropdown-toggle py-0" data-bs-toggle="dropdown" aria-expanded="false">Estado</button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" onclick="cambiar_a_nuevo('
+                            . $row['id_proyecto_gestionado'] . ')">Nuevos</a></li>
+                            <li><a class="dropdown-item" onclick="cambiar_a_borrador('
+                            . $row['id_proyecto_gestionado'] . ')">Borrador</a></li>
+                        </ul>
+                    </div>';
+                        break;
+                    case '3':
+                        $sub_array[] = '<div class="btn-group btn-group-sm p-0" role="group">
+                        <button class="btn btn-primary btn-sm dropdown-toggle py-0" data-bs-toggle="dropdown" aria-expanded="false">Estado</button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" onclick="cambiar_a_abierto('
+                            . $row['id_proyecto_gestionado'] . ')">Abierto</a></li>
+                        </ul>
+                    </div>';
+                        break;
+                }
+            } else {
+                $sub_array[] = '<div class="btn-group btn-group-sm p-0" role="group">
+                <button class="btn btn-secondary btn-sm py-0" title="Sin permisos" disabled>Pendiente</button>
+            </div>';
+            }
+
+            $data[] = $sub_array;
+        }
+
+        $results = array(
+            "sEcho" => 1,
+            "iTotalRecords" => count($data),
+            "iTotalDisplayRecords" => count($data),
+            "aaData" => $data
+        );
+        echo json_encode($results);
+        break;
+
     case 'get_proyectos_incident_response':
         $datos = $proyecto->get_proyectos_incident_response($_POST['sector_id'], $_POST['estados_id'], $_POST['cat_id']);
         $data = array();
@@ -1665,11 +1954,11 @@ switch ($_GET['proy']) {
             if (!empty($row['usu_nom_asignado'])) {
                 switch ($row['estados_id']) {
                     case '1':
-                        $sub_array[] = '<span type="button" onclick="ver_hosts_eh(' . $row['id_proyecto_gestionado'] . ')">
+                        $sub_array[] = '<span type="button" onclick="ver_activos(' . $row['id_proyecto_gestionado'] . ')">
                         <i class="text-secondary fs-18 ri-global-line" title="Ver hosts"></i></span>';
                         break;
                     case '2':
-                        $sub_array[] = '<span type="button" onclick="ver_hosts_eh(' . $row['id_proyecto_gestionado'] . ')">
+                        $sub_array[] = '<span type="button" onclick="ver_activos(' . $row['id_proyecto_gestionado'] . ')">
                         <i class="text-secondary fs-18 ri-global-line" title="Ver hosts"></i></span>';
                         $sub_array[] = '<a href="' . URL . 'View/Home/Gestion/Sectores/GestionarProy/?p='
                             . Openssl::set_ssl_encrypt($row['id_proyecto_cantidad_servicios'])
@@ -1703,7 +1992,7 @@ switch ($_GET['proy']) {
                         break;
                     case '3':
                     case '4':
-                        $sub_array[] = '<span type="button" onclick="ver_hosts_eh(' . $row['id_proyecto_gestionado'] . ')">
+                        $sub_array[] = '<span type="button" onclick="ver_activos(' . $row['id_proyecto_gestionado'] . ')">
                         <i class="text-secondary fs-18 ri-global-line" title="Ver hosts"></i></span>';
                         $sub_array[] = '<a href="' . URL . 'View/Home/Gestion/Sectores/GestionarProy/?p='
                             . Openssl::set_ssl_encrypt($row['id_proyecto_cantidad_servicios'])
@@ -1713,14 +2002,12 @@ switch ($_GET['proy']) {
                         break;
                 }
             } else {
-                $sub_array[] = '<span type="button" onclick="ver_hosts_eh(' . $row['id_proyecto_gestionado'] . ')">
+                $sub_array[] = '<span type="button" onclick="ver_activos(' . $row['id_proyecto_gestionado'] . ')">
                 <i class="text-secondary fs-18 ri-global-line" title="Ver hosts"></i></span>';
                 $sub_array[] = '<button class="btn btn-secondary btn-sm py-0" title="Sin permisos" disabled>Pendiente</button>';
             }
-
             $data[] = $sub_array;
         }
-
         $results = array(
             "sEcho" => 1,
             "iTotalRecords" => count($data),

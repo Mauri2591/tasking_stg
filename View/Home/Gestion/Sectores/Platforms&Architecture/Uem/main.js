@@ -467,7 +467,7 @@ function cambiar_a_nuevo(id_proyecto_gestionado) {
                 "json"
             ).fail(function (xhr, status, error) {
                 console.error("Error en AJAX:", status, error);
-                console.log(xhr.responseText); // 👈 para ver el error exacto
+                console.log(xhr.responseText); 
                 Swal.fire("Error", "No se pudo actualizar el proyecto.", "error");
             });
 

@@ -57,6 +57,7 @@
                                         <td style="width: 5%;"></td>
                                         <td style="width: 5%;"></td>
                                         <td style="width: 5%;"></td>
+                                        <td style="width: 5%;"></td>
                                         <?php if ($_SESSION['usu_id'] == 104): ?>
                                             <td style="width: 5%;"></td>
                                         <?php endif; ?>

@@ -18,8 +18,8 @@
                     </div>
 
                     <div style="overflow-y: auto; max-height: 300px; width: 30%;">
-                        <span class="badge bg-primary text-light mb-2">Url's</span>
-                        <div id="cont_url">
+                        <span class="badge bg-primary text-light mb-2">Equipos</span>
+                        <div id="cont_equipos">
 
                         </div>
                     </div>

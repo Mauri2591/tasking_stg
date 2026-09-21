@@ -292,31 +292,3 @@ function cerrar_proyecto(id_proyecto_gestionado) {
         }
     })
 }
-
-function ver_hosts_eh(id_proyecto_gestionado) {
-    $("#ModalVerHosts").modal("show");
-    $.post("../../../../../Controller/ctrProyectos.php?proy=get_hosts_proy_ip", {
-            id_proyecto_gestionado: id_proyecto_gestionado
-        },
-        function (data, textStatus, jqXHR) {
-            $("#cont_ip").html(data)
-        },
-        "html"
-    );
-    $.post("../../../../../Controller/ctrProyectos.php?proy=get_hosts_proy_url", {
-            id_proyecto_gestionado: id_proyecto_gestionado
-        },
-        function (data, textStatus, jqXHR) {
-            $("#cont_url").html(data)
-        },
-        "html"
-    );
-    $.post("../../../../../Controller/ctrProyectos.php?proy=get_hosts_proy_otro", {
-            id_proyecto_gestionado: id_proyecto_gestionado
-        },
-        function (data, textStatus, jqXHR) {
-            $("#cont_otro").html(data)
-        },
-        "html"
-    );
-}

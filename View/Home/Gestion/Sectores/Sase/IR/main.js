@@ -370,7 +370,7 @@ function asignar_proyecto(id_proyecto_gestionado) {
 //     alert(id_proyecto_cantidad_servicios)
 // }
 
-function ver_hosts_eh(id_proyecto_gestionado) {
+function ver_activos(id_proyecto_gestionado) {
     $("#ModalVerHosts").modal("show");
     $.post("../../../../../../Controller/ctrProyectos.php?proy=get_hosts_proy_ip", {
             id_proyecto_gestionado: id_proyecto_gestionado
@@ -380,11 +380,11 @@ function ver_hosts_eh(id_proyecto_gestionado) {
         },
         "html"
     );
-    $.post("../../../../../../Controller/ctrProyectos.php?proy=get_hosts_proy_url", {
+    $.post("../../../../../../Controller/ctrProyectos.php?proy=get_hosts_proy_equipo", {
             id_proyecto_gestionado: id_proyecto_gestionado
         },
         function (data, textStatus, jqXHR) {
-            $("#cont_url").html(data)
+            $("#cont_equipos").html(data)
         },
         "html"
     );

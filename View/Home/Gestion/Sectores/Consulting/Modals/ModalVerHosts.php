@@ -11,22 +11,22 @@
                 <div class="d-flex justify-content-evenly" style="overflow-x: hidden;">
                     <!-- Evita el scroll horizontal -->
                     <div style="overflow-y: auto; max-height: 300px; width: 30%;">
-                        <span class="badge border bg-primary text-light mb-2">Ips</span>
-                        <div id="cont_ip">
+                        <span class="badge border bg-primary text-light mb-2">Casillas</span>
+                        <div id="cont_casillas">
 
                         </div>
                     </div>
 
                     <div style="overflow-y: auto; max-height: 300px; width: 30%;">
-                        <span class="badge bg-primary text-light mb-2">Url's</span>
-                        <div id="cont_url">
+                        <span class="badge bg-primary text-light mb-2">Tematicas</span>
+                        <div id="cont_tematicas">
 
                         </div>
                     </div>
 
                     <div style="overflow-y: auto; max-height: 300px; width: 30%;">
-                        <span class="badge bg-primary text-light mb-2">Aplicaciones</span>
-                        <div id="cont_aplicacion">
+                        <span class="badge bg-primary text-light mb-2">Campañas</span>
+                        <div id="cont_campanias">
 
                         </div>
                     </div>

@@ -11,25 +11,47 @@
                 <div class="d-flex justify-content-evenly" style="overflow-x: hidden;">
                     <!-- Evita el scroll horizontal -->
                     <div style="overflow-y: auto; max-height: 300px; width: 30%;">
-                        <span class="badge border bg-primary text-light mb-2">Ips</span>
-                        <div id="cont_ip">
+                        <span class="badge border bg-primary text-light mb-2">Servidores Cloud</span>
+                        <div id="cont_servidores_cloud">
 
                         </div>
                     </div>
 
                     <div style="overflow-y: auto; max-height: 300px; width: 30%;">
-                        <span class="badge bg-primary text-light mb-2">Url's</span>
-                        <div id="cont_url">
+                        <span class="badge bg-primary text-light mb-2">Servidores On-prem</span>
+                        <div id="cont_servidores_on_prem">
 
                         </div>
                     </div>
 
                     <div style="overflow-y: auto; max-height: 300px; width: 30%;">
-                        <span class="badge bg-primary text-light mb-2">Otros</span>
-                        <div id="cont_otro">
+                        <span class="badge bg-primary text-light mb-2">Licencias Cloud</span>
+                        <div id="cont_licencias_cloud">
 
                         </div>
                     </div>
+
+                      <div style="overflow-y: auto; max-height: 300px; width: 30%;">
+                        <span class="badge bg-primary text-light mb-2">Licencias On-prem</span>
+                        <div id="cont_licencias_on_prem">
+
+                        </div>
+                    </div>
+
+                    <div style="overflow-y: auto; max-height: 300px; width: 30%;">
+                        <span class="badge bg-primary text-light mb-2">Modulos On-prem</span>
+                        <div id="cont_modulos_on_prem">
+
+                        </div>
+                    </div>
+
+                    <div style="overflow-y: auto; max-height: 300px; width: 30%;">
+                        <span class="badge bg-primary text-light mb-2">Modulos Cloud</span>
+                        <div id="cont_modulos_cloud">
+
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>

@@ -21,7 +21,7 @@ if (isset($_SESSION['usu_id'])) {
                 <div class="col-12">
                     <div class="page-title-box d-sm-flex align-items-center justify-content-between bg-light">
                         <h4 class="mb-sm-0"><span class="badge bg-dark text-light">SOC</span><span
-                                class="badge bg-dark text-light border mx-1 border-dark">PROYECTOS NO ESTANDAR</span>
+                                class="badge text-light mx-1" style="background-color:#299cdb">PROYECTOS NO ESTANDAR</span>
                         </h4>
                     </div>
                 </div>

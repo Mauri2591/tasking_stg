@@ -1,5 +1,5 @@
 $(document).ready(function () {
-    tabla = $("#table_proyectos_nuevos_eh_pentest").dataTable({
+    tabla = $("#table_proyectos_nuevos_platforms_y_architecture_pentest").dataTable({
         "aProcessing": true,
         "aServerSide": true,
         dom: 'Bfrtip',
@@ -13,12 +13,12 @@ $(document).ready(function () {
             'pdfHtml5'
         ],
         "ajax": {
-            url: "../../../../../../Controller/ctrProyectos.php?proy=get_proyectos_eh",
+            url: "../../../../../../Controller/ctrProyectos.php?proy=get_proyectos_platforms_architecture",
             type: "post",
             dataType: "json",
             data: {
-                sector_id: 1,
-                cat_id: 6,
+                sector_id: 8,
+                cat_id: 93,
                 estados_id: 1
             },
             error: function (e) {}
@@ -71,12 +71,12 @@ $(document).ready(function () {
             'pdfHtml5'
         ],
         "ajax": {
-            url: "../../../../../../Controller/ctrProyectos.php?proy=get_proyectos_eh",
+            url: "../../../../../../Controller/ctrProyectos.php?proy=get_proyectos_platforms_architecture",
             type: "post",
             dataType: "json",
             data: {
-                sector_id: 1,
-                cat_id: 6,
+                sector_id: 8,
+                cat_id: 93,
                 estados_id: 2
             },
             error: function (e) {}
@@ -129,12 +129,12 @@ $(document).ready(function () {
             'pdfHtml5'
         ],
         "ajax": {
-            url: "../../../../../../Controller/ctrProyectos.php?proy=get_proyectos_eh",
+            url: "../../../../../../Controller/ctrProyectos.php?proy=get_proyectos_platforms_architecture",
             type: "post",
             dataType: "json",
             data: {
-                sector_id: 1,
-                cat_id: 6,
+                sector_id: 8,
+                cat_id: 93,
                 estados_id: 3
             },
             error: function (e) {}
@@ -187,12 +187,12 @@ $(document).ready(function () {
             'pdfHtml5'
         ],
         "ajax": {
-            url: "../../../../../../Controller/ctrProyectos.php?proy=get_proyectos_eh",
+            url: "../../../../../../Controller/ctrProyectos.php?proy=get_proyectos_platforms_architecture",
             type: "post",
             dataType: "json",
             data: {
-                sector_id: 1,
-                cat_id: 6,
+                sector_id: 8,
+                cat_id: 93,
                 estados_id: 4
             },
             error: function (e) {}
@@ -258,8 +258,8 @@ function cambiar_proy_eh_pentest(id_proyecto_gestionado) {
                 showConfirmButton: false
             });
             setTimeout(() => {
-                if ($.fn.DataTable.isDataTable('#table_proyectos_nuevos_eh_pentest')) {
-                    $('#table_proyectos_nuevos_eh_pentest').DataTable().ajax.reload(null, false);
+                if ($.fn.DataTable.isDataTable('#table_proyectos_nuevos_platforms_y_architecture_pentest')) {
+                    $('#table_proyectos_nuevos_platforms_y_architecture_pentest').DataTable().ajax.reload(null, false);
                 }
                 if ($.fn.DataTable.isDataTable('#table_proyectos_borrador')) {
                     $('#table_proyectos_borrador').DataTable().ajax.reload(null, false);
@@ -301,8 +301,8 @@ function cambiar_a_borrador(id_proyecto_gestionado) {
             });
 
             setTimeout(() => {
-                if ($.fn.DataTable.isDataTable('#table_proyectos_nuevos_eh_pentest')) {
-                    $('#table_proyectos_nuevos_eh_pentest').DataTable().ajax.reload(null, false);
+                if ($.fn.DataTable.isDataTable('#table_proyectos_nuevos_platforms_y_architecture_pentest')) {
+                    $('#table_proyectos_nuevos_platforms_y_architecture_pentest').DataTable().ajax.reload(null, false);
                 }
                 if ($.fn.DataTable.isDataTable('#table_proyectos_borrador')) {
                     $('#table_proyectos_borrador').DataTable().ajax.reload(null, false);
@@ -348,8 +348,8 @@ function cambiar_a_abierto(id_proyecto_gestionado) {
             });
 
             setTimeout(() => {
-                if ($.fn.DataTable.isDataTable('#table_proyectos_nuevos_eh_pentest')) {
-                    $('#table_proyectos_nuevos_eh_pentest').DataTable().ajax.reload(null, false);
+                if ($.fn.DataTable.isDataTable('#table_proyectos_nuevos_platforms_y_architecture_pentest')) {
+                    $('#table_proyectos_nuevos_platforms_y_architecture_pentest').DataTable().ajax.reload(null, false);
                 }
                 if ($.fn.DataTable.isDataTable('#table_proyectos_abiertos_eh_pentest')) {
                     $('#table_proyectos_abiertos_eh_pentest').DataTable().ajax.reload(null, false);
@@ -391,8 +391,8 @@ function asignar_proyecto(id_proyecto_gestionado) {
             });
 
             setTimeout(() => {
-                if ($.fn.DataTable.isDataTable('#table_proyectos_nuevos_eh_pentest')) {
-                    $('#table_proyectos_nuevos_eh_pentest').DataTable().ajax.reload(null, false);
+                if ($.fn.DataTable.isDataTable('#table_proyectos_nuevos_platforms_y_architecture_pentest')) {
+                    $('#table_proyectos_nuevos_platforms_y_architecture_pentest').DataTable().ajax.reload(null, false);
                 }
             }, 500);
         }
@@ -401,29 +401,54 @@ function asignar_proyecto(id_proyecto_gestionado) {
 }
 
 
-function ver_hosts_eh(id_proyecto_gestionado) {
+function ver_activos(id_proyecto_gestionado) {
+    
     $("#ModalVerHosts").modal("show");
-    $.post("../../../../../../Controller/ctrProyectos.php?proy=get_hosts_proy_ip", {
+    $.post("../../../../../../Controller/ctrProyectos.php?proy=get_hosts_proy_servidores_on_prem", {
             id_proyecto_gestionado: id_proyecto_gestionado
         },
         function (data, textStatus, jqXHR) {
-            $("#cont_ip").html(data)
+            $("#cont_servidores_on_prem").html(data)
         },
         "html"
     );
-    $.post("../../../../../../Controller/ctrProyectos.php?proy=get_hosts_proy_url", {
+    $.post("../../../../../../Controller/ctrProyectos.php?proy=get_hosts_proy_servidores_cloud", {
             id_proyecto_gestionado: id_proyecto_gestionado
         },
         function (data, textStatus, jqXHR) {
-            $("#cont_url").html(data)
+            $("#cont_servidores_cloud").html(data)
         },
         "html"
     );
-    $.post("../../../../../../Controller/ctrProyectos.php?proy=get_hosts_proy_otro", {
+    $.post("../../../../../../Controller/ctrProyectos.php?proy=get_hosts_proy_licencias_on_prem", {
             id_proyecto_gestionado: id_proyecto_gestionado
         },
         function (data, textStatus, jqXHR) {
-            $("#cont_otro").html(data)
+            $("#cont_licencias_on_prem").html(data)
+        },
+        "html"
+    );
+    $.post("../../../../../../Controller/ctrProyectos.php?proy=get_hosts_proy_licencias_cloud", {
+            id_proyecto_gestionado: id_proyecto_gestionado
+        },
+        function (data, textStatus, jqXHR) {
+            $("#cont_licencias_cloud").html(data)
+        },
+        "html"
+    );
+     $.post("../../../../../../Controller/ctrProyectos.php?proy=get_hosts_proy_modulos_on_prem", {
+            id_proyecto_gestionado: id_proyecto_gestionado
+        },
+        function (data, textStatus, jqXHR) {
+            $("#cont_modulos_on_prem").html(data)
+        },
+        "html"
+    );
+     $.post("../../../../../../Controller/ctrProyectos.php?proy=get_hosts_proy_modulos_cloud", {
+            id_proyecto_gestionado: id_proyecto_gestionado
+        },
+        function (data, textStatus, jqXHR) {
+            $("#cont_modulos_cloud").html(data)
         },
         "html"
     );
@@ -457,9 +482,9 @@ function cambiar_a_nuevo(id_proyecto_gestionado) {
                         }
                     );
                     setTimeout(() => {
-                        if ($.fn.DataTable.isDataTable('#table_proyectos_nuevos_eh_pentest')) {
+                        if ($.fn.DataTable.isDataTable('#table_proyectos_nuevos_platforms_y_architecture_pentest')) {
                             $('#table_proyectos_abiertos_eh_pentest').DataTable().ajax.reload(null, false);
-                            $('#table_proyectos_nuevos_eh_pentest').DataTable().ajax.reload(null, false);
+                            $('#table_proyectos_nuevos_platforms_y_architecture_pentest').DataTable().ajax.reload(null, false);
                         }
                     }, 500);
 
@@ -467,7 +492,7 @@ function cambiar_a_nuevo(id_proyecto_gestionado) {
                 "json"
             ).fail(function (xhr, status, error) {
                 console.error("Error en AJAX:", status, error);
-                console.log(xhr.responseText); // 👈 para ver el error exacto
+                console.log(xhr.responseText); 
                 Swal.fire("Error", "No se pudo actualizar el proyecto.", "error");
             });
 
@@ -501,7 +526,7 @@ function cambiar_a_realizado(id_proyecto_gestionado) {
                 showConfirmButton: false
             });
             setTimeout(() => {
-                if ($.fn.DataTable.isDataTable('#table_proyectos_nuevos_eh_pentest')) {
+                if ($.fn.DataTable.isDataTable('#table_proyectos_nuevos_platforms_y_architecture_pentest')) {
                     $('#table_proyectos_abiertos_eh_pentest').DataTable().ajax.reload(null, false);
                     $('#table_proyectos_realizados_eh_pentest').DataTable().ajax.reload(null, false);
                 }

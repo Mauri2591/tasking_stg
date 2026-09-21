@@ -63,14 +63,14 @@ if (isset($_SESSION['usu_id'])) {
                         </ul>
 
                         <?php
-                        include_once __DIR__ . "/../Modals/ModalVerHosts.php";
+                        include_once __DIR__ . "/../../EthicalHacking/Modals/ModalVerHosts.php";
                         ?>
                         <!-- Tab panes -->
                         <div class="tab-content text-muted">
 
                             <div class="tab-pane active" id="tab_nuevos" role="tabpanel">
                                 <div class="card card-body">
-                                    <table id="table_proyectos_nuevos_eh_pentest" style="text-align: center; width: 100%;">
+                                    <table id="table_proyectos_nuevos_platforms_y_architecture_pentest" style="text-align: center; width: 100%;">
                                         <thead style="text-align: center;">
                                             <tr style="text-align: center;">
                                                 <th style="width: 300px;text-align: center;">TITULO</th>

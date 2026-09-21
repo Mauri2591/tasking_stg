@@ -1,6 +1,5 @@
 var tabla;
 var VALIDAR_SI_HAY_FECHA_INICIO = false;
-var VALIDAR_SI_HAY_FECHA_INICIO = false;
 const tablas = {};
 //***************  Borradores  *****************************
 $(document).ready(function () {
@@ -545,7 +544,7 @@ $("#combo_sector_proy_nuevo").change(function (e) {
                     <span class="badge bg-light fs-10 mb-1 text-dark">Ip's</span>
                     <input type="hidden" hidden value="IP">
                     <textarea class="form-control" id="ips_proy_nuevo_eh" rows="3"
-                        placeholder="Engrese las Ips"></textarea>
+                        placeholder="Ingrese las Ips"></textarea>
                 </div>
                     <div id="mje_ips_proy_nuevo_eh">
 
@@ -608,17 +607,17 @@ $("#combo_sector_proy_nuevo").change(function (e) {
                     <div id="mje_agentes_proy_nuevo_soc">
                     </div>
                 </div>
-                <div class="col-sm-3 ml-1">
+               <div class="col-sm-3 ml-1">
                     <div class="mb-3">
                         <input type="hidden" hidden value="OTROS">
                         <span class="badge bg-light fs-10 mb-1 text-dark">Otros activos</span>
 
-                        <textarea class="form-control" id="otros_proy_nuevo_soc" rows="3"
+                        <textarea class="form-control" id="otros_proy_nuevo" rows="3"
                             placeholder="Otros"></textarea>
                     </div>
                     <div id="mje_urls_proy_nuevo_otros">
-                    </div>
-                </div>`;
+                </div>
+            `;
             break;
 
         case '3': //SASE
@@ -644,16 +643,15 @@ $("#combo_sector_proy_nuevo").change(function (e) {
                     <div id="mje_equipos_proy_nuevo_sase">
                     </div>
                 </div>
-                <div class="col-sm-3 ml-1">
+               <div class="col-sm-3 ml-1">
                     <div class="mb-3">
                         <input type="hidden" hidden value="OTROS">
                         <span class="badge bg-light fs-10 mb-1 text-dark">Otros activos</span>
 
-                        <textarea class="form-control" id="otros_proy_nuevo_sase" rows="3"
+                        <textarea class="form-control" id="otros_proy_nuevo" rows="3"
                             placeholder="Otros"></textarea>
                     </div>
                     <div id="mje_urls_proy_nuevo_otros">
-                    </div>
                 </div>`;
             break;
 
@@ -720,7 +718,60 @@ $("#combo_sector_proy_nuevo").change(function (e) {
                     <div id="mje_equipos_proy_nuevo_sase">
                     </div>
                 </div>
-                <div class="col-sm-4 ml-1">
+                <div class="col-sm-3 mr-1">
+                <div class="mb-3">
+                    <span class="badge bg-light fs-10 mb-1 text-dark">Servidores On-prem</span>
+                    <input type="hidden" hidden value="SERVIDOR_ON_PREM">
+                    <textarea class="form-control" id="servidores_on_prem_proy_nuevo" rows="3"
+                        placeholder="Engrese los Servidores On-prem"></textarea>
+                </div>
+  
+                </div>
+                <div class="col-sm-6">
+                    <div class="mb-3">
+                        <span class="badge bg-light fs-10 mb-1 text-dark">Servidores Cloud</span>
+                        <input type="hidden" hidden value="SERVIDOR_CLOUD">
+                        <textarea class="form-control" id="servidores_cloud_proy_nuevo" rows="3"
+                            placeholder="Ingrese los Servidores Cloud"></textarea>
+                    </div>
+                </div>
+                <div class="col-sm-3 ml-1">
+                    <div class="mb-3">
+                        <input type="hidden" hidden value="LICENCIAS_ON_PREM">
+                        <span class="badge bg-light fs-10 mb-1 text-dark">Licencias On-prem</span>
+
+                        <textarea class="form-control" id="licencias_on_prem_proy_nuevo" rows="3"
+                            placeholder="Licencias on-prem"></textarea>
+                    </div>
+                </div>
+                <div class="col-sm-3 ml-1">
+                    <div class="mb-3">
+                        <input type="hidden" hidden value="LICENCIAS_CLOUD">
+                        <span class="badge bg-light fs-10 mb-1 text-dark">Licencias Cloud</span>
+
+                        <textarea class="form-control" id="licencias_cloud_proy_nuevo" rows="3"
+                            placeholder="Licencias cloud"></textarea>
+                    </div>
+                </div>
+                <div class="col-sm-3 ml-1">
+                    <div class="mb-3">
+                        <input type="hidden" hidden value="MODULOS_ON_PREM">
+                        <span class="badge bg-light fs-10 mb-1 text-dark">Modulos On-prem</span>
+
+                        <textarea class="form-control" id="modulos_on_prem_proy_nuevo" rows="3"
+                            placeholder="Modulos on-prem"></textarea>
+                    </div>
+                </div>
+                <div class="col-sm-3 ml-1">
+                    <div class="mb-3">
+                        <input type="hidden" hidden value="MODULOS_CLOUD">
+                        <span class="badge bg-light fs-10 mb-1 text-dark">Modulos Cloud</span>
+
+                        <textarea class="form-control" id="modulos_cloud_proy_nuevo" rows="3"
+                            placeholder="Modulos cloud"></textarea>
+                    </div>
+                </div>
+                 <div class="col-sm-3 ml-1">
                     <div class="mb-3">
                         <input type="hidden" hidden value="OTROS">
                         <span class="badge bg-light fs-10 mb-1 text-dark">Otros activos</span>
@@ -729,7 +780,6 @@ $("#combo_sector_proy_nuevo").change(function (e) {
                             placeholder="Otros"></textarea>
                     </div>
                     <div id="mje_urls_proy_nuevo_otros">
-                    </div>
                 </div>`;
             activarValidacionTextarea(
                 "ips_proy_nuevo_eh",
@@ -748,50 +798,93 @@ $("#combo_sector_proy_nuevo").change(function (e) {
             document.getElementById('container_ips_urls').innerHTML =
                 `<div class="col-sm-3 mr-1">
                 <div class="mb-3">
-                    <span class="badge bg-light fs-10 mb-1 text-dark">Ip's</span>
-                    <input type="hidden" hidden value="IP">
-                    <textarea class="form-control" id="ips_proy_nuevo_eh" rows="3"
-                        placeholder="Engrese las Ips"></textarea>
+                    <span class="badge bg-light fs-10 mb-1 text-dark">Casillas</span>
+                    <input type="hidden" hidden value="CASILLAS">
+                    <textarea class="form-control" id="casillas_proy_nuevo" rows="3"
+                        placeholder="Engrese las Casillas"></textarea>
                 </div>
-                    <div id="mje_ips_proy_nuevo_eh">
 
-                    </div>
                 </div>
                 <div class="col-sm-6">
                     <div class="mb-3">
-                        <span class="badge bg-light fs-10 mb-1 text-dark">Url's</span>
-                        <input type="hidden" hidden value="URL">
-                        <textarea class="form-control" id="urls_proy_nuevo_eh" rows="3"
-                            placeholder="Ingrese las URL's"></textarea>
+                        <span class="badge bg-light fs-10 mb-1 text-dark">Tematicas</span>
+                        <input type="hidden" hidden value="TEMATICAS">
+                        <textarea class="form-control" id="tematicas_proy_nuevo" rows="3"
+                            placeholder="Ingrese las Tematicas"></textarea>
                     </div>
-                    <div id="mje_urls_proy_nuevo_eh">
+                </div>
+                
+                <div class="col-sm-3 ml-1">
+                    <div class="mb-3">
+                        <input type="hidden" hidden value="CAMPANIAS">
+                        <span class="badge bg-light fs-10 mb-1 text-dark">Campañas</span>
+
+                        <textarea class="form-control" id="campanias_proy_nuevo" rows="3"
+                            placeholder="Ingrese las Campañas"></textarea>
+                    </div>
+                </div>`;
+            break;
+
+        case '7': //FUNCTIONAL SERVICES
+            document.getElementById('container_ips_urls').innerHTML =
+                `<div class="col-sm-3 mr-1">
+                <div class="mb-3">
+                    <span class="badge bg-light fs-10 mb-1 text-dark">Servidores On-prem</span>
+                    <input type="hidden" hidden value="SERVIDOR_ON_PREM">
+                    <textarea class="form-control" id="servidores_on_prem_proy_nuevo" rows="3"
+                        placeholder="Engrese los Servidores On-prem"></textarea>
+                </div>
+  
+                </div>
+                <div class="col-sm-6">
+                    <div class="mb-3">
+                        <span class="badge bg-light fs-10 mb-1 text-dark">Servidores Cloud</span>
+                        <input type="hidden" hidden value="SERVIDOR_CLOUD">
+                        <textarea class="form-control" id="servidores_cloud_proy_nuevo" rows="3"
+                            placeholder="Ingrese los Servidores Cloud"></textarea>
                     </div>
                 </div>
                 <div class="col-sm-3 ml-1">
                     <div class="mb-3">
-                        <input type="hidden" hidden value="APLICACIONES">
-                        <span class="badge bg-light fs-10 mb-1 text-dark">Aplicaciones</span>
+                        <input type="hidden" hidden value="LICENCIAS_ON_PREM">
+                        <span class="badge bg-light fs-10 mb-1 text-dark">Licencias On-prem</span>
 
-                        <textarea class="form-control" id="aplicaciones_proy_nuevo" rows="3"
-                            placeholder="Aplicaciones"></textarea>
+                        <textarea class="form-control" id="licencias_on_prem_proy_nuevo" rows="3"
+                            placeholder="Licencias on-prem"></textarea>
                     </div>
-                    <div id="mje_aplicaciones_proy_nuevo_otros">
-                    </div>
-                </div>`;
-            activarValidacionTextarea(
-                "ips_proy_nuevo_eh",
-                "mje_ips_proy_nuevo_eh",
-                "IP"
-            );
+                </div>
+                <div class="col-sm-3 ml-1">
+                    <div class="mb-3">
+                        <input type="hidden" hidden value="LICENCIAS_CLOUD">
+                        <span class="badge bg-light fs-10 mb-1 text-dark">Licencias Cloud</span>
 
-            activarValidacionTextarea(
-                "urls_proy_nuevo_eh",
-                "mje_urls_proy_nuevo_eh",
-                "URL"
-            );
+                        <textarea class="form-control" id="licencias_cloud_proy_nuevo" rows="3"
+                            placeholder="Licencias cloud"></textarea>
+                    </div>
+                </div>
+                <div class="col-sm-3 ml-1">
+                    <div class="mb-3">
+                        <input type="hidden" hidden value="MODULOS_ON_PREM">
+                        <span class="badge bg-light fs-10 mb-1 text-dark">Modulos On-prem</span>
+
+                        <textarea class="form-control" id="modulos_on_prem_proy_nuevo" rows="3"
+                            placeholder="Modulos on-prem"></textarea>
+                    </div>
+                </div>
+                <div class="col-sm-3 ml-1">
+                    <div class="mb-3">
+                        <input type="hidden" hidden value="MODULOS_CLOUD">
+                        <span class="badge bg-light fs-10 mb-1 text-dark">Modulos Cloud</span>
+
+                        <textarea class="form-control" id="modulos_cloud_proy_nuevo" rows="3"
+                            placeholder="Modulos cloud"></textarea>
+                    </div>
+                </div>
+                `;
+
             break;
 
-        case '7': //FUNCTIONAL SERVICES
+        case '8': //PLATFORMS Y ARCHITECTURE
             document.getElementById('container_ips_urls').innerHTML =
                 `<div class="col-sm-3 mr-1">
                 <div class="mb-3">
@@ -837,7 +930,6 @@ $("#combo_sector_proy_nuevo").change(function (e) {
                 "URL"
             );
             break;
-
         default:
             break;
     }
@@ -1709,6 +1801,15 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
         ajax_insert_host_nuevos(data);
     });
 
+    function limpiar_duplicados(valor) {
+        return valor
+            .split('\n')
+            .map(v => v.trim())
+            .filter(v => v.length > 0)
+            .filter((v, i, arr) => arr.indexOf(v) === i) // ← Elimina duplicados
+            .join('\n');
+    }
+
 
     //quede acá
     function get_datos_insert_proyecto_gestionado() {
@@ -1743,13 +1844,36 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
         formData.append('fech_vantive', document.getElementById('fech_vantive').value);
         formData.append('captura_imagen', document.getElementById('captura_imagen').value);
 
+        //Ethical Hacking
         formData.append('ips', document.getElementById("ips_proy_nuevo_eh")?.value || "");
         formData.append('urls', document.getElementById("urls_proy_nuevo_eh")?.value || "");
-        formData.append('otros', document.getElementById("otros_proy_nuevo")?.value || "");
+        //Ethical Hacking
+
         formData.append('aplicaciones', document.getElementById("aplicaciones_proy_nuevo")?.value || "");
+
         formData.append('equipos', document.getElementById("equipos_proy_nuevo_sase")?.value || "");
+
+        //SOC
         formData.append('agentes', document.getElementById("agentes_proy_nuevo_soc")?.value || "");
         formData.append('dispositivos', document.getElementById("dispositivos_proy_nuevo_soc")?.value || "");
+        //SOC
+
+
+        //Functional Services
+        formData.append('servidores_on_prem', document.getElementById("servidores_on_prem_proy_nuevo")?.value || "");
+        formData.append('servidores_cloud', document.getElementById("servidores_cloud_proy_nuevo")?.value || "");
+        formData.append('licencias_on_prem', document.getElementById("licencias_on_prem_proy_nuevo")?.value || "");
+        formData.append('licencias_cloud', document.getElementById("licencias_cloud_proy_nuevo")?.value || "");
+        formData.append('modulos_on_prem', document.getElementById("modulos_on_prem_proy_nuevo")?.value || "");
+        formData.append('modulos_cloud', document.getElementById("modulos_cloud_proy_nuevo")?.value || "");
+        //Functional Services
+
+        //Consulting
+        formData.append('campanias', document.getElementById("campanias_proy_nuevo")?.value || "");
+        formData.append('tematicas', document.getElementById("tematicas_proy_nuevo")?.value || "");
+        formData.append('casillas', document.getElementById("casillas_proy_nuevo")?.value || "");
+        //Consulting
+        formData.append('otros', document.getElementById("otros_proy_nuevo")?.value || "");
 
         formData.append('hs_dimensionadas', document.getElementById('hs_dimensionadas').value);
         return formData;
@@ -2053,14 +2177,14 @@ function actualizarComboActivos(valor) {
             opciones = `
                 <option value="IP">IP's</option>
                 <option value="URL">URL's</option>
-                <option value="OTRO">Otros</option>
+                <option value="OTROS">Otros</option>
             `;
             break;
         case '2':
             opciones = `
                 <option value="DISPOSITIVO">Dispositivos</option>
                 <option value="AGENTE">Agentes</option>
-                <option value="OTRO">Otros</option>
+                <option value="OTROS">Otros</option>
             `;
             break;
 
@@ -2068,7 +2192,7 @@ function actualizarComboActivos(valor) {
             opciones = `
                 <option value="IP">IP's</option>
                 <option value="EQUIPO">Equipos</option>
-                <option value="OTRO">Otros</option>
+                <option value="OTROS">Otros</option>
             `;
             break;
         case '5':
@@ -2078,22 +2202,36 @@ function actualizarComboActivos(valor) {
                 <option value="DISPOSITIVO">Dispositivos</option>
                 <option value="AGENTE">Agentes</option>
                 <option value="EQUIPO">Equipos</option>
-                <option value="OTRO">Otros</option>
+                <option value="CAMPANIAS">CAMPAÑAS</option>
+                <option value="TEMATICAS">TEMATICAS</option>
+                <option value="CASILLAS">CASILLAS</option>
+                <option value="OTROS">Otros</option>
             `;
 
         case '6':
             opciones = `
-                <option value="IP">IP's</option>
-                <option value="URL">URL's</option>
-                <option value="APLICACION">Aplicacion</option>
+                <option value="CAMPANIAS">CAMPAÑAS</option>
+                <option value="TEMATICAS">TEMATICAS</option>
+                <option value="CASILLAS">CASILLAS</option>
             `;
             break;
 
         case '7':
             opciones = `
+                <option value="SERVIDOR_ON_PREM">Servidor On-prem</option>
+                <option value="SERVIDOR_CLOUD">Servidor Cloud</option>
+                <option value="LICENCIAS_ON_PREM">Licencias on-prem</option>
+                <option value="LICENCIAS_CLOUD">Licencias cloud</option>
+                <option value="MODULOS_ON_PREM">Modulos on-prem</option>
+                <option value="MODULOS_CLOUD">Modulos cloud</option>
+            `;
+            break;
+
+        case '8':
+            opciones = `
                 <option value="IP">IP's</option>
                 <option value="URL">URL's</option>
-                <option value="OTRO">Otros</option>
+                <option value="OTROS">Otros</option>
             `;
             break;
     }

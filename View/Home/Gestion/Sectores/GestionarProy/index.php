@@ -142,7 +142,6 @@ if (isset($_SESSION['usu_id'])) {
 
                                 <div class="col-lg-12 p-2 mt-1">
                                     <div id="contenedor_ips_y_descripcion" class="row d-flex justify-content-evenly" style="opacity:0;">
-
                                         <div id="contenedor_ips" style="display:none;" class="col-ms-2 col text-center">
                                             <span type="button"
                                                 onclick="copiar_ips(<?php echo isset($_GET['p']) ? Openssl::get_ssl_decrypt($_GET['p']) : ''; ?>)"
@@ -219,6 +218,111 @@ if (isset($_SESSION['usu_id'])) {
                                                 <div class="text-center" id="cont_otro"></div>
                                             </div>
                                         </div>
+
+                                        <!-- CONSULTING -->
+                                        <div id="contenedor_casillas" style="display:none;" class="col-ms-2 col text-center">
+                                            <span type="button"
+                                                onclick="copiar_casillas(<?php echo isset($_GET['p']) ? Openssl::get_ssl_decrypt($_GET['p']) : ''; ?>)"
+                                                class="btn btn-sm py-0 px-1 btn-outline-success waves-effect waves-light mb-2">Casillas<i
+                                                    class=" ri-file-copy-line"></i></span>
+                                            <div style="max-height: 220px;  min-height: 220px; overflow-y: scroll; border-radius: 5px;"
+                                                class=" border border-success">
+                                                <div class="text-center" id="cont_casillas"></div>
+                                            </div>
+                                        </div>
+
+                                        <div id="contenedor_tematica" style="display:none;" class="col-ms-2 col text-center">
+                                            <span type="button"
+                                                onclick="copiar_tematica(<?php echo isset($_GET['p']) ? Openssl::get_ssl_decrypt($_GET['p']) : ''; ?>)"
+                                                class="btn btn-sm py-0 px-1 btn-outline-success waves-effect waves-light mb-2">Tematicas<i
+                                                    class=" ri-file-copy-line"></i></span>
+                                            <div style="max-height: 220px;  min-height: 220px; overflow-y: scroll; border-radius: 5px;"
+                                                class=" border border-success">
+                                                <div class="text-center" id="cont_tematicas"></div>
+                                            </div>
+                                        </div>
+
+                                        <div id="contenedor_campanias" style="display:none;" class="col-ms-2 col text-center">
+                                            <span type="button"
+                                                onclick="copiar_campanias(<?php echo isset($_GET['p']) ? Openssl::get_ssl_decrypt($_GET['p']) : ''; ?>)"
+                                                class="btn btn-sm py-0 px-1 btn-outline-success waves-effect waves-light mb-2">Campañas<i
+                                                    class=" ri-file-copy-line"></i></span>
+                                            <div style="max-height: 220px;  min-height: 220px; overflow-y: scroll; border-radius: 5px;"
+                                                class=" border border-success">
+                                                <div class="text-center" id="cont_campanias"></div>
+                                            </div>
+                                        </div>
+                                        <!-- CONSULTING -->
+
+
+                                        <!-- FUNCTIONAL SERVICES -->
+                                        <div id="contenedor_servidores_on_prem" style="display:none;" class="col-ms-2 col text-center">
+                                            <span type="button"
+                                                onclick="copiar_servidores_on_prem(<?php echo isset($_GET['p']) ? Openssl::get_ssl_decrypt($_GET['p']) : ''; ?>)"
+                                                class="btn btn-sm py-0 px-1 btn-outline-success waves-effect waves-light mb-2">Servidores On-prem<i
+                                                    class=" ri-file-copy-line"></i></span>
+                                            <div style="max-height: 220px;  min-height: 220px; overflow-y: scroll; border-radius: 5px;"
+                                                class=" border border-success">
+                                                <div class="text-center" id="cont_servidores_on_prem"></div>
+                                            </div>
+                                        </div>
+
+                                        <div id="contenedor_servidores_cloud" style="display:none;" class="col-ms-2 col text-center">
+                                            <span type="button"
+                                                onclick="copiar_servidores_cloud(<?php echo isset($_GET['p']) ? Openssl::get_ssl_decrypt($_GET['p']) : ''; ?>)"
+                                                class="btn btn-sm py-0 px-1 btn-outline-success waves-effect waves-light mb-2">Servidores Cloud<i
+                                                    class=" ri-file-copy-line"></i></span>
+                                            <div style="max-height: 220px;  min-height: 220px; overflow-y: scroll; border-radius: 5px;"
+                                                class=" border border-success">
+                                                <div class="text-center" id="cont_servidores_cloud"></div>
+                                            </div>
+                                        </div>
+
+                                        <div id="contenedor_licencias_on_prem" style="display:none;" class="col-ms-2 col text-center">
+                                            <span type="button"
+                                                onclick="copiar_licencias_on_prem(<?php echo isset($_GET['p']) ? Openssl::get_ssl_decrypt($_GET['p']) : ''; ?>)"
+                                                class="btn btn-sm py-0 px-1 btn-outline-success waves-effect waves-light mb-2">Licencias On-prem<i
+                                                    class=" ri-file-copy-line"></i></span>
+                                            <div style="max-height: 220px;  min-height: 220px; overflow-y: scroll; border-radius: 5px;"
+                                                class=" border border-success">
+                                                <div class="text-center" id="cont_licencias_on_prem"></div>
+                                            </div>
+                                        </div>
+
+                                        <div id="contenedor_licencias_cloud" style="display:none;" class="col-ms-2 col text-center">
+                                            <span type="button"
+                                                onclick="copiar_licencias_cloud(<?php echo isset($_GET['p']) ? Openssl::get_ssl_decrypt($_GET['p']) : ''; ?>)"
+                                                class="btn btn-sm py-0 px-1 btn-outline-success waves-effect waves-light mb-2">Licencias Cloud<i
+                                                    class=" ri-file-copy-line"></i></span>
+                                            <div style="max-height: 220px;  min-height: 220px; overflow-y: scroll; border-radius: 5px;"
+                                                class=" border border-success">
+                                                <div class="text-center" id="cont_licencias_cloud"></div>
+                                            </div>
+                                        </div>
+
+                                        <div id="contenedor_modulos_on_prem" style="display:none;" class="col-ms-2 col text-center">
+                                            <span type="button"
+                                                onclick="copiar_modulos_on_prem(<?php echo isset($_GET['p']) ? Openssl::get_ssl_decrypt($_GET['p']) : ''; ?>)"
+                                                class="btn btn-sm py-0 px-1 btn-outline-success waves-effect waves-light mb-2">Modulos On-prem<i
+                                                    class=" ri-file-copy-line"></i></span>
+                                            <div style="max-height: 220px;  min-height: 220px; overflow-y: scroll; border-radius: 5px;"
+                                                class=" border border-success">
+                                                <div class="text-center" id="cont_modulos_on_prem"></div>
+                                            </div>
+                                        </div>
+
+                                        <div id="contenedor_modulos_cloud" style="display:none;" class="col-ms-2 col text-center">
+                                            <span type="button"
+                                                onclick="copiar_modulos_cloud(<?php echo isset($_GET['p']) ? Openssl::get_ssl_decrypt($_GET['p']) : ''; ?>)"
+                                                class="btn btn-sm py-0 px-1 btn-outline-success waves-effect waves-light mb-2">Modulos Cloud<i
+                                                    class=" ri-file-copy-line"></i></span>
+                                            <div style="max-height: 220px;  min-height: 220px; overflow-y: scroll; border-radius: 5px;"
+                                                class=" border border-success">
+                                                <div class="text-center" id="cont_modulos_cloud"></div>
+                                            </div>
+                                        </div>
+                                        <!-- FUNCTIONAL SERVICES -->
+
 
                                         <div class="col-xl-5 bg-success" style="border:.1rem solid gray;margin-right: 2px; border-radius: 5px;">
                                             <div class="d-flex align-items-center">
@@ -533,15 +637,24 @@ if (isset($_SESSION['usu_id'])) {
                                 break;
 
                             case 6:
-                                $("#contenedor_ips").show();
-                                $("#contenedor_urls").show();
-                                $("#contenedor_aplicaciones").show();
+                                $("#contenedor_casillas").show();
+                                $("#contenedor_tematica").show();
+                                $("#contenedor_campanias").show();
                                 break;
 
                             case 7:
-                                $("#contenedor_ips").show();
-                                $("#contenedor_urls").show();
-                                $("#contenedor_otros").show();
+                                $("#contenedor_servidores_on_prem").show();
+                                $("#contenedor_servidores_cloud").show();
+                                $("#contenedor_licencias_on_prem").show();
+                                $("#contenedor_licencias_cloud").show();
+                                $("#contenedor_modulos_on_prem").show();
+                                $("#contenedor_modulos_cloud").show();
+                                break;
+
+                            case 8:
+                                $("#contenedor_casillas").show();
+                                $("#contenedor_tematica").show();
+                                $("#contenedor_campanias").show();
                                 break;
                         }
                         $("#contenedor_ips_y_descripcion").css("opacity", "1");
@@ -835,6 +948,125 @@ if (isset($_SESSION['usu_id'])) {
                 },
                 "html"
             );
+
+            //CONSULTING INICIO  ------------------------------------------------------------
+
+            $.post("../../../../../Controller/ctrProyectos.php?proy=get_hosts_proy_casillas", {
+                    id_proyecto_gestionado: id_proyecto_gestionado
+                },
+                function(data, textStatus, jqXHR) {
+                    if (data) {
+                        $("#cont_casillas").html(data)
+                    } else {
+                        $("#cont_casillas").text("No hay activos")
+                    }
+                },
+                "html"
+            );
+
+            $.post("../../../../../Controller/ctrProyectos.php?proy=get_hosts_proy_tematicas", {
+                    id_proyecto_gestionado: id_proyecto_gestionado
+                },
+                function(data, textStatus, jqXHR) {
+                    if (data) {
+                        $("#cont_tematicas").html(data)
+                    } else {
+                        $("#cont_tematicas").text("No hay activos")
+                    }
+                },
+                "html"
+            );
+
+            $.post("../../../../../Controller/ctrProyectos.php?proy=get_hosts_proy_campanias", {
+                    id_proyecto_gestionado: id_proyecto_gestionado
+                },
+                function(data, textStatus, jqXHR) {
+                    if (data) {
+                        $("#cont_campanias").html(data)
+                    } else {
+                        $("#cont_campanias").text("No hay activos")
+                    }
+                },
+                "html"
+            );
+            //CONSULTING FIN  ------------------------------------------------------------
+
+            //FUNCTIONAL SERVICES FIN  ------------------------------------------------------------
+            $.post("../../../../../Controller/ctrProyectos.php?proy=get_hosts_proy_servidores_on_prem", {
+                    id_proyecto_gestionado: id_proyecto_gestionado
+                },
+                function(data, textStatus, jqXHR) {
+                    if (data) {
+                        $("#cont_servidores_on_prem").html(data)
+                    } else {
+                        $("#cont_servidores_on_prem").text("No hay activos")
+                    }
+                },
+                "html"
+            );
+            $.post("../../../../../Controller/ctrProyectos.php?proy=get_hosts_proy_servidores_cloud", {
+                    id_proyecto_gestionado: id_proyecto_gestionado
+                },
+                function(data, textStatus, jqXHR) {
+                    if (data) {
+                        $("#cont_servidores_cloud").html(data)
+                    } else {
+                        $("#cont_servidores_cloud").text("No hay activos")
+                    }
+                },
+                "html"
+            );
+            $.post("../../../../../Controller/ctrProyectos.php?proy=get_hosts_proy_licencias_on_prem", {
+                    id_proyecto_gestionado: id_proyecto_gestionado
+                },
+                function(data, textStatus, jqXHR) {
+                    if (data) {
+                        $("#cont_licencias_on_prem").html(data)
+                    } else {
+                        $("#cont_licencias_on_prem").text("No hay activos")
+                    }
+                },
+                "html"
+            );
+            $.post("../../../../../Controller/ctrProyectos.php?proy=get_hosts_proy_licencias_cloud", {
+                    id_proyecto_gestionado: id_proyecto_gestionado
+                },
+                function(data, textStatus, jqXHR) {
+                    if (data) {
+                        $("#cont_licencias_cloud").html(data)
+                    } else {
+                        $("#cont_licencias_cloud").text("No hay activos")
+                    }
+                },
+                "html"
+            );
+            $.post("../../../../../Controller/ctrProyectos.php?proy=get_hosts_proy_modulos_on_prem", {
+                    id_proyecto_gestionado: id_proyecto_gestionado
+                },
+                function(data, textStatus, jqXHR) {
+                    if (data) {
+                        $("#cont_modulos_on_prem").html(data)
+                    } else {
+                        $("#cont_modulos_on_prem").text("No hay activos")
+                    }
+                },
+                "html"
+            );
+            $.post("../../../../../Controller/ctrProyectos.php?proy=get_hosts_proy_modulos_cloud", {
+                    id_proyecto_gestionado: id_proyecto_gestionado
+                },
+                function(data, textStatus, jqXHR) {
+                    if (data) {
+                        $("#cont_modulos_cloud").html(data)
+                    } else {
+                        $("#cont_modulos_cloud").text("No hay activos")
+                    }
+                },
+                "html"
+            );
+            //FUNCTIONAL SERVICES FIN  ------------------------------------------------------------
+
+
 
             function summernote() {
                 $('#descripcion_proyecto').summernote({
@@ -1672,6 +1904,56 @@ if (isset($_SESSION['usu_id'])) {
             });
         }
 
+        //CONSULTING -------------------------------------------------------
+        function copiar_casillas(id_proyecto_cantidad_servicios) {
+            Toastify({
+                text: "¡Activos copiados!",
+                duration: 2000,
+                gravity: "top",
+                position: "right",
+                backgroundColor: "#0ab39c",
+            }).showToast();
+            let contenido = document.getElementById("cont_casillas").innerText.trim();
+            navigator.clipboard.writeText(contenido).then(function() {
+                toast.success('Successfully toasted!')
+            }).catch(function(error) {
+                console.error("Error al copiar: ", error);
+            });
+        }
+
+        function copiar_tematica(id_proyecto_cantidad_servicios) {
+            Toastify({
+                text: "¡Activos copiados!",
+                duration: 2000,
+                gravity: "top",
+                position: "right",
+                backgroundColor: "#0ab39c",
+            }).showToast();
+            let contenido = document.getElementById("cont_tematica").innerText.trim();
+            navigator.clipboard.writeText(contenido).then(function() {
+                toast.success('Successfully toasted!')
+            }).catch(function(error) {
+                console.error("Error al copiar: ", error);
+            });
+        }
+
+        function copiar_campanias(id_proyecto_cantidad_servicios) {
+            Toastify({
+                text: "¡Activos copiados!",
+                duration: 2000,
+                gravity: "top",
+                position: "right",
+                backgroundColor: "#0ab39c",
+            }).showToast();
+            let contenido = document.getElementById("cont_campanias").innerText.trim();
+            navigator.clipboard.writeText(contenido).then(function() {
+                toast.success('Successfully toasted!')
+            }).catch(function(error) {
+                console.error("Error al copiar: ", error);
+            });
+        }
+        //CONSULTING -------------------------------------------------------
+
         function copiar_aplicaciones(id_proyecto_cantidad_servicios) {
             Toastify({
                 text: "¡Activos copiados!",
@@ -1688,6 +1970,113 @@ if (isset($_SESSION['usu_id'])) {
                 console.error("Error al copiar: ", error);
             });
         }
+
+        //FUNCTIONAL SERVICES -------------------------------------------------------
+        function copiar_servidores_on_prem(id_proyecto_cantidad_servicios) {
+            Toastify({
+                text: "¡Activos copiados!",
+                duration: 2000,
+                gravity: "top",
+                position: "right",
+                backgroundColor: "#0ab39c",
+            }).showToast();
+
+            let contenido = document.getElementById("cont_servidores_on_prem").innerText.trim();
+            navigator.clipboard.writeText(contenido).then(function() {
+                toast.success('Successfully toasted!')
+            }).catch(function(error) {
+                console.error("Error al copiar: ", error);
+            });
+        }
+
+        function copiar_servidores_cloud(id_proyecto_cantidad_servicios) {
+            Toastify({
+                text: "¡Activos copiados!",
+                duration: 2000,
+                gravity: "top",
+                position: "right",
+                backgroundColor: "#0ab39c",
+            }).showToast();
+
+            let contenido = document.getElementById("cont_servidores_cloud").innerText.trim();
+            navigator.clipboard.writeText(contenido).then(function() {
+                toast.success('Successfully toasted!')
+            }).catch(function(error) {
+                console.error("Error al copiar: ", error);
+            });
+        }
+
+        function copiar_licencias_on_prem(id_proyecto_cantidad_servicios) {
+            Toastify({
+                text: "¡Activos copiados!",
+                duration: 2000,
+                gravity: "top",
+                position: "right",
+                backgroundColor: "#0ab39c",
+            }).showToast();
+
+            let contenido = document.getElementById("cont_licencias_on_prem").innerText.trim();
+            navigator.clipboard.writeText(contenido).then(function() {
+                toast.success('Successfully toasted!')
+            }).catch(function(error) {
+                console.error("Error al copiar: ", error);
+            });
+        }
+
+        function copiar_licencias_cloud(id_proyecto_cantidad_servicios) {
+            Toastify({
+                text: "¡Activos copiados!",
+                duration: 2000,
+                gravity: "top",
+                position: "right",
+                backgroundColor: "#0ab39c",
+            }).showToast();
+
+            let contenido = document.getElementById("cont_licencias_cloud").innerText.trim();
+            navigator.clipboard.writeText(contenido).then(function() {
+                toast.success('Successfully toasted!')
+            }).catch(function(error) {
+                console.error("Error al copiar: ", error);
+            });
+        }
+
+        function copiar_modulos_on_prem(id_proyecto_cantidad_servicios) {
+            Toastify({
+                text: "¡Activos copiados!",
+                duration: 2000,
+                gravity: "top",
+                position: "right",
+                backgroundColor: "#0ab39c",
+            }).showToast();
+
+            let contenido = document.getElementById("cont_modulos_on_prem").innerText.trim();
+            navigator.clipboard.writeText(contenido).then(function() {
+                toast.success('Successfully toasted!')
+            }).catch(function(error) {
+                console.error("Error al copiar: ", error);
+            });
+        }
+
+        function copiar_modulos_cloud(id_proyecto_cantidad_servicios) {
+            Toastify({
+                text: "¡Activos copiados!",
+                duration: 2000,
+                gravity: "top",
+                position: "right",
+                backgroundColor: "#0ab39c",
+            }).showToast();
+
+            let contenido = document.getElementById("cont_modulos_cloud").innerText.trim();
+            navigator.clipboard.writeText(contenido).then(function() {
+                toast.success('Successfully toasted!')
+            }).catch(function(error) {
+                console.error("Error al copiar: ", error);
+            });
+        }
+        //FUNCTIONAL SERVICES -------------------------------------------------------
+
+
+
 
         function verLogs(id_proyecto_gestionado) {
             $("#ModalVerLogsProyectos").modal("show")
