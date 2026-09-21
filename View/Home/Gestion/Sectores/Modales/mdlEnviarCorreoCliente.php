@@ -103,7 +103,7 @@
                             <?php if (!empty($datos_envios_agrupados)): ?>
                                 <?php foreach ($datos_envios_agrupados as $idx => $val): ?>
 
-                                    <div class="border rounded p-2 mb-2" style="background:#fafafa;">
+                                    <div class="rounded p-2 mb-2" style="background:#fafafa; border:.1rem solid #8d8d8d">
                                         <span class="badge bg-light text-dark fs-10 mb-1">Envío #<?= count($datos_envios_agrupados) - $idx ?></span>
                                         <!-- CORREO AL CLIENTE -->
                                         <div class="fs-13" id="correo_item_<?= intval($val['id']) ?>">
