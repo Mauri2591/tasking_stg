@@ -205,10 +205,13 @@ class Correo extends Conexion
 
     public function enviarCorreoCliente(int $id_proyecto_gestionado, string $correo_destino, int $pais_id, string $correos_copia_input = '')
     {
-        $correos_copia = $this->getCorreosCopia($id_proyecto_gestionado, $correos_copia_input);
         $correos_cliente_copia = $this->getCorreosClienteCopia($id_proyecto_gestionado, $correos_copia_input);
         $lideres = $this->getLideresDelSector($id_proyecto_gestionado);
         $correos_sectores = array_filter(array_map('trim', explode(',', MAIL_COPIA_SECTORES)));
+
+        // Unificar todos los que van en CC
+        $todos_en_copia = array_merge($correos_cliente_copia, $lideres, $correos_sectores);
+        $todos_en_copia = array_unique(array_filter($todos_en_copia)); // Eliminar duplicados
 
         $remitente = $pais_id == 1 ? SMTP_FROM_ARG : SMTP_FROM_INT;
         $nombre_remitente = $pais_id == 1 ? SMTP_FROM_NAME_ARG : SMTP_FROM_NAME_INT;
@@ -231,13 +234,11 @@ class Correo extends Conexion
             $mail->setFrom($remitente, $nombre_remitente);
             $mail->isHTML(true);
         };
-
         $datos    = $this->getDatosParaCorreo($id_proyecto_gestionado);
         $refProy  = $datos->refProy  ?: 'N/A';
         $producto = $datos->producto ?: 'N/A';
         $tipo = $datos->tipo ?: 'N/A';
         $cliente  = $datos->cliente  ?: 'N/A';
-
         $conn = $this->get_conexion();
         $sql  = "SELECT 
         descripciones_proyecto.id, 
@@ -262,17 +263,14 @@ class Correo extends Conexion
         $stmt->bindValue(':id', $id_proyecto_gestionado, PDO::PARAM_INT);
         $stmt->execute();
         $doc = $stmt->fetch(PDO::FETCH_ASSOC);
-
         if (!$doc || empty($doc['documento'])) {
             $this->registrarEnvio($id_proyecto_gestionado, $remitente, 'ERROR');
             return 'Sin documentos para enviar';
         }
-
         $id_descripciones_proyecto = $doc['id'];
         $carpeta  = $doc['carpeta_documentos_proy'];
         $archivos = array_filter(explode(',', $doc['documento']));
         $clave    = strtoupper(bin2hex(random_bytes(6)));
-
         $carpeta_zip = ZIP_PATH;
         if (!file_exists($carpeta_zip)) {
             mkdir($carpeta_zip, 0755, true);
@@ -282,11 +280,9 @@ class Correo extends Conexion
 
         $zip = new ZipArchive();
         $resultado = $zip->open($ruta_zip, ZipArchive::CREATE);
-
         if ($resultado !== true) {
             return 'Error abriendo ZIP: ' . $resultado;
         }
-
         $archivos_encontrados = 0;
         foreach ($archivos as $archivo) {
             $ruta_archivo = BASE_PATH . "View/Home/Public/Uploads/Proyectos/" . $carpeta . "/" . trim($archivo);
@@ -302,38 +298,24 @@ class Correo extends Conexion
             }
         }
         $zip->close();
-
         if ($archivos_encontrados === 0) {
             $this->registrarEnvio($id_proyecto_gestionado, $remitente, 'ERROR');
             return 'No se encontraron archivos físicos en el servidor';
         }
-
         try {
-            // ========== CORREO 1: AL CLIENTE CON ZIP + CC a copias + CC a líderes + CC a sectores ==========
+            // ========== CORREO 1: AL CLIENTE CON ZIP + CC a TODOS ==========
             $mailCliente = new PHPMailer(true);
             if (SMTP_ENABLED === 'true') {
                 $smtpConfig($mailCliente);
                 $mailCliente->addAddress($correo_destino); // Destinatario principal
 
-                // CC a todos los que están en copia
-                foreach ($correos_cliente_copia as $correo_copia) {
-                    $mailCliente->addCC(trim($correo_copia));
+                // CC a todos (copias + líderes + sectores)
+                foreach ($todos_en_copia as $correo) {
+                    $mailCliente->addCC(trim($correo));
                 }
-
-                // CC al líder
-                foreach ($lideres as $correo_lider) {
-                    $mailCliente->addCC(trim($correo_lider));
-                }
-
-                // CC a sectores (visible en el correo)
-                foreach ($correos_sectores as $correo_sector) {
-                    $mailCliente->addCC($correo_sector);
-                }
-
                 $mailCliente->Subject = $pais_id == 1
                     ? $cliente . '| Informe del Servicio ' . $producto . ' - ' . $tipo . ' ID: ' . $refProy
                     : $cliente . ' | Informe del Servicio ' . $producto . ' - ' . $tipo;
-
                 $mailCliente->Body = "
         <p>Estimado/a cliente,</p>
         <p>
@@ -355,7 +337,6 @@ class Correo extends Conexion
             if (SMTP_ENABLED === 'true') {
                 $smtpConfig($mailClave);
                 $mailClave->addAddress($correo_destino); // SOLO al cliente
-
                 $mailClave->Subject = 'Clave de acceso - Documentos del Servicio ' . $doc['producto'];
                 $mailClave->Body = "
         <p>Le compartimos la clave para abrir el archivo correspondiente a su servicio de <strong>{$doc['producto']}:</strong></p>
@@ -365,27 +346,13 @@ class Correo extends Conexion
             } else {
                 throw new Exception('SMTP deshabilitado');
             }
-
             $id_ecc = $this->registrarEnvio($id_proyecto_gestionado, $remitente, 'OK', $ruta_zip, $clave, $id_descripciones_proyecto, $correo_destino);
-
-            // Registrar envío interno a copias
-            foreach ($correos_cliente_copia as $correo_copia) {
+            // Registrar envío interno a TODOS en copia
+            foreach ($todos_en_copia as $correo) {
                 $this->registrarEnvioInterno(
                     $id_proyecto_gestionado,
                     $id_descripciones_proyecto,
-                    trim($correo_copia),
-                    'OK',
-                    'En CC del correo al cliente',
-                    $id_ecc
-                );
-            }
-
-            // Registrar envío interno a líderes
-            foreach ($lideres as $correo_lider) {
-                $this->registrarEnvioInterno(
-                    $id_proyecto_gestionado,
-                    $id_descripciones_proyecto,
-                    trim($correo_lider),
+                    trim($correo),
                     'OK',
                     'En CC del correo al cliente',
                     $id_ecc
@@ -394,31 +361,18 @@ class Correo extends Conexion
         } catch (Exception $e) {
             $id_ecc = $this->registrarEnvio($id_proyecto_gestionado, $remitente, 'ERROR', $ruta_zip, $clave, $id_descripciones_proyecto, $correo_destino);
 
-            foreach ($correos_cliente_copia as $correo_copia) {
+            foreach ($todos_en_copia as $correo) {
                 $this->registrarEnvioInterno(
                     $id_proyecto_gestionado,
                     $id_descripciones_proyecto,
-                    trim($correo_copia),
+                    trim($correo),
                     'PENDIENTE',
                     'Envío al cliente fallido',
                     $id_ecc
                 );
             }
-
-            foreach ($lideres as $correo_lider) {
-                $this->registrarEnvioInterno(
-                    $id_proyecto_gestionado,
-                    $id_descripciones_proyecto,
-                    trim($correo_lider),
-                    'PENDIENTE',
-                    'Envío al cliente fallido',
-                    $id_ecc
-                );
-            }
-
             return 'ERROR - Pais ID=' . $pais_id . ' - SMTP: ' . $e->getMessage();
         }
-
         return [
             'status'               => 'OK',
             'clave'                => $clave,
