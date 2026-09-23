@@ -6,10 +6,13 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body" style="height: 500px; overflow-y: auto;">
+                <div class="d-flex justify-content-end">
+                    <span onclick="descargarComparativo()" type="button" class="badge bg-success text-light py-1 mb-2 border border-success">Descargar<i class="ri-file-excel-line fs-16 text-light"></i></span>
+                </div>
                 <div class="d-flex justify-content-between" style="gap: 1rem;">
                     <div style="flex: 1; margin: 0 .3rem; border:.1rem solid #f2f2f2; border-radius: .7rem; padding: .5rem;">
                         <h6 class="badge bg-primary text-light">Vulma Gestión 2023-2024</h6>
-                        <table id="proyectosVulmaGestion" class="table table-sm">
+                        <table id="proyectosVulmaGestion" class="table table-sm table-hover">
                             <thead>
                                 <tr>
                                     <th>Producto</th>
@@ -22,7 +25,7 @@
                     </div>
                     <div style="flex: 1; margin: 0 .3rem; border:.1rem solid #f2f2f2; border-radius: .7rem; padding: .5rem;">
                         <h6 class="badge bg-primary text-light">Tasking 2024-2025</h6>
-                        <table id="proyectosTaskingViejo" class="table table-sm">
+                        <table id="proyectosTaskingViejo" class="table table-sm table-hover">
                             <thead>
                                 <tr>
                                     <th>Producto</th>
@@ -35,7 +38,7 @@
                     </div>
                     <div style="flex: 1; margin: 0 .3rem; border:.1rem solid #f2f2f2; border-radius: .7rem; padding: .5rem;">
                         <h6 class="badge bg-primary text-light">Tasking Nuevo 2026</h6>
-                        <table id="proyectosTasking" class="table table-sm">
+                        <table id="proyectosTasking" class="table table-sm table-hover">
                             <thead>
                                 <tr>
                                     <th>Producto</th>

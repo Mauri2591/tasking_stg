@@ -81,7 +81,7 @@ if (isset($_SESSION['usu_id'])) {
                         <div class="card">
                             <?php if ($_SESSION['sector_id'] == 1): ?>
                                 <div class="d-flex justify-content-end m-2">
-                                    <button id="btnComparativoAnual" class="btn py-0 btn-sm btn-success">Comparativo Anual <i class=" ri-file-excel-line fs-14"></i></button>
+                                    <button id="btnComparativoAnual" class="btn py-0 btn-sm btn-success">Comparativo Anual</button>
                                 </div>
                             <?php endif; ?>
                             <canvas id="barra_servicios" width="400" height="110"></canvas>
@@ -133,53 +133,152 @@ if (isset($_SESSION['usu_id'])) {
     <?php
     if (($_SESSION['sector_id']) != "4"):
     ?>
+        <?php if ($_SESSION['sector_id'] == 1): ?>
+            <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+            <script>
+                const btnComparativoAnual = document.querySelector("#btnComparativoAnual");
+                let datosComparativo = null;
+
+                function obtenerDatosComparativo() {
+                    return Promise.all([
+                        $.ajax({
+                            type: "POST",
+                            url: URL + 'VulmaGestion/Controller/ctrProyectos.php?case=proyectos_eh',
+                            dataType: "json"
+                        }),
+                        $.ajax({
+                            type: "POST",
+                            url: URL + 'TaskingViejo/Controller/ctrProyectos.php?case=proyectos_eh',
+                            dataType: "json"
+                        }),
+                        $.ajax({
+                            type: "POST",
+                            url: URL + 'Controller/ctrProyectos.php?proy=proyectos_eh',
+                            dataType: "json"
+                        })
+                    ]).then(([datos2023, datos2024, datos2026]) => {
+                        datosComparativo = {
+                            datos2023,
+                            datos2024,
+                            datos2026
+                        };
+                        return datosComparativo;
+                    });
+                }
+
+                function generarComparativo(datos2023, datos2024, datos2026) {
+                    llenarTabla('#proyectosVulmaGestion', datos2023);
+                    llenarTabla('#proyectosTaskingViejo', datos2024);
+                    llenarTabla('#proyectosTasking', datos2026);
+
+                    const opts = {
+                        destroy: true,
+                        paging: true,
+                        searching: false,
+                        info: false,
+                        order: [
+                            [1, 'desc']
+                        ]
+                    };
+                    $('#proyectosVulmaGestion').DataTable(opts);
+                    $('#proyectosTaskingViejo').DataTable(opts);
+                    $('#proyectosTasking').DataTable(opts);
+                }
+
+                function llenarTabla(selectorTabla, datos) {
+                    const tbody = $(selectorTabla + ' tbody');
+                    tbody.empty();
+                    datos.forEach(item => {
+                        tbody.append(`<tr>
+                <td>${item.producto}</td>
+                <td>${item.mes}</td>
+                <td>${item.total}</td>
+            </tr>`);
+                    });
+                }
+
+                function crearHoja(filas, encabezados) {
+                    const ws = XLSX.utils.aoa_to_sheet([encabezados, ...filas]);
+                    ws['!autofilter'] = {
+                        ref: XLSX.utils.encode_range({
+                            s: {
+                                r: 0,
+                                c: 0
+                            },
+                            e: {
+                                r: filas.length,
+                                c: encabezados.length - 1
+                            }
+                        })
+                    };
+                    ws['!cols'] = encabezados.map(() => ({
+                        wch: 25
+                    }));
+                    return ws;
+                }
+
+                function descargarComparativo() {
+                    const armarExcel = ({
+                        datos2023,
+                        datos2024,
+                        datos2026
+                    }) => {
+                        const origenes = [{
+                                nombre: 'VulmaGestion',
+                                datos: datos2023
+                            },
+                            {
+                                nombre: 'TaskingViejo',
+                                datos: datos2024
+                            },
+                            {
+                                nombre: 'Tasking',
+                                datos: datos2026
+                            }
+                        ];
+
+                        const wb = XLSX.utils.book_new();
+
+                        const consolidado = [];
+                        origenes.forEach(o => o.datos.forEach(i =>
+                            consolidado.push([o.nombre, i.producto, i.mes, Number(i.total) || 0])
+                        ));
+                        XLSX.utils.book_append_sheet(wb, crearHoja(consolidado, ['Tasking', 'Producto', 'Mes', 'Total']), 'Consolidado');
+
+                        origenes.forEach(o => {
+                            const filas = o.datos.map(i => [i.producto, i.mes, Number(i.total) || 0]);
+                            XLSX.utils.book_append_sheet(wb, crearHoja(filas, ['Producto', 'Mes', 'Total']), o.nombre);
+                        });
+
+                        const fecha = new Date().toISOString().slice(0, 10);
+                        const b64 = XLSX.write(wb, {
+                            bookType: 'xlsx',
+                            type: 'base64'
+                        });
+                        const a = document.createElement('a');
+                        a.href = 'data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,' + b64;
+                        a.download = `Comparativo_Proyectos_${fecha}.xlsx`;
+                        document.body.appendChild(a);
+                        a.click();
+                        a.remove();
+                    };
+                    (datosComparativo ? Promise.resolve(datosComparativo) : obtenerDatosComparativo())
+                    .then(armarExcel)
+                        .catch(err => console.error("Error al generar Excel:", err));
+                }
+
+                if (btnComparativoAnual) {
+                    btnComparativoAnual.addEventListener("click", () => {
+                        $("#mdlProyectosHistoricos").modal("show");
+                        obtenerDatosComparativo()
+                            .then(d => generarComparativo(d.datos2023, d.datos2024, d.datos2026))
+                            .catch(error => console.error("Error:", error));
+                    });
+                }
+            </script>
+        <?php endif; ?>
+
         <script>
-            const btnComparativoAnual = document.querySelector("#btnComparativoAnual");
-
-            function generarComparativo(datos2023, datos2024, datos2026) {
-                llenarTabla('#proyectosVulmaGestion', datos2023);
-                llenarTabla('#proyectosTaskingViejo', datos2024);
-                llenarTabla('#proyectosTasking', datos2026);
-
-                // Inicializar DataTables
-                $('#proyectosVulmaGestion').DataTable({
-                    destroy: true,
-                    paging: true,
-                    searching: false,
-                    info: false,
-                    order: [[1, 'desc']]  
-                });
-                $('#proyectosTaskingViejo').DataTable({
-                    destroy: true,
-                    paging: true,
-                    searching: false,
-                    info: false,
-                    order: [[1, 'desc']]  
-
-                });
-                $('#proyectosTasking').DataTable({
-                    destroy: true,
-                    paging: true,
-                    searching: false,
-                    info: false,
-                    order: [[1, 'desc']]  
-                });
-            }
-
-            function llenarTabla(selectorTabla, datos) {
-                const tbody = $(selectorTabla + ' tbody');
-                tbody.empty();
-
-                datos.forEach(item => {
-                    const fila = `<tr>
-            <td>${item.producto}</td>
-            <td>${item.mes}</td>
-            <td>${item.total}</td>
-        </tr>`;
-                    tbody.append(fila);
-                });
-            }
-
             document.addEventListener("DOMContentLoaded", function() {
                 $.post("../../Controller/ctrProyectos.php?proy=get_sectores_x_sector_id",
                     function(data, textStatus, jqXHR) {
@@ -223,36 +322,6 @@ if (isset($_SESSION['usu_id'])) {
                     },
                     "json"
                 );
-
-                if (btnComparativoAnual) {
-                    btnComparativoAnual.addEventListener("click", () => {
-                        $("#mdlProyectosHistoricos").modal("show");
-
-                        Promise.all([
-                                $.ajax({
-                                    type: "POST",
-                                    url: URL + 'VulmaGestion/Controller/ctrProyectos.php?case=proyectos_eh',
-                                    dataType: "json"
-                                }),
-                                $.ajax({
-                                    type: "POST",
-                                    url: URL + 'TaskingViejo/Controller/ctrProyectos.php?case=proyectos_eh',
-                                    dataType: "json"
-                                }),
-                                $.ajax({
-                                    type: "POST",
-                                    url: URL + 'Controller/ctrProyectos.php?proy=proyectos_eh',
-                                    dataType: "json"
-                                })
-                            ])
-                            .then(([datos2023, datos2024, datos2026]) => {
-                                generarComparativo(datos2023, datos2024, datos2026);
-                            })
-                            .catch((error) => {
-                                console.error("Error:", error);
-                            });
-                    });
-                }
             });
 
             document.getElementById("idCheckValidarUsuPass2").addEventListener("change", function() {
