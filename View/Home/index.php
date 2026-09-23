@@ -146,19 +146,23 @@ if (isset($_SESSION['usu_id'])) {
                     destroy: true,
                     paging: true,
                     searching: false,
-                    info: false
+                    info: false,
+                    order: [[1, 'desc']]  
                 });
                 $('#proyectosTaskingViejo').DataTable({
                     destroy: true,
                     paging: true,
                     searching: false,
-                    info: false
+                    info: false,
+                    order: [[1, 'desc']]  
+
                 });
                 $('#proyectosTasking').DataTable({
                     destroy: true,
                     paging: true,
                     searching: false,
-                    info: false
+                    info: false,
+                    order: [[1, 'desc']]  
                 });
             }
 

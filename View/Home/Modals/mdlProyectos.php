@@ -7,8 +7,8 @@
             </div>
             <div class="modal-body" style="height: 500px; overflow-y: auto;">
                 <div class="d-flex justify-content-between" style="gap: 1rem;">
-                    <div style="flex: 1;">
-                        <h6>Vulma Gestión 2023-2024</h6>
+                    <div style="flex: 1; margin: 0 .3rem; border:.1rem solid #f2f2f2; border-radius: .7rem; padding: .5rem;">
+                        <h6 class="badge bg-primary text-light">Vulma Gestión 2023-2024</h6>
                         <table id="proyectosVulmaGestion" class="table table-sm">
                             <thead>
                                 <tr>
@@ -20,8 +20,8 @@
                             <tbody></tbody>
                         </table>
                     </div>
-                    <div style="flex: 1;">
-                        <h6>Tasking Viejo 2024-2025</h6>
+                    <div style="flex: 1; margin: 0 .3rem; border:.1rem solid #f2f2f2; border-radius: .7rem; padding: .5rem;">
+                        <h6 class="badge bg-primary text-light">Tasking Viejo 2024-2025</h6>
                         <table id="proyectosTaskingViejo" class="table table-sm">
                             <thead>
                                 <tr>
@@ -33,8 +33,8 @@
                             <tbody></tbody>
                         </table>
                     </div>
-                    <div style="flex: 1;">
-                        <h6>Tasking 2026</h6>
+                    <div style="flex: 1; margin: 0 .3rem; border:.1rem solid #f2f2f2; border-radius: .7rem; padding: .5rem;">
+                        <h6 class="badge bg-primary text-light">Tasking 2026</h6>
                         <table id="proyectosTasking" class="table table-sm">
                             <thead>
                                 <tr>
