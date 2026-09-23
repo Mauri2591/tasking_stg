@@ -321,6 +321,7 @@ class Correo extends Conexion
         <p>
             En el marco del servicio contratado <strong>{$doc['producto']} + {$doc['tipo']}</strong> <strong>ID: " . ($doc['referencia'] ?: 'N/A') . "</strong> adjuntamos el informe correspondiente en formato ZIP protegido.<br><br> 
             <strong>La clave para descifrar se le enviará por separado en otro correo.</strong><br><br>
+            Cualquier comentario por favor contactarse con Calidad-mssp@personal.com.ar.<br>
             Saludos,<br><br><br>
             Equipo de Calidad y Procesos<br>
             Delivery Services – Cybersecurity Solutions<br><br>
