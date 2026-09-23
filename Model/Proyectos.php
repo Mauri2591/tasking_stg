@@ -3600,18 +3600,17 @@ WHERE pg.id_proyecto_cantidad_servicios = :id_proyecto_cantidad_servicios";
     {
         $conn = parent::get_conexion();
         $sql = "SELECT 
-        tm_categoria.cat_nom AS producto,
-        YEAR(proyecto_gestionado.fech_crea) AS anio,
-        MONTH(proyecto_gestionado.fech_crea) AS mes,
-        COUNT(*) AS total 
-    FROM proyecto_gestionado
-    INNER JOIN tm_categoria ON tm_categoria.cat_id = proyecto_gestionado.cat_id 
-    WHERE proyecto_gestionado.estados_id IN (1,2,3,4) 
-    AND proyecto_gestionado.sector_id IN (1,5)
-    AND proyecto_gestionado.fech_crea > '2026-01-01' 
-    AND proyecto_gestionado.est = 1
-    GROUP BY tm_categoria.cat_id, tm_categoria.cat_nom, YEAR(proyecto_gestionado.fech_crea), MONTH(proyecto_gestionado.fech_crea)
-    ORDER BY producto, anio, mes DESC";
+    tm_categoria.cat_nom AS producto,
+    DATE_FORMAT(proyecto_gestionado.fech_crea, '%Y-%m') AS mes,
+    COUNT(*) AS total 
+FROM proyecto_gestionado
+INNER JOIN tm_categoria ON tm_categoria.cat_id = proyecto_gestionado.cat_id 
+WHERE proyecto_gestionado.estados_id IN (1,2,3,4) 
+AND proyecto_gestionado.sector_id IN (1,5)
+AND proyecto_gestionado.fech_crea BETWEEN '2026-01-01' AND '2026-09-30 23:59:59'
+AND proyecto_gestionado.est = 1
+GROUP BY tm_categoria.cat_id, tm_categoria.cat_nom, DATE_FORMAT(proyecto_gestionado.fech_crea, '%Y-%m')
+ORDER BY producto, mes DESC";
         $stmt = $conn->prepare($sql);
         $stmt->execute();
         $datos = $stmt->fetchAll(PDO::FETCH_ASSOC);
