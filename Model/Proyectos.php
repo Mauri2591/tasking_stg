@@ -3611,7 +3611,7 @@ WHERE pg.id_proyecto_cantidad_servicios = :id_proyecto_cantidad_servicios";
     AND proyecto_gestionado.fech_crea > '2026-01-01' 
     AND proyecto_gestionado.est = 1
     GROUP BY tm_categoria.cat_id, tm_categoria.cat_nom, YEAR(proyecto_gestionado.fech_crea), MONTH(proyecto_gestionado.fech_crea)
-    ORDER BY producto, año, mes DESC";
+    ORDER BY producto, anio, mes DESC";
         $stmt = $conn->prepare($sql);
         $stmt->execute();
         $datos = $stmt->fetchAll(PDO::FETCH_ASSOC);
