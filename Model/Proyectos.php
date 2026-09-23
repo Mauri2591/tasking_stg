@@ -3601,7 +3601,7 @@ WHERE pg.id_proyecto_cantidad_servicios = :id_proyecto_cantidad_servicios";
         $conn = parent::get_conexion();
         $sql = "SELECT 
         tm_categoria.cat_nom AS producto,
-        YEAR(proyecto_gestionado.fech_crea) AS año,
+        YEAR(proyecto_gestionado.fech_crea) AS anio,
         MONTH(proyecto_gestionado.fech_crea) AS mes,
         COUNT(*) AS total 
     FROM proyecto_gestionado
