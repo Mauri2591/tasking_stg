@@ -3608,7 +3608,7 @@ WHERE pg.id_proyecto_cantidad_servicios = :id_proyecto_cantidad_servicios";
     INNER JOIN tm_categoria ON tm_categoria.cat_id = proyecto_gestionado.cat_id 
     WHERE proyecto_gestionado.estados_id IN (1,2,3,4) 
     AND proyecto_gestionado.sector_id IN (1,5)
-    AND proyecto_gestionado.fech_crea BETWEEN '2026-01-01' AND '2026-09-31' 
+    AND proyecto_gestionado.fech_crea > '2026-01-01' 
     AND proyecto_gestionado.est = 1
     GROUP BY tm_categoria.cat_id, tm_categoria.cat_nom, YEAR(proyecto_gestionado.fech_crea), MONTH(proyecto_gestionado.fech_crea)
     ORDER BY producto, año, mes DESC";

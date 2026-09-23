@@ -115,6 +115,7 @@ if (isset($_SESSION['usu_id'])) {
     </div>
     <!-- End Page-content -->
     <?php
+    include_once __DIR__ . "/Modals/mdlProyectos.php";
     include_once __DIR__ . "/Public/Template/footer.php";
     ?>
     <script>
@@ -134,6 +135,47 @@ if (isset($_SESSION['usu_id'])) {
     ?>
         <script>
             const btnComparativoAnual = document.querySelector("#btnComparativoAnual");
+
+            function generarComparativo(datos2023, datos2024, datos2026) {
+                llenarTabla('#proyectosVulmaGestion', datos2023);
+                llenarTabla('#proyectosTaskingViejo', datos2024);
+                llenarTabla('#proyectosTasking', datos2026);
+
+                // Inicializar DataTables
+                $('#proyectosVulmaGestion').DataTable({
+                    destroy: true,
+                    paging: true,
+                    searching: false,
+                    info: false
+                });
+                $('#proyectosTaskingViejo').DataTable({
+                    destroy: true,
+                    paging: true,
+                    searching: false,
+                    info: false
+                });
+                $('#proyectosTasking').DataTable({
+                    destroy: true,
+                    paging: true,
+                    searching: false,
+                    info: false
+                });
+            }
+
+            function llenarTabla(selectorTabla, datos) {
+                const tbody = $(selectorTabla + ' tbody');
+                tbody.empty();
+
+                datos.forEach(item => {
+                    const fila = `<tr>
+            <td>${item.producto}</td>
+            <td>${item.mes}</td>
+            <td>${item.total}</td>
+        </tr>`;
+                    tbody.append(fila);
+                });
+            }
+
             document.addEventListener("DOMContentLoaded", function() {
                 $.post("../../Controller/ctrProyectos.php?proy=get_sectores_x_sector_id",
                     function(data, textStatus, jqXHR) {
@@ -177,8 +219,11 @@ if (isset($_SESSION['usu_id'])) {
                     },
                     "json"
                 );
+
                 if (btnComparativoAnual) {
                     btnComparativoAnual.addEventListener("click", () => {
+                        $("#mdlProyectosHistoricos").modal("show");
+
                         Promise.all([
                                 $.ajax({
                                     type: "POST",
@@ -197,14 +242,10 @@ if (isset($_SESSION['usu_id'])) {
                                 })
                             ])
                             .then(([datos2023, datos2024, datos2026]) => {
-                                console.log("2023:", datos2023);
-                                console.log("2024:", datos2024);
-                                console.log("2026:", datos2026);
-
                                 generarComparativo(datos2023, datos2024, datos2026);
                             })
                             .catch((error) => {
-                                console.error("Error en llamada AJAX:", error);
+                                console.error("Error:", error);
                             });
                     });
                 }
