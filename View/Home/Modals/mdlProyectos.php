@@ -21,7 +21,7 @@
                         </table>
                     </div>
                     <div style="flex: 1; margin: 0 .3rem; border:.1rem solid #f2f2f2; border-radius: .7rem; padding: .5rem;">
-                        <h6 class="badge bg-primary text-light">Tasking Viejo 2024-2025</h6>
+                        <h6 class="badge bg-primary text-light">Tasking 2024-2025</h6>
                         <table id="proyectosTaskingViejo" class="table table-sm">
                             <thead>
                                 <tr>
@@ -34,7 +34,7 @@
                         </table>
                     </div>
                     <div style="flex: 1; margin: 0 .3rem; border:.1rem solid #f2f2f2; border-radius: .7rem; padding: .5rem;">
-                        <h6 class="badge bg-primary text-light">Tasking 2026</h6>
+                        <h6 class="badge bg-primary text-light">Tasking Nuevo 2026</h6>
                         <table id="proyectosTasking" class="table table-sm">
                             <thead>
                                 <tr>
