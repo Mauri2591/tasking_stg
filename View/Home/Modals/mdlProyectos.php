@@ -11,7 +11,7 @@
                 </div>
                 <div class="d-flex justify-content-between" style="gap: 1rem;">
                     <div style="flex: 1; margin: 0 .3rem; border:.1rem solid #f2f2f2; border-radius: .7rem; padding: .5rem;">
-                        <h6 class="badge bg-primary text-light">Vulma Gestión 2023-2024</h6>
+                        <h6 class="badge bg-primary text-light fs-11">Vulma Gestión 2023-2024</h6>
                         <table id="proyectosVulmaGestion" class="table table-sm table-hover">
                             <thead>
                                 <tr>
@@ -24,7 +24,7 @@
                         </table>
                     </div>
                     <div style="flex: 1; margin: 0 .3rem; border:.1rem solid #f2f2f2; border-radius: .7rem; padding: .5rem;">
-                        <h6 class="badge bg-primary text-light">Tasking 2024-2025</h6>
+                        <h6 class="badge bg-primary text-light fs-11">Tasking 2024-2025</h6>
                         <table id="proyectosTaskingViejo" class="table table-sm table-hover">
                             <thead>
                                 <tr>
@@ -37,7 +37,7 @@
                         </table>
                     </div>
                     <div style="flex: 1; margin: 0 .3rem; border:.1rem solid #f2f2f2; border-radius: .7rem; padding: .5rem;">
-                        <h6 class="badge bg-primary text-light">Tasking Nuevo 2026</h6>
+                        <h6 class="badge bg-primary text-light fs-11">Tasking 2026 - actualidad</h6>
                         <table id="proyectosTasking" class="table table-sm table-hover">
                             <thead>
                                 <tr>
