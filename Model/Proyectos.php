@@ -3614,7 +3614,7 @@ WHERE pg.id_proyecto_cantidad_servicios = :id_proyecto_cantidad_servicios";
     ORDER BY producto, año, mes DESC";
         $stmt = $conn->prepare($sql);
         $stmt->execute();
-        $datos = $stmt->fetch(PDO::FETCH_ASSOC);
+        $datos = $stmt->fetchAll(PDO::FETCH_ASSOC);
         return count($datos) > 0 ? $datos : [];
     }
 }
