@@ -205,7 +205,6 @@ if (isset($_SESSION['usu_id'])) {
                             })
                             .catch((error) => {
                                 console.error("Error en llamada AJAX:", error);
-                                alert("Error al cargar datos del comparativo");
                             });
                     });
                 }
