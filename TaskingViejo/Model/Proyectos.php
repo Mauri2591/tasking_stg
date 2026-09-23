@@ -13,7 +13,7 @@ class ProyectosTaskingViejo extends ConexionTaskingViejo
         WHERE tm_ticket.estados_id IN (1,2,3,4)
         AND tm_ticket.sector != 'Calidad' 
         AND tm_categoria.cat_nom != 'Servicios Profesionales'
-        AND tm_ticket.fech_crea BETWEEN '2025-01-01' AND '2025-12-31 23:59:59' 
+        AND tm_ticket.fech_crea BETWEEN '2024-01-01' AND '2025-12-31 23:59:59' 
         AND tm_ticket.est = 1 
         GROUP BY tm_categoria.cat_id, tm_categoria.cat_nom, DATE_FORMAT(tm_ticket.fech_crea, '%Y-%m')
         ORDER BY producto, mes DESC";
