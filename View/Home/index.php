@@ -31,7 +31,7 @@ if (isset($_SESSION['usu_id'])) {
             border-radius: 5px;
         }
 
-        #botonesProductos:hover{
+        #botonesProductos:hover {
             background-color: #e5ebffff;
         }
     </style>
@@ -58,7 +58,7 @@ if (isset($_SESSION['usu_id'])) {
             </div>
             <!-- end page title -->
         </div>
-        
+
         <div class="col-xl-12">
             <div class="card crm-widget">
                 <div class="card-body p-0">
@@ -77,10 +77,13 @@ if (isset($_SESSION['usu_id'])) {
             <!-- container-fluid -->
             <div class="col-lg-12">
                 <div class="row">
-                    <div class="col-lg-12 mt-2">
+                    <div class="col-lg-12 mt-0">
                         <div class="card">
-                            <!-- <p class="text-center"> <span class="badge bg-light text-primary mt-1">Total de proyectos cerrados</span>
-                            </p>  -->
+                            <?php if ($_SESSION['sector_id'] == 1): ?>
+                                <div class="d-flex justify-content-end m-2">
+                                    <button id="btnComparativoAnual" class="btn py-0 btn-sm btn-success">Comparativo Anual <i class=" ri-file-excel-line fs-14"></i></button>
+                                </div>
+                            <?php endif; ?>
                             <canvas id="barra_servicios" width="400" height="110"></canvas>
                         </div>
                     </div>
@@ -114,22 +117,23 @@ if (isset($_SESSION['usu_id'])) {
     <?php
     include_once __DIR__ . "/Public/Template/footer.php";
     ?>
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-  const el = document.getElementById("text_bienvenido");
-  if (!el) return;
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const el = document.getElementById("text_bienvenido");
+            if (!el) return;
 
-  setTimeout(() => {
-    el.style.display = "none";
-  }, 3000);
-});
-</script>
-<?php unset($_SESSION['bienvenido']); ?>
+            setTimeout(() => {
+                el.style.display = "none";
+            }, 3000);
+        });
+    </script>
+    <?php unset($_SESSION['bienvenido']); ?>
 
     <?php
     if (($_SESSION['sector_id']) != "4"):
     ?>
         <script>
+            const btnComparativoAnual = document.querySelector("#btnComparativoAnual");
             document.addEventListener("DOMContentLoaded", function() {
                 $.post("../../Controller/ctrProyectos.php?proy=get_sectores_x_sector_id",
                     function(data, textStatus, jqXHR) {
@@ -173,6 +177,38 @@ document.addEventListener("DOMContentLoaded", () => {
                     },
                     "json"
                 );
+                if (btnComparativoAnual) {
+                    btnComparativoAnual.addEventListener("click", () => {
+                        Promise.all([
+                                $.ajax({
+                                    type: "POST",
+                                    url: URL + 'VulmaGestion/Controller/ctrProyectos.php?case=proyectos_eh',
+                                    dataType: "json"
+                                }),
+                                $.ajax({
+                                    type: "POST",
+                                    url: URL + 'TaskingViejo/Controller/ctrProyectos.php?case=proyectos_eh',
+                                    dataType: "json"
+                                }),
+                                $.ajax({
+                                    type: "POST",
+                                    url: URL + 'Controller/ctrProyectos.php?proy=proyectos_eh',
+                                    dataType: "json"
+                                })
+                            ])
+                            .then(([datos2023, datos2024, datos2026]) => {
+                                console.log("2023:", datos2023);
+                                console.log("2024:", datos2024);
+                                console.log("2026:", datos2026);
+
+                                generarComparativo(datos2023, datos2024, datos2026);
+                            })
+                            .catch((error) => {
+                                console.error("Error en llamada AJAX:", error);
+                                alert("Error al cargar datos del comparativo");
+                            });
+                    });
+                }
             });
 
             document.getElementById("idCheckValidarUsuPass2").addEventListener("change", function() {

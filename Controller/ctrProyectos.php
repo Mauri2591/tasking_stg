@@ -214,7 +214,7 @@ switch ($_GET['proy']) {
         $sectionCasillas = '';
 
         foreach ($data as $val) {
-            if ($val['tipo'] == "CASILLAS") {  
+            if ($val['tipo'] == "CASILLAS") {
                 $sectionCasillas .= '<section><span class="badge bg-light text-dark">' . htmlspecialchars($val['host']) . '</span></section>';
             }
         }
@@ -224,7 +224,7 @@ switch ($_GET['proy']) {
         $data = $proyecto->get_hosts_proy($_POST['id_proyecto_gestionado']);
         $sectionTematicas = '';
         foreach ($data as $val) {
-            if ($val['tipo'] == "TEMATICAS") {  
+            if ($val['tipo'] == "TEMATICAS") {
                 $sectionTematicas .= '<section><span class="badge bg-light text-dark">' . htmlspecialchars($val['host']) . '</span></section>';
             }
         }
@@ -269,7 +269,7 @@ switch ($_GET['proy']) {
         $data = $proyecto->get_hosts_proy($_POST['id_proyecto_gestionado']);
         $sectionLicencias_on_prem = '';
         foreach ($data as $val) {
-            if ($val['tipo'] == "LICENCIAS_ON_PREM") {  
+            if ($val['tipo'] == "LICENCIAS_ON_PREM") {
                 $sectionLicencias_on_prem .= '<section><span class="badge bg-light text-dark">' . htmlspecialchars($val['host']) . '</span></section>';
             }
         }
@@ -279,7 +279,7 @@ switch ($_GET['proy']) {
         $data = $proyecto->get_hosts_proy($_POST['id_proyecto_gestionado']);
         $sectionLicencias_cloud = '';
         foreach ($data as $val) {
-            if ($val['tipo'] == "LICENCIAS_CLOUD") {  
+            if ($val['tipo'] == "LICENCIAS_CLOUD") {
                 $sectionLicencias_cloud .= '<section><span class="badge bg-light text-dark">' . htmlspecialchars($val['host']) . '</span></section>';
             }
         }
@@ -289,7 +289,7 @@ switch ($_GET['proy']) {
         $data = $proyecto->get_hosts_proy($_POST['id_proyecto_gestionado']);
         $sectionModulos_on_prem = '';
         foreach ($data as $val) {
-            if ($val['tipo'] == "MODULOS_ON_PREM") { 
+            if ($val['tipo'] == "MODULOS_ON_PREM") {
                 $sectionModulos_on_prem .= '<section><span class="badge bg-light text-dark">' . htmlspecialchars($val['host']) . '</span></section>';
             }
         }
@@ -299,7 +299,7 @@ switch ($_GET['proy']) {
         $data = $proyecto->get_hosts_proy($_POST['id_proyecto_gestionado']);
         $sectionModulos_cloud = '';
         foreach ($data as $val) {
-            if ($val['tipo'] == "MODULOS_CLOUD") { 
+            if ($val['tipo'] == "MODULOS_CLOUD") {
                 $sectionModulos_cloud .= '<section><span class="badge bg-light text-dark">' . htmlspecialchars($val['host']) . '</span></section>';
             }
         }
@@ -3071,6 +3071,10 @@ TXT;
         }
         break;
 
+    case 'proyectos_eh':
+        $datos = $proyecto->proyectos_eh();
+        echo json_encode($datos);
+        break;
 
     default:
         break;

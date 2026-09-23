@@ -1,4 +1,4 @@
-<footer class="footer">
+<footer class="footer p-0 m-0">
     <div class="container-fluid">
         <div class="row">
             <div class="col-sm-6">
@@ -12,8 +12,6 @@
                     }
                 });
             </script>
-
-
         </div>
     </div>
 </footer>

@@ -184,8 +184,8 @@ class Proyectos extends Conexion
         $stmt->bindValue(1, $id_proyecto_gestionado, PDO::PARAM_INT);
         $stmt->bindValue(2, $id_proyecto_cantidad_servicios, PDO::PARAM_INT);
         $stmt->bindValue(3, $usu_crea, PDO::PARAM_INT);
-        $stmt->bindValue(4, $tipo, PDO::PARAM_STR);       
-        $stmt->bindValue(5, $valor, PDO::PARAM_STR);      
+        $stmt->bindValue(4, $tipo, PDO::PARAM_STR);
+        $stmt->bindValue(5, $valor, PDO::PARAM_STR);
         $stmt->execute();
     }
 
@@ -1626,7 +1626,7 @@ ORDER BY id_proyecto_cantidad_servicios ASC";
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-     public function get_proyectos_bitacora()
+    public function get_proyectos_bitacora()
     {
         $conn = parent::get_conexion();
         $sql = "SELECT 
@@ -3594,5 +3594,27 @@ WHERE pg.id_proyecto_cantidad_servicios = :id_proyecto_cantidad_servicios";
         $stmt->bindValue(":id", $id, PDO::PARAM_INT);
         $stmt->execute();
         return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    public function proyectos_eh()
+    {
+        $conn = parent::get_conexion();
+        $sql = "SELECT 
+        tm_categoria.cat_nom AS producto,
+        YEAR(proyecto_gestionado.fech_crea) AS año,
+        MONTH(proyecto_gestionado.fech_crea) AS mes,
+        COUNT(*) AS total 
+    FROM proyecto_gestionado
+    INNER JOIN tm_categoria ON tm_categoria.cat_id = proyecto_gestionado.cat_id 
+    WHERE proyecto_gestionado.estados_id IN (1,2,3,4) 
+    AND proyecto_gestionado.sector_id IN (1,5)
+    AND proyecto_gestionado.fech_crea BETWEEN '2026-01-01' AND '2026-09-31' 
+    AND proyecto_gestionado.est = 1
+    GROUP BY tm_categoria.cat_id, tm_categoria.cat_nom, YEAR(proyecto_gestionado.fech_crea), MONTH(proyecto_gestionado.fech_crea)
+    ORDER BY producto, año, mes DESC";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+        $datos = $stmt->fetch(PDO::FETCH_ASSOC);
+        return count($datos) > 0 ? $datos : [];
     }
 }

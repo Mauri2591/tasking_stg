@@ -40,3 +40,45 @@ class Conexion
         return $this->conexion;
     }
 }
+
+class ConexionTaskingViejo
+{
+    private $conexion;
+    public function __construct()
+    {
+        try {
+            // $conectar = $this->conexion = new PDO("mysql:local=localhost;dbname=tasking", "tasking", "TaskUser*2024");
+            $conectar = $this->conexion = new PDO("mysql:host=localhost;dbname=tasking", "root", "");
+            return $conectar;
+        } catch (Exception $e) {
+            print "Error BD Tasking Viejo!: " . $e->getMessage() . "<br/>";
+            die();
+        }
+    }
+
+    public function get_conexion_tasking_viejo()
+    {
+        return $this->conexion;
+    }
+}
+
+
+class ConexionVulmaGestion
+{
+    private $conexion;
+    public function __construct()
+    {
+        try {
+            // $conectar = $this->conexion = new PDO("mysql:local=localhost;dbname=vulma_gestion", "vulma_gestion", "wRAj%7D9KT9#SV");                
+            $conectar = $this->conexion = new PDO("mysql:host=localhost;dbname=vulma_gestion", "root", "");         
+            return $conectar;
+        } catch (Exception $e) {
+            print "Error BD Vulma Gestion!: " . $e->getMessage() . "<br/>";
+            die();
+        }
+    }
+    public function get_conexion_vulma_gestion()
+    {
+        return $this->conexion;
+    }
+}
