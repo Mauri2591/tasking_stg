@@ -3420,7 +3420,10 @@ if (modalEditarParcial) {
         $('#formProyecto .is-invalid').removeClass('is-invalid');
     });
 }
-
+$('#btn_cancelar_update_parcial').on('click', function () {
+    bloquear_cierre = false;
+    $('#ModalEditarProyectoParcial').modal('hide');
+});
 if (btn_update_parcial) {
     btn_update_parcial.addEventListener("click", (e) => {
         e.preventDefault();

@@ -64,8 +64,9 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="d-flex justify-content-end mt-3 mx-2">
-                            <button id="btn_update_parcial" class="btn btn-sm btn-success">Guardar</button>
+                        <div class="d-flex justify-content-end gap-2 mt-3 mx-2">
+                            <button type="button" id="btn_cancelar_update_parcial" class="btn btn-sm btn-light text-dark">Cancelar</button>
+                            <button type="button" id="btn_update_parcial" class="btn btn-sm btn-success">Guardar</button>
                         </div>
                     </form>
                     <div style="display: none; justify-content: center;" id="mje_update_parcial">
