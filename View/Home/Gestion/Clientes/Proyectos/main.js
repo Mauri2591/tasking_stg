@@ -454,6 +454,7 @@ $(document).ready(function () {
             checks.forEach(check => check.checked = this.checked);
         });
     }
+
     const elBtnRechequeo = document.getElementById("btn_rechequeo");
     if (elBtnRechequeo) {
         elBtnRechequeo.addEventListener("click", () => {
@@ -3350,6 +3351,7 @@ function editar_proyecto(id_proyecto_gestionado) {
             $('#descripcion').val(proyecto.descripcion);
             $('#dimensionamiento_update_parcial').val(proyecto.dimensionamiento);
 
+            // Combo de tipos
             $.ajax({
                 type: "POST",
                 url: URL + 'Controller/ctrProyectos.php?proy=get_combo_subcategorias_x_sector',
@@ -3363,10 +3365,24 @@ function editar_proyecto(id_proyecto_gestionado) {
                 }
             });
 
+            // Usuarios del sector
+            $('#usuarios_sector_update_parcial').prop('checked', false);
+            $.post(URL + "Controller/ctrProyectos.php?proy=get_usuarios_x_sector", {
+                sector_id: proyecto.sector_id,
+                id_proyecto_gestionado: id_proyecto_gestionado
+            }, function (res) {
+                $("#combo_usuario_x_sector_update_parcial").html(res);
+            });
+
             $("#ModalEditarProyectoParcial").modal("show");
         }
     });
 }
+
+// Checkbox "seleccionar todos" (se registra una sola vez)
+$('#usuarios_sector_update_parcial').on('change', function () {
+    $('#combo_usuario_x_sector_update_parcial input[type="checkbox"]').prop('checked', this.checked);
+});
 
 function validar_campos_update_parcial() {
     // Las claves tienen que coincidir con los ids de los inputs
@@ -3417,7 +3433,6 @@ if (btn_update_parcial) {
 
         bloquear_cierre = false;
         $('#mje_campos_vacios_update_parcial').css('display', 'none');
-
         $.ajax({
             type: "POST",
             url: URL + 'Controller/ctrProyectos.php?proy=update_parcial_de_proyecto',
@@ -3432,25 +3447,28 @@ if (btn_update_parcial) {
                 correo_envio_cliente_copias: $('#correo_envio_cliente_copias_edicion_parcial').val(),
                 descripcion: $('#descripcion').val(),
                 tipo: $('#tipo').val(),
-                hs_dimensionadas: $('#dimensionamiento_update_parcial').val()
+                hs_dimensionadas: $('#dimensionamiento_update_parcial').val(),
+                usu_asignado: $('#combo_usuario_x_sector_update_parcial input[type="checkbox"]:checked')
+                    .map((i, el) => el.value).get()
             },
             dataType: "json",
             success: function (response) {
                 if (response.success) {
                     $('#mje_update_parcial').css('display', 'flex');
-                    if ($.fn.DataTable.isDataTable('#table_bitacora')) {
-                        $('#table_bitacora').DataTable().ajax.reload(null, false);
-                        $('#table_proyectos_borrador').DataTable().ajax.reload(null, false);
-                        $('#table_proyectos_en_proceso').DataTable().ajax.reload(null, false);
-                        $('#table_proyectos_realizados').DataTable().ajax.reload(null, false);
-                    }
+                    ['#table_bitacora', '#table_proyectos_borrador', '#table_proyectos_en_proceso', '#table_proyectos_realizados']
+                    .forEach(tabla => {
+                        if ($.fn.DataTable.isDataTable(tabla)) {
+                            $(tabla).DataTable().ajax.reload(null, false);
+                        }
+                    });
                     setTimeout(() => {
                         $('#mje_update_parcial').css('display', 'none');
                     }, 1300);
                 } else {
                     console.error('Error al actualizar', {
                         proyecto_gestionado: response.pg,
-                        dimensionamiento: response.dim
+                        dimensionamiento: response.dim,
+                        usuarios: response.usu
                     });
                 }
             },

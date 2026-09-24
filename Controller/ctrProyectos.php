@@ -537,10 +537,10 @@ switch ($_GET['proy']) {
                 ? $colores_prioridad[$row['prioridad']]
                 : "badge bg-light text-dark";
             $sub_array[] = '<span class="' . $clase . '">' . $row['prioridad'] . '</span>';
-            $sub_array[] = '<span class="badge bg-light text-dark">'.$row['fech_inicio'].'</span>';
+            $sub_array[] = '<span class="badge bg-light text-dark">' . $row['fech_inicio'] . '</span>';
 
             $sub_array[] = strtoupper($row['client_rs']);
-            $sub_array[] = '<p class="text-center p-0 m-0">'.strtoupper($row['refProy']).'</p>';
+            $sub_array[] = '<p class="text-center p-0 m-0">' . strtoupper($row['refProy']) . '</p>';
             $sub_array[] = $_SESSION['sector_id'] == "4" ? '<span class="badge bg-light text-dark" title="Asignarme como PM" type="button" onclick="asignarPm(' . $row['id_proyecto_gestionado'] . "," . $row['id_pm_calidad'] . ')">' . $row['creador_proy'] . '</span>' : '<span class="badge bg-light text-dark">' . $row['creador_proy'] . '</span>';
 
             if (!empty($row['posicion_recurrencia'])) {
@@ -709,7 +709,7 @@ switch ($_GET['proy']) {
             }
 
             /* =====================================================
-                * 🚨 BLOQUEO CRÍTICO: MÁS DE 1 FILA
+                * BLOQUEO CRÍTICO: MÁS DE 1 FILA
                 * ===================================================== */
             if ($updated_proyecto > 1) {
 
@@ -2215,12 +2215,12 @@ switch ($_GET['proy']) {
                                         Estado
                                     </button>
                                     <ul class="dropdown-menu" aria-labelledby="btnGroupDrop1">
-                                        <li><a class="dropdown-item" type="button" onclick="cambiar_proy_a_borrador(' . $row['id_proyecto_gestionado'] . ')">Borrador</a></li>
-                                        <li><a class="dropdown-item" type="button" onclick="cambiar_proy_a_nuevo(' . $row['id_proyecto_gestionado'] . ')">Nuevo</a></li>
-                                        <li><a class="dropdown-item" type="button" onclick="cambiar_a_abierto(' . $row['id_proyecto_gestionado'] . ')">Abierto</a></li>
-                                        <li><a class="dropdown-item" type="button" onclick="cambiar_a_realizado(' . $row['id_proyecto_gestionado'] . ')">Realizado</a></li>
-                                        <li><a class="dropdown-item" type="button" onclick="cerrar_proyecto(' . $row['id_proyecto_gestionado'] . ')">Cerrar proyecto</a></li>
-                                        <li><a class="dropdown-item" type="button" onclick="editar_proyecto(' . $row['id_proyecto_gestionado'] . ')">Editar <i class="text-secondary fs-16 ri-edit-2-line"></i></a></li>                                                                        
+                                        <li><a class="dropdown-item py-1" type="button" onclick="cambiar_proy_a_borrador(' . $row['id_proyecto_gestionado'] . ')">Borrador</a></li>
+                                        <li><a class="dropdown-item py-1" type="button" onclick="cambiar_proy_a_nuevo(' . $row['id_proyecto_gestionado'] . ')">Nuevo</a></li>
+                                        <li><a class="dropdown-item py-1" type="button" onclick="cambiar_a_abierto(' . $row['id_proyecto_gestionado'] . ')">Abierto</a></li>
+                                        <li><a class="dropdown-item py-1" type="button" onclick="cambiar_a_realizado(' . $row['id_proyecto_gestionado'] . ')">Realizado</a></li>
+                                        <li><a class="dropdown-item py-1" type="button" onclick="cerrar_proyecto(' . $row['id_proyecto_gestionado'] . ')">Cerrar proyecto</a></li>
+                                        <li><a class="dropdown-item py-1" type="button" onclick="editar_proyecto(' . $row['id_proyecto_gestionado'] . ')">Editar <i class="text-secondary fs-16 ri-edit-2-line"></i></a></li>                                                                        
                                     </ul>
                                 </div>
                             </div>';
@@ -3083,6 +3083,12 @@ TXT;
 
     case 'update_parcial_de_proyecto':
         $id = (int) ($_POST['id'] ?? 0);
+
+        if ($id <= 0) {
+            echo json_encode(['success' => false, 'message' => 'ID de proyecto inválido']);
+            exit;
+        }
+
         $datos = [
             'fecha_vantive'               => $_POST['fecha_vantive'] ?? null,
             'inicio'                      => $_POST['inicio'] ?? null,
@@ -3095,14 +3101,27 @@ TXT;
             'tipo'                        => (int) ($_POST['tipo'] ?? 0),
             'hs_dimensionadas'            => $_POST['hs_dimensionadas'] ?? null,
         ];
-        $okPg  = $proyecto->update_parcial_pg($id, $datos);
 
+        $usuarios_ids = isset($_POST['usu_asignado']) && is_array($_POST['usu_asignado'])
+            ? $_POST['usu_asignado']
+            : [];
+
+        $okPg  = $proyecto->update_parcial_pg($id, $datos);
         $okDim = $proyecto->update_parcial_dimensionamiento($id, $datos);
+
+        // Usuarios asignados (reutiliza el método existente)
+        $conexion = new Conexion();
+        $conn = $conexion->get_conexion();
+        $conn->beginTransaction();
+        $okUsu = $proyecto->update_usuarios_asignados($conn, $id, $usuarios_ids);
+        $okUsu ? $conn->commit() : $conn->rollBack();
+
         header('Content-Type: application/json');
         echo json_encode([
-            'success' => $okPg && $okDim,
+            'success' => $okPg && $okDim && $okUsu,
             'pg'      => $okPg,
             'dim'     => $okDim,
+            'usu'     => $okUsu,
         ]);
         break;
 

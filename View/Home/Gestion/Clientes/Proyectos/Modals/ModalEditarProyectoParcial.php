@@ -1,4 +1,5 @@
-<div class="modal fade" id="ModalEditarProyectoParcial" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">    <div class="modal-dialog modal-xl">
+<div class="modal fade" id="ModalEditarProyectoParcial" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="card-body">
                 <h5 class="mb-2 pb-0">Edicion Parcial del Proyecto</h5>
@@ -47,9 +48,20 @@
                                 <textarea class="form-control form-control-sm" id="correo_envio_cliente_copias_edicion_parcial" name="correo_envio_cliente_copias_edicion_parcial" rows="2"></textarea>
                             </div>
 
-                            <div class="col-md-12">
-                                <label for="descripcion" class="form-label mb-0 fs-12">Descripción</label>
-                                <textarea class="form-control form-control-sm" id="descripcion" name="descripcion" rows="4"></textarea>
+                            <div class="mt-2 d-flex">
+                                <div class="col-md-8">
+                                    <label for="descripcion" class="form-label mb-0 fs-12">Descripción</label>
+                                    <textarea class="form-control form-control-sm" id="descripcion" name="descripcion" rows="6"></textarea>
+                                </div>
+
+                                <div class="col-sm-3 mx-3" style="border: 1px solid #ced4da; border-radius: .3rem;"> <label for="usuarios_sector_update_parcial"><span class="badge bg-light fs-10 mb-1 text-dark">Usuarios <input type="checkbox" name="usuarios_sector_update_parcial" id="usuarios_sector_update_parcial" title="Seleccionar todos los usuarios">
+                                        </span></label>
+                                    <div style="height: 100px; overflow-y: scroll;">
+                                        <div class="form-check" id="combo_usuario_x_sector_update_parcial">
+
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div class="d-flex justify-content-end mt-3 mx-2">
