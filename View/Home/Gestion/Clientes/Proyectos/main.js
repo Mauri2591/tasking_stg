@@ -3323,5 +3323,140 @@ $("#btnPasarEliminarHistorico").off("click").on("click", function () {
         }
     });
 });
-
 //------------------------------ FIN RECURRENCIAS  -----------------------------------//
+
+const btn_update_parcial = document.getElementById("btn_update_parcial");
+const modalEditarParcial = document.getElementById("ModalEditarProyectoParcial");
+let bloquear_cierre = false;
+
+function editar_proyecto(id_proyecto_gestionado) {
+    $.ajax({
+        type: "POST",
+        url: URL + 'Controller/ctrProyectos.php?proy=get_datos_para_edicion_parcial_de_proyecto',
+        data: {
+            id: id_proyecto_gestionado
+        },
+        dataType: "json",
+        success: function (proyecto) {
+            $('#id_proyecto_gestionadoa_update_parcial').val(id_proyecto_gestionado);
+            $('#sector_id_update_parcial').val(proyecto.sector_id);
+            $('#titulo').val(proyecto.titulo);
+            $('#referencia').val(proyecto.referencia);
+            $('#fecha_vantive').val(proyecto.fecha_vantive ? proyecto.fecha_vantive.slice(0, 10) : '');
+            $('#inicio').val(proyecto.inicio ? proyecto.inicio.slice(0, 10) : '');
+            $('#fin').val(proyecto.fin ? proyecto.fin.slice(0, 10) : '');
+            $('#correo_envio_cliente_edicion_parcial').val(proyecto.correo_envio_cliente);
+            $('#correo_envio_cliente_copias_edicion_parcial').val(proyecto.correo_envio_cliente_copias);
+            $('#descripcion').val(proyecto.descripcion);
+            $('#dimensionamiento_update_parcial').val(proyecto.dimensionamiento);
+
+            $.ajax({
+                type: "POST",
+                url: URL + 'Controller/ctrProyectos.php?proy=get_combo_subcategorias_x_sector',
+                data: {
+                    sector_id: proyecto.sector_id
+                },
+                dataType: "html",
+                success: function (options) {
+                    $('#tipo').html(options);
+                    $('#tipo').val(proyecto.tipo);
+                }
+            });
+
+            $("#ModalEditarProyectoParcial").modal("show");
+        }
+    });
+}
+
+function validar_campos_update_parcial() {
+    // Las claves tienen que coincidir con los ids de los inputs
+    const obligatorios = {
+        titulo: $('#titulo').val(),
+        referencia: $('#referencia').val(),
+        dimensionamiento_update_parcial: $('#dimensionamiento_update_parcial').val(),
+        inicio: $('#inicio').val(),
+        fin: $('#fin').val()
+    };
+
+    const vacios = Object.keys(obligatorios).filter(campo => !String(obligatorios[campo] ?? '').trim());
+
+    Object.keys(obligatorios).forEach(campo => {
+        $('#' + campo).toggleClass('is-invalid', vacios.includes(campo));
+    });
+
+    return vacios;
+}
+
+if (modalEditarParcial) {
+    // Impide cerrar (click afuera, ESC o botón Cerrar) si hubo error y siguen campos vacíos
+    modalEditarParcial.addEventListener('hide.bs.modal', (e) => {
+        if (bloquear_cierre && validar_campos_update_parcial().length) {
+            e.preventDefault();
+            $('#mje_campos_vacios_update_parcial').css('display', 'flex');
+        }
+    });
+
+    // Al cerrarse, limpia el estado
+    modalEditarParcial.addEventListener('hidden.bs.modal', () => {
+        bloquear_cierre = false;
+        $('#mje_campos_vacios_update_parcial').css('display', 'none');
+        $('#mje_update_parcial').css('display', 'none');
+        $('#formProyecto .is-invalid').removeClass('is-invalid');
+    });
+}
+
+if (btn_update_parcial) {
+    btn_update_parcial.addEventListener("click", (e) => {
+        e.preventDefault();
+
+        if (validar_campos_update_parcial().length) {
+            bloquear_cierre = true;
+            $('#mje_campos_vacios_update_parcial').css('display', 'flex');
+            return;
+        }
+
+        bloquear_cierre = false;
+        $('#mje_campos_vacios_update_parcial').css('display', 'none');
+
+        $.ajax({
+            type: "POST",
+            url: URL + 'Controller/ctrProyectos.php?proy=update_parcial_de_proyecto',
+            data: {
+                id: $('#id_proyecto_gestionadoa_update_parcial').val(),
+                fecha_vantive: $('#fecha_vantive').val(),
+                inicio: $('#inicio').val(),
+                fin: $('#fin').val(),
+                titulo: $('#titulo').val(),
+                referencia: $('#referencia').val(),
+                correo_envio_cliente: $('#correo_envio_cliente_edicion_parcial').val(),
+                correo_envio_cliente_copias: $('#correo_envio_cliente_copias_edicion_parcial').val(),
+                descripcion: $('#descripcion').val(),
+                tipo: $('#tipo').val(),
+                hs_dimensionadas: $('#dimensionamiento_update_parcial').val()
+            },
+            dataType: "json",
+            success: function (response) {
+                if (response.success) {
+                    $('#mje_update_parcial').css('display', 'flex');
+                    if ($.fn.DataTable.isDataTable('#table_bitacora')) {
+                        $('#table_bitacora').DataTable().ajax.reload(null, false);
+                        $('#table_proyectos_borrador').DataTable().ajax.reload(null, false);
+                        $('#table_proyectos_en_proceso').DataTable().ajax.reload(null, false);
+                        $('#table_proyectos_realizados').DataTable().ajax.reload(null, false);
+                    }
+                    setTimeout(() => {
+                        $('#mje_update_parcial').css('display', 'none');
+                    }, 1300);
+                } else {
+                    console.error('Error al actualizar', {
+                        proyecto_gestionado: response.pg,
+                        dimensionamiento: response.dim
+                    });
+                }
+            },
+            error: function (xhr) {
+                console.error('Error en la petición:', xhr.responseText);
+            }
+        });
+    });
+}

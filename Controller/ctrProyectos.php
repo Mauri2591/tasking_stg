@@ -533,14 +533,14 @@ switch ($_GET['proy']) {
         $colores_prioridad = array("BAJO" => "badge border border-success text-success", "MEDIO" => "badge border border-warning text-warning", "ALTO" => "badge border border-danger text-danger");
         foreach ($datos as $row) {
             $sub_array = array();
-            $sub_array[] = $row['fech_inicio'];
-
             $clase = isset($colores_prioridad[$row['prioridad']])
                 ? $colores_prioridad[$row['prioridad']]
                 : "badge bg-light text-dark";
             $sub_array[] = '<span class="' . $clase . '">' . $row['prioridad'] . '</span>';
+            $sub_array[] = '<span class="badge bg-light text-dark">'.$row['fech_inicio'].'</span>';
 
             $sub_array[] = strtoupper($row['client_rs']);
+            $sub_array[] = '<p class="text-center p-0 m-0">'.strtoupper($row['refProy']).'</p>';
             $sub_array[] = $_SESSION['sector_id'] == "4" ? '<span class="badge bg-light text-dark" title="Asignarme como PM" type="button" onclick="asignarPm(' . $row['id_proyecto_gestionado'] . "," . $row['id_pm_calidad'] . ')">' . $row['creador_proy'] . '</span>' : '<span class="badge bg-light text-dark">' . $row['creador_proy'] . '</span>';
 
             if (!empty($row['posicion_recurrencia'])) {
@@ -2124,8 +2124,8 @@ switch ($_GET['proy']) {
             $clase = isset($colores_prioridad[$row['prioridad']])
                 ? $colores_prioridad[$row['prioridad']]
                 : "badge bg-light text-dark";
-            $sub_array[] = '<span class="' . $clase . '">' . $row['prioridad'] . '</span>';
             $sub_array[] = $row['client_rs'];
+            $sub_array[] = $row['refProy'];
             $sub_array[] = $_SESSION['sector_id'] == "4" ? '<span class="badge bg-light text-dark" title="Asignarme como PM" type="button" onclick="asignarPm(' . $row['id_proyecto_gestionado'] . "," . $row['id_pm_calidad'] . ')">' . $row['creador_proy'] . '</span>' : '<span class="badge bg-light text-dark">' . $row['creador_proy'] . '</span>';
 
             $sub_array[] = $row['posicion_recurrencia'] == '' ? '-' : '<span class="badge bg-success">' . $row['posicion_recurrencia'] . '</span>';
@@ -2198,9 +2198,8 @@ switch ($_GET['proy']) {
             $sub_array[] = '<span class="badge bg-light text-dark badge-wrap" data-placement="top" title="' . $row['fech_inicio'] . '">' . $row['fech_inicio'] . '</span>';
             $sub_array[] = '<span class="badge bg-light text-dark badge-wrap" data-placement="top" title="' . $row['fech_fin'] . '">' . $row['fech_fin'] . '</span>';
             $sub_array[] = $row['client_rs'];
+            $sub_array[] = $row['referencia'];
             $sub_array[] = $_SESSION['sector_id'] == "4" ? '<span class="badge bg-light text-dark" title="Asignarme como PM" type="button" onclick="asignarPm(' . $row['id_proyecto_gestionado'] . "," . $row['id_pm_calidad'] . ')">' . $row['creador_proy'] . '</span>' : '<span class="badge bg-light text-dark">' . $row['creador_proy'] . '</span>';
-            $sub_array[] = $row['posicion_recurrencia'] == '' ? '-' : '<span class="badge bg-success">' . $row['posicion_recurrencia'] . '</span>';
-            $sub_array[] = $row['rechequeo'] == 'NO' ? '-' : '<span class="badge bg-danger">SI</span>';
             $sub_array[] = empty($row['sector_nombre'])
                 ? '<span>Sin asignar</span>'
                 : '<span style="background-color:' . $row['sector_color'] . '" class="badge">' . $row['sector_nombre'] . '</span>';
@@ -2220,7 +2219,8 @@ switch ($_GET['proy']) {
                                         <li><a class="dropdown-item" type="button" onclick="cambiar_proy_a_nuevo(' . $row['id_proyecto_gestionado'] . ')">Nuevo</a></li>
                                         <li><a class="dropdown-item" type="button" onclick="cambiar_a_abierto(' . $row['id_proyecto_gestionado'] . ')">Abierto</a></li>
                                         <li><a class="dropdown-item" type="button" onclick="cambiar_a_realizado(' . $row['id_proyecto_gestionado'] . ')">Realizado</a></li>
-                                        <li><a class="dropdown-item" type="button" onclick="cerrar_proyecto(' . $row['id_proyecto_gestionado'] . ')">Cerrar proyecto</a></li>                                    
+                                        <li><a class="dropdown-item" type="button" onclick="cerrar_proyecto(' . $row['id_proyecto_gestionado'] . ')">Cerrar proyecto</a></li>
+                                        <li><a class="dropdown-item" type="button" onclick="editar_proyecto(' . $row['id_proyecto_gestionado'] . ')">Editar <i class="text-secondary fs-16 ri-edit-2-line"></i></a></li>                                                                        
                                     </ul>
                                 </div>
                             </div>';
@@ -3074,6 +3074,36 @@ TXT;
     case 'proyectos_eh':
         $datos = $proyecto->proyectos_eh();
         echo json_encode($datos);
+        break;
+
+    case 'get_datos_para_edicion_parcial_de_proyecto':
+        $datos = $proyecto->get_datos_para_edicion_parcial_de_proyecto($_POST['id']);
+        echo json_encode($datos);
+        break;
+
+    case 'update_parcial_de_proyecto':
+        $id = (int) ($_POST['id'] ?? 0);
+        $datos = [
+            'fecha_vantive'               => $_POST['fecha_vantive'] ?? null,
+            'inicio'                      => $_POST['inicio'] ?? null,
+            'fin'                         => $_POST['fin'] ?? null,
+            'titulo'                      => trim($_POST['titulo'] ?? ''),
+            'referencia'                  => trim($_POST['referencia'] ?? ''),
+            'correo_envio_cliente'        => trim($_POST['correo_envio_cliente'] ?? ''),
+            'correo_envio_cliente_copias' => trim($_POST['correo_envio_cliente_copias'] ?? ''),
+            'descripcion'                 => trim($_POST['descripcion'] ?? ''),
+            'tipo'                        => (int) ($_POST['tipo'] ?? 0),
+            'hs_dimensionadas'            => $_POST['hs_dimensionadas'] ?? null,
+        ];
+        $okPg  = $proyecto->update_parcial_pg($id, $datos);
+
+        $okDim = $proyecto->update_parcial_dimensionamiento($id, $datos);
+        header('Content-Type: application/json');
+        echo json_encode([
+            'success' => $okPg && $okDim,
+            'pg'      => $okPg,
+            'dim'     => $okDim,
+        ]);
         break;
 
     default:

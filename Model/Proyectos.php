@@ -252,6 +252,7 @@ class Proyectos extends Conexion
     tc.cat_nom,
     tp.pais_nombre,
     pg.id AS id_proyecto_gestionado,
+    pg.refProy,
     prioridad.prioridad,
     IF(proyecto_rechequeo.id,'SI','NO') AS rechequeo,
     CASE 
@@ -1506,6 +1507,7 @@ ORDER BY id_proyecto_cantidad_servicios ASC";
     tp.pais_nombre,
     pg.id AS id_proyecto_gestionado,
     pg.cat_id,
+    pg.refProy,
     pg.estados_id,
     proyecto_recurrencia.posicion_recurrencia,
     pg.titulo,
@@ -1647,6 +1649,7 @@ ORDER BY id_proyecto_cantidad_servicios ASC";
     tp.pais_nombre,
     pg.id AS id_proyecto_gestionado,
     pg.cat_id,
+    pg.refProy AS referencia,
     pg.estados_id,
     IF(proyecto_rechequeo.id,'SI','NO') AS rechequeo,
 (
@@ -3615,5 +3618,85 @@ ORDER BY producto, mes DESC";
         $stmt->execute();
         $datos = $stmt->fetchAll(PDO::FETCH_ASSOC);
         return count($datos) > 0 ? $datos : [];
+    }
+
+    public function get_datos_para_edicion_parcial_de_proyecto(int $id)
+    {
+        $conn = parent::get_conexion();
+        $sql = "SELECT proyecto_gestionado.fech_vantive AS fecha_vantive, 
+        proyecto_gestionado.fech_inicio AS inicio, proyecto_gestionado.fech_fin AS fin, 
+        proyecto_gestionado.titulo AS titulo, proyecto_gestionado.refProy AS referencia, 
+        proyecto_gestionado.correo_envio_cliente AS correo_envio_cliente,
+        proyecto_gestionado.cats_id AS tipo, 
+        proyecto_gestionado.correo_envio_cliente_copias AS correo_envio_cliente_copias, 
+        proyecto_gestionado.descripcion, proyecto_gestionado.cats_id AS tipo,
+        proyecto_gestionado.sector_id AS sector_id,
+        dimensionamiento.hs_dimensionadas AS dimensionamiento
+        FROM proyecto_gestionado 
+        LEFT JOIN dimensionamiento 
+        ON dimensionamiento.id_proyecto_gestionado=proyecto_gestionado.id
+        WHERE proyecto_gestionado.id=:id";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue(":id", $id, PDO::PARAM_INT);
+        $stmt->execute();
+        $datos = $stmt->fetch(PDO::FETCH_ASSOC);
+        return count($datos) > 0 ? $datos : [];
+    }
+
+    public function update_parcial_pg(int $id, array $datos)
+    {
+        $conn = parent::get_conexion();
+        try {
+            $conn->beginTransaction();
+            $sql = "UPDATE proyecto_gestionado SET
+                    fech_vantive = :fech_vantive,
+                    fech_inicio = :fech_inicio,
+                    fech_fin = :fech_fin,
+                    titulo = :titulo,
+                    refProy = :refProy,
+                    correo_envio_cliente = :correo_envio_cliente,
+                    correo_envio_cliente_copias = :correo_envio_cliente_copias,
+                    descripcion = :descripcion,
+                    cats_id = :cats_id
+                WHERE id = :id";
+            $stmt = $conn->prepare($sql);
+            $stmt->bindValue(":fech_vantive", $datos['fecha_vantive'] ?: null);
+            $stmt->bindValue(":fech_inicio", $datos['inicio'] ?: null);
+            $stmt->bindValue(":fech_fin", $datos['fin'] ?: null);
+            $stmt->bindValue(":titulo", $datos['titulo']);
+            $stmt->bindValue(":refProy", $datos['referencia']);
+            $stmt->bindValue(":correo_envio_cliente", $datos['correo_envio_cliente']);
+            $stmt->bindValue(":correo_envio_cliente_copias", $datos['correo_envio_cliente_copias']);
+            $stmt->bindValue(":descripcion", $datos['descripcion']);
+            $stmt->bindValue(":cats_id", $datos['tipo'], PDO::PARAM_INT);
+            $stmt->bindValue(":id", $id, PDO::PARAM_INT);
+            $stmt->execute();
+            $conn->commit();
+            return true;
+        } catch (PDOException $e) {
+            $conn->rollBack();
+            error_log($e->getMessage());
+            return false;
+        }
+    }
+
+    public function update_parcial_dimensionamiento(int $id_proyecto, array $datos)
+    {
+        $conn = parent::get_conexion();
+        try {
+            $conn->beginTransaction();
+            $sql = "UPDATE dimensionamiento SET hs_dimensionadas = :hs_dimensionadas
+                WHERE id_proyecto_gestionado = :id_proyecto";
+            $stmt = $conn->prepare($sql);
+            $stmt->bindValue(":hs_dimensionadas", $datos['hs_dimensionadas'], PDO::PARAM_STR);
+            $stmt->bindValue(":id_proyecto", $id_proyecto, PDO::PARAM_INT);
+            $stmt->execute();
+            $conn->commit();
+            return true;
+        } catch (PDOException $e) {
+            $conn->rollBack();
+            error_log($e->getMessage());
+            return false;
+        }
     }
 }
