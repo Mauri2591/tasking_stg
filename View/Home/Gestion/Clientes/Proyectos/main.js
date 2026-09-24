@@ -3388,10 +3388,10 @@ function validar_campos_update_parcial() {
     // Las claves tienen que coincidir con los ids de los inputs
     const obligatorios = {
         titulo: $('#titulo').val(),
-        referencia: $('#referencia').val(),
+        // referencia: $('#referencia').val(),
         dimensionamiento_update_parcial: $('#dimensionamiento_update_parcial').val(),
-        inicio: $('#inicio').val(),
-        fin: $('#fin').val()
+        // inicio: $('#inicio').val(),
+        // fin: $('#fin').val()
     };
 
     const vacios = Object.keys(obligatorios).filter(campo => !String(obligatorios[campo] ?? '').trim());
