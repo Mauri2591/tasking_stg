@@ -329,7 +329,6 @@ if (isset($_SESSION['usu_id'])) {
                                         </tr>
                                     </tbody>
                                 </table>
-                                <p style="font-style: italic;" class="text-center mt-5 mx-3 text-danger">Este reporte identifica <strong>Clientes</strong> con servicios contratados en el <strong>año en curso (<?php echo date('Y') ?>) </strong> que aún no tienen cobertura completa en todos los sectores <strong>(Ethical Hacking</strong>, <strong>SOC</strong> y <strong>SASE)</strong>, representando una oportunidad de expansión comercial.</p>
                             </div>
                         </div>
 
