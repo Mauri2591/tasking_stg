@@ -8,11 +8,14 @@ require_once __DIR__ . "/../Model/Clases/Validaciones.php";
 require_once __DIR__ . "/../Model/Clases/Headers.php";
 require_once __DIR__ . "/../Model/Clases/Openssl.php";
 require_once __DIR__ . "/../Model/Integraciones.php";
+require_once __DIR__ . "/../Model/Auditoria.php";
 
 $conexion = new Conexion();
 $integracion = new Integraciones();
 $proyecto = new Proyectos();
 $validacion = new Validaciones();
+$audit=new Auditoria();
+
 Headers::get_csp();
 
 function convertirNombrePipeline($texto, $id)
@@ -3108,6 +3111,7 @@ TXT;
 
         $okPg  = $proyecto->update_parcial_pg($id, $datos);
         $okDim = $proyecto->update_parcial_dimensionamiento($id, $datos);
+        $audit->insert_audit_estados_proyecto($id,24, $_SESSION['usu_id'], $_SESSION['sector_id']);
 
         // Usuarios asignados (reutiliza el método existente)
         $conexion = new Conexion();

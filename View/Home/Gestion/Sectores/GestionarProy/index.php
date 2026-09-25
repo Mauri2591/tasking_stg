@@ -2075,9 +2075,6 @@ if (isset($_SESSION['usu_id'])) {
         }
         //FUNCTIONAL SERVICES -------------------------------------------------------
 
-
-
-
         function verLogs(id_proyecto_gestionado) {
             $("#ModalVerLogsProyectos").modal("show")
             tabla = $("#tablaAuditoriaProyectosPorId").dataTable({
@@ -2124,7 +2121,7 @@ if (isset($_SESSION['usu_id'])) {
                     },
                     {
                         "targets": 5,
-                        "width": "20%"
+                        "width": "30%"
                     },
                     {
                         "targets": 6,

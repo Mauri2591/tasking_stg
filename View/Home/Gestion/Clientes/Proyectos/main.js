@@ -3457,6 +3457,7 @@ if (btn_update_parcial) {
             dataType: "json",
             success: function (response) {
                 if (response.success) {
+
                     $('#mje_update_parcial').css('display', 'flex');
                     ['#table_bitacora', '#table_proyectos_borrador', '#table_proyectos_en_proceso', '#table_proyectos_realizados']
                     .forEach(tabla => {
