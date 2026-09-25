@@ -117,11 +117,9 @@ if (isset($_SESSION['usu_id'])) {
                                         </table>
                                     </div>
                                 </div>
-
                                 <!-- Modals -->
-                                <?php include_once __DIR__ . "/../EthicalHacking/Modals/ModalVerHosts.php"; ?>
+                                <?php include_once __DIR__ . "/Modals/ModalVerHosts.php"; ?>
                                 <!-- <?php include_once __DIR__ . "/Modals/ModalAgregarActivos.php"; ?> -->
-
                             </div>
                         </div>
                     </div>

@@ -401,7 +401,7 @@ function asignar_proyecto(id_proyecto_gestionado) {
 }
 
 
-function ver_hosts_consulting(id_proyecto_gestionado) {
+function ver_activos_consulting(id_proyecto_gestionado) {
     $("#ModalVerHosts").modal("show");
     $.post("../../../../../../Controller/ctrProyectos.php?proy=get_hosts_proy_casillas", {
             id_proyecto_gestionado: id_proyecto_gestionado
