@@ -2721,11 +2721,10 @@ switch ($_GET['proy']) {
                 : '<p class="text-center my-0 badge bg-light text-dark fs-10">SIN FECHA</p>';
 
             $sub_array[] = htmlspecialchars($titulo);
-            $sub_array[] = $posicion_recurrencia === '' ? '-' : '<span class="badge bg-success">' . htmlspecialchars($posicion_recurrencia) . '</span>';
 
-            $sub_array[] = strlen($refProy) > 20
-                ? '<p class="text-center m-0 p-0">' . wordwrap(htmlspecialchars($refProy), 20, '<br>', true) . '</p>'
-                : '<p class="text-center m-0 p-0">' . htmlspecialchars($refProy) . '</p>';
+            $sub_array[] = '<p class="text-center m-0 p-0">' . htmlspecialchars($refProy) . '</p>';
+
+            $sub_array[] = $posicion_recurrencia === '' ? '-' : '<span class="badge bg-success">' . htmlspecialchars($posicion_recurrencia) . '</span>';
 
             if ($rechequeo === "SI") {
                 $num_rechequeo_de = isset($id_to_pos[$rechequeo_de]) ? $id_to_pos[$rechequeo_de] : $rechequeo_de;
