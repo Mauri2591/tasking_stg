@@ -30,25 +30,9 @@
             ]);
             exit;
 
-        case 'notificar_proyecto_en_pausa':
-            $id = isset($_POST['id']) ? (int)$_POST['id'] : 0;
-            if ($id <= 0) {
-                echo json_encode([
-                    'status' => 'ERROR',
-                    'error'  => 'ID inválido'
-                ]);
-                exit;
-            }
-            $result = $correo->notificarProyectoEstado($id);
-            echo json_encode([
-                'status' => $result === true ? 'OK' : 'ERROR',
-                'error'  => $result === true ? null : $result
-            ]);
-            break;
-
         case 'enviar_correo_cliente':
 
-            $pais_id = isset($_POST['pais_id_valor']) ? (int)$_POST['pais_id_valor'] : 0;
+            $pais_id= isset($_POST['pais_id_valor']) ? (int)$_POST['pais_id_valor'] : 0;
             $id_proyecto_gestionado = isset($_POST['id_proyecto_gestionado']) ? (int)$_POST['id_proyecto_gestionado'] : 0;
             $correo_destino         = $_POST['correo_destino'] ?? '';
 
