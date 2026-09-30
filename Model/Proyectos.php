@@ -26,7 +26,7 @@ class Proyectos extends Conexion
     public function get_client_y_pais_para_proy_borrador($proy_id)
     {
         $conn = parent::get_conexion();
-        $sql = "SELECT clientes.client_rs, tm_pais.pais_nombre, DATE_FORMAT(fech_crea,'%d-%m-%Y') AS fech_crea FROM proyectos LEFT JOIN clientes ON proyectos.client_id=clientes.client_id LEFT JOIN tm_pais ON clientes.pais_id=tm_pais.pais_id WHERE proy_id=?";
+        $sql = "SELECT clientes.client_rs, tm_pais.pais_nombre, DATE_FORMAT(proyectos.fech_crea,'%d-%m-%Y') AS fech_crea FROM proyectos LEFT JOIN clientes ON proyectos.client_id=clientes.client_id LEFT JOIN tm_pais ON clientes.pais_id=tm_pais.pais_id WHERE proy_id=?";
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(1, $proy_id, PDO::PARAM_INT);
         $stmt->execute();
