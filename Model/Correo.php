@@ -123,9 +123,74 @@ class Correo extends Conexion
         }
     }
 
+    public function getDatosParaCorreoNotificarEstado($id)
+    {
+        $conn = $this->get_conexion();
+        $sql = "SELECT
+        pg.id,
+        pg.titulo,
+        pg.refProy,
+        tm_estados.estados_nombre AS estado,
+        tm_categoria.cat_nom AS producto,
+        tm_subcategoria.cats_nom AS tipo,
+        cli.client_rs AS cliente,
+        cli.pais_id,
+        tm_pais.pais_nombre AS pais_nombre,
+        s.sector_nombre AS sector,
+        s.sector_id AS sector_id,
+        COALESCE(
+            GROUP_CONCAT(
+                DISTINCT LOWER(tu.usu_correo)
+                ORDER BY LOWER(tu.usu_correo)
+                SEPARATOR ', '
+            ),
+            'Sin usuarios asignados'
+        ) AS usuarios,
+        COALESCE(
+            GROUP_CONCAT(
+                DISTINCT LOWER(lider.usu_correo)
+                ORDER BY LOWER(lider.usu_correo)
+                SEPARATOR ', '
+            ),
+            'Sin lider'
+        ) AS lideres
+        FROM proyecto_gestionado pg
+        LEFT JOIN proyecto_cantidad_servicios pcs
+            ON pcs.id = pg.id_proyecto_cantidad_servicios
+        LEFT JOIN proyectos pr
+            ON pr.proy_id = pcs.proy_id
+        LEFT JOIN clientes cli
+            ON cli.client_id = pr.client_id
+        LEFT JOIN sectores s
+            ON s.sector_id = pg.sector_id
+        LEFT JOIN usuario_proyecto up
+            ON up.id_proyecto_gestionado = pg.id
+        LEFT JOIN tm_usuario tu
+            ON tu.usu_id = up.usu_asignado
+        LEFT JOIN tm_usuario lider
+            ON lider.lider = 'SI'
+            AND (
+                pg.sector_id = 5
+                OR lider.sector_id = pg.sector_id
+            )
+        INNER JOIN tm_categoria ON pg.cat_id = tm_categoria.cat_id
+        INNER JOIN tm_subcategoria ON pg.cats_id = tm_subcategoria.cats_id
+        INNER JOIN tm_pais ON cli.pais_id = tm_pais.pais_id
+        INNER JOIN tm_estados ON pg.estados_id = tm_estados.estados_id
+        WHERE pg.id = :id
+        GROUP BY
+        pg.id,
+        cli.client_rs,
+        s.sector_nombre";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_OBJ);
+    }
+
     public function notificarProyectoEstado($id)
     {
-        $datos = $this->getDatosParaCorreo($id);
+        $datos = $this->getDatosParaCorreoNotificarEstado($id);
         $usuarioNotificador = $_SESSION['usu_correo'];
         if (!$datos) {
             return 'No se encontraron datos del proyecto';
@@ -149,33 +214,56 @@ class Correo extends Conexion
             ];
             $mail->CharSet = 'UTF-8';
             $mail->setFrom(SMTP_FROM_ARG, SMTP_FROM_NAME);
-            $destinatariosAgregados = 0;
+
+            $destinatarios = [];
+
             if (!empty($datos->usuarios) && $datos->usuarios !== 'Sin usuarios asignados') {
-                $listaUsuarios = array_map('trim', explode(',', $datos->usuarios));
-                foreach ($listaUsuarios as $correo) {
+                foreach (array_map('trim', explode(',', $datos->usuarios)) as $correo) {
                     if (filter_var($correo, FILTER_VALIDATE_EMAIL)) {
-                        $mail->addAddress($correo);
-                        $destinatariosAgregados++;
+                        $destinatarios[strtolower($correo)] = $correo;
                     }
                 }
             }
-            if ($destinatariosAgregados === 0) {
+
+            if (!empty($datos->lideres) && $datos->lideres !== 'Sin lider') {
+                foreach (array_map('trim', explode(',', $datos->lideres)) as $correo) {
+                    if (filter_var($correo, FILTER_VALIDATE_EMAIL)) {
+                        if (!isset($destinatarios[strtolower($correo)])) {
+                            $destinatarios[strtolower($correo)] = $correo;
+                        }
+                    }
+                }
+            }
+
+            if (empty($destinatarios)) {
                 return 'No hay usuarios con correo válido para notificar';
+            }
+
+            foreach ($destinatarios as $correo) {
+                $mail->addAddress($correo);
+            }
+            foreach (array_map('trim', explode(',', MAIL_COPIA_SECTORES)) as $correoCopia) {
+                if (filter_var($correoCopia, FILTER_VALIDATE_EMAIL)) {
+                    $mail->addCC($correoCopia);
+                }
             }
 
             $mail->isHTML(true);
             $mail->Subject = 'Proyecto en estado ' . $datos->estado . ' - [CLIENTE] ' . $cliente;
             $mail->Body = "<p>Estimados,<br><br>
-            El presente proyecto se encuentra en estado <b> {$datos->estado}</b>.</p>
-            <p><b>Título:</b> {$datos->titulo}</p>
-            <p><b>Referencia:</b> {$refProy}</p>
-            <p><b>Producto:</b> {$producto}</p>
-            <p><b>Tipo:</b> {$datos->tipo}</p>
-            <p><b>Usuarios asignados al proyecto:</b><br>{$datos->usuarios}</p>
-            <br>
-            <p><b>Accion generada por:</b> {$usuarioNotificador}</p>
-            <br><br>
-            <p>Saludos.</p>";
+                    El presente proyecto se encuentra en estado <b> {$datos->estado}</b>.</p>
+                    <p><b>Título:</b> {$datos->titulo}</p>
+                    <p><b>Referencia:</b> {$refProy}</p>
+                    <p><b>Producto:</b> {$producto}</p>
+                    <p><b>Tipo:</b> {$datos->tipo}</p>
+                    <p><b>Usuario/s asignado/s al proyecto:</b><br>{$datos->usuarios}</p>
+                    <p><b>Líder/es del sector:</b><br>{$datos->lideres}</p>
+                    <br>
+                    <p><b>Accion generada por:</b> {$usuarioNotificador}</p>
+                    <br><br>
+                    <p>Saludos.</p><br><br><br>
+                    Equipo de Calidad y Procesos<br>
+                    Delivery Services – Cybersecurity Solutions<br><br>";
             $mail->send();
             return true;
         } catch (Exception $e) {
