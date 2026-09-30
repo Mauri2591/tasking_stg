@@ -2460,6 +2460,40 @@ function cambiar_a_borrador(id_proyecto_gestionado) {
     })
 }
 
+function cambiar_a_pausa(id_proyecto_gestionado) {
+    Swal.fire({
+        icon: "info",
+        title: "Desea pasar el proyecto a estado En Pausa?",
+        showConfirmButton: true,
+        showCancelButton: true
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.post("../../../../../Controller/ctrProyectos.php?proy=update_estado_proy", {
+                    id: id_proyecto_gestionado,
+                    estados_id: 25
+                },
+                function (data, textStatus, jqXHR) {
+
+                },
+                "json"
+            );
+            setTimeout(() => {
+                if ($.fn.DataTable.isDataTable('#table_proyectos_borrador')) {
+                    $('#table_proyectos_borrador').DataTable().ajax.reload(null, false);
+                    $('#table_bitacora').DataTable().ajax.reload(null, false);
+                }
+            }, 500);
+            Swal.fire({
+                icon: "success",
+                title: "Bien",
+                text: "Proyecto pasado a Nuevo!",
+                timer: 1500,
+                showConfirmButton: false
+            });
+        }
+    })
+}
+
 function cambiar_a_realizado(id_proyecto_gestionado) {
     Swal.fire({
         icon: "info",

@@ -1761,7 +1761,7 @@ ON pm_concat.id_proyecto_gestionado = pg.id
 
 WHERE 
     pcs.est = 1 
-    AND pg.estados_id IN (1, 2, 3, 14, 15)
+    AND pg.estados_id IN (1, 2, 3, 14, 15, 17, 25)
 GROUP BY 
     pcs.id,
     pcs.proy_id, 

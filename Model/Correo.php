@@ -19,6 +19,7 @@ class Correo extends Conexion
         pg.id,
         pg.titulo,
         pg.refProy,
+        tm_estados.estados_nombre AS estado,
         tm_categoria.cat_nom AS producto,
         tm_subcategoria.cats_nom AS tipo,
         cli.client_rs AS cliente,
@@ -49,6 +50,7 @@ class Correo extends Conexion
         INNER JOIN tm_categoria ON pg.cat_id=tm_categoria.cat_id
         INNER JOIN tm_subcategoria ON pg.cats_id=tm_subcategoria.cats_id
         INNER JOIN tm_pais ON cli.pais_id=tm_pais.pais_id
+        INNER JOIN tm_estados ON pg.estados_id=tm_estados.estados_id
         WHERE pg.id = :id
         GROUP BY
             pg.id,
@@ -114,6 +116,66 @@ class Correo extends Conexion
                 </p>
                 <br>
                 <p>Saludos.</p>";
+            $mail->send();
+            return true;
+        } catch (Exception $e) {
+            return 'ERROR SMTP: ' . $mail->ErrorInfo;
+        }
+    }
+
+    public function notificarProyectoEstado($id)
+    {
+        $datos = $this->getDatosParaCorreo($id);
+        $usuarioNotificador = $_SESSION['usu_correo'];
+        if (!$datos) {
+            return 'No se encontraron datos del proyecto';
+        }
+        $producto = $datos->producto ?: 'N/A';
+        $cliente  = $datos->cliente  ?: 'N/A';
+        $refProy  = $datos->refProy  ?: 'N/A';
+        $mail = new PHPMailer(true);
+        try {
+            $mail->isSMTP();
+            $mail->Host       = SMTP_HOST;
+            $mail->SMTPAuth   = false;
+            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+            $mail->Port       = (int)SMTP_PORT;
+            $mail->SMTPOptions = [
+                'ssl' => [
+                    'verify_peer'       => false,
+                    'verify_peer_name'  => false,
+                    'allow_self_signed' => true,
+                ],
+            ];
+            $mail->CharSet = 'UTF-8';
+            $mail->setFrom(SMTP_FROM_ARG, SMTP_FROM_NAME);
+            $destinatariosAgregados = 0;
+            if (!empty($datos->usuarios) && $datos->usuarios !== 'Sin usuarios asignados') {
+                $listaUsuarios = array_map('trim', explode(',', $datos->usuarios));
+                foreach ($listaUsuarios as $correo) {
+                    if (filter_var($correo, FILTER_VALIDATE_EMAIL)) {
+                        $mail->addAddress($correo);
+                        $destinatariosAgregados++;
+                    }
+                }
+            }
+            if ($destinatariosAgregados === 0) {
+                return 'No hay usuarios con correo válido para notificar';
+            }
+
+            $mail->isHTML(true);
+            $mail->Subject = 'Proyecto en estado ' . $datos->estado . ' - [CLIENTE] ' . $cliente;
+            $mail->Body = "<p>Estimados,<br><br>
+            El presente proyecto se encuentra en estado <b> {$datos->estado}</b>.</p>
+            <p><b>Título:</b> {$datos->titulo}</p>
+            <p><b>Referencia:</b> {$refProy}</p>
+            <p><b>Producto:</b> {$producto}</p>
+            <p><b>Tipo:</b> {$datos->tipo}</p>
+            <p><b>Usuarios asignados al proyecto:</b><br>{$datos->usuarios}</p>
+            <br>
+            <p><b>Accion generada por:</b> {$usuarioNotificador}</p>
+            <br><br>
+            <p>Saludos.</p>";
             $mail->send();
             return true;
         } catch (Exception $e) {

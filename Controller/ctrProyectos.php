@@ -9,12 +9,14 @@ require_once __DIR__ . "/../Model/Clases/Headers.php";
 require_once __DIR__ . "/../Model/Clases/Openssl.php";
 require_once __DIR__ . "/../Model/Integraciones.php";
 require_once __DIR__ . "/../Model/Auditoria.php";
+require_once __DIR__ . "/../Model/Correo.php";
 
 $conexion = new Conexion();
 $integracion = new Integraciones();
 $proyecto = new Proyectos();
 $validacion = new Validaciones();
-$audit=new Auditoria();
+$audit = new Auditoria();
+$correo = new Correo(); 
 
 Headers::get_csp();
 
@@ -2222,6 +2224,7 @@ switch ($_GET['proy']) {
                                         <li><a class="dropdown-item py-1" type="button" onclick="cambiar_proy_a_nuevo(' . $row['id_proyecto_gestionado'] . ')">Nuevo</a></li>
                                         <li><a class="dropdown-item py-1" type="button" onclick="cambiar_a_abierto(' . $row['id_proyecto_gestionado'] . ')">Abierto</a></li>
                                         <li><a class="dropdown-item py-1" type="button" onclick="cambiar_a_realizado(' . $row['id_proyecto_gestionado'] . ')">Realizado</a></li>
+                                        <li><a class="dropdown-item py-1" type="button" onclick="cambiar_a_pausa(' . $row['id_proyecto_gestionado'] . ')">En Pausa</a><i class="' . $row[''] . '"></i></li>
                                         <li><a class="dropdown-item py-1" type="button" onclick="cerrar_proyecto(' . $row['id_proyecto_gestionado'] . ')">Cerrar proyecto</a></li>
                                         <li><a class="dropdown-item py-1" type="button" onclick="editar_proyecto(' . $row['id_proyecto_gestionado'] . ')">Editar <i class="text-secondary fs-16 ri-edit-2-line"></i></a></li>                                                                        
                                     </ul>
@@ -2564,8 +2567,19 @@ switch ($_GET['proy']) {
         break;
 
     case 'update_estado_proy':
-        $proyecto->update_estado_proy($_POST['id'], $_POST['estados_id']);
-        echo json_encode(["success" => true]);
+        $id = (int)$_POST['id'];
+        $estados_id = (int)$_POST['estados_id'];
+        $proyecto->update_estado_proy($id, $estados_id);
+
+        $correo_result = null; // Notifica solo si pasa a estado En Pausa (estado 25)
+        if ($estados_id === 25) {
+            $correo_result = $correo->notificarProyectoEstado($id);
+        }
+
+        echo json_encode([
+            "success" => true,
+            "correo"  => $correo_result
+        ]);
         break;
 
     case 'tomar_proyecto':
@@ -3110,7 +3124,7 @@ TXT;
 
         $okPg  = $proyecto->update_parcial_pg($id, $datos);
         $okDim = $proyecto->update_parcial_dimensionamiento($id, $datos);
-        $audit->insert_audit_estados_proyecto($id,24, $_SESSION['usu_id'], $_SESSION['sector_id']);
+        $audit->insert_audit_estados_proyecto($id, 24, $_SESSION['usu_id'], $_SESSION['sector_id']);
 
         // Usuarios asignados (reutiliza el método existente)
         $conexion = new Conexion();
