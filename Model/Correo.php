@@ -251,7 +251,8 @@ class Correo extends Conexion
             $mail->isHTML(true);
             $mail->Subject = 'Proyecto en estado ' . $datos->estado . ' - [CLIENTE] ' . $cliente;
             $mail->Body = "<p>Estimados,<br><br>
-                    El presente proyecto se encuentra en estado <b> {$datos->estado}</b>.</p>
+                    El presente proyecto se encuentra en estado <b> {$datos->estado}</b>.
+                    En el caso de reabrirse lo verá reflejado en Tasking.</p>
                     <p><b>Título:</b> {$datos->titulo}</p>
                     <p><b>Referencia:</b> {$refProy}</p>
                     <p><b>Producto:</b> {$producto}</p>

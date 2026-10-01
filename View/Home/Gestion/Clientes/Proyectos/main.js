@@ -2380,142 +2380,141 @@ function ver_hosts_eh(id_proyecto_gestionado) {
 function cambiar_a_abierto(id_proyecto_gestionado) {
     Swal.fire({
         icon: "info",
-        title: "Desea pasar el proyecto a Abierto?",
+        title: "¿Desea pasar el proyecto a Abierto?",
         showConfirmButton: true,
         showCancelButton: true
-    }).then((result) => {
-        if (result.isConfirmed) {
-            $.post("../../../../../Controller/ctrProyectos.php?proy=update_estado_proy", {
-                    id: id_proyecto_gestionado,
-                    estados_id: 2
-                },
-                function (data, textStatus, jqXHR) {
+    }).then(async (result) => {
+        if (!result.isConfirmed) return;
 
-                },
-                "json"
-            );
+        try {
+            await $.post("../../../../../Controller/ctrProyectos.php?proy=update_estado_proy", {
+                id: id_proyecto_gestionado,
+                estados_id: 2
+            }, null, "json");
 
-            $.post(
-                "../../../../../Controller/ctrAuditoria.php?case=insert_audit_estados_proyecto", {
-                    id_proyecto_gestionado: id_proyecto_gestionado,
-                    estados_id: 2
-                }
-            );
+            await $.post("../../../../../Controller/ctrAuditoria.php?case=insert_audit_estados_proyecto", {
+                id_proyecto_gestionado: id_proyecto_gestionado,
+                estados_id: 2
+            });
 
-            setTimeout(() => {
-                if ($.fn.DataTable.isDataTable('#table_bitacora')) {
-                    $('#table_bitacora').DataTable().ajax.reload(null, false);
-                }
-            }, 500);
+            if ($.fn.DataTable.isDataTable('#table_bitacora')) {
+                $('#table_bitacora').DataTable().ajax.reload(null, false);
+            }
+
             Swal.fire({
                 icon: "success",
                 title: "Bien",
-                text: "Proyecto pasado a Nuevo!",
+                text: "Proyecto pasado a Abierto!",
                 timer: 1500,
                 showConfirmButton: false
             });
+        } catch (err) {
+            console.error(err);
+            Swal.fire({
+                icon: "error",
+                title: "Error",
+                text: "No se pudo actualizar el proyecto."
+            });
         }
-    })
+    });
 }
 
 function cambiar_a_borrador(id_proyecto_gestionado) {
     Swal.fire({
         icon: "info",
-        title: "Desea pasar el proyecto a Borrador?",
+        title: "¿Desea pasar el proyecto a Borrador?",
         showConfirmButton: true,
         showCancelButton: true
-    }).then((result) => {
-        if (result.isConfirmed) {
-            $.post("../../../../../Controller/ctrProyectos.php?proy=update_estado_proy", {
-                    id: id_proyecto_gestionado,
-                    estados_id: 14
-                },
-                function (data, textStatus, jqXHR) {
+    }).then(async (result) => {
+        if (!result.isConfirmed) return;
 
-                },
-                "json"
-            );
+        try {
+            await $.post("../../../../../Controller/ctrProyectos.php?proy=update_estado_proy", {
+                id: id_proyecto_gestionado,
+                estados_id: 14
+            }, null, "json");
 
-            $.post(
-                "../../../../../Controller/ctrAuditoria.php?case=insert_audit_estados_proyecto", {
-                    id_proyecto_gestionado: id_proyecto_gestionado,
-                    estados_id: 14
-                }
-            );
+            await $.post("../../../../../Controller/ctrAuditoria.php?case=insert_audit_estados_proyecto", {
+                id_proyecto_gestionado: id_proyecto_gestionado,
+                estados_id: 14
+            });
 
-            setTimeout(() => {
-                if ($.fn.DataTable.isDataTable('#table_proyectos_borrador')) {
-                    $('#table_proyectos_borrador').DataTable().ajax.reload(null, false);
-                    $('#table_bitacora').DataTable().ajax.reload(null, false);
-                }
-            }, 500);
+            if ($.fn.DataTable.isDataTable('#table_proyectos_borrador')) {
+                $('#table_proyectos_borrador').DataTable().ajax.reload(null, false);
+            }
+            if ($.fn.DataTable.isDataTable('#table_bitacora')) {
+                $('#table_bitacora').DataTable().ajax.reload(null, false);
+            }
+
             Swal.fire({
                 icon: "success",
                 title: "Bien",
-                text: "Proyecto pasado a Nuevo!",
+                text: "Proyecto pasado a Borrador!",
                 timer: 1500,
                 showConfirmButton: false
             });
+        } catch (err) {
+            console.error(err);
+            Swal.fire({
+                icon: "error",
+                title: "Error",
+                text: "No se pudo actualizar el proyecto."
+            });
         }
-    })
+    });
 }
 
 function cambiar_a_pausa(id_proyecto_gestionado) {
     Swal.fire({
         icon: "info",
-        title: "Desea pasar el proyecto a estado En Pausa?",
+        title: "¿Desea pasar el proyecto a estado En Pausa?",
         showConfirmButton: true,
         showCancelButton: true
-    }).then((result) => {
-        if (result.isConfirmed) {
-            $.post("../../../../../Controller/ctrProyectos.php?proy=update_estado_proy", {
-                    id: id_proyecto_gestionado,
-                    estados_id: 25
-                },
-                function (data) {
-                    if (!data.success) {
-                        Swal.fire({
-                            icon: "error",
-                            title: "Error",
-                            text: "No se pudo cambiar el estado"
-                        });
-                        return;
-                    }
+    }).then(async (result) => {
+        if (!result.isConfirmed) return;
 
-                    // Recargar tablas
-                    if ($.fn.DataTable.isDataTable('#table_proyectos_borrador')) {
-                        $('#table_proyectos_borrador').DataTable().ajax.reload(null, false);
-                        $('#table_bitacora').DataTable().ajax.reload(null, false);
-                    }
+        try {
+            const data = await $.post("../../../../../Controller/ctrProyectos.php?proy=update_estado_proy", {
+                id: id_proyecto_gestionado,
+                estados_id: 25
+            }, null, "json");
 
-                    // Mensaje según el resultado del correo
-                    let textoCorreo;
-                    if (data.correo === true) {
-                        textoCorreo = "Notificación enviada por Outlook a los usuarios asignados.";
-                    } else if (data.correo === null) {
-                        textoCorreo = ""; // no correspondía notificar
-                    } else {
-                        // vino un string (no había destinatarios, o error SMTP)
-                        textoCorreo = "Proyecto actualizado, pero la notificación no se envió: " + data.correo;
-                    }
+            if (!data.success) {
+                Swal.fire({ icon: "error", title: "Error", text: "No se pudo cambiar el estado" });
+                return;
+            }
 
-                    Swal.fire({
-                        icon: "success",
-                        title: "Proyecto pasado a En Pausa",
-                        text: textoCorreo,
-                        timer: textoCorreo ? 3000 : 1500,
-                        showConfirmButton: false
-                    });
-                },
-                "json"
-            ).fail(function (xhr) {
-                console.log("Falló:", xhr.status, xhr.responseText);
-                Swal.fire({
-                    icon: "error",
-                    title: "Error",
-                    text: "Error en el servidor"
-                });
+            await $.post("../../../../../Controller/ctrAuditoria.php?case=insert_audit_estados_proyecto", {
+                id_proyecto_gestionado: id_proyecto_gestionado,
+                estados_id: 25
             });
+
+            if ($.fn.DataTable.isDataTable('#table_proyectos_borrador')) {
+                $('#table_proyectos_borrador').DataTable().ajax.reload(null, false);
+            }
+            if ($.fn.DataTable.isDataTable('#table_bitacora')) {
+                $('#table_bitacora').DataTable().ajax.reload(null, false);
+            }
+
+            let textoCorreo;
+            if (data.correo === true) {
+                textoCorreo = "Notificación enviada por Outlook a los usuarios asignados.";
+            } else if (data.correo === null) {
+                textoCorreo = "";
+            } else {
+                textoCorreo = "Proyecto actualizado, pero la notificación no se envió: " + data.correo;
+            }
+
+            Swal.fire({
+                icon: "success",
+                title: "Proyecto pasado a En Pausa",
+                text: textoCorreo,
+                timer: textoCorreo ? 3000 : 1500,
+                showConfirmButton: false
+            });
+        } catch (xhr) {
+            console.log("Falló:", xhr.status, xhr.responseText);
+            Swal.fire({ icon: "error", title: "Error", text: "Error en el servidor" });
         }
     });
 }
@@ -2523,26 +2522,27 @@ function cambiar_a_pausa(id_proyecto_gestionado) {
 function cambiar_a_realizado(id_proyecto_gestionado) {
     Swal.fire({
         icon: "info",
-        title: "Desea pasar el proyecto a Realizado?",
+        title: "¿Desea pasar el proyecto a Realizado?",
         showConfirmButton: true,
         showCancelButton: true
-    }).then((result) => {
-        if (result.isConfirmed) {
-            $.post("../../../../../Controller/ctrProyectos.php?proy=update_estado_proy", {
-                    id: id_proyecto_gestionado,
-                    estados_id: 3
-                },
-                function (data, textStatus, jqXHR) {
+    }).then(async (result) => {
+        if (!result.isConfirmed) return;
 
-                },
-                "json"
-            );
+        try {
+            await $.post("../../../../../Controller/ctrProyectos.php?proy=update_estado_proy", {
+                id: id_proyecto_gestionado,
+                estados_id: 3
+            }, null, "json");
 
-            setTimeout(() => {
-                if ($.fn.DataTable.isDataTable('#table_bitacora')) {
-                    $('#table_bitacora').DataTable().ajax.reload(null, false);
-                }
-            }, 500);
+            await $.post("../../../../../Controller/ctrAuditoria.php?case=insert_audit_estados_proyecto", {
+                id_proyecto_gestionado: id_proyecto_gestionado,
+                estados_id: 3
+            });
+
+            if ($.fn.DataTable.isDataTable('#table_bitacora')) {
+                $('#table_bitacora').DataTable().ajax.reload(null, false);
+            }
+
             Swal.fire({
                 icon: "success",
                 title: "Bien",
@@ -2550,34 +2550,41 @@ function cambiar_a_realizado(id_proyecto_gestionado) {
                 timer: 1500,
                 showConfirmButton: false
             });
+        } catch (err) {
+            console.error(err);
+            Swal.fire({
+                icon: "error",
+                title: "Error",
+                text: "No se pudo actualizar el proyecto."
+            });
         }
-    })
+    });
 }
-
 
 function cambiar_a_fin_sin_imp(id_proyecto_gestionado) {
     Swal.fire({
         icon: "info",
-        title: "Desea pasar el proyecto a Fin Sin Implementar?",
+        title: "¿Desea pasar el proyecto a Fin Sin Implementar?",
         showConfirmButton: true,
         showCancelButton: true
-    }).then((result) => {
-        if (result.isConfirmed) {
-            $.post("../../../../../Controller/ctrProyectos.php?proy=update_estado_proy", {
-                    id: id_proyecto_gestionado,
-                    estados_id: 15
-                },
-                function (data, textStatus, jqXHR) {
+    }).then(async (result) => {
+        if (!result.isConfirmed) return;
 
-                },
-                "json"
-            );
+        try {
+            await $.post("../../../../../Controller/ctrProyectos.php?proy=update_estado_proy", {
+                id: id_proyecto_gestionado,
+                estados_id: 15
+            }, null, "json");
 
-            setTimeout(() => {
-                if ($.fn.DataTable.isDataTable('#table_bitacora')) {
-                    $('#table_bitacora').DataTable().ajax.reload(null, false);
-                }
-            }, 500);
+            await $.post("../../../../../Controller/ctrAuditoria.php?case=insert_audit_estados_proyecto", {
+                id_proyecto_gestionado: id_proyecto_gestionado,
+                estados_id: 15
+            });
+
+            if ($.fn.DataTable.isDataTable('#table_bitacora')) {
+                $('#table_bitacora').DataTable().ajax.reload(null, false);
+            }
+
             Swal.fire({
                 icon: "success",
                 title: "Bien",
@@ -2585,33 +2592,41 @@ function cambiar_a_fin_sin_imp(id_proyecto_gestionado) {
                 timer: 1500,
                 showConfirmButton: false
             });
+        } catch (err) {
+            console.error(err);
+            Swal.fire({
+                icon: "error",
+                title: "Error",
+                text: "No se pudo actualizar el proyecto."
+            });
         }
-    })
+    });
 }
 
 function cambiar_a_cancelar(id_proyecto_gestionado) {
     Swal.fire({
         icon: "info",
-        title: "Desea pasar el proyecto a Cancelado?",
+        title: "¿Desea pasar el proyecto a Cancelado?",
         showConfirmButton: true,
         showCancelButton: true
-    }).then((result) => {
-        if (result.isConfirmed) {
-            $.post("../../../../../Controller/ctrProyectos.php?proy=update_estado_proy", {
-                    id: id_proyecto_gestionado,
-                    estados_id: 17
-                },
-                function (data, textStatus, jqXHR) {
+    }).then(async (result) => {
+        if (!result.isConfirmed) return;
 
-                },
-                "json"
-            );
+        try {
+            await $.post("../../../../../Controller/ctrProyectos.php?proy=update_estado_proy", {
+                id: id_proyecto_gestionado,
+                estados_id: 17
+            }, null, "json");
 
-            setTimeout(() => {
-                if ($.fn.DataTable.isDataTable('#table_bitacora')) {
-                    $('#table_bitacora').DataTable().ajax.reload(null, false);
-                }
-            }, 500);
+            await $.post("../../../../../Controller/ctrAuditoria.php?case=insert_audit_estados_proyecto", {
+                id_proyecto_gestionado: id_proyecto_gestionado,
+                estados_id: 17
+            });
+
+            if ($.fn.DataTable.isDataTable('#table_bitacora')) {
+                $('#table_bitacora').DataTable().ajax.reload(null, false);
+            }
+
             Swal.fire({
                 icon: "success",
                 title: "Bien",
@@ -2619,8 +2634,15 @@ function cambiar_a_cancelar(id_proyecto_gestionado) {
                 timer: 1500,
                 showConfirmButton: false
             });
+        } catch (err) {
+            console.error(err);
+            Swal.fire({
+                icon: "error",
+                title: "Error",
+                text: "No se pudo cancelar el proyecto."
+            });
         }
-    })
+    });
 }
 
 function inactivar_host_borrador(id_proyecto_gestionado, host_id) {
@@ -2701,26 +2723,35 @@ function activar_host_borrador(id_proyecto_cantidad_servicios, host_id) {
 function cambiar_proy_a_borrador(id_proyecto_gestionado) {
     Swal.fire({
         icon: "info",
-        title: "Desea pasar el proyecto a Borrador?",
+        title: "¿Desea pasar el proyecto a Borrador?",
         showConfirmButton: true,
         showCancelButton: true
-    }).then((result) => {
-        if (result.isConfirmed) {
-            $.post("../../../../../Controller/ctrProyectos.php?proy=update_estado_proy", {
-                    id: id_proyecto_gestionado,
-                    estados_id: 14
-                },
-                function (data, textStatus, jqXHR) {
+    }).then(async (result) => {
+        if (!result.isConfirmed) return;
 
-                },
-                "json"
-            );
-            $.post(
-                "../../../../../Controller/ctrAuditoria.php?case=insert_audit_estados_proyecto", {
-                    id_proyecto_gestionado: id_proyecto_gestionado,
-                    estados_id: 14
+        try {
+            await $.post("../../../../../Controller/ctrProyectos.php?proy=update_estado_proy", {
+                id: id_proyecto_gestionado,
+                estados_id: 14
+            }, null, "json");
+
+            await $.post("../../../../../Controller/ctrAuditoria.php?case=insert_audit_estados_proyecto", {
+                id_proyecto_gestionado: id_proyecto_gestionado,
+                estados_id: 14
+            });
+
+            [
+                '#table_proyectos_borrador',
+                '#table_proyectos_realizados',
+                '#table_proyectos_total',
+                '#tablelHistorialProyectosCalidad',
+                '#table_bitacora'
+            ].forEach((tabla) => {
+                if ($.fn.DataTable.isDataTable(tabla)) {
+                    $(tabla).DataTable().ajax.reload(null, false);
                 }
-            );
+            });
+
             Swal.fire({
                 icon: "success",
                 title: "Bien",
@@ -2728,54 +2759,50 @@ function cambiar_proy_a_borrador(id_proyecto_gestionado) {
                 timer: 1500,
                 showConfirmButton: false
             });
-
-            setTimeout(() => {
-                if ($.fn.DataTable.isDataTable('#table_proyectos_borrador')) {
-                    $('#table_proyectos_borrador').DataTable().ajax.reload(null, false);
-                    $('#table_proyectos_realizados').DataTable().ajax.reload(null, false);
-                    $('#table_proyectos_total').DataTable().ajax.reload(null, false);
-                    $('#tablelHistorialProyectosCalidad').DataTable().ajax.reload(null, false);
-                    $('#table_bitacora').DataTable().ajax.reload(null, false);
-                }
-            }, 500);
-
-            setTimeout(() => {
-                if ($.fn.DataTable.isDataTable('#table_bitacora')) {
-                    $('#table_bitacora').DataTable().ajax.reload(null, false);
-                    $('#table_proyectos_borrador').DataTable().ajax.reload(null, false);
-                    $('#table_proyectos_realizados').DataTable().ajax.reload(null, false);
-                    $('#table_proyectos_total').DataTable().ajax.reload(null, false);
-                    $('#tablelHistorialProyectosCalidad').DataTable().ajax.reload(null, false);
-                }
-            }, 500);
-
+        } catch (err) {
+            console.error(err);
+            Swal.fire({
+                icon: "error",
+                title: "Error",
+                text: "No se pudo actualizar el proyecto."
+            });
         }
-    })
+    });
 }
 
 function cambiar_proy_a_nuevo(id_proyecto_gestionado) {
     Swal.fire({
         icon: "info",
-        title: "Desea pasar el proyecto a Nuevo?",
+        title: "¿Desea pasar el proyecto a Nuevo?",
         showConfirmButton: true,
         showCancelButton: true
-    }).then((result) => {
-        if (result.isConfirmed) {
-            $.post("../../../../../Controller/ctrProyectos.php?proy=update_estado_proy", {
-                    id: id_proyecto_gestionado,
-                    estados_id: 1
-                },
-                function (data, textStatus, jqXHR) {
+    }).then(async (result) => {
+        if (!result.isConfirmed) return;
 
-                },
-                "json"
-            );
-            $.post(
-                "../../../../../Controller/ctrAuditoria.php?case=insert_audit_estados_proyecto", {
-                    id_proyecto_gestionado: id_proyecto_gestionado,
-                    estados_id: 1
+        try {
+            await $.post("../../../../../Controller/ctrProyectos.php?proy=update_estado_proy", {
+                id: id_proyecto_gestionado,
+                estados_id: 1
+            }, null, "json");
+
+            await $.post("../../../../../Controller/ctrAuditoria.php?case=insert_audit_estados_proyecto", {
+                id_proyecto_gestionado: id_proyecto_gestionado,
+                estados_id: 1
+            });
+
+            [
+                '#table_proyectos_en_proceso',
+                '#table_proyectos_borrador',
+                '#table_proyectos_realizados',
+                '#table_proyectos_total',
+                '#tablelHistorialProyectosCalidad',
+                '#table_bitacora'
+            ].forEach((tabla) => {
+                if ($.fn.DataTable.isDataTable(tabla)) {
+                    $(tabla).DataTable().ajax.reload(null, false);
                 }
-            );
+            });
+
             Swal.fire({
                 icon: "success",
                 title: "Bien",
@@ -2783,73 +2810,64 @@ function cambiar_proy_a_nuevo(id_proyecto_gestionado) {
                 timer: 1500,
                 showConfirmButton: false
             });
-
-            setTimeout(() => {
-
-                if ($.fn.DataTable.isDataTable('#table_proyectos_en_proceso')) {
-                    $('#table_proyectos_en_proceso').DataTable().ajax.reload(null, false);
-                }
-                if ($.fn.DataTable.isDataTable('#table_bitacora')) {
-                    $('#table_bitacora').DataTable().ajax.reload(null, false);
-                    $('#table_proyectos_en_proceso').DataTable().ajax.reload(null, false);
-                }
-                if ($.fn.DataTable.isDataTable('#table_proyectos_borrador')) {
-                    $('#table_proyectos_borrador').DataTable().ajax.reload(null, false);
-                    $('#table_proyectos_realizados').DataTable().ajax.reload(null, false);
-                    $('#table_proyectos_total').DataTable().ajax.reload(null, false);
-                    $('#tablelHistorialProyectosCalidad').DataTable().ajax.reload(null, false);
-                    $('#table_bitacora').DataTable().ajax.reload(null, false);
-                }
-
-            }, 500);
-
+        } catch (err) {
+            console.error(err);
+            Swal.fire({
+                icon: "error",
+                title: "Error",
+                text: "No se pudo actualizar el proyecto."
+            });
         }
-    })
+    });
 }
 
 
 function cerrar_proyecto(id_proyecto_gestionado) {
     Swal.fire({
         icon: "info",
-        title: "Desea Cerrar el proyecto?",
+        title: "¿Desea cerrar el proyecto?",
         showConfirmButton: true,
         showCancelButton: true
-    }).then((result) => {
-        if (result.isConfirmed) {
-            $.post("../../../../../Controller/ctrProyectos.php?proy=update_estado_proy", {
-                    id: id_proyecto_gestionado,
-                    estados_id: 4
-                },
-                function (data, textStatus, jqXHR) {
+    }).then(async (result) => {
+        if (!result.isConfirmed) return;
 
-                },
-                "json"
-            );
+        try {
+            await $.post("../../../../../Controller/ctrProyectos.php?proy=update_estado_proy", {
+                id: id_proyecto_gestionado,
+                estados_id: 4
+            }, null, "json");
 
-            $.post(
-                "../../../../../Controller/ctrAuditoria.php?case=insert_audit_estados_proyecto", {
-                    id_proyecto_gestionado: id_proyecto_gestionado,
-                    estados_id: 4
+            await $.post("../../../../../Controller/ctrAuditoria.php?case=insert_audit_estados_proyecto", {
+                id_proyecto_gestionado: id_proyecto_gestionado,
+                estados_id: 4
+            });
+
+            [
+                '#table_proyectos_realizados',
+                '#table_proyectos_borrador',
+                '#table_bitacora'
+            ].forEach((tabla) => {
+                if ($.fn.DataTable.isDataTable(tabla)) {
+                    $(tabla).DataTable().ajax.reload(null, false);
                 }
-            );
-
-            setTimeout(() => {
-                if ($.fn.DataTable.isDataTable('#table_proyectos_realizados')) {
-                    $('#table_proyectos_realizados').DataTable().ajax.reload(null, false);
-                    $('#table_proyectos_borrador').DataTable().ajax.reload(null, false);
-                    $('#table_bitacora').DataTable().ajax.reload(null, false);
-                }
-            }, 500);
+            });
 
             Swal.fire({
                 icon: "success",
                 title: "Bien",
-                text: "Proyecto pasado a Nuevo!",
+                text: "Proyecto Cerrado!",
                 timer: 1500,
                 showConfirmButton: false
             });
+        } catch (err) {
+            console.error(err);
+            Swal.fire({
+                icon: "error",
+                title: "Error",
+                text: "No se pudo cerrar el proyecto."
+            });
         }
-    })
+    });
 }
 
 const btnEliminar = document.getElementById("btn_eliminar_proyecto");
@@ -2869,8 +2887,8 @@ if (btnEliminar) {
             }).then((resutl) => {
                 if (resutl.isConfirmed) {
                     $.post("../../../../../Controller/ctrProyectos.php?proy=cambiar_estado_proyecto_cantidad_servicios", {
-                        estados_id:16,    
-                        id_proyecto_cantidad_servicios: ID_PROYECTO_CANTIDAD_SERVICIOS
+                            estados_id: 16,
+                            id_proyecto_cantidad_servicios: ID_PROYECTO_CANTIDAD_SERVICIOS
                         },
                         function (data, textStatus, jqXHR) {
 
@@ -2967,11 +2985,10 @@ if (btnFinSinImplementar) {
             }).then((resutl) => {
                 if (resutl.isConfirmed) {
                     $.post("../../../../../Controller/ctrProyectos.php?proy=cambiar_estado_proyecto_cantidad_servicios", {
-                            estados_id:15,
+                            estados_id: 15,
                             id_proyecto_cantidad_servicios: ID_PROYECTO_CANTIDAD_SERVICIOS,
                         },
-                        function (data, textStatus, jqXHR) {
-                        },
+                        function (data, textStatus, jqXHR) {},
                         "json"
                     );
                     Swal.fire({
@@ -3003,7 +3020,7 @@ if (btnFinSinImplementar) {
 
                     $.post("../../../../../Controller/ctrProyectos.php?proy=cambiar_estado", {
                             id: ID_PROYECTO_GESTIONADO,
-                            estados_id:15
+                            estados_id: 15
                         },
                         function (data, textStatus, jqXHR) {
 
@@ -3047,11 +3064,10 @@ if (btnCancelar) {
             }).then((resutl) => {
                 if (resutl.isConfirmed) {
                     $.post("../../../../../Controller/ctrProyectos.php?proy=cambiar_estado_proyecto_cantidad_servicios", {
-                            estados_id:17,
+                            estados_id: 17,
                             id_proyecto_cantidad_servicios: ID_PROYECTO_CANTIDAD_SERVICIOS,
                         },
-                        function (data, textStatus, jqXHR) {
-                        },
+                        function (data, textStatus, jqXHR) {},
                         "json"
                     );
                     Swal.fire({
@@ -3083,7 +3099,7 @@ if (btnCancelar) {
 
                     $.post("../../../../../Controller/ctrProyectos.php?proy=cambiar_estado", {
                             id: ID_PROYECTO_GESTIONADO,
-                            estados_id:17
+                            estados_id: 17
                         },
                         function (data, textStatus, jqXHR) {
 
