@@ -1443,7 +1443,7 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
             });
 
             // ===============================
-            // BOTÓN: Editar proyecto
+            // BOTÓN Editar proyecto
             // ===============================
             $("#btn_editar_proyecto").attr("type", "button").off().on("click", function (e) {
                 e.preventDefault();
@@ -2538,13 +2538,6 @@ function cambiar_a_realizado(id_proyecto_gestionado) {
                 "json"
             );
 
-            $.post(
-                "../../../../../Controller/ctrAuditoria.php?case=insert_audit_estados_proyecto", {
-                    id_proyecto_gestionado: id_proyecto_gestionado,
-                    estados_id: 3
-                }
-            );
-
             setTimeout(() => {
                 if ($.fn.DataTable.isDataTable('#table_bitacora')) {
                     $('#table_bitacora').DataTable().ajax.reload(null, false);
@@ -2561,6 +2554,74 @@ function cambiar_a_realizado(id_proyecto_gestionado) {
     })
 }
 
+
+function cambiar_a_fin_sin_imp(id_proyecto_gestionado) {
+    Swal.fire({
+        icon: "info",
+        title: "Desea pasar el proyecto a Fin Sin Implementar?",
+        showConfirmButton: true,
+        showCancelButton: true
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.post("../../../../../Controller/ctrProyectos.php?proy=update_estado_proy", {
+                    id: id_proyecto_gestionado,
+                    estados_id: 15
+                },
+                function (data, textStatus, jqXHR) {
+
+                },
+                "json"
+            );
+
+            setTimeout(() => {
+                if ($.fn.DataTable.isDataTable('#table_bitacora')) {
+                    $('#table_bitacora').DataTable().ajax.reload(null, false);
+                }
+            }, 500);
+            Swal.fire({
+                icon: "success",
+                title: "Bien",
+                text: "Proyecto Finalizado Sin Implementar!",
+                timer: 1500,
+                showConfirmButton: false
+            });
+        }
+    })
+}
+
+function cambiar_a_cancelar(id_proyecto_gestionado) {
+    Swal.fire({
+        icon: "info",
+        title: "Desea pasar el proyecto a Cancelado?",
+        showConfirmButton: true,
+        showCancelButton: true
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.post("../../../../../Controller/ctrProyectos.php?proy=update_estado_proy", {
+                    id: id_proyecto_gestionado,
+                    estados_id: 17
+                },
+                function (data, textStatus, jqXHR) {
+
+                },
+                "json"
+            );
+
+            setTimeout(() => {
+                if ($.fn.DataTable.isDataTable('#table_bitacora')) {
+                    $('#table_bitacora').DataTable().ajax.reload(null, false);
+                }
+            }, 500);
+            Swal.fire({
+                icon: "success",
+                title: "Bien",
+                text: "Proyecto Cancelado!",
+                timer: 1500,
+                showConfirmButton: false
+            });
+        }
+    })
+}
 
 function inactivar_host_borrador(id_proyecto_gestionado, host_id) {
     Swal.fire({
@@ -2746,6 +2807,7 @@ function cambiar_proy_a_nuevo(id_proyecto_gestionado) {
     })
 }
 
+
 function cerrar_proyecto(id_proyecto_gestionado) {
     Swal.fire({
         icon: "info",
@@ -2801,13 +2863,14 @@ if (btnEliminar) {
             Swal.fire({
                 icon: "warning",
                 title: "Atencion",
-                text: "Desea eliminar este proyecto?",
+                text: "Desea Eliminar este proyecto?",
                 showCancelButton: true,
                 showConfirmButton: true
             }).then((resutl) => {
                 if (resutl.isConfirmed) {
                     $.post("../../../../../Controller/ctrProyectos.php?proy=cambiar_estado_proyecto_cantidad_servicios", {
-                            id_proyecto_cantidad_servicios: ID_PROYECTO_CANTIDAD_SERVICIOS
+                        estados_id:16,    
+                        id_proyecto_cantidad_servicios: ID_PROYECTO_CANTIDAD_SERVICIOS
                         },
                         function (data, textStatus, jqXHR) {
 
@@ -2851,7 +2914,7 @@ if (btnEliminar) {
                         "json"
                     );
 
-                    $.post("../../../../../Controller/ctrProyectos.php?proy=cambiar_a_eliminado_proyecto_gestionado", {
+                    $.post("../../../../../Controller/ctrProyectos.php?proy=cambiar_estado", {
                             id: ID_PROYECTO_GESTIONADO,
                             estados_id: 16
                         },
@@ -2888,6 +2951,166 @@ if (btnEliminar) {
     })
 }
 
+const btnFinSinImplementar = document.getElementById("btn_fin_sin_implementar");
+if (btnFinSinImplementar) {
+    btnFinSinImplementar.addEventListener("click", (e) => {
+        const ID_PROYECTO_GESTIONADO = document.getElementById("mdl_id_proyecto_gestionado").value;
+        const ID_PROYECTO_CANTIDAD_SERVICIOS = document.getElementById("id_proyecto_cantidad_servicios").value;
+        e.preventDefault();
+        if (!ID_PROYECTO_GESTIONADO) {
+            Swal.fire({
+                icon: "warning",
+                title: "Atencion",
+                text: "Desea Finalizar Sin Implementar este proyecto?",
+                showCancelButton: true,
+                showConfirmButton: true
+            }).then((resutl) => {
+                if (resutl.isConfirmed) {
+                    $.post("../../../../../Controller/ctrProyectos.php?proy=cambiar_estado_proyecto_cantidad_servicios", {
+                            estados_id:15,
+                            id_proyecto_cantidad_servicios: ID_PROYECTO_CANTIDAD_SERVICIOS,
+                        },
+                        function (data, textStatus, jqXHR) {
+                        },
+                        "json"
+                    );
+                    Swal.fire({
+                        icon: "success",
+                        title: "Bien",
+                        text: "Proyecto Finalizado Sin Implementar correctamente",
+                        timer: 1100,
+                        showCancelButton: false,
+                        showConfirmButton: false
+                    });
+                    setTimeout(() => {
+                        $("#ModalAltaProject").modal("hide");
+                        if ($.fn.DataTable.isDataTable('#table_proyectos_borrador')) {
+                            $('#table_proyectos_borrador').DataTable().ajax.reload(null, false);
+                            $('#table_proyectos_total_calidad').DataTable().ajax.reload(null, false);
+                        }
+                    }, 500);
+                }
+            })
+        } else {
+            Swal.fire({
+                icon: "warning",
+                title: "Atencion",
+                text: "Desea Finalizar Sin Implementar este proyecto?",
+                showCancelButton: true,
+                showConfirmButton: true
+            }).then((resutl) => {
+                if (resutl.isConfirmed) {
+
+                    $.post("../../../../../Controller/ctrProyectos.php?proy=cambiar_estado", {
+                            id: ID_PROYECTO_GESTIONADO,
+                            estados_id:15
+                        },
+                        function (data, textStatus, jqXHR) {
+
+                        },
+                        "json"
+                    );
+
+                    Swal.fire({
+                        icon: "success",
+                        title: "Bien",
+                        text: "Proyecto Finalizado Sin Implementar correctamente",
+                        timer: 1100,
+                        showCancelButton: false,
+                        showConfirmButton: false
+                    });
+                    setTimeout(() => {
+                        $("#ModalAltaProject").modal("hide");
+                        if ($.fn.DataTable.isDataTable('#table_proyectos_borrador')) {
+                            $('#table_proyectos_borrador').DataTable().ajax.reload(null, false);
+                        }
+                    }, 500);
+                }
+            })
+        }
+    })
+}
+
+const btnCancelar = document.getElementById("btn_cancelar_proyecto");
+if (btnCancelar) {
+    btnCancelar.addEventListener("click", (e) => {
+        const ID_PROYECTO_GESTIONADO = document.getElementById("mdl_id_proyecto_gestionado").value;
+        const ID_PROYECTO_CANTIDAD_SERVICIOS = document.getElementById("id_proyecto_cantidad_servicios").value;
+        e.preventDefault();
+        if (!ID_PROYECTO_GESTIONADO) {
+            Swal.fire({
+                icon: "warning",
+                title: "Atencion",
+                text: "Desea Cancelar este proyecto?",
+                showCancelButton: true,
+                showConfirmButton: true
+            }).then((resutl) => {
+                if (resutl.isConfirmed) {
+                    $.post("../../../../../Controller/ctrProyectos.php?proy=cambiar_estado_proyecto_cantidad_servicios", {
+                            estados_id:17,
+                            id_proyecto_cantidad_servicios: ID_PROYECTO_CANTIDAD_SERVICIOS,
+                        },
+                        function (data, textStatus, jqXHR) {
+                        },
+                        "json"
+                    );
+                    Swal.fire({
+                        icon: "success",
+                        title: "Bien",
+                        text: "Proyecto Cancelado correctamente",
+                        timer: 1100,
+                        showCancelButton: false,
+                        showConfirmButton: false
+                    });
+                    setTimeout(() => {
+                        $("#ModalAltaProject").modal("hide");
+                        if ($.fn.DataTable.isDataTable('#table_proyectos_borrador')) {
+                            $('#table_proyectos_borrador').DataTable().ajax.reload(null, false);
+                            $('#table_proyectos_total_calidad').DataTable().ajax.reload(null, false);
+                        }
+                    }, 500);
+                }
+            })
+        } else {
+            Swal.fire({
+                icon: "warning",
+                title: "Atencion",
+                text: "Desea Cancelar este proyecto?",
+                showCancelButton: true,
+                showConfirmButton: true
+            }).then((resutl) => {
+                if (resutl.isConfirmed) {
+
+                    $.post("../../../../../Controller/ctrProyectos.php?proy=cambiar_estado", {
+                            id: ID_PROYECTO_GESTIONADO,
+                            estados_id:17
+                        },
+                        function (data, textStatus, jqXHR) {
+
+                        },
+                        "json"
+                    );
+
+                    Swal.fire({
+                        icon: "success",
+                        title: "Bien",
+                        text: "Proyecto cancelado correctamente",
+                        timer: 1100,
+                        showCancelButton: false,
+                        showConfirmButton: false
+                    });
+                    setTimeout(() => {
+                        $("#ModalAltaProject").modal("hide");
+                        if ($.fn.DataTable.isDataTable('#table_proyectos_borrador')) {
+                            $('#table_proyectos_borrador').DataTable().ajax.reload(null, false);
+                        }
+                    }, 500);
+                }
+            })
+        }
+    })
+}
+
 const btnFinalizar = document.getElementById("btn_finalizar_estado_proyecto");
 if (btnFinalizar) {
     btnFinalizar.addEventListener("click", (e) => {
@@ -2902,7 +3125,7 @@ if (btnFinalizar) {
             showConfirmButton: true
         }).then((resutl) => {
             if (resutl.isConfirmed) {
-                $.post("../../../../../Controller/ctrProyectos.php?proy=cambiar_a_eliminado_proyecto_gestionado", {
+                $.post("../../../../../Controller/ctrProyectos.php?proy=cambiar_estado", {
                         id: ID_PROYECTO_GESTIONADO,
                         estados_id: 15
                     },
@@ -3338,7 +3561,7 @@ $("#btnPasarEliminarHistorico").off("click").on("click", function () {
     }
     Swal.fire({
         icon: "warning",
-        title: `¿Desea eliminar esta recurrencia de ${$("#cliente").val()}?`,
+        title: `¿Desea Eliminar esta recurrencia de ${$("#cliente").val()}?`,
         showCancelButton: true,
         confirmButtonText: "Sí, eliminar",
         cancelButtonText: "Cancelar"

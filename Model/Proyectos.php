@@ -67,16 +67,17 @@ class Proyectos extends Conexion
         $stmt->execute();
     }
 
-    public function cambiar_estado_proyecto_cantidad_servicios($id_proyecto_cantidad_servicios)
+    public function cambiar_estado_proyecto_cantidad_servicios($estados_id,$id_proyecto_cantidad_servicios)
     {
         $conn = parent::get_conexion();
-        $sql = "UPDATE proyecto_cantidad_servicios SET est=0 WHERE id=:id_proyecto_cantidad_servicios";
+        $sql = "UPDATE proyecto_cantidad_servicios SET est=0, estados_id=:estados_id WHERE id=:id_proyecto_cantidad_servicios";
         $stmt = $conn->prepare($sql);
+        $stmt->bindValue(":estados_id", $estados_id, PDO::PARAM_INT);
         $stmt->bindValue(":id_proyecto_cantidad_servicios", $id_proyecto_cantidad_servicios, PDO::PARAM_INT);
         $stmt->execute();
     }
 
-    public function cambiar_a_eliminado_proyecto_gestionado($id, $estados_id)
+    public function cambiar_estado($id, $estados_id)
     {
         $conn = parent::get_conexion();
         $sql = "UPDATE proyecto_gestionado SET estados_id= :estados_id WHERE id=:id";
@@ -1761,7 +1762,7 @@ ON pm_concat.id_proyecto_gestionado = pg.id
 
 WHERE 
     pcs.est = 1 
-    AND pg.estados_id IN (1, 2, 3, 14, 15, 17, 25)
+    AND pg.estados_id IN (1, 2, 3, 4, 14, 15, 17, 25)
 GROUP BY 
     pcs.id,
     pcs.proy_id, 

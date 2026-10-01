@@ -1876,11 +1876,11 @@ switch ($_GET['proy']) {
         break;
 
     case 'cambiar_estado_proyecto_cantidad_servicios':
-        $proyecto->cambiar_estado_proyecto_cantidad_servicios($_POST['id_proyecto_cantidad_servicios']);
+        $proyecto->cambiar_estado_proyecto_cantidad_servicios($_POST['estados_id'],$_POST['id_proyecto_cantidad_servicios']);
         break;
 
-    case 'cambiar_a_eliminado_proyecto_gestionado':
-        $proyecto->cambiar_a_eliminado_proyecto_gestionado($_POST['id'], $_POST['estados_id']);
+    case 'cambiar_estado':
+        $proyecto->cambiar_estado($_POST['id'], $_POST['estados_id']);
         break;
 
     case 'get_proyectos_sase':
@@ -2224,7 +2224,11 @@ switch ($_GET['proy']) {
                                         <li><a class="dropdown-item py-1" type="button" onclick="cambiar_proy_a_nuevo(' . $row['id_proyecto_gestionado'] . ')">Nuevo</a></li>
                                         <li><a class="dropdown-item py-1" type="button" onclick="cambiar_a_abierto(' . $row['id_proyecto_gestionado'] . ')">Abierto</a></li>
                                         <li><a class="dropdown-item py-1" type="button" onclick="cambiar_a_realizado(' . $row['id_proyecto_gestionado'] . ')">Realizado</a></li>
-                                        <li><a class="dropdown-item py-1" type="button" onclick="cambiar_a_pausa(' . $row['id_proyecto_gestionado'] . ')">En Pausa</a><i class="' . $row[''] . '"></i></li>
+                                        <li><a class="dropdown-item py-1" type="button" onclick="cambiar_a_pausa(' . $row['id_proyecto_gestionado'] . ')">En Pausa</a></li>
+                                        
+                                        <li><a class="dropdown-item py-1" type="button" onclick="cambiar_a_fin_sin_imp(' . $row['id_proyecto_gestionado'] . ')">Fin Sin Implementar</a></li>
+                                        <li><a class="dropdown-item py-1" type="button" onclick="cambiar_a_cancelar(' . $row['id_proyecto_gestionado'] . ')">Cancelar</a></li>
+
                                         <li><a class="dropdown-item py-1" type="button" onclick="cerrar_proyecto(' . $row['id_proyecto_gestionado'] . ')">Cerrar proyecto</a></li>
                                         <li><a class="dropdown-item py-1" type="button" onclick="editar_proyecto(' . $row['id_proyecto_gestionado'] . ')">Editar <i class="text-secondary fs-16 ri-edit-2-line"></i></a></li>                                                                        
                                     </ul>

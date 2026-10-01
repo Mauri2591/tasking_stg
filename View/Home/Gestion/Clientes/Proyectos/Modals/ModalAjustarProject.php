@@ -300,17 +300,20 @@
                             <button id="btn_crear_proyecto" type="submit" class="btn btn-sm btn-primary">Crear</button>
 
                             <button id="btn_eliminar_proyecto"
-                                class="btn btn-sm btn-danger">Eliminar</button>
+                                class="btn btn-sm text-light" style="background-color: #f06548;">Eliminar</button>
 
-                            <button id="btn_finalizar_estado_proyecto" type="submit" class="btn btn-sm"
-                                style="background-color: gray; color:#fff">Fin sin impl</button>
+                            <button id="btn_cancelar_proyecto" type="submit" class="btn btn-sm text-light"
+                                style="background-color: #d4a66a;">Cancelar</button>
 
-                            <button id="btn_editar_proyecto" type="button" class="btn btn-sm btn-success">
+                            <button id="btn_fin_sin_implementar" type="submit" class="btn btn-sm text-light"
+                                style="background-color: #957763;">Fin sin impl</button>
+
+                            <button id="btn_editar_proyecto" type="button" class="btn btn-sm btn-success text-light">
                                 Guardar Edición
                             </button>
 
                             <button id="btn_cambiar_estado_proyecto" type="submit"
-                                class="btn btn-sm btn-primary">Cambiar
+                                class="btn btn-sm text-light" style="background-color: #405189;">Cambiar
                                 a Nuevo</button>
 
                             <button type="button" id="btn_cancelar_proyecto" class="btn btn-sm btn-light"
