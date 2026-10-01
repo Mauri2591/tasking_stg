@@ -259,12 +259,11 @@ class Correo extends Conexion
                     <p><b>Tipo:</b> {$datos->tipo}</p>
                     <p><b>Usuario/s asignado/s al proyecto:</b><br>{$datos->usuarios}</p>
                     <p><b>Líder/es del sector:</b><br>{$datos->lideres}</p>
-                    <br>
                     <p><b>Accion generada por:</b> {$usuarioNotificador}</p>
                     <br>
-                    <p>Saludos.</p><br>
-                    Equipo de Calidad y Procesos<br>
-                    Delivery Services – Cybersecurity Solutions<br><br>";
+                    <p>Saludos.</p>
+                    <p>Equipo de Calidad y Procesos</p>
+                    <p>Delivery Services – Cybersecurity Solutions<p>";
             $mail->send();
             return true;
         } catch (Exception $e) {
