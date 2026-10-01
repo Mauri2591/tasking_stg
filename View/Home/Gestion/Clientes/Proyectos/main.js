@@ -2472,26 +2472,52 @@ function cambiar_a_pausa(id_proyecto_gestionado) {
                     id: id_proyecto_gestionado,
                     estados_id: 25
                 },
-                function (data, textStatus, jqXHR) {
+                function (data) {
+                    if (!data.success) {
+                        Swal.fire({
+                            icon: "error",
+                            title: "Error",
+                            text: "No se pudo cambiar el estado"
+                        });
+                        return;
+                    }
 
+                    // Recargar tablas
+                    if ($.fn.DataTable.isDataTable('#table_proyectos_borrador')) {
+                        $('#table_proyectos_borrador').DataTable().ajax.reload(null, false);
+                        $('#table_bitacora').DataTable().ajax.reload(null, false);
+                    }
+
+                    // Mensaje según el resultado del correo
+                    let textoCorreo;
+                    if (data.correo === true) {
+                        textoCorreo = "Notificación enviada a los usuarios asignados.";
+                    } else if (data.correo === null) {
+                        textoCorreo = ""; // no correspondía notificar
+                    } else {
+                        // vino un string (no había destinatarios, o error SMTP)
+                        textoCorreo = "Proyecto actualizado, pero la notificación no se envió: " + data.correo;
+                    }
+
+                    Swal.fire({
+                        icon: "success",
+                        title: "Proyecto pasado a En Pausa",
+                        text: textoCorreo,
+                        timer: textoCorreo ? 3000 : 1500,
+                        showConfirmButton: false
+                    });
                 },
                 "json"
-            );
-            setTimeout(() => {
-                if ($.fn.DataTable.isDataTable('#table_proyectos_borrador')) {
-                    $('#table_proyectos_borrador').DataTable().ajax.reload(null, false);
-                    $('#table_bitacora').DataTable().ajax.reload(null, false);
-                }
-            }, 500);
-            Swal.fire({
-                icon: "success",
-                title: "Bien",
-                text: "Proyecto pasado a Nuevo!",
-                timer: 1500,
-                showConfirmButton: false
+            ).fail(function (xhr) {
+                console.log("Falló:", xhr.status, xhr.responseText);
+                Swal.fire({
+                    icon: "error",
+                    title: "Error",
+                    text: "Error en el servidor"
+                });
             });
         }
-    })
+    });
 }
 
 function cambiar_a_realizado(id_proyecto_gestionado) {
