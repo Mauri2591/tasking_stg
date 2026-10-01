@@ -2491,7 +2491,7 @@ function cambiar_a_pausa(id_proyecto_gestionado) {
                     // Mensaje según el resultado del correo
                     let textoCorreo;
                     if (data.correo === true) {
-                        textoCorreo = "Notificación enviada a los usuarios asignados.";
+                        textoCorreo = "Notificación enviada por Outlook a los usuarios asignados.";
                     } else if (data.correo === null) {
                         textoCorreo = ""; // no correspondía notificar
                     } else {
