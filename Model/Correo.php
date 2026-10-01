@@ -213,7 +213,7 @@ class Correo extends Conexion
                 ],
             ];
             $mail->CharSet = 'UTF-8';
-            $mail->setFrom(SMTP_FROM_ARG, SMTP_FROM_NAME);
+            $mail->setFrom(SMTP_FROM_ARG, SMTP_FROM_NAME_ARG);
 
             $destinatarios = [];
 
