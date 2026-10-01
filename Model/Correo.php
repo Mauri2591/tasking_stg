@@ -260,8 +260,8 @@ class Correo extends Conexion
                     <p><b>Líder/es del sector:</b><br>{$datos->lideres}</p>
                     <br>
                     <p><b>Accion generada por:</b> {$usuarioNotificador}</p>
-                    <br><br>
-                    <p>Saludos.</p><br><br><br>
+                    <br>
+                    <p>Saludos.</p><br>
                     Equipo de Calidad y Procesos<br>
                     Delivery Services – Cybersecurity Solutions<br><br>";
             $mail->send();
