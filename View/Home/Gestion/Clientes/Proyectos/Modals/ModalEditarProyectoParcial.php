@@ -10,47 +10,70 @@
 
                         <div class="row g-2">
                             <div class="col-md-6">
-                                <label for="titulo" class="form-label mb-0 fs-12">Título</label>
+                                <label for="titulo" class="badge bg-light fs-10 mb-1 text-dark">Título</label>
                                 <input autocomplete="off" type="text" class="form-control form-control-sm" id="titulo" name="titulo">
                             </div>
                             <div class="col-md-2">
-                                <label for="referencia" class="form-label mb-0 fs-12">Referencia</label>
+                                <label for="referencia" class="badge bg-light fs-10 mb-1 text-dark">Referencia</label>
                                 <input autocomplete="off" type="text" class="form-control form-control-sm" id="referencia" name="referencia">
                             </div>
                             <div class="col-md-2">
-                                <label for="tipo" class="form-label mb-0 fs-12">Dimensionamiento</label>
+                                <label for="tipo" class="badge bg-light fs-10 mb-1 text-dark">Dimensionamiento</label>
                                 <input autocomplete="off" type="text" class="form-control form-control-sm" id="dimensionamiento_update_parcial" name="dimensionamiento_update_parcial">
                             </div>
                             <div class="col-md-2">
-                                <label for="tipo" class="form-label mb-0 fs-12">Tipo</label>
+                                <label for="tipo" class="badge bg-light fs-10 mb-1 text-dark">Tipo</label>
                                 <select class="form-select form-select-sm" id="tipo" name="tipo"></select>
                             </div>
 
-                            <div class="col-md-4">
-                                <label for="fecha_vantive" class="form-label mb-0 fs-12">Fecha Vantive</label>
+                            <div class="col-md-3">
+                                <span class="badge bg-light fs-10 mb-1 text-dark">Fecha Contrato</span>
+                                <input id="fecha_contrato_update_parcial" class="form-control form-control-sm" type="date">
+                            </div>
+
+                            <div class="col-md-3">
+                                <span class="badge bg-light fs-10 mb-1 text-dark">Plazo Meses</span>
+                                <input id="plazo_meses_update_parcial" class="form-control form-control-sm" type="number" title="Ingrese un valor numerico" autocomplete="off">
+                            </div>
+
+                            <div class="col-md-3">
+                                <span class="badge bg-light fs-10 mb-1 text-dark">Posee Licencias?</span>
+                                <select class="form-select form-select-sm" id="posee_licencias_update_parcial">
+                                    <option value="NO">NO</option>
+                                    <option value="SI">SI</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-3">
+                                <span class="badge bg-light fs-10 mb-1 text-dark">Vencimiento Licencias</span>
+                                <input class="form-control form-control-sm" id="fecha_vencimiento_licencias_update_parcial" type="date">
+                            </div>
+
+                            <div class="col-md-3">
+                                <label for="fecha_vantive" class="badge bg-light fs-10 mb-1 text-dark">Fecha Vantive</label>
                                 <input autocomplete="off" type="date" class="form-control form-control-sm" id="fecha_vantive" name="fecha_vantive">
                             </div>
-                            <div class="col-md-4">
-                                <label for="inicio" class="form-label mb-0 fs-12">Inicio</label>
+                            <div class="col-md-3">
+                                <label for="inicio" class="badge bg-light fs-10 mb-1 text-dark">Inicio</label>
                                 <input autocomplete="off" type="date" class="form-control form-control-sm" id="inicio" name="inicio">
                             </div>
-                            <div class="col-md-4">
-                                <label for="fin" class="form-label mb-0 fs-12">Fin</label>
+                            <div class="col-md-3">
+                                <label for="fin" class="badge bg-light fs-10 mb-1 text-dark">Fin</label>
                                 <input autocomplete="off" type="date" class="form-control form-control-sm" id="fin" name="fin">
                             </div>
 
                             <div class="col-md-6">
-                                <label for="correo_envio_cliente" class="form-label mb-0 fs-12">Correo cliente</label>
+                                <label for="correo_envio_cliente" class="badge bg-light fs-10 mb-1 text-dark">Correo cliente</label>
                                 <textarea class="form-control form-control-sm" id="correo_envio_cliente_edicion_parcial" name="correo_envio_cliente_edicion_parcial" rows="2"></textarea>
                             </div>
                             <div class="col-md-6">
-                                <label for="correo_envio_cliente_copias" class="form-label mb-0 fs-12">Correos en copia</label>
+                                <label for="correo_envio_cliente_copias" class="badge bg-light fs-10 mb-1 text-dark">Correos en copia</label>
                                 <textarea class="form-control form-control-sm" id="correo_envio_cliente_copias_edicion_parcial" name="correo_envio_cliente_copias_edicion_parcial" rows="2"></textarea>
                             </div>
 
                             <div class="mt-2 d-flex">
                                 <div class="col-md-8">
-                                    <label for="descripcion" class="form-label mb-0 fs-12">Descripción</label>
+                                    <label for="descripcion" class="badge bg-light fs-10 mb-1 text-dark">Descripción</label>
                                     <textarea class="form-control form-control-sm" id="descripcion" name="descripcion" rows="6"></textarea>
                                 </div>
 

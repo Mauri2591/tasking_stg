@@ -252,6 +252,28 @@ if (isset($_SESSION['usu_id'])) {
                                                 <div class="text-center" id="cont_campanias"></div>
                                             </div>
                                         </div>
+
+                                        <div id="contenedor_transacciones" style="display:none;" class="col-ms-2 col text-center">
+                                            <span type="button"
+                                                onclick="copiar_transacciones(<?php echo isset($_GET['p']) ? Openssl::get_ssl_decrypt($_GET['p']) : ''; ?>)"
+                                                class="btn btn-sm py-0 px-1 btn-outline-success waves-effect waves-light mb-2">Transacciones<i
+                                                    class=" ri-file-copy-line"></i></span>
+                                            <div style="max-height: 220px;  min-height: 220px; overflow-y: scroll; border-radius: 5px;"
+                                                class=" border border-success">
+                                                <div class="text-center" id="cont_transacciones"></div>
+                                            </div>
+                                        </div>
+
+                                        <div id="contenedor_adicionales" style="display:none;" class="col-ms-2 col text-center">
+                                            <span type="button"
+                                                onclick="copiar_adicionales(<?php echo isset($_GET['p']) ? Openssl::get_ssl_decrypt($_GET['p']) : ''; ?>)"
+                                                class="btn btn-sm py-0 px-1 btn-outline-success waves-effect waves-light mb-2">Adicionales<i
+                                                    class=" ri-file-copy-line"></i></span>
+                                            <div style="max-height: 220px;  min-height: 220px; overflow-y: scroll; border-radius: 5px;"
+                                                class=" border border-success">
+                                                <div class="text-center" id="cont_adicionales"></div>
+                                            </div>
+                                        </div>
                                         <!-- CONSULTING -->
 
 
@@ -640,6 +662,8 @@ if (isset($_SESSION['usu_id'])) {
                                 $("#contenedor_casillas").show();
                                 $("#contenedor_tematica").show();
                                 $("#contenedor_campanias").show();
+                                $("#contenedor_adicionales").show();
+                                $("#contenedor_transacciones").show();
                                 break;
 
                             case 7:
@@ -985,6 +1009,31 @@ if (isset($_SESSION['usu_id'])) {
                         $("#cont_campanias").html(data)
                     } else {
                         $("#cont_campanias").text("No hay activos")
+                    }
+                },
+                "html"
+            );
+
+            $.post("../../../../../Controller/ctrProyectos.php?proy=get_hosts_proy_transacciones", {
+                    id_proyecto_gestionado: id_proyecto_gestionado
+                },
+                function(data, textStatus, jqXHR) {
+                    if (data) {
+                        $("#cont_transacciones").html(data)
+                    } else {
+                        $("#cont_transacciones").text("No hay activos")
+                    }
+                },
+                "html"
+            );
+            $.post("../../../../../Controller/ctrProyectos.php?proy=get_hosts_proy_adicionales", {
+                    id_proyecto_gestionado: id_proyecto_gestionado
+                },
+                function(data, textStatus, jqXHR) {
+                    if (data) {
+                        $("#cont_adicionales").html(data)
+                    } else {
+                        $("#cont_adicionales").text("No hay activos")
                     }
                 },
                 "html"
@@ -1946,6 +1995,38 @@ if (isset($_SESSION['usu_id'])) {
                 backgroundColor: "#0ab39c",
             }).showToast();
             let contenido = document.getElementById("cont_campanias").innerText.trim();
+            navigator.clipboard.writeText(contenido).then(function() {
+                toast.success('Successfully toasted!')
+            }).catch(function(error) {
+                console.error("Error al copiar: ", error);
+            });
+        }
+
+        function copiar_transacciones(id_proyecto_cantidad_servicios) {
+            Toastify({
+                text: "¡Activos copiados!",
+                duration: 2000,
+                gravity: "top",
+                position: "right",
+                backgroundColor: "#0ab39c",
+            }).showToast();
+            let contenido = document.getElementById("cont_transacciones").innerText.trim();
+            navigator.clipboard.writeText(contenido).then(function() {
+                toast.success('Successfully toasted!')
+            }).catch(function(error) {
+                console.error("Error al copiar: ", error);
+            });
+        }
+
+        function copiar_adicionales(id_proyecto_cantidad_servicios) {
+            Toastify({
+                text: "¡Activos copiados!",
+                duration: 2000,
+                gravity: "top",
+                position: "right",
+                backgroundColor: "#0ab39c",
+            }).showToast();
+            let contenido = document.getElementById("cont_adicionales").innerText.trim();
             navigator.clipboard.writeText(contenido).then(function() {
                 toast.success('Successfully toasted!')
             }).catch(function(error) {

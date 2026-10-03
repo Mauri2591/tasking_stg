@@ -798,14 +798,14 @@ $("#combo_sector_proy_nuevo").change(function (e) {
         case '6': //CONSULTING
             document.getElementById('container_ips_urls').innerHTML =
                 `<div class="col-sm-3 mr-1">
-                <div class="mb-3">
-                    <span class="badge bg-light fs-10 mb-1 text-dark">Casillas</span>
-                    <input type="hidden" hidden value="CASILLAS">
-                    <textarea class="form-control" id="casillas_proy_nuevo" rows="3"
-                        placeholder="Engrese las Casillas"></textarea>
+                    <div class="mb-3">
+                        <span class="badge bg-light fs-10 mb-1 text-dark">Casillas</span>
+                        <input type="hidden" hidden value="CASILLAS">
+                        <textarea class="form-control" id="casillas_proy_nuevo" rows="3"
+                            placeholder="Ingrese las Casillas"></textarea>
+                    </div>
                 </div>
 
-                </div>
                 <div class="col-sm-6">
                     <div class="mb-3">
                         <span class="badge bg-light fs-10 mb-1 text-dark">Tematicas</span>
@@ -823,7 +823,26 @@ $("#combo_sector_proy_nuevo").change(function (e) {
                         <textarea class="form-control" id="campanias_proy_nuevo" rows="3"
                             placeholder="Ingrese las Campañas"></textarea>
                     </div>
-                </div>`;
+                </div>
+
+                <div class="col-sm-3 mr-1">
+                    <div class="mb-3">
+                        <span class="badge bg-light fs-10 mb-1 text-dark">Transacciones</span>
+                        <input type="hidden" hidden value="TRANSACCIONES">
+                        <textarea class="form-control" id="transacciones_proy_nuevo" rows="3"
+                            placeholder="Ingrese las Transacciones"></textarea>
+                    </div>
+                </div>
+
+                <div class="col-sm-3 mr-1">
+                    <div class="mb-3">
+                        <span class="badge bg-light fs-10 mb-1 text-dark">Adicionales</span>
+                        <input type="hidden" hidden value="ADICIONALES">
+                        <textarea class="form-control" id="adicionales_proy_nuevo" rows="3"
+                            placeholder="Ingrese las Adicionales"></textarea>
+                    </div>
+                </div>
+                `;
             break;
 
         case '7': //FUNCTIONAL SERVICES
@@ -1171,7 +1190,6 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
     );
 
 
-    // Esta parte la puedo dejar afuera porque es independiente
     $.post("../../../../../Controller/ctrProyectos.php?proy=get_primer_id_proyecto_gestionado", {
             id_proyecto_cantidad_servicios: id_proyecto_cantidad_servicios
         },
@@ -1219,10 +1237,10 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
             return null;
         }
 
-        // 🔹 Aseguramos que el ID venga del campo correcto
+        // Aseguro que el ID venga del campo correcto
         let idProyecto = $("#id_proyecto_gestionado").val() || id || null;
         if (!idProyecto) {
-            console.error("❌ No se encontró el id_proyecto_gestionado");
+            console.error("No se encontró el id_proyecto_gestionado");
             return null;
         }
 
@@ -1244,6 +1262,10 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
         formData.append('fech_vantive', $("#fech_vantive").val());
         formData.append('hs_dimensionadas', hs_dimensionadas);
 
+        formData.append('fecha_contrato', $("#fecha_contrato").val());
+        formData.append('plazo_meses', $("#plazo_meses").val());
+        formData.append('posee_licencias', $("#posee_licencias").val());
+        formData.append('fecha_vencimiento_licencias', $("#fecha_vencimiento_licencias").val());
         return formData;
     }
 
@@ -1253,7 +1275,7 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
         proy_id: proy_id
     }, function (data) {
         const client_rs = data.client_rs;
-        const tituloDefault = `${client_rs}`; // 🔹 Sin fecha de creación
+        const tituloDefault = `${client_rs}`; //  Sin fecha de creación
 
         // Asigna los valores base
         $("#client_rs_alta_proy").val(client_rs);
@@ -1333,6 +1355,12 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
 
             $("#combo_recurrente_proy_nuevo").val(data.recurrencia);
             $("#fech_ini_proy_nuevo").val(data.fech_inicio);
+
+            $("#fecha_contrato").val(data.fecha_contrato);
+            $("#plazo_meses").val(data.plazo_meses);
+            $("#posee_licencias").val(data.posee_licencias);
+            $("#fecha_vencimiento_licencias").val(data.fecha_vencimiento_licencias);
+
 
             $("#titulo_client_rs_alta_proy")
                 .val(data.titulo)
@@ -1873,10 +1901,19 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
         formData.append('campanias', document.getElementById("campanias_proy_nuevo")?.value || "");
         formData.append('tematicas', document.getElementById("tematicas_proy_nuevo")?.value || "");
         formData.append('casillas', document.getElementById("casillas_proy_nuevo")?.value || "");
+        formData.append('transacciones', document.getElementById("transacciones_proy_nuevo")?.value || "");
+        formData.append('adicionales', document.getElementById("adicionales_proy_nuevo")?.value || "");
         //Consulting
+        
         formData.append('otros', document.getElementById("otros_proy_nuevo")?.value || "");
 
         formData.append('hs_dimensionadas', document.getElementById('hs_dimensionadas').value);
+
+        formData.append('fecha_contrato', document.getElementById('fecha_contrato').value);
+        formData.append('plazo_meses', document.getElementById('plazo_meses').value);
+        formData.append('posee_licencias', document.getElementById('posee_licencias').value);
+        formData.append('fecha_vencimiento_licencias', document.getElementById('fecha_vencimiento_licencias').value);
+
         return formData;
     }
 
@@ -2203,9 +2240,9 @@ function actualizarComboActivos(valor) {
                 <option value="DISPOSITIVO">Dispositivos</option>
                 <option value="AGENTE">Agentes</option>
                 <option value="EQUIPO">Equipos</option>
-                <option value="CAMPANIAS">CAMPAÑAS</option>
-                <option value="TEMATICAS">TEMATICAS</option>
-                <option value="CASILLAS">CASILLAS</option>
+                <option value="CAMPANIAS">Campañas</option>
+                <option value="TEMATICAS">Tematicas</option>
+                <option value="CASILLAS">Casillas</option>
                 <option value="OTROS">Otros</option>
             `;
 
@@ -2214,6 +2251,8 @@ function actualizarComboActivos(valor) {
                 <option value="CAMPANIAS">CAMPAÑAS</option>
                 <option value="TEMATICAS">TEMATICAS</option>
                 <option value="CASILLAS">CASILLAS</option>
+                <option value="TRANSACCIONES">TRANSACCIONES</option>
+                <option value="ADICIONALES">ADICIONALES</option>
             `;
             break;
 
@@ -2480,7 +2519,11 @@ function cambiar_a_pausa(id_proyecto_gestionado) {
             }, null, "json");
 
             if (!data.success) {
-                Swal.fire({ icon: "error", title: "Error", text: "No se pudo cambiar el estado" });
+                Swal.fire({
+                    icon: "error",
+                    title: "Error",
+                    text: "No se pudo cambiar el estado"
+                });
                 return;
             }
 
@@ -2514,7 +2557,11 @@ function cambiar_a_pausa(id_proyecto_gestionado) {
             });
         } catch (xhr) {
             console.log("Falló:", xhr.status, xhr.responseText);
-            Swal.fire({ icon: "error", title: "Error", text: "Error en el servidor" });
+            Swal.fire({
+                icon: "error",
+                title: "Error",
+                text: "Error en el servidor"
+            });
         }
     });
 }
@@ -3650,7 +3697,11 @@ function editar_proyecto(id_proyecto_gestionado) {
             $('#descripcion').val(proyecto.descripcion);
             $('#dimensionamiento_update_parcial').val(proyecto.dimensionamiento);
 
-            // Combo de tipos
+            $('#fecha_contrato_update_parcial').val(proyecto.fecha_contrato);
+            $('#plazo_meses_update_parcial').val(proyecto.plazo_meses);
+            $('#posee_licencias_update_parcial').val(proyecto.posee_licencias);
+            $('#fecha_vencimiento_licencias_update_parcial').val(proyecto.fecha_vencimiento_licencias);
+
             $.ajax({
                 type: "POST",
                 url: URL + 'Controller/ctrProyectos.php?proy=get_combo_subcategorias_x_sector',
@@ -3750,6 +3801,10 @@ if (btn_update_parcial) {
                 descripcion: $('#descripcion').val(),
                 tipo: $('#tipo').val(),
                 hs_dimensionadas: $('#dimensionamiento_update_parcial').val(),
+                fecha_contrato: $('#fecha_contrato_update_parcial').val(),
+                plazo_meses: $('#plazo_meses_update_parcial').val(),
+                posee_licencias: $('#posee_licencias_update_parcial').val(),
+                fecha_vencimiento_licencias: $('#fecha_vencimiento_licencias_update_parcial').val(),
                 usu_asignado: $('#combo_usuario_x_sector_update_parcial input[type="checkbox"]:checked')
                     .map((i, el) => el.value).get()
             },

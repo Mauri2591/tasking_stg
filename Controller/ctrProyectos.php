@@ -225,6 +225,32 @@ switch ($_GET['proy']) {
         }
         echo $sectionCasillas;
         break;
+
+        case 'get_hosts_proy_transacciones':
+        $data = $proyecto->get_hosts_proy($_POST['id_proyecto_gestionado']);
+        $sectionTransacciones = '';
+
+        foreach ($data as $val) {
+            if ($val['tipo'] == "TRANSACCIONES") {
+                $sectionTransacciones .= '<section><span class="badge bg-light text-dark">' . htmlspecialchars($val['host']) . '</span></section>';
+            }
+        }
+        echo $sectionTransacciones;
+        break;
+
+        case 'get_hosts_proy_adicionales':
+        $data = $proyecto->get_hosts_proy($_POST['id_proyecto_gestionado']);
+        $sectionAdicionales = '';
+
+        foreach ($data as $val) {
+            if ($val['tipo'] == "ADICIONALES") {
+                $sectionAdicionales .= '<section><span class="badge bg-light text-dark">' . htmlspecialchars($val['host']) . '</span></section>';
+            }
+        }
+        echo $sectionAdicionales;
+        break;
+
+
     case 'get_hosts_proy_tematicas':
         $data = $proyecto->get_hosts_proy($_POST['id_proyecto_gestionado']);
         $sectionTematicas = '';
@@ -390,6 +416,8 @@ switch ($_GET['proy']) {
         $tematicas = $_POST['tematicas'] ?? '';
         $casillas = $_POST['casillas'] ?? '';
 
+        $transacciones = $_POST['transacciones'] ?? '';
+        $adicionales = $_POST['adicionales'] ?? '';
 
         $hosts = array_merge(
             $validacion->parse_hosts($ips, 'IP'),
@@ -414,7 +442,9 @@ switch ($_GET['proy']) {
             //CONSULTING
             $validacion->parse_hosts($campanias, 'CAMPANIAS'),
             $validacion->parse_hosts($tematicas, 'TEMATICAS'),
-            $validacion->parse_hosts($casillas, 'CASILLAS')
+            $validacion->parse_hosts($casillas, 'CASILLAS'),
+            $validacion->parse_hosts($transacciones, 'TRANSACCIONES'),
+            $validacion->parse_hosts($adicionales, 'ADICIONALES')
             //CONSULTING
         );
 
@@ -439,6 +469,10 @@ switch ($_GET['proy']) {
             $_POST['fech_inicio'],
             $_POST['fech_fin'],
             $_POST['fech_vantive'],
+            $_POST['fecha_contrato'],
+            $_POST['plazo_meses'],
+            $_POST['posee_licencias'],
+            $_POST['fecha_vencimiento_licencias'],
             $archivo_subido,
             $_POST['captura_imagen']
         );
@@ -703,7 +737,11 @@ switch ($_GET['proy']) {
                 ($_POST['recurrencia'] === '' ? null : (int) $_POST['recurrencia']),
                 $_POST['fech_inicio'] ?? null,
                 $_POST['fech_fin'] ?? null,
-                $_POST['fech_vantive'] ?? null
+                $_POST['fech_vantive'] ?? null,
+                $_POST['fecha_contrato'] ?? null,
+                trim($_POST['plazo_meses'] ?? null),
+                $_POST['posee_licencias'] ?? null,
+                $_POST['fecha_vencimiento_licencias'] ?? null
             );
 
             // SOLO PARA TEST el valor en 2 - BORRAR DESPUÉS
@@ -2714,29 +2752,27 @@ switch ($_GET['proy']) {
             $rechequeo = $row['rechequeo'] ?? '';
             $rechequeo_de = $row['rechequeo_de'] ?? '';
             $refProy = $row['referencia'] ?? '';
-            $fech_crea = $row['fech_crea'] ?? '';
             $sector_nombre = $row['sector_nombre'] ?? '';
             $sector_color = $row['sector_color'] ?? '';
             $producto = $row['producto'] ?? '';
             $dimensionamiento = $row['dimensionamiento'] ?? 0;
             $estado = $row['estado'] ?? '';
+            $fech_crea = !empty($row['fech_crea']) ? date('d/m/Y', strtotime($row['fech_crea'])) : 'SIN FECHA';
+            $fech_inicio = !empty($row['fech_inicio']) ? date('d/m/Y', strtotime($row['fech_inicio'])) : 'SIN FECHA';
+            $fech_fin = !empty($row['fech_fin']) ? date('d/m/Y', strtotime($row['fech_fin'])) : 'SIN FECHA';
+
             $id_proyecto_cantidad_servicios = (string)($row['id_proyecto_cantidad_servicios'] ?? '0');
             $id = (string)($row['id'] ?? '0');
 
             $sub_array = [];
 
             $sub_array[] = '<span class="badge bg-light text-dark">' . ($key + 1) . '</span>';
-            $sub_array[] = !empty($fech_crea)
-                ? '<p class="text-center my-0 badge bg-light text-dark fs-10">' . date('d/m/Y', strtotime($fech_crea)) . '</p>'
-                : '<p class="text-center my-0 badge bg-light text-dark fs-10">SIN FECHA</p>';
 
-            $sub_array[] = !empty($fech_inicio)
-                ? '<p class="text-center my-0 badge bg-light text-dark fs-10">' . date('d/m/Y', strtotime($fech_inicio)) . '</p>'
-                : '<p class="text-center my-0 badge bg-light text-dark fs-10">SIN FECHA</p>';
+            $sub_array[] = '<p class="text-center my-0 badge bg-light text-dark fs-10">'.$fech_crea.'</p>';
 
-            $sub_array[] = !empty($fech_fin)
-                ? '<p class="text-center my-0 badge bg-light text-dark fs-10">' . date('d/m/Y', strtotime($fech_fin)) . '</p>'
-                : '<p class="text-center my-0 badge bg-light text-dark fs-10">SIN FECHA</p>';
+            $sub_array[] = '<p class="text-center my-0 badge bg-light text-dark fs-10">'.$fech_inicio.'</p>';
+
+            $sub_array[] = '<p class="text-center my-0 badge bg-light text-dark fs-10">'.$fech_fin.'</p>';
 
             $sub_array[] = htmlspecialchars($titulo);
 
@@ -3120,6 +3156,11 @@ TXT;
             'descripcion'                 => trim($_POST['descripcion'] ?? ''),
             'tipo'                        => (int) ($_POST['tipo'] ?? 0),
             'hs_dimensionadas'            => $_POST['hs_dimensionadas'] ?? null,
+
+            'fecha_contrato'              => $_POST['fecha_contrato'] ?? null,
+            'plazo_meses'                 => $_POST['plazo_meses'] ?? null,
+            'posee_licencias'             => $_POST['posee_licencias'] ?? null,
+            'fecha_vencimiento_licencias' => $_POST['fecha_vencimiento_licencias'] ?? null
         ];
 
         $usuarios_ids = isset($_POST['usu_asignado']) && is_array($_POST['usu_asignado'])

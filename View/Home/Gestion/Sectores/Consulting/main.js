@@ -319,4 +319,22 @@ function ver_hosts_eh(id_proyecto_gestionado) {
         },
         "html"
     );
+
+    $.post("../../../../../Controller/ctrProyectos.php?proy=get_hosts_proy_transacciones", {
+            id_proyecto_gestionado: id_proyecto_gestionado
+        },
+        function (data, textStatus, jqXHR) {
+            $("#cont_transacciones").html(data)
+        },
+        "html"
+    );
+
+    $.post("../../../../../Controller/ctrProyectos.php?proy=get_hosts_proy_adicionales", {
+            id_proyecto_gestionado: id_proyecto_gestionado
+        },
+        function (data, textStatus, jqXHR) {
+            $("#cont_adicionales").html(data)
+        },
+        "html"
+    );
 }

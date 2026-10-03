@@ -122,14 +122,14 @@
                                 <div class="mb-3 col-sm-2">
                                     <span class="badge bg-light fs-10 mb-1 text-dark">Referencia</span>
                                     <input autofocus type="text" class="form-control form-control-sm"
-                                        id="client_refPro_proy_nuevo">
+                                        id="client_refPro_proy_nuevo" autocomplete="off">
                                 </div>
 
                                 <div class="mb-1 col-sm-2">
                                     <label class="badge bg-light fs-10 mb-1 text-dark d-flex align-items-center justify-content-center" style="white-space: nowrap;">
                                         <span class="text-danger fs-13">* </span> Horas
                                     </label>
-                                    <input autofocus type="number" class="form-control form-control-sm" id="hs_dimensionadas">
+                                    <input autofocus type="number" class="form-control form-control-sm" id="hs_dimensionadas" title="Ingrese un valor numerico" autocomplete="off">
                                 </div>
 
                                 <div class="mb-3 col-sm-2" id="cont_combo_workshop">
@@ -190,23 +190,51 @@
 
                                         </div>
                                     </div>
-
                                 </div>
 
-                                <div class="mb-3 col-sm-3">
-                                    <span class="badge bg-light fs-10 mb-1 text-dark"><span class="text-danger fs-13">*
-                                        </span>Fecha Inicio</span>
-                                    <input class="form-control form-control-sm" id="fech_ini_proy_nuevo" type="date">
-                                </div>
+                                <div class="col-sm-9">
+                                    <div class="row">
+                                        <div class="mb-3 col-sm-3">
+                                            <span class="badge bg-light fs-10 mb-1 text-dark">Fecha Contrato</span>
+                                            <input class="form-control form-control-sm" id="fecha_contrato" type="date">
+                                        </div>
 
-                                <div class="mb-3 col-sm-3">
-                                    <span class="badge bg-light fs-10 mb-1 text-dark">Fecha Fin</span>
-                                    <input class="form-control form-control-sm" id="fech_fin_proy_nuevo" type="date">
-                                </div>
+                                         <div class="mb-3 col-sm-3">
+                                            <span class="badge bg-light fs-10 mb-1 text-dark">Plazo Meses</span>
+                                            <input class="form-control form-control-sm" type="number" title="Ingrese un valor numerico" autocomplete="off" id="plazo_meses" name="plazo_meses">
+                                        </div>
 
-                                <div class="mb-3 col-sm-3">
-                                    <span class="badge bg-light fs-10 mb-1 text-dark">Fecha Vantive</span>
-                                    <input class="form-control form-control-sm" id="fech_vantive" type="date">
+                                        <div class="mb-3 col-sm-3">
+                                            <span class="badge bg-light fs-10 mb-1 text-dark">Posee Licencias?</span>
+                                            <select class="form-select form-select-sm" name="posee_licencias" id="posee_licencias">
+                                                <option value="NO">NO</option>
+                                                <option value="SI">SI</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="mb-3 col-sm-3">
+                                            <span class="badge bg-light fs-10 mb-1 text-dark">Vencimiento Licencias</span>
+                                            <input class="form-control form-control-sm" id="fecha_vencimiento_licencias" type="date">
+                                        </div>
+
+                                        <div class="mb-3 col-sm-3">
+                                            <span class="badge bg-light fs-10 mb-1 text-dark">Fecha Vantive</span>
+                                            <input class="form-control form-control-sm" id="fech_vantive" type="date">
+                                        </div>
+
+                                        <div class="mb-3 col-sm-3">
+                                            <span class="badge bg-light fs-10 mb-1 text-dark"><span class="text-danger fs-13">*
+                                                </span>Fecha Inicio</span>
+                                            <input class="form-control form-control-sm" id="fech_ini_proy_nuevo" type="date">
+                                        </div>
+
+                                        <div class="mb-3 col-sm-3">
+                                            <span class="badge bg-light fs-10 mb-1 text-dark">Fecha Fin</span>
+                                            <input class="form-control form-control-sm" id="fech_fin_proy_nuevo" type="date">
+                                        </div>
+
+                                       
+                                    </div>
                                 </div>
                             </div>
 
@@ -225,7 +253,7 @@
                                     <div class="col-sm-6">
                                         <span class="badge bg-light fs-10 mb-1 text-dark">Captura de Imagen</span><br>
                                         <input type="text" id="captura_imagen" name="captura_imagen"
-                                            class="form-control-sm">
+                                            class="form-control-sm" title="Solo se acepta captura de imagen">
                                     </div>
                                 </div>
                             </div>

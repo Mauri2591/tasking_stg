@@ -30,6 +30,20 @@
 
                         </div>
                     </div>
+
+                     <div style="overflow-y: auto; max-height: 300px; width: 30%;">
+                        <span class="badge bg-primary text-light mb-2">Transacciones</span>
+                        <div id="cont_transacciones">
+
+                        </div>
+                    </div>
+
+                     <div style="overflow-y: auto; max-height: 300px; width: 30%;">
+                        <span class="badge bg-primary text-light mb-2">Adicionales</span>
+                        <div id="cont_adicionales">
+
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

@@ -2023,7 +2023,7 @@ ORDER BY id_proyecto_cantidad_servicios ASC";
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function insert_proyecto_gestionado(int $id_proyecto_cantidad_servicios, int $cat_id, int $cats_id, int $sector_id, int $usu_crea, string $prioridad_id, int $estados_id, string $titulo, string $descripcion, string $refProy, string $correo_envio_cliente, string $correo_envio_cliente_copias, string $recurrencia, string $fech_inicio, string $fech_fin, string $fech_vantive, $archivo, $captura_imagen)
+    public function insert_proyecto_gestionado(int $id_proyecto_cantidad_servicios, int $cat_id, int $cats_id, int $sector_id, int $usu_crea, string $prioridad_id, int $estados_id, string $titulo, string $descripcion, string $refProy, string $correo_envio_cliente, string $correo_envio_cliente_copias, string $recurrencia, string $fech_inicio, string $fech_fin, string $fech_vantive, string $fecha_contrato, int $plazo_meses,string $posee_licencias,string $fecha_vencimiento_licencias, $archivo, $captura_imagen)
     {
         $conn = parent::get_conexion();
         $sql = "INSERT INTO proyecto_gestionado (
@@ -2043,10 +2043,14 @@ ORDER BY id_proyecto_cantidad_servicios ASC";
             fech_inicio,
             fech_fin,
             fech_vantive,
+            fecha_contrato,
+            plazo_meses,
+            posee_licencias,
+            fecha_vencimiento_licencias,
             archivo,
             captura_imagen,
             est
-        ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?, ?)";
+        ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(1, $id_proyecto_cantidad_servicios, PDO::PARAM_INT);
@@ -2065,9 +2069,15 @@ ORDER BY id_proyecto_cantidad_servicios ASC";
         $stmt->bindValue(14, $fech_inicio, is_null($fech_inicio) ? PDO::PARAM_NULL : PDO::PARAM_STR);
         $stmt->bindValue(15, $fech_fin, is_null($fech_fin) ? PDO::PARAM_NULL : PDO::PARAM_STR);
         $stmt->bindValue(16, $fech_vantive, is_null($fech_vantive) ? PDO::PARAM_NULL : PDO::PARAM_STR);
-        $stmt->bindValue(17, $archivo, PDO::PARAM_STR);
-        $stmt->bindValue(18, $captura_imagen, PDO::PARAM_STR);
-        $stmt->bindValue(19, 1, PDO::PARAM_INT); // est activo por defecto
+        
+        $stmt->bindValue(17, $fecha_contrato, is_null($fecha_contrato) ? PDO::PARAM_NULL : PDO::PARAM_STR);
+        $stmt->bindValue(18, $plazo_meses, is_null($plazo_meses) ? PDO::PARAM_NULL : PDO::PARAM_INT);
+        $stmt->bindValue(19, $posee_licencias, is_null($posee_licencias) ? PDO::PARAM_NULL : PDO::PARAM_STR);
+        $stmt->bindValue(20, $fecha_vencimiento_licencias, is_null($fecha_vencimiento_licencias) ? PDO::PARAM_NULL : PDO::PARAM_STR);
+
+        $stmt->bindValue(21, $archivo, PDO::PARAM_STR);
+        $stmt->bindValue(22, $captura_imagen, PDO::PARAM_STR);
+        $stmt->bindValue(23, 1, PDO::PARAM_INT); // est activo por defecto
         $stmt->execute();
         return $conn->lastInsertId();
     }
@@ -2196,7 +2206,11 @@ ORDER BY id_proyecto_cantidad_servicios ASC";
         string $recurrencia,
         string $fech_inicio,
         string $fech_fin,
-        string $fech_vantive
+        string $fech_vantive,
+        string $fecha_contrato,
+        int $plazo_meses,
+        string $posee_licencias,
+        string $fecha_vencimiento_licencias
     ) {
         try {
             $sql = "UPDATE proyecto_gestionado 
@@ -2213,7 +2227,11 @@ ORDER BY id_proyecto_cantidad_servicios ASC";
                     recurrencia = :recurrencia,
                     fech_inicio = :fech_inicio,
                     fech_fin = :fech_fin,
-                    fech_vantive = :fech_vantive
+                    fech_vantive = :fech_vantive,
+                    fecha_contrato = :fecha_contrato,
+                    plazo_meses = :plazo_meses,
+                    posee_licencias = :posee_licencias,
+                    fecha_vencimiento_licencias = :fecha_vencimiento_licencias
                 WHERE id = :id
                   AND est = 1";
 
@@ -2233,6 +2251,12 @@ ORDER BY id_proyecto_cantidad_servicios ASC";
             $stmt->bindValue(':fech_inicio', $fech_inicio ?: null, PDO::PARAM_STR);
             $stmt->bindValue(':fech_fin', $fech_fin ?: null, PDO::PARAM_STR);
             $stmt->bindValue(':fech_vantive', $fech_vantive ?: null, PDO::PARAM_STR);
+
+            $stmt->bindValue(':fecha_contrato', $fecha_contrato ?: null, PDO::PARAM_STR);
+            $stmt->bindValue(':plazo_meses', $plazo_meses ?: null, PDO::PARAM_INT);
+            $stmt->bindValue(':posee_licencias', $posee_licencias ?: null, PDO::PARAM_STR);
+            $stmt->bindValue(':fecha_vencimiento_licencias', $fecha_vencimiento_licencias ?: null, PDO::PARAM_STR);
+
             $stmt->bindValue(':id', $id, PDO::PARAM_INT);
 
             $stmt->execute();
@@ -3253,15 +3277,6 @@ WHERE pg.id_proyecto_cantidad_servicios = :id_proyecto_cantidad_servicios";
         return $conn->lastInsertId();
     }
 
-    // public function get_fecha_inicio_proy($id){
-    //     $conn=parent::get_conexion();
-    //     $sql="SELECT fech_inicio FROM gestionar_proy_borrador WHERE id=:id";
-    //     $stmt=$conn->prepare($sql);
-    //     $stmt->bindValue("id",$id,PDO::PARAM_INT);
-    //     $stmt->execute();
-    //     return $stmt->fetch(PDO::FETCH_ASSOC);
-    // }
-
     public function insert_dimensionamiento_recurrente_proy_gestionado($id_proyecto_gestionado, $hs_dimensionadas, $usu_crea)
     {
         $conn = parent::get_conexion();
@@ -3632,7 +3647,11 @@ ORDER BY producto, mes DESC";
         proyecto_gestionado.correo_envio_cliente_copias AS correo_envio_cliente_copias, 
         proyecto_gestionado.descripcion, proyecto_gestionado.cats_id AS tipo,
         proyecto_gestionado.sector_id AS sector_id,
-        dimensionamiento.hs_dimensionadas AS dimensionamiento
+        dimensionamiento.hs_dimensionadas AS dimensionamiento,
+        proyecto_gestionado.fecha_contrato AS fecha_contrato,
+        proyecto_gestionado.plazo_meses AS plazo_meses,
+        proyecto_gestionado.posee_licencias AS posee_licencias,
+        proyecto_gestionado.fecha_vencimiento_licencias AS fecha_vencimiento_licencias
         FROM proyecto_gestionado 
         LEFT JOIN dimensionamiento 
         ON dimensionamiento.id_proyecto_gestionado=proyecto_gestionado.id
@@ -3658,7 +3677,12 @@ ORDER BY producto, mes DESC";
                     correo_envio_cliente = :correo_envio_cliente,
                     correo_envio_cliente_copias = :correo_envio_cliente_copias,
                     descripcion = :descripcion,
-                    cats_id = :cats_id
+                    cats_id = :cats_id,
+                    
+                    fecha_contrato = :fecha_contrato,
+                    plazo_meses = :plazo_meses,
+                    posee_licencias = :posee_licencias,
+                    fecha_vencimiento_licencias = :fecha_vencimiento_licencias
                 WHERE id = :id";
             $stmt = $conn->prepare($sql);
             $stmt->bindValue(":fech_vantive", $datos['fecha_vantive'] ?: null);
@@ -3670,6 +3694,12 @@ ORDER BY producto, mes DESC";
             $stmt->bindValue(":correo_envio_cliente_copias", $datos['correo_envio_cliente_copias']);
             $stmt->bindValue(":descripcion", $datos['descripcion']);
             $stmt->bindValue(":cats_id", $datos['tipo'], PDO::PARAM_INT);
+
+            $stmt->bindValue(":fecha_contrato", $datos['fecha_contrato'],PDO::PARAM_STR ?: null);
+            $stmt->bindValue(":plazo_meses", $datos['plazo_meses'],PDO::PARAM_INT ?: null);
+            $stmt->bindValue(":posee_licencias", $datos['posee_licencias'],PDO::PARAM_STR ?: null);
+            $stmt->bindValue(":fecha_vencimiento_licencias", $datos['fecha_vencimiento_licencias'],PDO::PARAM_STR ?: null);
+
             $stmt->bindValue(":id", $id, PDO::PARAM_INT);
             $stmt->execute();
             $conn->commit();

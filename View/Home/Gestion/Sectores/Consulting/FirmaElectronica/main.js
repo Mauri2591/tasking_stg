@@ -400,7 +400,6 @@ function asignar_proyecto(id_proyecto_gestionado) {
 
 }
 
-
 function ver_activos_consulting(id_proyecto_gestionado) {
     $("#ModalVerHosts").modal("show");
     $.post("../../../../../../Controller/ctrProyectos.php?proy=get_hosts_proy_casillas", {
@@ -424,6 +423,22 @@ function ver_activos_consulting(id_proyecto_gestionado) {
         },
         function (data, textStatus, jqXHR) {
             $("#cont_campanias").html(data)
+        },
+        "html"
+    );
+     $.post("../../../../../../Controller/ctrProyectos.php?proy=get_hosts_proy_transacciones", {
+            id_proyecto_gestionado: id_proyecto_gestionado
+        },
+        function (data, textStatus, jqXHR) {
+            $("#cont_transacciones").html(data)
+        },
+        "html"
+    );
+    $.post("../../../../../../Controller/ctrProyectos.php?proy=get_hosts_proy_adicionales", {
+            id_proyecto_gestionado: id_proyecto_gestionado
+        },
+        function (data, textStatus, jqXHR) {
+            $("#cont_adicionales").html(data)
         },
         "html"
     );
