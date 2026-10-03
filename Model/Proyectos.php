@@ -3695,10 +3695,10 @@ ORDER BY producto, mes DESC";
             $stmt->bindValue(":descripcion", $datos['descripcion']);
             $stmt->bindValue(":cats_id", $datos['tipo'], PDO::PARAM_INT);
 
-            $stmt->bindValue(":fecha_contrato", $datos['fecha_contrato'],PDO::PARAM_STR ?: null);
-            $stmt->bindValue(":plazo_meses", $datos['plazo_meses'],PDO::PARAM_INT ?: null);
-            $stmt->bindValue(":posee_licencias", $datos['posee_licencias'],PDO::PARAM_STR ?: null);
-            $stmt->bindValue(":fecha_vencimiento_licencias", $datos['fecha_vencimiento_licencias'],PDO::PARAM_STR ?: null);
+            $stmt->bindValue(":fecha_contrato", $datos['fecha_contrato'] ?: null);
+            $stmt->bindValue(":plazo_meses", $datos['plazo_meses'] ?: null);
+            $stmt->bindValue(":posee_licencias", $datos['posee_licencias'] ?: null);
+            $stmt->bindValue(":fecha_vencimiento_licencias", $datos['fecha_vencimiento_licencias'] ?: null);
 
             $stmt->bindValue(":id", $id, PDO::PARAM_INT);
             $stmt->execute();
