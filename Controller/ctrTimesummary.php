@@ -15,7 +15,6 @@ $timesummary = new timesummary;
 switch ($_GET['accion']) {
 
     case 'insert_tarea':
-
         $hora_desde = $_POST['hora_desde'] ?? null;
         $hora_hasta = $_POST['hora_hasta'] ?? null;
 
@@ -28,7 +27,6 @@ switch ($_GET['accion']) {
         }
 
         try {
-            // Acepta YYYY-MM-DD o ISO 8601 con timezone
             $fecha_mysql = (new DateTime($fecha_raw))->format('Y-m-d');
         } catch (Exception $e) {
             http_response_code(400);
@@ -37,23 +35,19 @@ switch ($_GET['accion']) {
         }
 
         $data = [
-            "proyecto" => $_POST['id_proyecto_gestionado'] ?? null,
             "producto" => $_POST['id_producto'] ?? null,
             "id_tarea" => $_POST['id_tarea'] ?? null,
-            "es_telecom" => $_POST['es_telecom'] ?? null,
-            "fecha" => $fecha_mysql, //  ya normalizada
-            "desde" => $hora_desde,
-            "hasta" => $hora_hasta
+            "fecha"    => $fecha_mysql,
+            "desde"    => $hora_desde,
+            "hasta"    => $hora_hasta
         ];
 
-        // Validación de formato de hora
         if (!timesummary::validarHora($hora_desde) || !timesummary::validarHora($hora_hasta)) {
             http_response_code(400);
             echo json_encode(["error" => "Formato de hora inválido. Use HH:MM"]);
             exit;
         }
 
-        // Validación de campos vacíos
         if (!timesummary::validarDatosVacios($data)) {
             http_response_code(400);
             echo json_encode(["error" => "Hay campos obligatorios vacíos"]);
@@ -66,21 +60,43 @@ switch ($_GET['accion']) {
             echo json_encode(["error" => $validacion_horas['error']]);
             exit;
         }
-
         $horas_consumidas = $validacion_horas['duracion'];
+
+        // ===== VALIDACIÓN DE IDS Y ASIGNACIÓN =====
+        $conn = $timesummary->get_conexion();
+
+        $id_proyecto = (int)($_POST['id_proyecto_gestionado'] ?? 0);
+        $id_producto = (int)($_POST['id_producto'] ?? 0);
+        $id_tarea    = (int)($_POST['id_tarea'] ?? 0);
+        $es_telecom  = ($_POST['es_telecom'] ?? '') === 'Telecom';
+
+        $existe = function ($sql, $params) use ($conn) {
+            $s = $conn->prepare($sql);
+            $s->execute($params);
+            return (bool)$s->fetchColumn();
+        };
+
+       $error = $timesummary->validar_carga($_SESSION['usu_id'], $id_proyecto, $id_producto, $id_tarea, $es_telecom);
+
+        if ($error) {
+            http_response_code(400);
+            echo json_encode(["error" => $error]);
+            exit;
+        }
+        // ===== FIN VALIDACIÓN =====
 
         try {
             $timesummary->insert_tarea(
                 $_SESSION['usu_id'],
-                $_POST['id_proyecto_gestionado'],
-                $_POST['id_producto'],
-                $_POST['id_tarea'],
-                $_POST['es_telecom'],
-                $_POST['id_pm_calidad'] ?? null,
+                $id_proyecto,
+                $id_producto,
+                $id_tarea,
+                $es_telecom ? 'Telecom' : '',
+                $_POST['id_pm_calidad'] ?? 0,
                 $fecha_mysql,
                 $hora_desde,
                 $hora_hasta,
-                $_POST['descripcion'] ?? null,
+                $_POST['descripcion'] ?? '',
                 $horas_consumidas
             );
 

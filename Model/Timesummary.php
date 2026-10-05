@@ -1393,8 +1393,8 @@ ORDER BY clientes.client_rs";
                 dimensionamiento.hs_dimensionadas
                 HAVING hs_restante != ''  AND usuarios_asignados != ''
             ORDER BY clientes.client_rs";
-        $stmt = $conn->prepare($sql);
-        $stmt->execute();
+            $stmt = $conn->prepare($sql);
+            $stmt->execute();
         } else {
             $sql = "SELECT
                 clientes.client_id,
@@ -1479,11 +1479,47 @@ ORDER BY clientes.client_rs";
                 dimensionamiento.hs_dimensionadas
                 HAVING hs_restante != '' AND usuarios_asignados != ''
             ORDER BY clientes.client_rs";
-        $stmt = $conn->prepare($sql);
-        $stmt->bindValue(":sector_id", $sector_id, PDO::PARAM_INT);
-        $stmt->execute();
+            $stmt = $conn->prepare($sql);
+            $stmt->bindValue(":sector_id", $sector_id, PDO::PARAM_INT);
+            $stmt->execute();
         }
         $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
         return count($data) > 0 ? $data : [];
+    }
+
+    public function validar_carga($usu_id, $id_proyecto, $id_producto, $id_tarea, $es_telecom)
+    {
+        $conn = parent::get_conexion();
+
+        $existe = function ($sql, $params) use ($conn) {
+            $s = $conn->prepare($sql);
+            $s->execute($params);
+            return (bool)$s->fetchColumn();
+        };
+
+        if (!$existe("SELECT 1 FROM tm_categoria WHERE cat_id = ?", [$id_producto])) {
+            return "Producto inexistente";
+        }
+
+        if (!$existe("SELECT 1 FROM tareas WHERE id = ?", [$id_tarea])) {
+            return "Tarea inexistente";
+        }
+
+        if ($id_proyecto === 0) {
+            return $es_telecom ? null : "Una carga sin proyecto debe ser computada a Telecom";
+        }
+
+        $asignado = $existe(
+            "SELECT 1 FROM proyecto_gestionado pg
+         WHERE pg.id = ?
+           AND (pg.usu_crea = ?
+                OR EXISTS (SELECT 1 FROM usuario_proyecto up
+                           WHERE up.id_proyecto_gestionado = pg.id
+                             AND up.usu_asignado = ?
+                             AND up.est = 1))",
+            [$id_proyecto, $usu_id, $usu_id]
+        );
+
+        return $asignado ? null : "Proyecto inexistente o no asignado";
     }
 }

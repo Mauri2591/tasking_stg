@@ -397,6 +397,7 @@ if (isset($_SESSION['usu_id'])) {
                 const FECHA_OBJ = new Date(START);
                 const FECHA_FORMATO = FECHA_OBJ.toISOString().split('T')[0];
                 const PRODUCTO = EVENTO.extendedProps.producto;
+                const ID_PRODUCTO = EVENTO.extendedProps.id_producto;
                 const DESCRIPCION = EVENTO.extendedProps.descripcion;
                 const ID_TAREA = EVENTO.extendedProps.id_tarea;
                 const TAREA = EVENTO.extendedProps.nombre;
@@ -617,7 +618,7 @@ if (isset($_SESSION['usu_id'])) {
                                         url: URL + "Controller/ctrTimesummary.php?accion=insert_tarea",
                                         data: {
                                             id_proyecto_gestionado: ID_PROYECTO_GESTIONADO == 209 ? null : ID_PROYECTO_GESTIONADO,
-                                            id_producto: PRODUCTO,
+                                            id_producto: ID_PRODUCTO,
                                             id_tarea: ID_TAREA,
                                             es_telecom: EVENTO.extendedProps.es_telecom ? "Telecom" : null,
                                             fecha: fecha,
