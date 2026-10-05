@@ -837,38 +837,38 @@ return function (App $app) {
     // ******************   FIN TASKING ***********************
 
 
-// ******************   INICIO TIMASUMMARY ***********************
-$app->get('/total-tareas', function (Request $request, Response $response) use ($app) {
-    $apiKeyPlana = $request->getHeaderLine('X-API-KEY');
-    if (!$apiKeyPlana) {
-        $response->getBody()->write(json_encode(["error" => "API Key requerida"]));
-        return $response->withHeader('Content-Type', 'application/json')->withStatus(401);
-    }
-
-    $pdo = $app->getContainer()->get(PDO::class);
-    $keys = $pdo->query("SELECT api_key, sector_id FROM api_keys WHERE est = 1")
-        ->fetchAll(PDO::FETCH_ASSOC);
-
-    $sector_id = null;
-    foreach ($keys as $row) {
-        if (hash_equals((string)Openssl::get_ssl_decrypt($row['api_key']), $apiKeyPlana)) {
-            $sector_id = (int)$row['sector_id'];
-            break;
+    // ******************   INICIO TIMASUMMARY ***********************
+    $app->get('/total-tareas', function (Request $request, Response $response) use ($app) {
+        $apiKeyPlana = $request->getHeaderLine('X-API-KEY');
+        if (!$apiKeyPlana) {
+            $response->getBody()->write(json_encode(["error" => "API Key requerida"]));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(401);
         }
-    }
-    if (!$sector_id) {
-        $response->getBody()->write(json_encode(["error" => "API Key inválida"]));
-        return $response->withHeader('Content-Type', 'application/json')->withStatus(403);
-    }
 
-    $sql = "SELECT
+        $pdo = $app->getContainer()->get(PDO::class);
+        $keys = $pdo->query("SELECT api_key, sector_id FROM api_keys WHERE est = 1")
+            ->fetchAll(PDO::FETCH_ASSOC);
+
+        $sector_id = null;
+        foreach ($keys as $row) {
+            if (hash_equals((string)Openssl::get_ssl_decrypt($row['api_key']), $apiKeyPlana)) {
+                $sector_id = (int)$row['sector_id'];
+                break;
+            }
+        }
+        if (!$sector_id) {
+            $response->getBody()->write(json_encode(["error" => "API Key inválida"]));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(403);
+        }
+
+        $sql = "SELECT
             x.correo, x.colaborador, x.area, x.producto, x.tarea,
             x.fecha, x.hora_inicio, x.hora_fin, x.ht,
-            CASE
+           CASE
                 WHEN x.hs_dimensionadas IS NULL THEN 0
                 ELSE ROUND(
                     GREATEST(x.acum - x.hs_dimensionadas, 0)
-                  - GREATEST(x.acum - x.ht - x.hs_dimensionadas, 0)
+                - GREATEST(x.acum - x.ht_proyecto - x.hs_dimensionadas, 0)
                 , 2)
             END AS hn,
             x.cliente, x.pais, x.descripcion, x.dato_valido
@@ -876,16 +876,19 @@ $app->get('/total-tareas', function (Request $request, Response $response) use (
             SELECT
                 COALESCE(LOWER(u.usu_correo), 'sin usuario') AS correo,
                 COALESCE(LOWER(CONCAT(u.usu_nom, ' ', u.usu_ape)), 'sin usuario') AS colaborador,
-COALESCE(LOWER(su.sector_nombre), LOWER(sp.sector_nombre), 'sin asignar') AS area,
-COALESCE(su.sector_id, sp.sector_id) AS sector_filtro,
+                COALESCE(LOWER(su.sector_nombre), LOWER(sp.sector_nombre), 'sin asignar') AS area,
+                COALESCE(su.sector_id, sp.sector_id) AS sector_filtro,
                 COALESCE(LOWER(c.cat_nom), 'sin asignar') AS producto,
                 COALESCE(LOWER(t.nombre), 'sin asignar') AS tarea,
                 ts.fecha,
                 ts.hora_desde AS hora_inicio,
                 ts.hora_hasta AS hora_fin,
                 ROUND(TIME_TO_SEC(ts.horas_consumidas) / 3600, 2) AS ht,
+                CASE WHEN u.sector_id = pg.sector_id
+                    THEN ROUND(TIME_TO_SEC(ts.horas_consumidas) / 3600, 2) ELSE 0 END AS ht_proyecto,
                 d.hs_dimensionadas,
-                SUM(TIME_TO_SEC(ts.horas_consumidas) / 3600) OVER (
+                SUM(CASE WHEN u.sector_id = pg.sector_id
+                        THEN TIME_TO_SEC(ts.horas_consumidas) / 3600 ELSE 0 END) OVER (
                     PARTITION BY ts.id_proyecto_gestionado
                     ORDER BY ts.fecha, ts.hora_desde, ts.id
                 ) AS acum,
@@ -915,26 +918,26 @@ COALESCE(su.sector_id, sp.sector_id) AS sector_filtro,
             WHERE ts.est = 1
         ) x";
 
-    $params = [];
-    if ($sector_id !== 4) {
-        $sql .= " WHERE x.sector_filtro IN (:sector_id, 5)";
-        $params[':sector_id'] = $sector_id;
-    }
-    $sql .= " ORDER BY x.fecha DESC";
+        $params = [];
+        if ($sector_id !== 4) {
+            $sql .= " WHERE x.sector_filtro IN (:sector_id, 5)";
+            $params[':sector_id'] = $sector_id;
+        }
+        $sql .= " ORDER BY x.fecha DESC";
 
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute($params);
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute($params);
 
-    $rows = array_map(function ($r) {
-        $r['ht'] = $r['ht'] !== null ? (float)$r['ht'] : null;
-        $r['hn'] = (float)$r['hn'];
-        $r['dato_valido'] = (int)$r['dato_valido'];
-        return $r;
-    }, $stmt->fetchAll(PDO::FETCH_ASSOC));
+        $rows = array_map(function ($r) {
+            $r['ht'] = $r['ht'] !== null ? (float)$r['ht'] : null;
+            $r['hn'] = (float)$r['hn'];
+            $r['dato_valido'] = (int)$r['dato_valido'];
+            return $r;
+        }, $stmt->fetchAll(PDO::FETCH_ASSOC));
 
-    $response->getBody()->write(json_encode($rows, JSON_UNESCAPED_UNICODE));
-    return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
-});
+        $response->getBody()->write(json_encode($rows, JSON_UNESCAPED_UNICODE));
+        return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+    });
 
     //Cross-Sell
     $app->get('/cross-sell', function (Request $request, Response $response) use ($app) {
