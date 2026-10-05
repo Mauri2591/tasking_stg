@@ -838,7 +838,7 @@ return function (App $app) {
 
 
     // ******************   INICIO TIMASUMMARY ***********************
-    $app->get('/tareas', function (Request $request, Response $response) use ($app) {
+    $app->get('/total-tareas', function (Request $request, Response $response) use ($app) {
         $apiKeyPlana = $request->getHeaderLine('X-API-KEY');
         if (!$apiKeyPlana) {
             $response->getBody()->write(json_encode(["error" => "API Key requerida"]));
