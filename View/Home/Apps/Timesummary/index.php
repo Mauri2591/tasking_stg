@@ -612,6 +612,7 @@ if (isset($_SESSION['usu_id'])) {
                             }).then(result => {
                                 if (!result.isConfirmed) return;
 
+                                const descripcionCopia = $("#editar_descripcion").val().trim() || DESCRIPCION;
                                 let promesas = fechasLibres.map(fecha => {
                                     return $.ajax({
                                         type: "POST",
@@ -624,7 +625,7 @@ if (isset($_SESSION['usu_id'])) {
                                             fecha: fecha,
                                             hora_desde: `${START_HORA}:${START_MIN}`,
                                             hora_hasta: `${END_HORA}:${END_MIN}`,
-                                            descripcion: DESCRIPCION,
+                                            descripcion: descripcionCopia,
                                             id_pm_calidad: ID_PM_CALIDAD
                                         },
                                         dataType: "json"
