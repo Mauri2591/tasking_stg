@@ -840,7 +840,7 @@ return function (App $app) {
     // ******************   INICIO TIMASUMMARY ***********************
 
     //Tareas de usuarios
-    $app->get('/cargas-tareas', function (Request $request, Response $response) use ($app) {
+    $app->get('/tareas', function (Request $request, Response $response) use ($app) {
 
         $apiKeyPlana = $request->getHeaderLine('X-API-KEY');
         if (!$apiKeyPlana) {
@@ -874,8 +874,7 @@ return function (App $app) {
             ts.fecha,
             ts.hora_desde AS hora_inicio,
             ts.hora_hasta AS hora_fin,
-            ts.horas_consumidas AS HT,
-            IF(ts.horas_consumidas < 0, ts.horas_consumidas, NULL) AS HN,
+            ROUND(TIME_TO_SEC(ts.horas_consumidas) / 3600, 2) AS HT,
             CASE WHEN ts.es_telecom = 'Telecom' THEN 'TELECOM' ELSE cli.client_rs END AS cliente,
             CASE WHEN ts.es_telecom = 'Telecom' THEN 'ARGENTINA' ELSE p.pais_nombre END AS pais,
             ts.descripcion

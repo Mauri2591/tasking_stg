@@ -2023,8 +2023,7 @@ ORDER BY id_proyecto_cantidad_servicios ASC";
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function insert_proyecto_gestionado(int $id_proyecto_cantidad_servicios, int $cat_id, int $cats_id, int $sector_id, int $usu_crea, string $prioridad_id, int $estados_id, string $titulo, string $descripcion, string $refProy, string $correo_envio_cliente, string $correo_envio_cliente_copias, string $recurrencia, string $fech_inicio, string $fech_fin, string $fech_vantive, string $fecha_contrato, int $plazo_meses,string $posee_licencias,string $fecha_vencimiento_licencias, $archivo, $captura_imagen)
-    {
+public function insert_proyecto_gestionado(int $id_proyecto_cantidad_servicios, int $cat_id, int $cats_id, int $sector_id, int $usu_crea, string $prioridad_id, int $estados_id, string $titulo, string $descripcion, string $refProy, string $correo_envio_cliente, string $correo_envio_cliente_copias, string $recurrencia, ?string $fech_inicio, ?string $fech_fin, ?string $fech_vantive, ?string $fecha_contrato, ?int $plazo_meses, ?string $posee_licencias, ?string $fecha_vencimiento_licencias, $archivo, $captura_imagen)    {
         $conn = parent::get_conexion();
         $sql = "INSERT INTO proyecto_gestionado (
             id_proyecto_cantidad_servicios,

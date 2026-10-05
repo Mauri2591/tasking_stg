@@ -16,7 +16,7 @@ $integracion = new Integraciones();
 $proyecto = new Proyectos();
 $validacion = new Validaciones();
 $audit = new Auditoria();
-$correo = new Correo(); 
+$correo = new Correo();
 
 Headers::get_csp();
 
@@ -226,7 +226,7 @@ switch ($_GET['proy']) {
         echo $sectionCasillas;
         break;
 
-        case 'get_hosts_proy_transacciones':
+    case 'get_hosts_proy_transacciones':
         $data = $proyecto->get_hosts_proy($_POST['id_proyecto_gestionado']);
         $sectionTransacciones = '';
 
@@ -238,7 +238,7 @@ switch ($_GET['proy']) {
         echo $sectionTransacciones;
         break;
 
-        case 'get_hosts_proy_adicionales':
+    case 'get_hosts_proy_adicionales':
         $data = $proyecto->get_hosts_proy($_POST['id_proyecto_gestionado']);
         $sectionAdicionales = '';
 
@@ -452,6 +452,10 @@ switch ($_GET['proy']) {
             $proyecto->insert_proyecto_recurrencia($id_proyecto_cantidad_servicios, $_POST['cat_id']);
         }
 
+        $vacioANull = fn($v) => (isset($v) && $v !== '') ? $v : null;
+        $plazo_meses = $vacioANull($_POST['plazo_meses'] ?? null);
+        $plazo_meses = $plazo_meses !== null ? (int)$plazo_meses : null;
+
         $id_proyecto_gestionado = $proyecto->insert_proyecto_gestionado(
             $_POST['id_proyecto_cantidad_servicios'],
             $_POST['cat_id'],
@@ -466,13 +470,13 @@ switch ($_GET['proy']) {
             $_POST['correo_envio_cliente'],
             $_POST['correo_envio_cliente_copias'],
             $_POST['recurrencia'],
-            $_POST['fech_inicio'],
-            $_POST['fech_fin'],
-            $_POST['fech_vantive'],
-            $_POST['fecha_contrato'],
-            $_POST['plazo_meses'],
-            $_POST['posee_licencias'],
-            $_POST['fecha_vencimiento_licencias'],
+            $vacioANull($_POST['fech_inicio'] ?? null),
+            $vacioANull($_POST['fech_fin'] ?? null),
+            $vacioANull($_POST['fech_vantive'] ?? null),
+            $vacioANull($_POST['fecha_contrato'] ?? null),
+            $plazo_meses,
+            $vacioANull($_POST['posee_licencias'] ?? null),
+            $vacioANull($_POST['fecha_vencimiento_licencias'] ?? null),
             $archivo_subido,
             $_POST['captura_imagen']
         );
@@ -1914,7 +1918,7 @@ switch ($_GET['proy']) {
         break;
 
     case 'cambiar_estado_proyecto_cantidad_servicios':
-        $proyecto->cambiar_estado_proyecto_cantidad_servicios($_POST['estados_id'],$_POST['id_proyecto_cantidad_servicios']);
+        $proyecto->cambiar_estado_proyecto_cantidad_servicios($_POST['estados_id'], $_POST['id_proyecto_cantidad_servicios']);
         break;
 
     case 'cambiar_estado':
@@ -2768,11 +2772,11 @@ switch ($_GET['proy']) {
 
             $sub_array[] = '<span class="badge bg-light text-dark">' . ($key + 1) . '</span>';
 
-            $sub_array[] = '<p class="text-center my-0 badge bg-light text-dark fs-10">'.$fech_crea.'</p>';
+            $sub_array[] = '<p class="text-center my-0 badge bg-light text-dark fs-10">' . $fech_crea . '</p>';
 
-            $sub_array[] = '<p class="text-center my-0 badge bg-light text-dark fs-10">'.$fech_inicio.'</p>';
+            $sub_array[] = '<p class="text-center my-0 badge bg-light text-dark fs-10">' . $fech_inicio . '</p>';
 
-            $sub_array[] = '<p class="text-center my-0 badge bg-light text-dark fs-10">'.$fech_fin.'</p>';
+            $sub_array[] = '<p class="text-center my-0 badge bg-light text-dark fs-10">' . $fech_fin . '</p>';
 
             $sub_array[] = htmlspecialchars($titulo);
 
