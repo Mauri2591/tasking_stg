@@ -876,8 +876,8 @@ $app->get('/total-tareas', function (Request $request, Response $response) use (
             SELECT
                 COALESCE(LOWER(u.usu_correo), 'sin usuario') AS correo,
                 COALESCE(LOWER(CONCAT(u.usu_nom, ' ', u.usu_ape)), 'sin usuario') AS colaborador,
-                COALESCE(LOWER(sp.sector_nombre), LOWER(su.sector_nombre), 'sin asignar') AS area,
-                COALESCE(sp.sector_id, su.sector_id) AS sector_filtro,
+COALESCE(LOWER(su.sector_nombre), LOWER(sp.sector_nombre), 'sin asignar') AS area,
+COALESCE(su.sector_id, sp.sector_id) AS sector_filtro,
                 COALESCE(LOWER(c.cat_nom), 'sin asignar') AS producto,
                 COALESCE(LOWER(t.nombre), 'sin asignar') AS tarea,
                 ts.fecha,
