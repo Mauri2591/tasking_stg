@@ -7,6 +7,8 @@ require_once __DIR__ . "/../Model/Clases/Validaciones.php";
 require_once __DIR__ . "/../Model/Clases/Headers.php";
 require_once __DIR__ . "/../Model/Clases/Openssl.php";
 
+Headers::validar_sesion();
+
 $gestion_activos = new GestionActivos();
 switch ($_GET['case']) {
     case 'get_activos':

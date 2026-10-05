@@ -677,6 +677,14 @@
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"
     integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script>
 
+<script>
+    $(document).ajaxError(function(event, xhr) {
+        if (xhr.status === 401) {
+            window.location.href = URL + "View/Home/Logout.php";
+        }
+    });
+</script>
+
 <script
     src="<?php echo URL ?>/View/Home/Public/velzon/assets/libs/bootstrap/js/bootstrap.bundle.min.js?sheet=<?php echo rand(); ?>">
 </script>
@@ -696,20 +704,19 @@
 
 
 <script>
-fetch("<?php echo URL ?>View/Home/Public/velzon/assets/lang/en.json?sheet=<?php echo rand(); ?>")
-  .then(res => res.json())
-  .then(lang => {
-    console.log("Idioma cargado:", lang);
-    // ejemplo:
-    // document.getElementById("title").textContent = lang.title;
-  })
-  .catch(err => console.error("Error cargando idioma", err));
+    fetch("<?php echo URL ?>View/Home/Public/velzon/assets/lang/en.json?sheet=<?php echo rand(); ?>")
+        .then(res => res.json())
+        .then(lang => {
+            console.log("Idioma cargado:", lang);
+            // ejemplo:
+            // document.getElementById("title").textContent = lang.title;
+        })
+        .catch(err => console.error("Error cargando idioma", err));
 </script>
 
 
 <script
-  src="<?php echo URL ?>View/Home/Public/velzon/assets/js/plugins.js?sheet=<?php echo rand(); ?>"
->
+    src="<?php echo URL ?>View/Home/Public/velzon/assets/js/plugins.js?sheet=<?php echo rand(); ?>">
 </script>
 
 
@@ -730,8 +737,8 @@ fetch("<?php echo URL ?>View/Home/Public/velzon/assets/lang/en.json?sheet=<?php 
 
 <!-- Modal Js -->
 <script
-  src="<?php echo URL ?>View/Home/Public/velzon/assets/js/pages/modal.init.js?sheet=<?php echo rand(); ?>"
-  defer>
+    src="<?php echo URL ?>View/Home/Public/velzon/assets/js/pages/modal.init.js?sheet=<?php echo rand(); ?>"
+    defer>
 </script>
 
 <!-- Charjs -->

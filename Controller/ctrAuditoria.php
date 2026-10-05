@@ -2,6 +2,10 @@
 require_once __DIR__ . "/../Config/Conexion.php";
 require_once __DIR__ . "/../Config/Config.php";
 require_once __DIR__ . "/../Model/Auditoria.php";
+require_once __DIR__."/../Model/Clases/Headers.php";
+
+Headers::validar_sesion();
+
 $audit = new Auditoria();
 switch ($_GET['case']) {
     case 'get_audit_sesiones':

@@ -8,11 +8,14 @@ require_once __DIR__ . "/../Model/Clases/Validaciones.php";
 require_once __DIR__ . "/../Model/Clases/Headers.php";
 require_once __DIR__ . "/../Model/Clases/Openssl.php";
 
+Headers::validar_sesion();
+
 $timesummary = new timesummary;
 
 switch ($_GET['accion']) {
 
     case 'insert_tarea':
+
         $hora_desde = $_POST['hora_desde'] ?? null;
         $hora_hasta = $_POST['hora_hasta'] ?? null;
 
@@ -68,13 +71,13 @@ switch ($_GET['accion']) {
 
         try {
             $timesummary->insert_tarea(
-                $_SESSION['usu_id'] ?? null,
-                $_POST['id_proyecto_gestionado'] ?? null,
-                $_POST['id_producto'] ?? null,
-                $_POST['id_tarea'] ?? null,
-                $_POST['es_telecom'] ?? null,
+                $_SESSION['usu_id'],
+                $_POST['id_proyecto_gestionado'],
+                $_POST['id_producto'],
+                $_POST['id_tarea'],
+                $_POST['es_telecom'],
                 $_POST['id_pm_calidad'] ?? null,
-                $fecha_mysql,            
+                $fecha_mysql,
                 $hora_desde,
                 $hora_hasta,
                 $_POST['descripcion'] ?? null,
@@ -540,32 +543,32 @@ switch ($_GET['accion']) {
         echo json_encode(['conflictos' => $conflictos]);
         break;
 
-   case 'get_horas_extras_x_usu':
-    $mes    = intval($_POST['mes']  ?? date('n'));
-    $anio   = intval($_POST['anio'] ?? date('Y'));
-    $usu_id = $_SESSION['usu_id'];
+    case 'get_horas_extras_x_usu':
+        $mes    = intval($_POST['mes']  ?? date('n'));
+        $anio   = intval($_POST['anio'] ?? date('Y'));
+        $usu_id = $_SESSION['usu_id'];
 
-    $data = $timesummary->get_horas_extras_x_usu($usu_id, $mes, $anio);
+        $data = $timesummary->get_horas_extras_x_usu($usu_id, $mes, $anio);
 
-    $registros = [];
-    foreach ($data as $row) {
-        $registros[] = [
-            $row['fecha'],
-            $row['total_dia'],
-            $row['horas_extras']
-        ];
-    }
+        $registros = [];
+        foreach ($data as $row) {
+            $registros[] = [
+                $row['fecha'],
+                $row['total_dia'],
+                $row['horas_extras']
+            ];
+        }
 
-    echo json_encode([
-        "draw"            => intval($_POST['draw'] ?? 1),
-        "recordsTotal"    => count($registros),
-        "recordsFiltered" => count($registros),
-        "data"            => $registros
-    ]);
-    break;
+        echo json_encode([
+            "draw"            => intval($_POST['draw'] ?? 1),
+            "recordsTotal"    => count($registros),
+            "recordsFiltered" => count($registros),
+            "data"            => $registros
+        ]);
+        break;
 
     case 'getProyectosStatus':
-            echo json_encode($timesummary->getProyectosStatus($_SESSION['sector_id']));
+        echo json_encode($timesummary->getProyectosStatus($_SESSION['sector_id']));
         break;
 
     default:

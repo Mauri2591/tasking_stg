@@ -2,6 +2,10 @@
 require_once __DIR__ . "/../Config/Conexion.php";
 require_once __DIR__ . "/../Config/Config.php";
 require_once __DIR__ . "/../Model/Clientes.php";
+require_once __DIR__ . "/../Model/Clases/Headers.php";
+
+Headers::validar_sesion();
+
 $clientes = new Clientes();
 switch ($_GET['cliente']) {
     case 'total':

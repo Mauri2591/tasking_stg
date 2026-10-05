@@ -2,6 +2,10 @@
 require_once __DIR__ . "/../Config/Conexion.php";
 require_once __DIR__ . "/../Config/Config.php";
 require_once __DIR__ . "/../Model/Usuarios.php";
+require_once __DIR__."/../Model/Clases/Headers.php";
+
+Headers::validar_sesion();
+
 $usuarios = new Usuarios();
 switch ($_GET['usuarios']) {
     case 'get_usuarios':

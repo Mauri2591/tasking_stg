@@ -3,6 +3,9 @@
     require_once __DIR__ . "/../Config/Config.php";
     require_once __DIR__ . "/../Model/Correo.php";
     require_once __DIR__ . "/../Model/Auditoria.php";
+    require_once __DIR__."/../Model/Clases/Headers.php";
+
+    Headers::validar_sesion();
 
     use PHPMailer\PHPMailer\PHPMailer;
     use PHPMailer\PHPMailer\Exception;

@@ -24,4 +24,28 @@ class Headers
             echo json_encode(["status" => "error", "messaje" => "mime no permitido"]);
         }
     }
+
+    public static function validar_sesion($urlLogout = null)
+    {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
+        if (!empty($_SESSION['usu_id'])) {
+            return;
+        }
+
+        $urlLogout = $urlLogout ?? URL . 'View/Logout/';
+
+        $esAjax = strtolower($_SERVER['HTTP_X_REQUESTED_WITH'] ?? '') === 'xmlhttprequest';
+
+        if ($esAjax) {
+            http_response_code(401);
+            header('Content-Type: application/json');
+            echo json_encode(["error" => "Sesión expirada"]);
+        } else {
+            header("Location: $urlLogout");
+        }
+        exit;
+    }
 }

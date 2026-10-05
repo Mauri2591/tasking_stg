@@ -6,6 +6,9 @@ require_once __DIR__ . "/../Model/Clases/Openssl.php";
 require_once __DIR__ . "/../Model/Proyectos.php";
 require_once __DIR__ . "/../Model/Clases/ExtractorDocumentos.php";
 require_once __DIR__ . "/../Model/Clases/CisaKevChecker.php";
+require_once __DIR__."/../Model/Clases/Headers.php";
+
+Headers::validar_sesion();
 
 $proyecto = new Proyectos();
 $integracion = new Integraciones();
