@@ -11,6 +11,8 @@ require_once __DIR__ . "/../Model/Integraciones.php";
 require_once __DIR__ . "/../Model/Auditoria.php";
 require_once __DIR__ . "/../Model/Correo.php";
 
+Headers::validar_sesion();
+
 $conexion = new Conexion();
 $integracion = new Integraciones();
 $proyecto = new Proyectos();

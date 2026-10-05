@@ -5,6 +5,9 @@ require_once __DIR__ . "/../Model/Proyectos.php";
 require_once __DIR__ . "/../Model/Clases/Reportes.php";
 require_once __DIR__ . "/../Model/Timesummary.php";
 require_once __DIR__ . "/../Model/Auditoria.php";
+require_once __DIR__."/../Model/Clases/Headers.php";
+
+Headers::validar_sesion();
 
 // Instancio las clases una sola vez
 $reporte = new Reportes();
