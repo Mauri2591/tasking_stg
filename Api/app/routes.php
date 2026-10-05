@@ -838,7 +838,7 @@ return function (App $app) {
 
 
     // ******************   INICIO TIMASUMMARY ***********************
-    $app->get('/total-tareas', function (Request $request, Response $response) use ($app) {
+    $app->get('/tareas', function (Request $request, Response $response) use ($app) {
         $apiKeyPlana = $request->getHeaderLine('X-API-KEY');
         if (!$apiKeyPlana) {
             $response->getBody()->write(json_encode(["error" => "API Key requerida"]));
@@ -864,11 +864,11 @@ return function (App $app) {
         $sql = "SELECT
             x.correo, x.colaborador, x.area, x.producto, x.tarea,
             x.fecha, x.hora_inicio, x.hora_fin, x.ht,
-           CASE
+            CASE
                 WHEN x.hs_dimensionadas IS NULL THEN 0
                 ELSE ROUND(
                     GREATEST(x.acum - x.hs_dimensionadas, 0)
-                - GREATEST(x.acum - x.ht_proyecto - x.hs_dimensionadas, 0)
+                  - GREATEST(x.acum - x.ht_proyecto - x.hs_dimensionadas, 0)
                 , 2)
             END AS hn,
             x.cliente, x.pais, x.descripcion, x.dato_valido
@@ -885,14 +885,14 @@ return function (App $app) {
                 ts.hora_hasta AS hora_fin,
                 ROUND(TIME_TO_SEC(ts.horas_consumidas) / 3600, 2) AS ht,
                 CASE WHEN u.sector_id = pg.sector_id
-                    THEN ROUND(TIME_TO_SEC(ts.horas_consumidas) / 3600, 2) ELSE 0 END AS ht_proyecto,
+                     THEN ROUND(TIME_TO_SEC(ts.horas_consumidas) / 3600, 2) ELSE 0 END AS ht_proyecto,
                 d.hs_dimensionadas,
                 SUM(CASE WHEN u.sector_id = pg.sector_id
-                        THEN TIME_TO_SEC(ts.horas_consumidas) / 3600 ELSE 0 END) OVER (
+                         THEN TIME_TO_SEC(ts.horas_consumidas) / 3600 ELSE 0 END) OVER (
                     PARTITION BY ts.id_proyecto_gestionado
                     ORDER BY ts.fecha, ts.hora_desde, ts.id
                 ) AS acum,
-                CASE WHEN ts.es_telecom = 'Telecom' OR ts.id_proyecto_gestionado = 0 THEN 'telecom'
+                CASE WHEN ts.es_telecom = 'Telecom' OR ts.id_proyecto_gestionado = 0 THEN 'telecom - tareas diarias'
                      ELSE COALESCE(LOWER(cli.client_rs), 'sin asignar') END AS cliente,
                 CASE WHEN ts.es_telecom = 'Telecom' OR ts.id_proyecto_gestionado = 0 THEN 'argentina'
                      ELSE COALESCE(LOWER(p.pais_nombre), 'sin asignar') END AS pais,
@@ -916,6 +916,7 @@ return function (App $app) {
                 GROUP BY id_proyecto_gestionado
             ) d ON d.id_proyecto_gestionado = ts.id_proyecto_gestionado
             WHERE ts.est = 1
+              AND (pg.id IS NULL OR pg.estados_id <> 16)
         ) x";
 
         $params = [];
