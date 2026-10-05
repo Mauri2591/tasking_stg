@@ -709,10 +709,10 @@ if (isset($_SESSION['usu_id'])) {
                     let horaHasta = data.hora_hasta.slice(0, 5);
 
                     let datosInsert = {
-                        id_proyecto_gestionado: data.id_proyecto_gestionado == 209 ? null : data.id_proyecto_gestionado,
+                        id_proyecto_gestionado: data.id_proyecto_gestionado == 209 ? 0 : data.id_proyecto_gestionado,
                         id_producto: data.id_producto,
                         id_tarea: data.id_tarea,
-                        es_telecom: data.id_proyecto_gestionado == 0 ? "Telecom" : null,
+                        es_telecom: data.id_proyecto_gestionado == 0 ? "Telecom" : "",
                         fecha: NUEVA_FECHA, //  ahora manda la fecha local correcta
                         hora_desde: horaDesde,
                         hora_hasta: horaHasta,

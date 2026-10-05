@@ -101,7 +101,7 @@ switch ($_GET['accion']) {
             );
 
             http_response_code(200);
-            echo json_encode(["success" => "Tarea agregada correctamente"]);
+            echo json_encode(["success" => "Tarea creada correctamente"]);
         } catch (PDOException $e) {
             http_response_code(400);
             echo json_encode([
