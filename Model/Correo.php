@@ -87,7 +87,7 @@ class Correo extends Conexion
                 ],
             ];
             $mail->CharSet = 'UTF-8';
-            $mail->setFrom(SMTP_FROM_ARG, SMTP_FROM_NAME);
+            $mail->setFrom(SMTP_FROM_ARG, SMTP_FROM_NAME_ARG);
             $mail->addAddress('mssp-calidad@personal.com.ar');
             // Agregar usuarios en copia
             if (!empty($datos->usuarios) && $datos->usuarios !== 'Sin usuarios asignados') {
