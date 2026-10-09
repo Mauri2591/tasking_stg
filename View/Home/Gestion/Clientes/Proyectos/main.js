@@ -1025,6 +1025,21 @@ function validar_combo_prioridad(valorInicial) {
 
 function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
 
+    // ===============================
+    // FIX A: reset + ids ANTES de cualquier $.post
+    // ===============================
+    document.getElementById("form_alta_proyecto").reset();
+    $("#mdl_id_proyecto_gestionado").val(id);
+    $("#id_proyecto_gestionado").val(id);
+    $("#id_proyecto_cantidad_servicios").val(id_proyecto_cantidad_servicios);
+    $("#proy_id").val(proy_id);
+
+    // Placeholder mientras cargan los combos (evita ver ETHICAL HACKING por default)
+    if (id) {
+        const cargando = '<option value="">Cargando...</option>';
+        $("#combo_sector_proy_nuevo, #combo_categoria_proy_nuevo, #combo_subcategoria_proy_nuevo, #combo_prioridad_proy_nuevo").html(cargando);
+        $("#combo_usuario_x_sector").html('<small class="text-muted">Cargando...</small>');
+    }
 
     function actualizarTitulo() {
 
@@ -1092,8 +1107,7 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
         $("#mdl_id_proyecto_gestionado_nuevos_hosts").val(id); //id para modificar hosts de un proeycto creado
     }
 
-
-
+    // FIX: ahora #id_proyecto_gestionado ya tiene el id correcto
     $.post("../../../../../Controller/ctrProyectos.php?proy=get_workshop", {
             id_proyecto_gestionado: $("#id_proyecto_gestionado").val()
         },
@@ -1172,8 +1186,10 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
                                     position: "right",
                                     backgroundColor: "#0ab39c",
                                 }).showToast();
-                                if ($.fn.DataTable.isDataTable('#table_proyectos_recurrencia')) {
+                                if ($.fn.DataTable.isDataTable('#table_proyectos_borrador')) {
                                     $("#table_proyectos_borrador").DataTable().ajax.reload(null, false);
+                                }
+                                if ($.fn.DataTable.isDataTable('#table_proyectos_recurrencia')) {
                                     $('#table_proyectos_recurrencia').DataTable().ajax.reload(null, false);
                                 }
                             }, 300);
@@ -1189,21 +1205,20 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
         "json"
     );
 
-
+    // ===============================
+    // FIX B: no pisar el id cuando se edita un proyecto existente
+    // ===============================
     $.post("../../../../../Controller/ctrProyectos.php?proy=get_primer_id_proyecto_gestionado", {
             id_proyecto_cantidad_servicios: id_proyecto_cantidad_servicios
         },
         function (data, textStatus, jqXHR) {
-            $("#mdl_id_proyecto_gestionado").val(data.id_proyecto_gestionado);
+            if (!id) {
+                $("#mdl_id_proyecto_gestionado").val(data.id_proyecto_gestionado);
+            }
         },
         "json"
     );
 
-    document.getElementById("form_alta_proyecto").reset();
-
-    $("#mdl_id_proyecto_gestionado").val(id)
-
-    $("#id_proyecto_gestionado").val(id)
     $("#ModalAltaProject").modal("show");
     $("#btn_crear_proyecto").show();
     $("#btn_cambiar_estado_proyecto").hide();
@@ -1211,9 +1226,6 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
     $("#btn_finalizar_estado_proyecto").hide();
     $("#btn_editar_proyecto").hide();
     $("#combo_recurrente_proy_nuevo").show();
-
-    $("#id_proyecto_cantidad_servicios").val(id_proyecto_cantidad_servicios);
-    $("#proy_id").val(proy_id);
 
     function get_data_editar_proyecto() {
 
@@ -1281,9 +1293,14 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
         $("#client_rs_alta_proy").val(client_rs);
         $("#pais_id_carga_proy").val(data.pais_nombre);
 
-        $("#titulo_client_rs_alta_proy")
-            .val(tituloDefault)
-            .data("base", client_rs);
+        // ===============================
+        // FIX C: título por defecto solo para proyecto nuevo
+        // ===============================
+        if (!id) {
+            $("#titulo_client_rs_alta_proy")
+                .val(tituloDefault)
+                .data("base", client_rs);
+        }
 
         TITULO_EDITADO_MANUAL = false;
 
@@ -1320,16 +1337,10 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
             $("#contenedor_cont_activos").show();
         }
 
-        if (data.recurrencia != '' || data.recurrencia != null) {
+        // Proyecto existente: sector y categoría (producto) siempre bloqueados
+        if (data) {
             $("#combo_categoria_proy_nuevo").prop("disabled", true);
-            // $("#combo_subcategoria_proy_nuevo").prop("disabled", true);
             $("#combo_sector_proy_nuevo").prop("disabled", true);
-            // $("#client_refPro_proy_nuevo").prop("disabled", true);
-        } else {
-            $("#combo_categoria_proy_nuevo").prop("disabled", false);
-            $("#combo_subcategoria_proy_nuevo").prop("disabled", false);
-            $("#combo_sector_proy_nuevo").prop("disabled", false);
-            // $("#client_refPro_proy_nuevo").prop("disabled", false);
         }
 
         VALIDAR_SI_HAY_FECHA_INICIO = !!data.fech_inicio;
@@ -1366,38 +1377,37 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
                 .val(data.titulo)
                 .data("base", data.titulo.split("_Ref")[0]); // 🔥 CLAVE
 
+            // Combos en paralelo (antes estaban anidados dentro de get_sectores)
             $.post("../../../../../Controller/ctrProyectos.php?proy=get_sectores", function (res) {
                 $("#combo_sector_proy_nuevo").html(res);
                 $("#combo_sector_proy_nuevo").val(data.sector_id);
+            });
 
-                $.post("../../../../../Controller/ctrProyectos.php?proy=get_combo_categorias_x_sector", {
-                    sector_id: data.sector_id
-                }, function (res) {
-                    $("#combo_categoria_proy_nuevo").html(res);
-                    $("#combo_categoria_proy_nuevo").val(data.cat_id);
-                });
+            $.post("../../../../../Controller/ctrProyectos.php?proy=get_combo_categorias_x_sector", {
+                sector_id: data.sector_id
+            }, function (res) {
+                $("#combo_categoria_proy_nuevo").html(res);
+                $("#combo_categoria_proy_nuevo").val(data.cat_id);
+            });
 
-                $.post("../../../../../Controller/ctrProyectos.php?proy=get_combo_subcategorias_x_sector", {
-                    sector_id: data.sector_id
-                }, function (res) {
-                    $("#combo_subcategoria_proy_nuevo").html(res);
-                    $("#combo_subcategoria_proy_nuevo").val(data.cats_id);
-                });
+            $.post("../../../../../Controller/ctrProyectos.php?proy=get_combo_subcategorias_x_sector", {
+                sector_id: data.sector_id
+            }, function (res) {
+                $("#combo_subcategoria_proy_nuevo").html(res);
+                $("#combo_subcategoria_proy_nuevo").val(data.cats_id);
+            });
 
+            $.post("../../../../../Controller/ctrProyectos.php?proy=get_usuarios_x_sector", {
+                sector_id: data.sector_id,
+                id_proyecto_gestionado: id
+            }, function (res) {
+                $("#combo_usuario_x_sector").html(res);
+            });
 
-
-                $.post("../../../../../Controller/ctrProyectos.php?proy=get_usuarios_x_sector", {
-                    sector_id: data.sector_id,
-                    id_proyecto_gestionado: id
-                }, function (res) {
-                    $("#combo_usuario_x_sector").html(res);
-                });
-
-                $.post("../../../../../Controller/ctrProyectos.php?proy=get_combo_prioridad_proy_nuevo_eh", function (res) {
-                    $("#combo_prioridad_proy_nuevo").html(res);
-                    $("#combo_prioridad_proy_nuevo").val(data.prioridad_id);
-                    validar_combo_prioridad(data.prioridad_id);
-                });
+            $.post("../../../../../Controller/ctrProyectos.php?proy=get_combo_prioridad_proy_nuevo_eh", function (res) {
+                $("#combo_prioridad_proy_nuevo").html(res);
+                $("#combo_prioridad_proy_nuevo").val(data.prioridad_id);
+                validar_combo_prioridad(data.prioridad_id);
             });
 
             $("#fech_fin_proy_nuevo").val(data.fech_fin);
@@ -1523,6 +1533,9 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
                                 }
                             );
 
+                            // Workshop: solo si el update del proyecto salió bien
+                            actualizar_workshop();
+
                             setTimeout(() => {
                                 VALIDAR_SI_HAY_FECHA_INICIO = true;
                                 if ($.fn.DataTable.isDataTable('#table_proyectos_borrador')) {
@@ -1539,72 +1552,15 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
                         }
                     },
                     error: function (xhr) {
-                        console.error("error al actualizar proyecto", xhr.responseText);
+                        console.error("error al actualizar proyecto", xhr.status, xhr.responseText);
                         Swal.fire({
                             icon: "error",
                             title: "Error",
-                            text: "Datos invalidos",
+                            text: "Datos invalidos (HTTP " + xhr.status + ")",
                             showConfirmButton: true
                         });
                     }
                 });
-
-
-                $.post("../../../../../Controller/ctrProyectos.php?proy=get_workshop", {
-                        id_proyecto_gestionado: $("#id_proyecto_gestionado").val()
-                    },
-                    function (data, textStatus, jqXHR) {
-
-                        if (data == false) {
-                            if ($("#combo_workshop").val() == "SI") {
-                                $.ajax({
-                                    type: "POST",
-                                    url: "../../../../../Controller/ctrProyectos.php?proy=insert_workshop",
-                                    data: {
-                                        id_proyecto_gestionado: $("#id_proyecto_gestionado").val()
-                                    },
-                                    dataType: "json",
-                                    success: function (response) {},
-                                    error: function (err) {
-                                        console.log(err);
-                                    }
-                                });
-                            }
-                        } else {
-                            if (data.est == 0 && $("#combo_workshop").val() == "SI") {
-                                $.ajax({
-                                    type: "POST",
-                                    url: "../../../../../Controller/ctrProyectos.php?proy=update_workshop",
-                                    data: {
-                                        id_proyecto_gestionado: $("#id_proyecto_gestionado").val(),
-                                        est: 1
-                                    },
-                                    dataType: "json",
-                                    success: function (response) {},
-                                    error: function (err) {
-                                        console.log(err);
-                                    }
-                                });
-                            } else if (data.est == 1 && $("#combo_workshop").val() == "NO") {
-                                $.ajax({
-                                    type: "POST",
-                                    url: "../../../../../Controller/ctrProyectos.php?proy=update_workshop",
-                                    data: {
-                                        id_proyecto_gestionado: $("#id_proyecto_gestionado").val(),
-                                        est: 0
-                                    },
-                                    dataType: "json",
-                                    success: function (response) {},
-                                    error: function (err) {
-                                        console.log(err);
-
-                                    }
-                                });
-                            }
-                        }
-                    },
-                    "json"
-                );
             });
 
         } else {
@@ -1616,30 +1572,119 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
         }
     }, "json");
 
+    function actualizar_workshop() {
+        $.post("../../../../../Controller/ctrProyectos.php?proy=get_workshop", {
+                id_proyecto_gestionado: $("#id_proyecto_gestionado").val()
+            },
+            function (data, textStatus, jqXHR) {
+
+                if (data == false) {
+                    if ($("#combo_workshop").val() == "SI") {
+                        $.ajax({
+                            type: "POST",
+                            url: "../../../../../Controller/ctrProyectos.php?proy=insert_workshop",
+                            data: {
+                                id_proyecto_gestionado: $("#id_proyecto_gestionado").val()
+                            },
+                            dataType: "json",
+                            success: function (response) {},
+                            error: function (err) {
+                                console.log(err);
+                            }
+                        });
+                    }
+                } else {
+                    if (data.est == 0 && $("#combo_workshop").val() == "SI") {
+                        $.ajax({
+                            type: "POST",
+                            url: "../../../../../Controller/ctrProyectos.php?proy=update_workshop",
+                            data: {
+                                id_proyecto_gestionado: $("#id_proyecto_gestionado").val(),
+                                est: 1
+                            },
+                            dataType: "json",
+                            success: function (response) {},
+                            error: function (err) {
+                                console.log(err);
+                            }
+                        });
+                    } else if (data.est == 1 && $("#combo_workshop").val() == "NO") {
+                        $.ajax({
+                            type: "POST",
+                            url: "../../../../../Controller/ctrProyectos.php?proy=update_workshop",
+                            data: {
+                                id_proyecto_gestionado: $("#id_proyecto_gestionado").val(),
+                                est: 0
+                            },
+                            dataType: "json",
+                            success: function (response) {},
+                            error: function (err) {
+                                console.log(err);
+                            }
+                        });
+                    }
+                }
+            },
+            "json"
+        );
+    }
+
     const elRefPro = document.getElementById("client_refPro_proy_nuevo");
     if (elRefPro) elRefPro.focus();
-    $.post("../../../../../Controller/ctrProyectos.php?proy=get_combo_categorias_x_sector", {
-            sector_id: 1
-        },
-        function (data, textStatus, jqXHR) {
-            $("#combo_categoria_proy_nuevo").html(data)
-        },
-        "html"
-    );
 
-    $.post("../../../../../Controller/ctrProyectos.php?proy=get_combo_subcategorias_x_sector", {
-            sector_id: 1
-        },
-        function (data, textStatus, jqXHR) {
-            $("#combo_subcategoria_proy_nuevo").html(data)
-        },
-        "html"
-    );
+    // ===============================
+    // FIX D: combos por defecto (sector 1) SOLO para proyecto nuevo
+    // ===============================
+    if (!id) {
+        $.post("../../../../../Controller/ctrProyectos.php?proy=get_combo_categorias_x_sector", {
+                sector_id: 1
+            },
+            function (data, textStatus, jqXHR) {
+                $("#combo_categoria_proy_nuevo").html(data)
+            },
+            "html"
+        );
+
+        $.post("../../../../../Controller/ctrProyectos.php?proy=get_combo_subcategorias_x_sector", {
+                sector_id: 1
+            },
+            function (data, textStatus, jqXHR) {
+                $("#combo_subcategoria_proy_nuevo").html(data)
+            },
+            "html"
+        );
+
+        $.post("../../../../../Controller/ctrProyectos.php?proy=get_combo_prioridad_proy_nuevo_eh",
+            function (data, textStatus, jqXHR) {
+                $("#combo_prioridad_proy_nuevo").html(data)
+            },
+            "html"
+        );
+
+        $.post("../../../../../Controller/ctrProyectos.php?proy=get_sectores",
+            function (data, textStatus, jqXHR) {
+                $("#combo_sector_proy_nuevo").html(data)
+            },
+            "html"
+        );
+
+        $.post("../../../../../Controller/ctrProyectos.php?proy=get_usuarios_x_sector", {
+                sector_id: 1
+            },
+            function (data, textStatus, jqXHR) {
+                $("#combo_usuario_x_sector").html(data)
+            },
+            "html"
+        );
+    }
+
     $("#contenedor_validad_proy_Desa_interno_tasking").hide();
 
 
-
-    $("#combo_categoria_proy_nuevo").change(function (e) {
+    // ===============================
+    // FIX F: .off() para no acumular handlers
+    // ===============================
+    $("#combo_categoria_proy_nuevo").off("change.borrador").on("change.borrador", function (e) {
         e.preventDefault();
         $("#btn_crear_proyecto").show();
         $("#btn_eliminar_proyecto").show();
@@ -1697,59 +1742,35 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
         }
     });
 
-    $.post("../../../../../Controller/ctrProyectos.php?proy=get_combo_prioridad_proy_nuevo_eh",
-        function (data, textStatus, jqXHR) {
-            $("#combo_prioridad_proy_nuevo").html(data)
-        },
-        "html"
-    );
+    $("#combo_sector_proy_nuevo").off("change.borrador").on("change.borrador", function () {
+        const chkUsuariosSector = document.getElementById('usuarios_sector');
+        if (chkUsuariosSector) chkUsuariosSector.checked = false;
 
-    $.post("../../../../../Controller/ctrProyectos.php?proy=get_sectores",
-        function (data, textStatus, jqXHR) {
-            $("#combo_sector_proy_nuevo").html(data)
-        },
-        "html"
-    );
-
-    $.post("../../../../../Controller/ctrProyectos.php?proy=get_usuarios_x_sector", {
-            sector_id: 1
-        },
-        function (data, textStatus, jqXHR) {
-            $("#combo_usuario_x_sector").html(data)
-        },
-        "html"
-    );
-
-    const elComboSector = document.getElementById("combo_sector_proy_nuevo");
-    if (elComboSector) {
-        elComboSector.addEventListener("change", function () {
-            document.getElementById('usuarios_sector').checked = false;
-            $.post("../../../../../Controller/ctrProyectos.php?proy=get_combo_categorias_x_sector", {
-                    sector_id: this.value
-                },
-                function (data, textStatus, jqXHR) {
-                    $("#combo_categoria_proy_nuevo").html(data)
-                },
-                "html"
-            );
-            $.post("../../../../../Controller/ctrProyectos.php?proy=get_combo_subcategorias_x_sector", {
-                    sector_id: this.value
-                },
-                function (data, textStatus, jqXHR) {
-                    $("#combo_subcategoria_proy_nuevo").html(data)
-                },
-                "html"
-            );
-            $.post("../../../../../Controller/ctrProyectos.php?proy=get_usuarios_x_sector", {
-                    sector_id: this.value
-                },
-                function (data, textStatus, jqXHR) {
-                    $("#combo_usuario_x_sector").html(data)
-                },
-                "html"
-            );
-        });
-    }
+        $.post("../../../../../Controller/ctrProyectos.php?proy=get_combo_categorias_x_sector", {
+                sector_id: this.value
+            },
+            function (data, textStatus, jqXHR) {
+                $("#combo_categoria_proy_nuevo").html(data)
+            },
+            "html"
+        );
+        $.post("../../../../../Controller/ctrProyectos.php?proy=get_combo_subcategorias_x_sector", {
+                sector_id: this.value
+            },
+            function (data, textStatus, jqXHR) {
+                $("#combo_subcategoria_proy_nuevo").html(data)
+            },
+            "html"
+        );
+        $.post("../../../../../Controller/ctrProyectos.php?proy=get_usuarios_x_sector", {
+                sector_id: this.value
+            },
+            function (data, textStatus, jqXHR) {
+                $("#combo_usuario_x_sector").html(data)
+            },
+            "html"
+        );
+    });
 
     function validarHost(tipo, host) {
         host = host.trim();
@@ -1840,7 +1861,6 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
     }
 
 
-    //quede acá
     function get_datos_insert_proyecto_gestionado() {
         let formData = new FormData();
 
@@ -1904,7 +1924,7 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
         formData.append('transacciones', document.getElementById("transacciones_proy_nuevo")?.value || "");
         formData.append('adicionales', document.getElementById("adicionales_proy_nuevo")?.value || "");
         //Consulting
-        
+
         formData.append('otros', document.getElementById("otros_proy_nuevo")?.value || "");
 
         formData.append('hs_dimensionadas', document.getElementById('hs_dimensionadas').value);
@@ -1942,18 +1962,20 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
                 $("#btn_finalizar_estado_proyecto").show();
                 $("#btn_editar_proyecto").show();
 
+                // Cada tabla validada por separado para no cortar el resto si una no existe
                 setTimeout(() => {
-                    if ($.fn.DataTable.isDataTable('#table_proyectos_borrador')) {
-                        $('#table_proyectos_borrador').DataTable().ajax.reload(null, false);
-                        $('#table_proyectos_recurrencia').DataTable().ajax.reload(null, false);
-                        $('#table_proyectos_total_calidad').DataTable().ajax.reload(null, false);
-                        $('#tablelHistorialProyectosCalidad').DataTable().ajax.reload(null, false);
-                    }
+                    [
+                        '#table_proyectos_borrador',
+                        '#table_proyectos_recurrencia',
+                        '#table_proyectos_total_calidad',
+                        '#tablelHistorialProyectosCalidad',
+                        '#table_cross_sell_sectores'
+                    ].forEach(tabla => {
+                        if ($.fn.DataTable.isDataTable(tabla)) {
+                            $(tabla).DataTable().ajax.reload(null, false);
+                        }
+                    });
                 }, 500);
-
-                setTimeout(() => {
-                    $('#table_cross_sell_sectores').DataTable().ajax.reload(null, false);
-                }, 500)
 
             },
             error: function (error) {
@@ -1970,48 +1992,45 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
         });
     }
 
-    function captura_imagen_b64() {
-        document.getElementById("captura_imagen").addEventListener("paste", function (e) {
-            let clipboardData = (e.clipboardData || window.clipboardData);
-            // Buscar si hay items tipo imagen
-            let items = clipboardData.items;
-            let foundImage = false;
+    // FIX F: paste sin acumular listeners
+    $("#captura_imagen").off("paste.borrador").on("paste.borrador", function (e) {
+        const input = this;
+        let clipboardData = (e.originalEvent.clipboardData || window.clipboardData);
+        // Buscar si hay items tipo imagen
+        let items = clipboardData.items;
+        let foundImage = false;
 
-            for (let i = 0; i < items.length; i++) {
-                if (items[i].type.indexOf("image") !== -1) {
-                    let file = items[i].getAsFile();
-                    let reader = new FileReader();
-                    reader.onload = function (event) {
-                        // Insertar base64 en el input
-                        document.getElementById("captura_imagen").value = event.target.result;
-                    };
-                    reader.readAsDataURL(file);
-                    foundImage = true;
-                    break;
-                }
+        for (let i = 0; i < items.length; i++) {
+            if (items[i].type.indexOf("image") !== -1) {
+                let file = items[i].getAsFile();
+                let reader = new FileReader();
+                reader.onload = function (event) {
+                    // Insertar base64 en el input
+                    input.value = event.target.result;
+                };
+                reader.readAsDataURL(file);
+                foundImage = true;
+                break;
             }
-            if (!foundImage) {
-                e.preventDefault();
-                Swal.fire({
-                    icon: 'warning',
-                    title: "Error!",
-                    text: "Solo se permiten imágenes en formato base64",
-                    showConfirmButton: false,
-                    showCancelButton: false,
-                    timer: 1100
-                });
-            }
-        });
-    }
-    captura_imagen_b64();
+        }
+        if (!foundImage) {
+            e.preventDefault();
+            Swal.fire({
+                icon: 'warning',
+                title: "Error!",
+                text: "Solo se permiten imágenes en formato base64",
+                showConfirmButton: false,
+                showCancelButton: false,
+                timer: 1100
+            });
+        }
+    });
 
     $("#btn_crear_proyecto").off().click(function (e) {
         e.preventDefault();
 
         let data = get_datos_insert_proyecto_gestionado();
         let hs_dimensionadas = data.get('hs_dimensionadas').trim();
-
-        let validarHsDimRequerido = false;
 
         // Validar campo vacío
         if (hs_dimensionadas === '') {
@@ -2049,28 +2068,25 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
         }
     });
 
-    //Comienza validacion de IPS en TEXTAREA
-    const elIps = document.getElementById("ips_proy_nuevo_eh");
-    if (elIps) {
-        elIps.addEventListener("input", function () {
-            const textarea = this;
-            if (textarea.value.trim() === "") {
-                document.getElementById("mje_ips_proy_nuevo_eh").innerHTML = "";
-                return;
-            }
-            const todasLasIps = textarea.value
-                .split(/[\s,]+/)
-                .map(ip => ip.trim())
-                .filter(ip => ip.length > 0);
-            textarea.value = todasLasIps.join('\n');
-            const ipsInvalidas = todasLasIps.filter(ip => !validarIP(ip));
-            if (ipsInvalidas.length > 0) {
-                mostrarMensajeIpInvalida(ipsInvalidas);
-            } else {
-                eliminarMensajeIpInvalida();
-            }
-        });
-    }
+    //Comienza validacion de IPS en TEXTAREA (FIX F: .off)
+    $("#ips_proy_nuevo_eh").off("input.borrador").on("input.borrador", function () {
+        const textarea = this;
+        if (textarea.value.trim() === "") {
+            document.getElementById("mje_ips_proy_nuevo_eh").innerHTML = "";
+            return;
+        }
+        const todasLasIps = textarea.value
+            .split(/[\s,]+/)
+            .map(ip => ip.trim())
+            .filter(ip => ip.length > 0);
+        textarea.value = todasLasIps.join('\n');
+        const ipsInvalidas = todasLasIps.filter(ip => !validarIP(ip));
+        if (ipsInvalidas.length > 0) {
+            mostrarMensajeIpInvalida(ipsInvalidas);
+        } else {
+            eliminarMensajeIpInvalida();
+        }
+    });
 
     function validarIP(ip) {
         const regexIP = /^(25[0-5]|2[0-4][0-9]|1?[0-9]{1,2})(\.(25[0-5]|2[0-4][0-9]|1?[0-9]{1,2})){3}$/;
@@ -2092,28 +2108,25 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
     }
     //Finaliza validacion de IPS en TEXTAREA
 
-    //Comienza validacion URLS en TEXTAREA
-    const elUrls = document.getElementById("urls_proy_nuevo_eh");
-    if (elUrls) {
-        elUrls.addEventListener("input", function () {
-            const textarea = this;
-            if (textarea.value.trim() === "") {
-                document.getElementById("mje_urls_proy_nuevo_eh").innerHTML = "";
-                return;
-            }
-            const todasLasUrls = textarea.value
-                .split(/[\s,]+/)
-                .map(url => url.trim())
-                .filter(url => url.length > 0);
-            textarea.value = todasLasUrls.join('\n');
-            const urlsInvalidas = todasLasUrls.filter(url => !validarURL(url));
-            if (urlsInvalidas.length > 0) {
-                mostrarMensajeUrlInvalida(urlsInvalidas);
-            } else {
-                eliminarMensajeUrlInvalida();
-            }
-        });
-    } // cierra el if (elUrls)
+    //Comienza validacion URLS en TEXTAREA (FIX F: .off)
+    $("#urls_proy_nuevo_eh").off("input.borrador").on("input.borrador", function () {
+        const textarea = this;
+        if (textarea.value.trim() === "") {
+            document.getElementById("mje_urls_proy_nuevo_eh").innerHTML = "";
+            return;
+        }
+        const todasLasUrls = textarea.value
+            .split(/[\s,]+/)
+            .map(url => url.trim())
+            .filter(url => url.length > 0);
+        textarea.value = todasLasUrls.join('\n');
+        const urlsInvalidas = todasLasUrls.filter(url => !validarURL(url));
+        if (urlsInvalidas.length > 0) {
+            mostrarMensajeUrlInvalida(urlsInvalidas);
+        } else {
+            eliminarMensajeUrlInvalida();
+        }
+    });
 
     function validarURL(url) {
         return url.startsWith("http://") || url.startsWith("https://");
@@ -2134,7 +2147,6 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
     }
 
 } // cierra gestionar_proy_borrador
-
 
 function consultar_activos_borrdor(proy_id, numero_proyecto) {
     $("#ModalConsultarActivos").modal("show")

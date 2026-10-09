@@ -695,7 +695,7 @@ switch ($_GET['proy']) {
         $proyecto->activar_host_x_id($_SESSION['usu_id'], $_POST['id_proyecto_cantidad_servicios'], $_POST['host_id']);
         break;
 
-    case 'update_proyecto':
+  case 'update_proyecto':
         /* =====================================================
             * 0. VALIDACIÓN DEL ID
             * ===================================================== */
@@ -724,14 +724,52 @@ switch ($_GET['proy']) {
             $conn->beginTransaction();
 
             /* =====================================================
+                * 1.1 VALIDAR CAMPOS NO EDITABLES (sector / categoría)
+                * ===================================================== */
+            $stmtOrig = $conn->prepare(
+                "SELECT sector_id, cat_id
+                   FROM proyecto_gestionado
+                  WHERE id = :id AND est = 1
+                  FOR UPDATE"
+            );
+            $stmtOrig->bindValue(':id', $idProyecto, PDO::PARAM_INT);
+            $stmtOrig->execute();
+            $original = $stmtOrig->fetch(PDO::FETCH_ASSOC);
+
+            if (!$original) {
+                throw new Exception("Proyecto inexistente o inactivo");
+            }
+
+            $sectorPost = (int) ($_POST['sector_id'] ?? 0);
+            $catPost    = (int) ($_POST['cat_id'] ?? 0);
+
+            if ($sectorPost !== (int) $original['sector_id'] || $catPost !== (int) $original['cat_id']) {
+
+                error_log(sprintf(
+                    "[%s] INTENTO DE MODIFICAR CAMPOS BLOQUEADOS | proyecto_id=%d | sector %d->%d | cat %d->%d | usuario=%d | IP=%s\n",
+                    date('Y-m-d H:i:s'),
+                    $idProyecto,
+                    (int) $original['sector_id'],
+                    $sectorPost,
+                    (int) $original['cat_id'],
+                    $catPost,
+                    (int) $_SESSION['usu_id'],
+                    $_SERVER['REMOTE_ADDR'] ?? 'CLI'
+                ), 3, __DIR__ . '/Logs/ctrProyectos/camposBloqueadosUpdateProyecto.log');
+
+                throw new Exception("No es posible modificar el sector o la categoría del proyecto");
+            }
+
+            /* =====================================================
                 * 2. UPDATE PROYECTO
+                * sector_id y cat_id salen de la BD, no del POST
                 * ===================================================== */
             $updated_proyecto = $proyecto->update_proyecto(
                 $conn,
                 $idProyecto,
-                (int) ($_POST['cat_id'] ?? 0),
+                (int) $original['cat_id'],
                 (int) ($_POST['cats_id'] ?? 0),
-                (int) ($_POST['sector_id'] ?? 0),
+                (int) $original['sector_id'],
                 (int) ($_POST['usu_id'] ?? 0),
                 (int) $_SESSION['usu_id'],
                 (int) ($_POST['prioridad_id'] ?? 0),
@@ -740,12 +778,12 @@ switch ($_GET['proy']) {
                 trim($_POST['refProy'] ?? ''),
                 trim($_POST['correo_envio_cliente'] ?? ''),
                 trim($_POST['correo_envio_cliente_copias'] ?? ''),
-                ($_POST['recurrencia'] === '' ? null : (int) $_POST['recurrencia']),
-                $_POST['fech_inicio'] ?? null,
-                $_POST['fech_fin'] ?? null,
-                $_POST['fech_vantive'] ?? null,
+                (string) (int) ($_POST['recurrencia'] ?? 0),
+                $_POST['fech_inicio'] ?? '',
+                $_POST['fech_fin'] ?? '',
+                $_POST['fech_vantive'] ?? '',
                 $_POST['fecha_contrato'] ?? null,
-                trim($_POST['plazo_meses'] ?? null),
+                trim($_POST['plazo_meses'] ?? ''),
                 $_POST['posee_licencias'] ?? null,
                 $_POST['fecha_vencimiento_licencias'] ?? null
             );
