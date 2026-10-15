@@ -72,12 +72,12 @@
                             </div>
 
                             <div class="mt-2 d-flex">
-                                <div class="col-md-8">
+                                <div class="col-md-8" id="contenedor_descripcion">
                                     <label for="descripcion" class="badge bg-light fs-10 mb-1 text-dark">Descripción</label>
                                     <textarea class="form-control form-control-sm" id="descripcion" name="descripcion" rows="6"></textarea>
                                 </div>
 
-                                <div class="col-sm-3 mx-3" style="border: 1px solid #ced4da; border-radius: .3rem;"> <label for="usuarios_sector_update_parcial"><span class="badge bg-light fs-10 mb-1 text-dark">Usuarios <input type="checkbox" name="usuarios_sector_update_parcial" id="usuarios_sector_update_parcial" title="Seleccionar todos los usuarios">
+                                <div id="contenedor_combo_usuario_x_sector_update_parcial" class="col-sm-3 mx-3" style="border: 1px solid #ced4da; border-radius: .3rem;"> <label for="usuarios_sector_update_parcial"><span class="badge bg-light fs-10 mb-1 text-dark">Usuarios <input type="checkbox" name="usuarios_sector_update_parcial" id="usuarios_sector_update_parcial" title="Seleccionar todos los usuarios">
                                         </span></label>
                                     <div style="height: 100px; overflow-y: scroll;">
                                         <div class="form-check" id="combo_usuario_x_sector_update_parcial">

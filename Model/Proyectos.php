@@ -2627,6 +2627,57 @@ ORDER BY id_proyecto_cantidad_servicios ASC";
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    public function get_usuarios_x_sector_edicion_parcial($sector_id, $excluir_session = true)
+{
+    $conn = parent::get_conexion();
+    $usu_session = $_SESSION['usu_id'];
+    $filtro_session = $excluir_session ? "AND tm_usuario.usu_id != :usu_session" : "";
+
+    if ($sector_id == 5) {
+        $sql = "SELECT 
+        tm_usuario.usu_id,
+        tm_usuario.usu_correo,
+        CONCAT(
+            UPPER(LEFT(tm_usuario.usu_nom, 1)),
+            LOWER(SUBSTRING(tm_usuario.usu_nom, 2))
+        ) AS usu_nom,
+        sectores.sector_nombre
+    FROM tm_usuario
+    LEFT JOIN sectores 
+        ON tm_usuario.sector_id = sectores.sector_id
+    WHERE sectores.sector_nombre IS NOT NULL
+      AND tm_usuario.usu_id NOT IN (82,105) /*usuarios dev, Test Mau Soc*/ 
+      $filtro_session
+      AND tm_usuario.est = 1";
+        $stmt = $conn->prepare($sql);
+    } else {
+        $sql = "SELECT 
+        tm_usuario.usu_id,
+        tm_usuario.usu_correo,
+        CONCAT(
+            UPPER(LEFT(tm_usuario.usu_nom, 1)),
+            LOWER(SUBSTRING(tm_usuario.usu_nom, 2))
+        ) AS usu_nom,
+        sectores.sector_nombre
+    FROM tm_usuario
+    LEFT JOIN sectores 
+        ON tm_usuario.sector_id = sectores.sector_id
+    WHERE tm_usuario.sector_id = :sector_id
+      AND sectores.sector_nombre IS NOT NULL
+      AND tm_usuario.usu_id NOT IN(82,102,103,104,105) /*usuarios dev, Ari,Dani,Test M, Test Mau Soc*/ 
+      $filtro_session
+      AND tm_usuario.est = 1";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue(':sector_id', $sector_id, PDO::PARAM_INT);
+    }
+
+    if ($excluir_session) {
+        $stmt->bindValue(':usu_session', $usu_session, PDO::PARAM_INT);
+    }
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
     public function delete_proyecto_a_nuevo($proy_id)
     {
         $conn = parent::get_conexion();

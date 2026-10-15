@@ -547,6 +547,24 @@ switch ($_GET['proy']) {
         }
         echo $htmlOption;
         break;
+    case 'get_usuarios_x_sector_edicion_parcial':
+        $es_edicion = !empty($_POST['id_proyecto_gestionado']);
+        $usuarios = $proyecto->get_usuarios_x_sector_edicion_parcial($_POST['sector_id'], !$es_edicion);
+        $asignados = [];
+        if ($es_edicion) {
+            $asignados = $proyecto->get_usuarios_x_proy_y_sector((int) $_POST['id_proyecto_gestionado']);
+        }
+        $asignados_ids = array_column($asignados, 'usu_asignado');
+        $htmlCheckbox = '';
+        foreach ($usuarios as $val) {
+            $checked = in_array($val['usu_id'], $asignados_ids) ? 'checked' : '';
+            $htmlCheckbox .= '<label title="' . $val['sector_nombre'] . '" class="d-block">'
+                . '<input type="checkbox" value="' . $val['usu_id'] . '" name="usu_asignado[]" ' . $checked . '> '
+                . htmlspecialchars($val['usu_nom'])
+                . '</label>';
+        }
+        echo $htmlCheckbox;
+        break;
 
     case 'insert_usuarios_proyecto_abierto':
         $proyecto->insert_usuarios_proyecto($_POST['id_proyecto_gestionado'], $_POST['usu_asignado']);

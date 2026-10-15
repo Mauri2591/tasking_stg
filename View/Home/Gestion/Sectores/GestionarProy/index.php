@@ -53,6 +53,7 @@ if (isset($_SESSION['usu_id'])) {
             include_once __DIR__ . "/../Modales/mdlLogsProyectos.php";
             include_once __DIR__ . "/../Modales/mdlEnviarCorreoCliente.php";
             include_once __DIR__ . "/../Modales/mdlGenAiResumenDocumentos.php";
+            include_once __DIR__ . "/../../Clientes/Proyectos/Modals/ModalEditarProyectoParcial.php";
 
             ?>
 
@@ -381,7 +382,10 @@ if (isset($_SESSION['usu_id'])) {
                                                 <span id="workshop" style="display: none;" class="badge mx-1 text-light bg-info border border-light">workshop</span>
                                             </div>
 
-                                            <div style="display: flex; justify-content: end; align-items: center; margin-top: 0; margin-bottom: .2rem;">
+                                            <div style="display: flex; justify-content:space-between; align-items: center; margin-top: .3rem; margin-bottom: .5rem;">
+                                                <span type="button" onclick="editarParcial(<?php echo Openssl::get_ssl_decrypt($_GET['pg']) ?>)" style="background-color: #24bbff; display: inline-flex; align-items: center; gap: 4px;" class="badge border">
+                                                    Editar Parcial <i class="ri-file-text-fill fs-14"></i>
+                                                </span>
                                                 <span type="button" onclick="verLogs(<?php echo Openssl::get_ssl_decrypt($_GET['pg']) ?>)" style="background-color: #475569; display: inline-flex; align-items: center; gap: 4px;" class="badge border border-light">
                                                     Ver Logs <i class="ri-history-line fs-14"></i>
                                                 </span>
@@ -2155,6 +2159,171 @@ if (isset($_SESSION['usu_id'])) {
             });
         }
         //FUNCTIONAL SERVICES -------------------------------------------------------
+
+        const btn_update_parcial = document.getElementById("btn_update_parcial");
+        const modalEditarParcial = document.getElementById("ModalEditarProyectoParcial");
+        let bloquear_cierre = false;
+        let hubo_edicion_parcial = false;
+
+        function editarParcial(id_proyecto_gestionado) {
+            $.ajax({
+                type: "POST",
+                url: URL + 'Controller/ctrProyectos.php?proy=get_datos_para_edicion_parcial_de_proyecto',
+                data: {
+                    id: id_proyecto_gestionado
+                },
+                dataType: "json",
+                success: function(proyecto) {
+                    $('#id_proyecto_gestionadoa_update_parcial').val(id_proyecto_gestionado);
+                    $('#sector_id_update_parcial').val(proyecto.sector_id);
+                    $('#titulo').val(proyecto.titulo);
+                    $('#referencia').val(proyecto.referencia);
+                    $('#fecha_vantive').val(proyecto.fecha_vantive ? proyecto.fecha_vantive.slice(0, 10) : '');
+                    $('#inicio').val(proyecto.inicio ? proyecto.inicio.slice(0, 10) : '');
+                    $('#fin').val(proyecto.fin ? proyecto.fin.slice(0, 10) : '');
+                    $('#correo_envio_cliente_edicion_parcial').val(proyecto.correo_envio_cliente);
+                    $('#correo_envio_cliente_copias_edicion_parcial').val(proyecto.correo_envio_cliente_copias);
+                    $('#descripcion').val(proyecto.descripcion);
+                    $('#dimensionamiento_update_parcial').val(proyecto.dimensionamiento);
+
+                    $('#fecha_contrato_update_parcial').val(proyecto.fecha_contrato);
+                    $('#plazo_meses_update_parcial').val(proyecto.plazo_meses);
+                    $('#posee_licencias_update_parcial').val(proyecto.posee_licencias);
+                    $('#fecha_vencimiento_licencias_update_parcial').val(proyecto.fecha_vencimiento_licencias);
+
+                    $.ajax({
+                        type: "POST",
+                        url: URL + 'Controller/ctrProyectos.php?proy=get_combo_subcategorias_x_sector',
+                        data: {
+                            sector_id: proyecto.sector_id
+                        },
+                        dataType: "html",
+                        success: function(options) {
+                            $('#tipo').html(options);
+                            $('#tipo').val(proyecto.tipo);
+                        }
+                    });
+
+                    // Usuarios del sector
+                    $('#usuarios_sector_update_parcial').prop('checked', false);
+                    $.post(URL + "Controller/ctrProyectos.php?proy=get_usuarios_x_sector_edicion_parcial", {
+                        sector_id: proyecto.sector_id,
+                        id_proyecto_gestionado: id_proyecto_gestionado
+                    }, function(res) {
+                        $("#combo_usuario_x_sector_update_parcial").html(res);
+                    });
+
+                    $("#ModalEditarProyectoParcial").modal("show");
+                }
+            });
+        }
+
+        // Checkbox "seleccionar todos" (se registra una sola vez)
+        $('#usuarios_sector_update_parcial').on('change', function() {
+            $('#combo_usuario_x_sector_update_parcial input[type="checkbox"]').prop('checked', this.checked);
+        });
+
+        function validar_campos_update_parcial() {
+            const obligatorios = {
+                titulo: $('#titulo').val(),
+                dimensionamiento_update_parcial: $('#dimensionamiento_update_parcial').val(),
+            };
+
+            const vacios = Object.keys(obligatorios).filter(campo => !String(obligatorios[campo] ?? '').trim());
+
+            Object.keys(obligatorios).forEach(campo => {
+                $('#' + campo).toggleClass('is-invalid', vacios.includes(campo));
+            });
+
+            return vacios;
+        }
+
+        if (modalEditarParcial) {
+            // Impide cerrar (click afuera, ESC o botón Cerrar) si hubo error y siguen campos vacíos
+            modalEditarParcial.addEventListener('hide.bs.modal', (e) => {
+                if (bloquear_cierre && validar_campos_update_parcial().length) {
+                    e.preventDefault();
+                    $('#mje_campos_vacios_update_parcial').css('display', 'flex');
+                }
+            });
+
+            // Al cerrarse, limpia el estado
+            modalEditarParcial.addEventListener('hidden.bs.modal', () => {
+                bloquear_cierre = false;
+                $('#mje_campos_vacios_update_parcial').css('display', 'none');
+                $('#mje_update_parcial').css('display', 'none');
+                $('#formProyecto .is-invalid').removeClass('is-invalid');
+                if (hubo_edicion_parcial) {
+                    window.location.reload();
+                }
+            });
+        }
+        $('#btn_cancelar_update_parcial').on('click', function() {
+            bloquear_cierre = false;
+            $('#ModalEditarProyectoParcial').modal('hide');
+        });
+        if (btn_update_parcial) {
+            btn_update_parcial.addEventListener("click", (e) => {
+                e.preventDefault();
+
+                if (validar_campos_update_parcial().length) {
+                    bloquear_cierre = true;
+                    $('#mje_campos_vacios_update_parcial').css('display', 'flex');
+                    return;
+                }
+
+                bloquear_cierre = false;
+                $('#mje_campos_vacios_update_parcial').css('display', 'none');
+                $.ajax({
+                    type: "POST",
+                    url: URL + 'Controller/ctrProyectos.php?proy=update_parcial_de_proyecto',
+                    data: {
+                        id: $('#id_proyecto_gestionadoa_update_parcial').val(),
+                        fecha_vantive: $('#fecha_vantive').val(),
+                        inicio: $('#inicio').val(),
+                        fin: $('#fin').val(),
+                        titulo: $('#titulo').val(),
+                        referencia: $('#referencia').val(),
+                        correo_envio_cliente: $('#correo_envio_cliente_edicion_parcial').val(),
+                        correo_envio_cliente_copias: $('#correo_envio_cliente_copias_edicion_parcial').val(),
+                        descripcion: $('#descripcion').val(),
+                        tipo: $('#tipo').val(),
+                        hs_dimensionadas: $('#dimensionamiento_update_parcial').val(),
+                        fecha_contrato: $('#fecha_contrato_update_parcial').val(),
+                        plazo_meses: $('#plazo_meses_update_parcial').val(),
+                        posee_licencias: $('#posee_licencias_update_parcial').val(),
+                        fecha_vencimiento_licencias: $('#fecha_vencimiento_licencias_update_parcial').val(),
+                        usu_asignado: $('#combo_usuario_x_sector_update_parcial input[type="checkbox"]:checked')
+                            .map((i, el) => el.value).get()
+                    },
+                    dataType: "json",
+                    success: function(response) {
+                        if (response.success) {
+                            hubo_edicion_parcial = true;
+                            $('#mje_update_parcial').css('display', 'flex');
+                            ['#table_bitacora', '#table_proyectos_borrador', '#table_proyectos_en_proceso', '#table_proyectos_realizados']
+                            .forEach(tabla => {
+                                if ($.fn.DataTable.isDataTable(tabla)) {
+                                    $(tabla).DataTable().ajax.reload(null, false);
+                                }
+                            });
+                            setTimeout(() => {
+                                $('#mje_update_parcial').css('display', 'none');
+                            }, 1300);
+                        } else {
+                            console.error('Error al actualizar', {
+                                proyecto_gestionado: response.pg,
+                                dimensionamiento: response.dim,
+                                usuarios: response.usu
+                            });
+                        }
+                    },
+                    error: function(xhr) {
+                        console.error('Error en la petición:', xhr.responseText);
+                    }
+                });
+            });
+        }
 
         function verLogs(id_proyecto_gestionado) {
             $("#ModalVerLogsProyectos").modal("show")

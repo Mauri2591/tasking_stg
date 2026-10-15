@@ -1499,16 +1499,16 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
             $("#btn_cambiar_estado_proyecto_pre_nuevo").off().on("click", function (e) {
                 e.preventDefault();
 
-                if ($("#fech_ini_proy_nuevo").val() == '' || VALIDAR_SI_HAY_FECHA_INICIO == false) {
-                    Swal.fire({
-                        icon: "warning",
-                        title: "Error",
-                        text: "Debe seleccionar una fecha inicio",
-                        showConfirmButton: false,
-                        timer: 1500
-                    });
-                    return;
-                }
+                // if ($("#fech_ini_proy_nuevo").val() == '' || VALIDAR_SI_HAY_FECHA_INICIO == false) {
+                //     Swal.fire({
+                //         icon: "warning",
+                //         title: "Error",
+                //         text: "Debe seleccionar una fecha inicio",
+                //         showConfirmButton: false,
+                //         timer: 1500
+                //     });
+                //     return;
+                // }
 
                 Swal.fire({
                     icon: "question",
