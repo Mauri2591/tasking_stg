@@ -462,53 +462,58 @@ if (isset($_SESSION['usu_id'])) {
                 });
 
                 $("#btnEditarTarea").off("click").on("click", () => {
+                    const horaDesdeEdit = $("#hora_desde_edit").val();
+                    const horaHastaEdit = $("#hora_hasta_edit").val();
+
+                    if (!horaDesdeEdit || !horaHastaEdit || horaHastaEdit <= horaDesdeEdit) {
+                        Swal.fire({
+                            icon: "warning",
+                            title: "Error",
+                            text: "La hora hasta debe ser mayor a la hora desde.",
+                            timer: 1200,
+                            showConfirmButton: false
+                        });
+                        return;
+                    }
+
                     $.ajax({
                         type: "POST",
                         url: URL + "Controller/ctrTimesummary.php?accion=updateTarea",
                         data: {
                             id: EVENTO_ID,
-                            hora_desde: $("#hora_desde_edit").val(),
-                            hora_hasta: $("#hora_hasta_edit").val(),
+                            hora_desde: horaDesdeEdit,
+                            hora_hasta: horaHastaEdit,
                             id_tarea: $("#id_editar_tarea").val(),
-                            descripcion: $("#editar_descripcion").val() // debe coincidir con el controlador
+                            descripcion: $("#editar_descripcion").val()
                         },
                         dataType: "json",
                         success: function(response) {
-                            if (response.success) {
-                                Swal.fire({
-                                    icon: "success",
-                                    title: "Bien",
-                                    text: response.success,
-                                    showConfirmButton: false,
-                                    timer: 800
-                                });
+                            Swal.fire({
+                                icon: "success",
+                                title: "Bien",
+                                text: response.success,
+                                showConfirmButton: false,
+                                timer: 800
+                            });
 
-                                setTimeout(() => {
-                                    calendar.refetchEvents();
-                                    $("#mdlEditarTimesummary").modal("hide");
-                                    refrescarTablaTS();
+                            setTimeout(() => {
+                                calendar.refetchEvents();
+                                $("#mdlEditarTimesummary").modal("hide");
+                                refrescarTablaTS();
 
-                                    if ($("#mdlHorasExtrasTimesummary").hasClass("show")) {
-                                        if ($.fn.DataTable.isDataTable('#tableHorasExtrasTimesummary')) {
-                                            $('#tableHorasExtrasTimesummary').DataTable().ajax.reload(null, false);
-                                        }
+                                if ($("#mdlHorasExtrasTimesummary").hasClass("show")) {
+                                    if ($.fn.DataTable.isDataTable('#tableHorasExtrasTimesummary')) {
+                                        $('#tableHorasExtrasTimesummary').DataTable().ajax.reload(null, false);
                                     }
-                                }, 500);
-                            } else {
-                                Swal.fire({
-                                    icon: "warning",
-                                    title: "Error",
-                                    text: response.error,
-                                    timer: 800
-                                });
-                            }
+                                }
+                            }, 500);
                         },
-                        error: function() {
+                        error: function(xhr) {
                             Swal.fire({
                                 icon: "error",
                                 title: "Error",
-                                text: "Error en la petición AJAX",
-                                timer: 800
+                                text: xhr.responseJSON?.error || "Error en la petición",
+                                showConfirmButton: true
                             });
                         }
                     });
@@ -665,22 +670,18 @@ if (isset($_SESSION['usu_id'])) {
             },
             eventDrop: function(info) {
                 const EVENTO_ID = info.event.id;
-                const NUEVA_FECHA = toLocalDateStr(info.event.start); //  usa hora LOCAL, no UTC
+                const NUEVA_FECHA = toLocalDateStr(info.event.start); // usa hora LOCAL, no UTC
                 const NUEVO_INICIO = info.event.start;
-                const NUEVO_FIN = info.event.end;
+                const NUEVO_FIN = info.event.end || new Date(NUEVO_INICIO.getTime() + 60 * 60 * 1000);
 
                 let existeConflicto = calendar.getEvents().some(evento => {
                     if (evento.id === info.event.id) return false;
                     let inicio = evento.start;
-                    let fin = evento.end;
+                    let fin = evento.end || new Date(inicio.getTime() + 60 * 60 * 1000);
 
                     return (
-                        toLocalDateStr(inicio) === NUEVA_FECHA && //  comparación local
-                        (
-                            (NUEVO_INICIO >= inicio && NUEVO_INICIO < fin) ||
-                            (NUEVO_FIN > inicio && NUEVO_FIN <= fin) ||
-                            (NUEVO_INICIO <= inicio && NUEVO_FIN >= fin)
-                        )
+                        toLocalDateStr(inicio) === NUEVA_FECHA && // comparación local
+                        NUEVO_INICIO < fin && NUEVO_FIN > inicio // se superponen
                     );
                 });
 
@@ -704,7 +705,7 @@ if (isset($_SESSION['usu_id'])) {
                         return;
                     }
 
-                    //  Formatear horas a HH:MM
+                    // Formatear horas a HH:MM
                     let horaDesde = data.hora_desde.slice(0, 5);
                     let horaHasta = data.hora_hasta.slice(0, 5);
 
@@ -713,7 +714,7 @@ if (isset($_SESSION['usu_id'])) {
                         id_producto: data.id_producto,
                         id_tarea: data.id_tarea,
                         es_telecom: data.id_proyecto_gestionado == 0 ? "Telecom" : "",
-                        fecha: NUEVA_FECHA, //  ahora manda la fecha local correcta
+                        fecha: NUEVA_FECHA,
                         hora_desde: horaDesde,
                         hora_hasta: horaHasta,
                         descripcion: data.descripcion,
@@ -721,28 +722,26 @@ if (isset($_SESSION['usu_id'])) {
                     };
 
                     $.post(URL + "Controller/ctrTimesummary.php?accion=insert_tarea", datosInsert, function(response) {
-                        if (response.error) {
-                            Swal.fire({
-                                icon: "error",
-                                title: "Error",
-                                text: response.error,
-                                showConfirmButton: true
-                            });
-                            info.revert();
-                        } else {
-                            Swal.fire({
-                                icon: "success",
-                                title: "Bien",
-                                text: response.success || "Tarea movida correctamente",
-                                showConfirmButton: false,
-                                timer: 900
-                            });
-                            setTimeout(() => {
-                                calendar.refetchEvents();
-                                refrescarTablaTS();
-                            }, 500);
-                        }
-                    }, "json");
+                        Swal.fire({
+                            icon: "success",
+                            title: "Bien",
+                            text: response.success || "Tarea copiada correctamente",
+                            showConfirmButton: false,
+                            timer: 900
+                        });
+                        setTimeout(() => {
+                            calendar.refetchEvents();
+                            refrescarTablaTS();
+                        }, 500);
+                    }, "json").fail(function(xhr) {
+                        Swal.fire({
+                            icon: "error",
+                            title: "Error",
+                            text: xhr.responseJSON?.error || "No se pudo copiar la tarea",
+                            showConfirmButton: true
+                        });
+                        info.revert();
+                    });
 
                 }, "json").fail(function() {
                     console.log("Error al obtener datos");

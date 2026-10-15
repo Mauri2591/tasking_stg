@@ -110,26 +110,36 @@ class timesummary extends Conexion
         $stmt->execute();
     }
 
+    public function es_carga_del_usuario($id, $usu_id)
+    {
+        $conn = parent::get_conexion();
+        $sql = "SELECT COUNT(*) FROM timesummary_carga WHERE id = :id AND usu_id = :usu_id";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue(":id", (int) $id, PDO::PARAM_INT);
+        $stmt->bindValue(":usu_id", (int) $usu_id, PDO::PARAM_INT);
+        $stmt->execute();
+        return (bool) $stmt->fetchColumn();
+    }
+
     public function updateTarea($id, $hora_desde, $hora_hasta, $id_tarea, $descripcion)
     {
         $conn = parent::get_conexion();
 
-        // Calcular diferencia en formato HH:MM
-        $horaDesde = new DateTime($hora_desde);
-        $horaHasta = new DateTime($hora_hasta);
-        $intervalo = $horaDesde->diff($horaHasta);
-
-        // Formato HH:MM (ejemplo: 01:30)
-        $horasConsumidas = str_pad($intervalo->h, 2, "0", STR_PAD_LEFT) . ":" .
-            str_pad($intervalo->i, 2, "0", STR_PAD_LEFT);
+        // Misma validación que el insert: formato HH:MM y fin > inicio
+        $validacion = self::validar_horas_minutos(substr($hora_desde, 0, 5), substr($hora_hasta, 0, 5));
+        if (!$validacion['success']) {
+            error_log("updateTarea rechazado (id={$id}): " . $validacion['error']);
+            return false;
+        }
+        $horasConsumidas = $validacion['duracion'];
 
         $sql = "UPDATE timesummary_carga 
-            SET hora_desde = :hora_desde, 
-                hora_hasta = :hora_hasta, 
-                id_tarea = :id_tarea,
-                descripcion = :descripcion,
-                horas_consumidas = :horas_consumidas
-            WHERE id = :id";
+        SET hora_desde = :hora_desde, 
+            hora_hasta = :hora_hasta, 
+            id_tarea = :id_tarea,
+            descripcion = :descripcion,
+            horas_consumidas = :horas_consumidas
+        WHERE id = :id";
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(":id", (int)$id, PDO::PARAM_INT);
         $stmt->bindValue(":hora_desde", $hora_desde, PDO::PARAM_STR);
@@ -624,54 +634,49 @@ END AS posicion_recurrencia,
     {
         $conn = parent::get_conexion();
         $sql = "SELECT 
-            tm_categoria.cat_nom AS producto,
-            tareas.nombre AS tarea,
-            timesummary_carga.fecha,
-            timesummary_carga.hora_desde,
-            TIME_FORMAT(timesummary_carga.hora_desde, '%H:%i') AS hora_desde,
-            TIME_FORMAT(timesummary_carga.hora_hasta, '%H:%i') AS hora_hasta,
-            TIME_FORMAT(
-                TIMEDIFF(timesummary_carga.hora_hasta, timesummary_carga.hora_desde),
-                '%H:%i'
-            ) AS horas_consumidas,
-            timesummary_carga.descripcion,
-            timesummary_carga.fech_crea AS fecha_carga,
+    tm_categoria.cat_nom AS producto,
+    tareas.nombre AS tarea,
+    timesummary_carga.fecha,
+    TIME_FORMAT(timesummary_carga.hora_desde, '%H:%i') AS hora_desde,
+    TIME_FORMAT(timesummary_carga.hora_hasta, '%H:%i') AS hora_hasta,
+    TIME_FORMAT(
+        TIMEDIFF(timesummary_carga.hora_hasta, timesummary_carga.hora_desde),
+        '%H:%i'
+    ) AS horas_consumidas,
+    ROUND(
+        TIME_TO_SEC(TIMEDIFF(timesummary_carga.hora_hasta, timesummary_carga.hora_desde)) / 3600,
+        2
+    ) AS horas_decimal,
+    timesummary_carga.descripcion,
+    timesummary_carga.fech_crea AS fecha_carga,
 
-            CASE 
-                WHEN timesummary_carga.es_telecom = 'Telecom'
-                    THEN 'TELECOM'
-                ELSE clientes.client_rs
-            END AS cliente,
+    CASE 
+        WHEN timesummary_carga.es_telecom = 'Telecom' THEN 'TELECOM'
+        ELSE COALESCE(clientes.client_rs, 'Sin cliente')
+    END AS cliente,
 
-            proyecto_gestionado.refProy AS referencia,
-            tm_usuario.usu_nom,
-            tm_usuario.usu_ape
+    proyecto_gestionado.refProy AS referencia,
+    tm_usuario.usu_nom,
+    tm_usuario.usu_ape
 
-            FROM timesummary_carga
+FROM timesummary_carga
+INNER JOIN tm_usuario 
+    ON timesummary_carga.usu_id = tm_usuario.usu_id
+LEFT JOIN tm_categoria 
+    ON timesummary_carga.id_producto = tm_categoria.cat_id
+LEFT JOIN tareas 
+    ON timesummary_carga.id_tarea = tareas.id
+LEFT JOIN proyecto_gestionado 
+    ON timesummary_carga.id_proyecto_gestionado = proyecto_gestionado.id
+LEFT JOIN proyecto_cantidad_servicios 
+    ON proyecto_gestionado.id_proyecto_cantidad_servicios = proyecto_cantidad_servicios.id
+LEFT JOIN proyectos 
+    ON proyecto_cantidad_servicios.proy_id = proyectos.proy_id
+LEFT JOIN clientes 
+    ON proyectos.client_id = clientes.client_id
 
-            INNER JOIN tm_usuario 
-                ON timesummary_carga.usu_id = tm_usuario.usu_id
-
-            LEFT JOIN tm_categoria 
-                ON timesummary_carga.id_producto = tm_categoria.cat_id
-
-            LEFT JOIN tareas 
-                ON timesummary_carga.id_tarea = tareas.id
-
-            LEFT JOIN proyecto_gestionado 
-                ON timesummary_carga.id_proyecto_gestionado = proyecto_gestionado.id
-
-            LEFT JOIN proyecto_cantidad_servicios 
-                ON proyecto_gestionado.id_proyecto_cantidad_servicios = proyecto_cantidad_servicios.id
-
-            LEFT JOIN proyectos 
-                ON proyecto_cantidad_servicios.proy_id = proyectos.proy_id
-
-            LEFT JOIN clientes 
-                ON proyectos.client_id = clientes.client_id
-
-            WHERE timesummary_carga.usu_id = :usu_id
-            ORDER BY timesummary_carga.fecha DESC, timesummary_carga.hora_desde DESC";
+WHERE timesummary_carga.usu_id = :usu_id
+ORDER BY timesummary_carga.fecha DESC, timesummary_carga.hora_desde DESC";
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(":usu_id", $usu_id, PDO::PARAM_INT);
         $stmt->execute();

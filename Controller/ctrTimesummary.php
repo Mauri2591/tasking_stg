@@ -76,7 +76,7 @@ switch ($_GET['accion']) {
             return (bool)$s->fetchColumn();
         };
 
-       $error = $timesummary->validar_carga($_SESSION['usu_id'], $id_proyecto, $id_producto, $id_tarea, $es_telecom);
+        $error = $timesummary->validar_carga($_SESSION['usu_id'], $id_proyecto, $id_producto, $id_tarea, $es_telecom);
 
         if ($error) {
             http_response_code(400);
@@ -199,8 +199,16 @@ switch ($_GET['accion']) {
         break;
 
     case 'delete_tarea':
+        $id = (int) ($_POST['id'] ?? 0);
+
+        if (!$timesummary->es_carga_del_usuario($id, $_SESSION['usu_id'])) {
+            http_response_code(403);
+            echo json_encode(["error" => "No tiene permisos sobre esta carga"]);
+            exit;
+        }
+
         try {
-            $timesummary->delete_tarea($_POST['id']);
+            $timesummary->delete_tarea($id);
             echo json_encode(["success" => true]);
         } catch (Exception $e) {
             http_response_code(500);
@@ -209,12 +217,34 @@ switch ($_GET['accion']) {
         break;
 
     case 'updateTarea':
+        $id         = (int) ($_POST['id'] ?? 0);
+        $hora_desde = $_POST['hora_desde'] ?? '';
+        $hora_hasta = $_POST['hora_hasta'] ?? '';
+
+        $validacion = timesummary::validar_horas_minutos(substr($hora_desde, 0, 5), substr($hora_hasta, 0, 5));
+        if (!$validacion['success']) {
+            http_response_code(400);
+            echo json_encode(["error" => $validacion['error']]);
+            exit;
+        }
+
+        if (!$timesummary->es_carga_del_usuario($id, $_SESSION['usu_id'])) {
+            http_response_code(403);
+            echo json_encode(["error" => "No tiene permisos sobre esta carga"]);
+            exit;
+        }
+
         try {
-            $timesummary->updateTarea($_POST['id'], $_POST['hora_desde'], $_POST['hora_hasta'], $_POST['id_tarea'], $_POST['descripcion']);
+            $ok = $timesummary->updateTarea($id, $hora_desde, $hora_hasta, $_POST['id_tarea'] ?? null, $_POST['descripcion'] ?? '');
+            if ($ok === false) {
+                http_response_code(400);
+                echo json_encode(["error" => "No se pudo actualizar la tarea"]);
+                exit;
+            }
             echo json_encode(["success" => "Actualizado correctamente"]);
         } catch (\Throwable $e) {
-            echo "Error de update: " . $e->getMessage() . "\nCodigo: " . $e->getCode();
-            exit;
+            http_response_code(500);
+            echo json_encode(["error" => "Error de update"]);
         }
         break;
 
