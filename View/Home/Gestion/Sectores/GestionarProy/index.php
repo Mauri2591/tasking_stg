@@ -383,7 +383,7 @@ if (isset($_SESSION['usu_id'])) {
                                             </div>
 
                                             <div style="display: flex; justify-content:space-between; align-items: center; margin-top: .3rem; margin-bottom: .5rem;">
-                                                <span type="button" onclick="editarParcial(<?php echo Openssl::get_ssl_decrypt($_GET['pg']) ?>)" style="background-color: #24bbff; display: inline-flex; align-items: center; gap: 4px;" class="badge border">
+                                            <span id="boton_validar_usu_asignado" type="button" onclick="editarParcial(<?php echo Openssl::get_ssl_decrypt($_GET['pg']) ?>)" style="background-color: #24bbff; display: none; align-items: center; gap: 4px;" class="badge border">
                                                     Editar Parcial <i class="ri-file-text-fill fs-14"></i>
                                                 </span>
                                                 <span type="button" onclick="verLogs(<?php echo Openssl::get_ssl_decrypt($_GET['pg']) ?>)" style="background-color: #475569; display: inline-flex; align-items: center; gap: 4px;" class="badge border border-light">
@@ -757,6 +757,7 @@ if (isset($_SESSION['usu_id'])) {
                         if (elem.usu_asignado == session_usu_id) {
                             mostrar = true;
                             validar_usu_asignado = true;
+                            $("#boton_validar_usu_asignado").show();
                         }
 
                     });
