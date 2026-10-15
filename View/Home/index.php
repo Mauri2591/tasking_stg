@@ -41,6 +41,7 @@ if (isset($_SESSION['usu_id'])) {
             color: #fff;
             transition: all 0.25s ease;
             padding: .5rem 1.5rem;
+            font-weight: bold;
         }
 
         button[onclick^="btnPreNuevos"]:hover {
