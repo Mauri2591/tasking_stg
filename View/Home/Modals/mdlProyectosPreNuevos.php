@@ -52,6 +52,7 @@
                                 <tr class="text-center">
                                     <th style="width: 400px;text-align: center;">CLIENTE</th>
                                     <th style="width: 20px;text-align: center;">PRODUCTO</th>
+                                    <th style="width: 20px;text-align: center;">REFERENCIA</th>
                                     <th style="width: 20px;text-align: center;">TOTAL</th>
                                     <th style="width: 20px;text-align: center;">UTILIZADAS</th>
                                 </tr>

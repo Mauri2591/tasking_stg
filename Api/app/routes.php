@@ -940,6 +940,7 @@ return function (App $app) {
         return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
     });
 
+
     //Cross-Sell
     $app->get('/cross-sell', function (Request $request, Response $response) use ($app) {
 
@@ -1257,4 +1258,46 @@ return function (App $app) {
         }
     });
     //********************************** OAUTH AZURE SMTP FIN ***************************** */
+
+
+    //******************************** INICIO ENDPOINT DE PRUEBA  ****************************** */
+    $app->get('/prueba', function (Request $request, Response $response) use ($app) {
+        $apiKeyPlana = $request->getHeaderLine('X-API-KEY');
+        if (!$apiKeyPlana) {
+            $response->getBody()->write(json_encode(["error" => "API Key requerida"]));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(401);
+        }
+
+        $pdo = $app->getContainer()->get(PDO::class);
+        $keys = $pdo->query("SELECT api_key, sector_id FROM api_keys WHERE est = 1")
+            ->fetchAll(PDO::FETCH_ASSOC);
+
+        $sector_id = null;
+        foreach ($keys as $row) {
+            if (hash_equals((string)Openssl::get_ssl_decrypt($row['api_key']), $apiKeyPlana)) {
+                $sector_id = (int)$row['sector_id'];
+                break;
+            }
+        }
+        if (!$sector_id) {
+            $response->getBody()->write(json_encode(["error" => "API Key inválida"]));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(403);
+        }
+
+        $sql = "SELECT id, nombre, descripcion, fecha, estado FROM pruebas";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute();
+
+        $rows = array_map(function ($r) {
+            $r['id']     = (int)$r['id'];
+            $r['estado'] = (int)$r['estado'];
+            return $r;
+        }, $stmt->fetchAll(PDO::FETCH_ASSOC));
+
+        $response->getBody()->write(json_encode($rows, JSON_UNESCAPED_UNICODE));
+        return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+    });
+    //******************************** FIN ENDPOINT DE PRUEBA  ****************************** */
+
+
 };

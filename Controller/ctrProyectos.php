@@ -3336,6 +3336,7 @@ TXT;
             $sub_array = array();
             $sub_array[] = htmlspecialchars($row['client_rs'], ENT_QUOTES, 'UTF-8');
             $sub_array[] = '<span class="badge bg-light text-dark">' . htmlspecialchars($row['cat_nom'], ENT_QUOTES, 'UTF-8') . '</span>';
+            $sub_array[] = '<span class="badge bg-light text-dark">' . $row['refProy'] . '</span>';
             $sub_array[] = '<span class="badge bg-primary">' . (int) $row['recurrencias_total'] . '</span>';
             $sub_array[] = '<span class="badge bg-success">' . (int) $row['recurrencias_utilizadas'] . '</span>';
             $data[] = $sub_array;

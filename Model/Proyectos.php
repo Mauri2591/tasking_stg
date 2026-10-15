@@ -3031,6 +3031,7 @@ ORDER BY cantidad_proyectos DESC";
                 sectores.color AS sector_color,
                 MAX(pg.id) AS id_proyecto_gestionado,  
                 pcs.id AS id_proyecto_cantidad_servicios,
+                pg.refProy,
 
                 -- Total de recurrencias
                 (
