@@ -8,7 +8,6 @@ if (isset($_SESSION['usu_id'])) {
     include_once __DIR__ . "/Public/Template/head.php";
     ?>
     <style>
-       
         .scroll-fina {
             overflow-x: auto;
             scrollbar-width: thin;
@@ -43,7 +42,15 @@ if (isset($_SESSION['usu_id'])) {
             padding: .5rem 1.5rem;
             font-weight: bold;
         }
+        #btnComparativoAnual{
+             background-color: #3e33ffb8;
+            color: #fff;
+            transition: all 0.25s ease;
+            padding: 1rem .5rem;
+            font-weight: bold;
+        }
 
+        #btnComparativoAnual:hover,
         button[onclick^="btnPreNuevos"]:hover {
             background-color: #3e33ff;
             color: #fff;
@@ -51,6 +58,7 @@ if (isset($_SESSION['usu_id'])) {
             box-shadow: 0 4px 12px rgba(62, 51, 255, 0.4);
         }
 
+        #btnComparativoAnual:hover i,
         button[onclick^="btnPreNuevos"]:hover i {
             display: inline-block;
             animation: enColaBounce 0.6s ease;
@@ -118,7 +126,7 @@ if (isset($_SESSION['usu_id'])) {
                         <div class="card">
                             <?php if ($_SESSION['sector_id'] == 1): ?>
                                 <div class="d-flex justify-content-end m-2">
-                                    <button id="btnComparativoAnual" class="btn py-0 btn-sm btn-success">Comparativo Anual</button>
+                                    <button id="btnComparativoAnual" class="btn py-1 btn-sm">Comparativo Anual</button>
                                 </div>
                             <?php endif; ?>
                             <canvas id="barra_servicios" width="400" height="110"></canvas>
