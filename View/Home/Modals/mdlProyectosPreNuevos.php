@@ -5,7 +5,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <ul class="nav nav-pills arrow-navtabs bg-light nav-success mb-4" role="tablist">
+                <ul class="nav nav-pills arrow-navtabs nav-success mb-4" role="tablist">
                     <li class="nav-item" role="presentation">
                         <a class="nav-link active py-1 px-2" id="tab-pre-nuevos-btn" data-bs-toggle="tab" href="#tab-pre-nuevos" role="tab" aria-selected="true">
                             <span class="d-block d-sm-none"><i class="mdi mdi-timer-sand"></i></span>
