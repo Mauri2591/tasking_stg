@@ -2628,13 +2628,13 @@ ORDER BY id_proyecto_cantidad_servicios ASC";
     }
 
     public function get_usuarios_x_sector_edicion_parcial($sector_id, $excluir_session = true)
-{
-    $conn = parent::get_conexion();
-    $usu_session = $_SESSION['usu_id'];
-    $filtro_session = $excluir_session ? "AND tm_usuario.usu_id != :usu_session" : "";
+    {
+        $conn = parent::get_conexion();
+        $usu_session = $_SESSION['usu_id'];
+        $filtro_session = $excluir_session ? "AND tm_usuario.usu_id != :usu_session" : "";
 
-    if ($sector_id == 5) {
-        $sql = "SELECT 
+        if ($sector_id == 5) {
+            $sql = "SELECT 
         tm_usuario.usu_id,
         tm_usuario.usu_correo,
         CONCAT(
@@ -2649,9 +2649,9 @@ ORDER BY id_proyecto_cantidad_servicios ASC";
       AND tm_usuario.usu_id NOT IN (82,105) /*usuarios dev, Test Mau Soc*/ 
       $filtro_session
       AND tm_usuario.est = 1";
-        $stmt = $conn->prepare($sql);
-    } else {
-        $sql = "SELECT 
+            $stmt = $conn->prepare($sql);
+        } else {
+            $sql = "SELECT 
         tm_usuario.usu_id,
         tm_usuario.usu_correo,
         CONCAT(
@@ -2667,16 +2667,16 @@ ORDER BY id_proyecto_cantidad_servicios ASC";
       AND tm_usuario.usu_id NOT IN(82,102,103,104,105) /*usuarios dev, Ari,Dani,Test M, Test Mau Soc*/ 
       $filtro_session
       AND tm_usuario.est = 1";
-        $stmt = $conn->prepare($sql);
-        $stmt->bindValue(':sector_id', $sector_id, PDO::PARAM_INT);
-    }
+            $stmt = $conn->prepare($sql);
+            $stmt->bindValue(':sector_id', $sector_id, PDO::PARAM_INT);
+        }
 
-    if ($excluir_session) {
-        $stmt->bindValue(':usu_session', $usu_session, PDO::PARAM_INT);
+        if ($excluir_session) {
+            $stmt->bindValue(':usu_session', $usu_session, PDO::PARAM_INT);
+        }
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
-    $stmt->execute();
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);
-}
 
     public function delete_proyecto_a_nuevo($proy_id)
     {
@@ -3019,86 +3019,91 @@ ORDER BY cantidad_proyectos DESC";
         ]);
     }
 
-    public function get_proyectos_recurrentes()
+    public function get_proyectos_recurrentes($sector_id = null)
     {
         $conn = parent::get_conexion();
+        $filtrarSector = ($sector_id !== null && (int) $sector_id !== 4);
         $sql = "SELECT 
-    MAX(pg.titulo) AS titulo,
-    tc.cat_nom, 
-    c.client_rs, 
-    sectores.sector_nombre AS sector,
-    sectores.color AS sector_color,
-    MAX(pg.id) AS id_proyecto_gestionado,  
-    pcs.id AS id_proyecto_cantidad_servicios,
+                MAX(pg.titulo) AS titulo,
+                tc.cat_nom, 
+                c.client_rs, 
+                sectores.sector_nombre AS sector,
+                sectores.color AS sector_color,
+                MAX(pg.id) AS id_proyecto_gestionado,  
+                pcs.id AS id_proyecto_cantidad_servicios,
 
-   -- Total de recurrencias
-(
-    SELECT COUNT(*)
-    FROM proyecto_recurrencia prx
-    WHERE prx.id_proyecto_cantidad_servicios = pcs.id
-      AND prx.est = 1                          -- ← agregar
-) AS recurrencias_total,
+                -- Total de recurrencias
+                (
+                    SELECT COUNT(*)
+                    FROM proyecto_recurrencia prx
+                    WHERE prx.id_proyecto_cantidad_servicios = pcs.id
+                    AND prx.est = 1
+                ) AS recurrencias_total,
 
--- Utilizadas (activo = 'SI')
-(
-    SELECT COUNT(*)
-    FROM proyecto_recurrencia prx
-    WHERE prx.id_proyecto_cantidad_servicios = pcs.id
-      AND prx.activo = 'SI'
-      AND prx.est = 1                          -- ← agregar
-) AS recurrencias_utilizadas,
+                -- Utilizadas (activo = 'SI')
+                (
+                    SELECT COUNT(*)
+                    FROM proyecto_recurrencia prx
+                    WHERE prx.id_proyecto_cantidad_servicios = pcs.id
+                    AND prx.activo = 'SI'
+                    AND prx.est = 1
+                ) AS recurrencias_utilizadas,
 
--- Restantes
-(
-    SELECT COUNT(*)
-    FROM proyecto_recurrencia prx
-    WHERE prx.id_proyecto_cantidad_servicios = pcs.id
-      AND prx.est = 1                          -- ← agregar
-) -
-(
-    SELECT COUNT(*)
-    FROM proyecto_recurrencia prx
-    WHERE prx.id_proyecto_cantidad_servicios = pcs.id
-      AND prx.activo = 'SI'
-      AND prx.est = 1                          -- ← agregar
-) AS recurrencias_restantes,
+                -- Restantes
+                (
+                    SELECT COUNT(*)
+                    FROM proyecto_recurrencia prx
+                    WHERE prx.id_proyecto_cantidad_servicios = pcs.id
+                    AND prx.est = 1
+                ) -
+                (
+                    SELECT COUNT(*)
+                    FROM proyecto_recurrencia prx
+                    WHERE prx.id_proyecto_cantidad_servicios = pcs.id
+                    AND prx.activo = 'SI'
+                    AND prx.est = 1
+                ) AS recurrencias_restantes,
 
--- Primer ID pendiente
-(
-    SELECT MIN(pr2.id)
-    FROM proyecto_recurrencia pr2
-    WHERE pr2.id_proyecto_cantidad_servicios = pcs.id
-      AND pr2.activo = 'NO'
-      AND pr2.est = 1                          -- ← agregar
-) AS conteo_id_recurrencia,
+                -- Primer ID pendiente
+                (
+                    SELECT MIN(pr2.id)
+                    FROM proyecto_recurrencia pr2
+                    WHERE pr2.id_proyecto_cantidad_servicios = pcs.id
+                    AND pr2.activo = 'NO'
+                    AND pr2.est = 1
+                ) AS conteo_id_recurrencia,
 
-    -- Estado de toma
-    CASE 
-        WHEN SUM(CASE WHEN pg.id_proyecto_recurrencia IS NULL THEN 1 ELSE 0 END) > 0 
-            THEN 'NO_TOMADO'
-        ELSE 'SI_TOMADO'
-    END AS estado_recurrencia
+                -- Estado de toma
+                CASE 
+                    WHEN SUM(CASE WHEN pg.id_proyecto_recurrencia IS NULL THEN 1 ELSE 0 END) > 0 
+                        THEN 'NO_TOMADO'
+                    ELSE 'SI_TOMADO'
+                END AS estado_recurrencia
 
-FROM proyecto_cantidad_servicios pcs
-JOIN proyectos p 
-    ON pcs.proy_id = p.proy_id
-JOIN clientes c 
-    ON p.client_id = c.client_id
-LEFT JOIN proyecto_gestionado pg 
-    ON pg.id_proyecto_cantidad_servicios = pcs.id
-JOIN tm_categoria tc 
-    ON pg.cat_id = tc.cat_id
-    
-    JOIN sectores ON pg.sector_id=sectores.sector_id
+            FROM proyecto_cantidad_servicios pcs
+            JOIN proyectos p 
+                ON pcs.proy_id = p.proy_id
+            JOIN clientes c 
+                ON p.client_id = c.client_id
+            LEFT JOIN proyecto_gestionado pg 
+                ON pg.id_proyecto_cantidad_servicios = pcs.id
+            JOIN tm_categoria tc 
+                ON pg.cat_id = tc.cat_id
+            JOIN sectores 
+                ON pg.sector_id = sectores.sector_id
 
--- 🔹 Solo proyectos y servicios activos
-WHERE pcs.est = 1 
-  AND (pg.est = 1 OR pg.est IS NULL)
+            -- Solo proyectos y servicios activos
+            WHERE pcs.est = 1 
+            AND (pg.est = 1 OR pg.est IS NULL)
+            " . ($filtrarSector ? "AND pg.sector_id = :sector_id" : "") . "
 
-GROUP BY tc.cat_nom, c.client_rs, pcs.id
-HAVING recurrencias_total > recurrencias_utilizadas
-ORDER BY pcs.id DESC";
+            GROUP BY tc.cat_nom, c.client_rs, pcs.id
+            HAVING recurrencias_total > recurrencias_utilizadas
+            ORDER BY pcs.id DESC";
         $stmt = $conn->prepare($sql);
+        if ($filtrarSector) {
+            $stmt->bindValue(':sector_id', (int) $sector_id, PDO::PARAM_INT);
+        }
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -3911,7 +3916,7 @@ GROUP BY
         $stmt->bindValue(':sector_id', $sector_id, PDO::PARAM_INT);
         $stmt->bindValue(':estados_id', $estados_id, PDO::PARAM_INT);
         $stmt->execute();
-        $datos=$stmt->fetchAll(PDO::FETCH_ASSOC);
+        $datos = $stmt->fetchAll(PDO::FETCH_ASSOC);
         return count($datos) > 0 ? $datos : [];
     }
 }

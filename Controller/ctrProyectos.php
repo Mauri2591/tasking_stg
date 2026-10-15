@@ -900,7 +900,7 @@ switch ($_GET['proy']) {
 
 
     case 'get_proyectos_recurrentes':
-        $datos = $proyecto->get_proyectos_recurrentes();
+        $datos = $proyecto->get_proyectos_recurrentes($_SESSION['sector_id']);
         $data = array();
         foreach ($datos as $row) {
             $sub_array = array();
@@ -3315,13 +3315,29 @@ TXT;
                 $sub_array[] = '<span class="badge bg-light border border-dark text-dark">Sin asignar</span>';
             }
 
-            // ACTIVOS
-            // $sub_array[] = '<span type="button" onclick="ver_hosts_eh('
-            //     . $row['id_proyecto_gestionado']
-            //     . ')"><i class="text-secondary fs-18 ri-global-line" title="Ver hosts"></i></span>';
-
             $sub_array[] = '<button onclick="pasarProyectoaNuevo(' . $row['id_proyecto_gestionado'] . ')" class="btn btn-primary btn-sm py-0">Nuevo</button>';
 
+            $data[] = $sub_array;
+        }
+
+        echo json_encode(array(
+            "sEcho" => 1,
+            "iTotalRecords" => count($data),
+            "iTotalDisplayRecords" => count($data),
+            "aaData" => $data
+        ));
+        break;
+
+    case 'getProyectosRecurrentesSector':
+        $datos = $proyecto->get_proyectos_recurrentes($_SESSION['sector_id']);
+        $data = array();
+
+        foreach ($datos as $row) {
+            $sub_array = array();
+            $sub_array[] = htmlspecialchars($row['client_rs'], ENT_QUOTES, 'UTF-8');
+            $sub_array[] = '<span class="badge bg-light text-dark">' . htmlspecialchars($row['cat_nom'], ENT_QUOTES, 'UTF-8') . '</span>';
+            $sub_array[] = '<span class="badge bg-primary">' . (int) $row['recurrencias_total'] . '</span>';
+            $sub_array[] = '<span class="badge bg-success">' . (int) $row['recurrencias_utilizadas'] . '</span>';
             $data[] = $sub_array;
         }
 

@@ -42,8 +42,9 @@ if (isset($_SESSION['usu_id'])) {
             padding: .5rem 1.5rem;
             font-weight: bold;
         }
-        #btnComparativoAnual{
-             background-color: #3e33ffb8;
+
+        #btnComparativoAnual {
+            background-color: #3e33ffb8;
             color: #fff;
             transition: all 0.25s ease;
             padding: 1rem .5rem;
@@ -373,6 +374,35 @@ if (isset($_SESSION['usu_id'])) {
             function btnPreNuevos(session_id) {
                 $("#mdlProyectosPreNuevos").modal("show");
 
+                // Siempre abrir en el primer tab
+                bootstrap.Tab.getOrCreateInstance(document.getElementById('tab-pre-nuevos-btn')).show();
+
+                const idioma = {
+                    "sProcessing": "Procesando..",
+                    "sLengthMenu": "Mostrar _MENU_ registros",
+                    "sZeroRecords": "No se encontraron resultados..",
+                    "sEmptyTable": "Ninguna tarea disponible en esta tabla",
+                    "sInfo": "Mostrando un total de _TOTAL_ registros",
+                    "sInfoEmpty": "Mostrando un total de 0 registros",
+                    "sInfoFiltered": "(Filtrado de un total de _MAX_ registros)",
+                    "sInfoPostFix": "",
+                    "sSearch": "Buscar: ",
+                    "sUrl": "",
+                    "sInfoThousands": ",",
+                    "sLoadingRecords": "Cargando",
+                    "oPaginate": {
+                        "sFirst": "Primero",
+                        "sLast": "Último",
+                        "sNext": "Siguiente",
+                        "sPrevious": "Anterior"
+                    },
+                    "oAria": {
+                        "sSortAscending": ":Activar para ordenar la columna de manera ascendiente",
+                        "sSortDescending": ":Activar para ordenar la columna de manera descendiente"
+                    }
+                };
+
+                // ===== TAB 1: PRE-NUEVOS =====
                 tabla = $("#table-proyectos-pre-nuevos").dataTable({
                     "aProcessing": true,
                     "aServerSide": true,
@@ -403,31 +433,44 @@ if (isset($_SESSION['usu_id'])) {
                     "bInfo": true,
                     "iDisplayLength": 20,
                     "autoWith": false,
-                    "language": {
-                        "sProcessing": "Procesando..",
-                        "sLengthMenu": "Mostrar _MENU_ registros",
-                        "sZeroRecords": "No se encontraron resultados..",
-                        "sEmptyTable": "Ninguna tarea disponible en esta tabla",
-                        "sInfo": "Mostrando un total de _TOTAL_ registros",
-                        "sInfoEmpty": "Mostrando un total de 0 registros",
-                        "sInfoFiltered": "(Filtrado de un total de _MAX_ registros)",
-                        "sInfoPostFix": "",
-                        "sSearch": "Buscar: ",
-                        "sUrl": "",
-                        "sInfoThousands": ",",
-                        "sLoadingRecords": "Cargando",
-                        "oPaginate": {
-                            "sFirst": "Primero",
-                            "sLast": "Ùltimo",
-                            "sNext": "Siguiente",
-                            "sPrevious": "Anterior"
-                        },
-                        "oAria": {
-                            "sSortAscending": ":Activar para ordenar la columna de manera ascendiente",
-                            "sSortDescending": ":Activar para ordenar la columna de manera descendiente"
-                        }
-                    }
+                    "language": idioma
                 });
+
+                // ===== TAB 2: RECURRENTES PENDIENTES =====
+                $("#table-proyectos-recurrentes-sector").dataTable({
+                    "aProcessing": true,
+                    "aServerSide": true,
+                    "ordering": true,
+                    "lengthChange": true,
+                    "lengthMenu": [
+                        [10, 20, 50, -1],
+                        [10, 20, 50, "Todas"]
+                    ],
+                    dom: 'lfrtip',
+                    "searching": true,
+                    "ajax": {
+                        url: URL + "Controller/ctrProyectos.php?proy=getProyectosRecurrentesSector",
+                        type: "post",
+                        dataType: "json",
+                        error: function(e) {}
+                    },
+                    "order": [
+                        [0, "asc"]
+                    ],
+                    "bDestroy": true,
+                    "responsive": true,
+                    "bInfo": true,
+                    "iDisplayLength": 20,
+                    "autoWith": false,
+                    "language": idioma
+                });
+
+                // Recalcular anchos al cambiar de tab (las tablas ocultas se dibujan mal)
+                $('#mdlProyectosPreNuevos button[data-bs-toggle="tab"]')
+                    .off('shown.bs.tab.prenuevos')
+                    .on('shown.bs.tab.prenuevos', function() {
+                        $($(this).data('bs-target')).find('table.dataTable').DataTable().columns.adjust().responsive.recalc();
+                    });
             }
 
             let huboCambiosEnCola = false;
