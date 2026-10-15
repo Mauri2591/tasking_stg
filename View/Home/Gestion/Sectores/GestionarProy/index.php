@@ -348,6 +348,16 @@ if (isset($_SESSION['usu_id'])) {
 
 
                                         <div class="col-xl-5 bg-success" style="border:.1rem solid gray;margin-right: 2px; border-radius: 5px;">
+                                            <div style="display: flex; justify-content:end; align-items: center; margin-top:.1rem; margin-bottom: .2rem;">
+                                                <span id="boton_validar_usu_asignado" type="button" onclick="editarParcial(<?php echo (int) Openssl::get_ssl_decrypt($_GET['pg']) ?>)" style="background-color: #24bbff; display: none;" class="badge border py-1">
+                                                    <span style="display: inline-flex; align-items: center; gap: 4px;">
+                                                        Editar Parcial <i class="ri-file-text-fill fs-14" style="line-height: 1;"></i>
+                                                    </span>
+                                                </span>
+                                                <span type="button" onclick="verLogs(<?php echo (int) Openssl::get_ssl_decrypt($_GET['pg']) ?>)" style="background-color: #475569; display: inline-flex; align-items: center; gap: 4px;" class="badge border border-light py-1 mx-1">
+                                                    Ver Logs <i class="ri-history-line fs-14" style="line-height: 1;"></i>
+                                                </span>
+                                            </div>
                                             <div class="d-flex align-items-center">
                                                 <div class="d-flex align-items-center mt-1">
                                                     <span class="p-0 border border-light badge bg-light"><span style="width: 4.5rem; font-size: .6rem;" id="estadoProyecto" class="badge mx-1 text-light"></span></span>
@@ -360,7 +370,7 @@ if (isset($_SESSION['usu_id'])) {
                                             </div>
 
 
-                                            <div style="display: flex; margin-top: .2rem; margin-bottom: .2rem;">
+                                            <div style="display: flex; margin-top: .2rem;">
                                                 <span class="badge bg-light text-dark mx-1">Ref: <span id="referencia_proy"></span></span>
 
                                                 <span style="width: 7rem;"
@@ -378,17 +388,8 @@ if (isset($_SESSION['usu_id'])) {
 
                                             </div>
 
-                                            <div style="display: flex; margin-top: .2rem; margin-bottom: .2rem;">
+                                            <div style="display: flex; margin-top: .2rem;">
                                                 <span id="workshop" style="display: none;" class="badge mx-1 text-light bg-info border border-light">workshop</span>
-                                            </div>
-
-                                            <div style="display: flex; justify-content:space-between; align-items: center; margin-top: .3rem; margin-bottom: .5rem;">
-                                            <span id="boton_validar_usu_asignado" type="button" onclick="editarParcial(<?php echo Openssl::get_ssl_decrypt($_GET['pg']) ?>)" style="background-color: #24bbff; display: none; align-items: center; gap: 4px;" class="badge border">
-                                                    Editar Parcial <i class="ri-file-text-fill fs-14"></i>
-                                                </span>
-                                                <span type="button" onclick="verLogs(<?php echo Openssl::get_ssl_decrypt($_GET['pg']) ?>)" style="background-color: #475569; display: inline-flex; align-items: center; gap: 4px;" class="badge border border-light">
-                                                    Ver Logs <i class="ri-history-line fs-14"></i>
-                                                </span>
                                             </div>
 
                                             <div class="card-body p-0">
