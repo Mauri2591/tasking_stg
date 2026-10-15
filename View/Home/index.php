@@ -465,11 +465,10 @@ if (isset($_SESSION['usu_id'])) {
                     "language": idioma
                 });
 
-                // Recalcular anchos al cambiar de tab (las tablas ocultas se dibujan mal)
-                $('#mdlProyectosPreNuevos button[data-bs-toggle="tab"]')
+                $('#mdlProyectosPreNuevos a[data-bs-toggle="tab"]')
                     .off('shown.bs.tab.prenuevos')
                     .on('shown.bs.tab.prenuevos', function() {
-                        $($(this).data('bs-target')).find('table.dataTable').DataTable().columns.adjust().responsive.recalc();
+                        $($(this).attr('href')).find('table.dataTable').DataTable().columns.adjust().responsive.recalc();
                     });
             }
 

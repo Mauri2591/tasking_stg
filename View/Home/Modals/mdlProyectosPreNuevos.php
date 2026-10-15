@@ -5,18 +5,18 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-
-                <!-- TABS -->
-                <ul class="nav nav-tabs mb-3" role="tablist">
+                <ul class="nav nav-pills arrow-navtabs bg-light nav-success mb-4" role="tablist">
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link active" id="tab-pre-nuevos-btn" data-bs-toggle="tab" data-bs-target="#tab-pre-nuevos" type="button" role="tab" aria-controls="tab-pre-nuevos" aria-selected="true">
-                            Pre-nuevos
-                        </button>
+                        <a class="nav-link active py-1 px-2" id="tab-pre-nuevos-btn" data-bs-toggle="tab" href="#tab-pre-nuevos" role="tab" aria-selected="true">
+                            <span class="d-block d-sm-none"><i class="mdi mdi-timer-sand"></i></span>
+                            <span class="d-none d-sm-block">Pre-nuevos</span>
+                        </a>
                     </li>
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="tab-recurrentes-sector-btn" data-bs-toggle="tab" data-bs-target="#tab-recurrentes-sector" type="button" role="tab" aria-controls="tab-recurrentes-sector" aria-selected="false">
-                            Recurrentes
-                        </button>
+                        <a class="nav-link py-1 px-2" id="tab-recurrentes-sector-btn" data-bs-toggle="tab" href="#tab-recurrentes-sector" role="tab" aria-selected="false">
+                            <span class="d-block d-sm-none"><i class="mdi mdi-repeat"></i></span>
+                            <span class="d-none d-sm-block">Recurrentes</span>
+                        </a>
                     </li>
                 </ul>
 
