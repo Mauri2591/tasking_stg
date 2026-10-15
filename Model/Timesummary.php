@@ -131,6 +131,14 @@ class timesummary extends Conexion
         return $stmt->rowCount();
     }
 
+    public function get_fecha_carga($id)
+    {
+        $conn = parent::get_conexion();
+        $stmt = $conn->prepare("SELECT fecha FROM timesummary_carga WHERE id = :id");
+        $stmt->bindValue(":id", (int) $id, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchColumn();
+    }
     public function updateTarea($id, $hora_desde, $hora_hasta, $id_tarea, $descripcion)
     {
         $conn = parent::get_conexion();
@@ -174,7 +182,7 @@ class timesummary extends Conexion
             $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
-            error_log("Error en updateTarea: " . $e->getMessage());
+            error_log("Error en updateTarea: ");
             return false;
         }
     }
@@ -582,8 +590,28 @@ END AS posicion_recurrencia,
 
             return true;
         } catch (PDOException $e) {
-            throw new PDOException($e->getMessage());
+            throw new PDOException();
         }
+    }
+
+    public function existe_solapamiento($usu_id, $fecha, $hora_desde, $hora_hasta, $excluir_id = 0)
+    {
+        $conn = parent::get_conexion();
+        $sql = "SELECT COUNT(*) FROM timesummary_carga
+            WHERE usu_id = :usu_id
+              AND fecha = :fecha
+              AND est = 1
+              AND hora_desde < :hora_hasta
+              AND hora_hasta > :hora_desde
+              AND id != :excluir_id";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue(":usu_id", (int) $usu_id, PDO::PARAM_INT);
+        $stmt->bindValue(":fecha", $fecha, PDO::PARAM_STR);
+        $stmt->bindValue(":hora_desde", $hora_desde, PDO::PARAM_STR);
+        $stmt->bindValue(":hora_hasta", $hora_hasta, PDO::PARAM_STR);
+        $stmt->bindValue(":excluir_id", (int) $excluir_id, PDO::PARAM_INT);
+        $stmt->execute();
+        return (bool) $stmt->fetchColumn();
     }
     public function get_tareas_total()
     {
@@ -1252,15 +1280,15 @@ ORDER BY clientes.client_rs";
     public function getDatosParaEventDrop($id)
     {
         $conn = parent::get_conexion();
-        $sql = "SELECT * FROM timesummary_carga WHERE id=:id";
+        $sql = "SELECT * FROM timesummary_carga WHERE id = :id";
         $stmt = $conn->prepare($sql);
-        $stmt->bindValue(":id", $id, PDO::PARAM_INT);
+        $stmt->bindValue(":id", (int) $id, PDO::PARAM_INT);
         try {
             $stmt->execute();
             return $stmt->fetch(PDO::FETCH_ASSOC);
         } catch (\Throwable $e) {
-            echo "Error: " . $e->getMessage();
-            exit;
+            error_log("getDatosParaEventDrop: " . $e->getMessage());
+            return ["error" => "No se pudieron obtener los datos"];
         }
     }
 

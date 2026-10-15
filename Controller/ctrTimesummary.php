@@ -62,7 +62,11 @@ switch ($_GET['accion']) {
         }
         $horas_consumidas = $validacion_horas['duracion'];
 
-        // ===== VALIDACIÓN DE IDS Y ASIGNACIÓN =====
+        if ($timesummary->existe_solapamiento($_SESSION['usu_id'], $fecha_mysql, $hora_desde, $hora_hasta)) {
+            http_response_code(409);
+            echo json_encode(["error" => "Ya existe una tarea en ese rango horario"]);
+            exit;
+        }
         $conn = $timesummary->get_conexion();
 
         $id_proyecto = (int)($_POST['id_proyecto_gestionado'] ?? 0);
@@ -83,7 +87,6 @@ switch ($_GET['accion']) {
             echo json_encode(["error" => $error]);
             exit;
         }
-        // ===== FIN VALIDACIÓN =====
 
         try {
             $timesummary->insert_tarea(
@@ -92,34 +95,22 @@ switch ($_GET['accion']) {
                 $id_producto,
                 $id_tarea,
                 $es_telecom ? 'Telecom' : '',
-                $_POST['id_pm_calidad'] ?? 0,
+                (int) ($_POST['id_pm_calidad'] ?? 0),
                 $fecha_mysql,
                 $hora_desde,
                 $hora_hasta,
                 $_POST['descripcion'] ?? '',
                 $horas_consumidas
             );
-
             http_response_code(200);
             echo json_encode(["success" => "Tarea creada correctamente"]);
-        } catch (PDOException $e) {
-            http_response_code(400);
-            echo json_encode([
-                "error" => "Error SQL",
-                "message" => $e->getMessage(),
-                "sqlstate" => $e->getCode()
-            ]);
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
+            error_log("insert_tarea: " . $e->getMessage());
             http_response_code(500);
-            echo json_encode([
-                "error" => "Error general",
-                "message" => $e->getMessage()
-            ]);
+            echo json_encode(["error" => "No se pudo crear la tarea"]);
         }
         break;
 
-
-    // OBTENER TAREAS PARA FULLCALENDAR
     case 'get_tareas':
         $data = $timesummary->get_tareas($_SESSION['usu_id'] ?? null);
         $eventos = [];
@@ -210,9 +201,10 @@ switch ($_GET['accion']) {
         try {
             $timesummary->delete_tarea($id);
             echo json_encode(["success" => true]);
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
+            error_log("delete_tarea: " . $e->getMessage());
             http_response_code(500);
-            echo json_encode(["error" => $e->getMessage()]);
+            echo json_encode(["error" => "No se pudo eliminar la tarea"]);
         }
         break;
 
@@ -257,6 +249,13 @@ switch ($_GET['accion']) {
         if (!$timesummary->es_carga_del_usuario($id, $_SESSION['usu_id'])) {
             http_response_code(403);
             echo json_encode(["error" => "No tiene permisos sobre esta carga"]);
+            exit;
+        }
+
+        $fecha = $timesummary->get_fecha_carga($id);
+        if ($timesummary->existe_solapamiento($_SESSION['usu_id'], $fecha, $hora_desde, $hora_hasta, $id)) {
+            http_response_code(409);
+            echo json_encode(["error" => "Ya existe una tarea en ese rango horario"]);
             exit;
         }
 
@@ -470,25 +469,29 @@ switch ($_GET['accion']) {
 
 
     case 'cambiar_estado_tarea':
-        try {
-            //  Obtener el usuario actual desde la sesión
-            $usuario_asignado = $_SESSION['usu_id'];
+        $id_timesummary_estados = (int) ($_POST['id_timesummary_estados'] ?? 0);
+        $est = (int) ($_POST['est'] ?? -1);
 
-            //  Llamada al modelo con el filtro por usuario
+        if ($id_timesummary_estados <= 0 || !in_array($est, [0, 1], true)) {
+            http_response_code(400);
+            echo json_encode(["Error" => "Datos inválidos"]);
+            exit;
+        }
+
+        try {
+            // El modelo filtra por el usuario de la sesión
             $timesummary->cambiar_estado_tarea(
-                $_POST['id_timesummary_estados'],
-                $_POST['est'],
-                $usuario_asignado
+                $id_timesummary_estados,
+                $est,
+                $_SESSION['usu_id']
             );
 
             http_response_code(200);
             echo json_encode(["Success" => "Tarea actualizada correctamente"]);
-        } catch (PDOException $e) {
+        } catch (Throwable $e) {
+            error_log("cambiar_estado_tarea: " . $e->getMessage());
             http_response_code(400);
-            echo json_encode(["Error" => "Error SQL: " . $e->getMessage()]);
-        } catch (Exception $e) {
-            http_response_code(500);
-            echo json_encode(["Error" => "Error general: " . $e->getMessage()]);
+            echo json_encode(["Error" => "No se pudo cambiar el estado de la tarea"]);
         }
         break;
 
@@ -531,8 +534,14 @@ switch ($_GET['accion']) {
         }
         break;
 
-    case 'get_tareas_x_usuario':
-        $datos = $timesummary->get_tareas_x_usuario($_POST['usu_id']);
+       case 'get_tareas_x_usuario':
+        if ($_SESSION['sector_id'] != '4') {
+            http_response_code(403);
+            echo json_encode(["error" => "Sin permisos"]);
+            exit;
+        }
+
+        $datos = $timesummary->get_tareas_x_usuario((int) ($_POST['usu_id'] ?? 0));
         $data = array();
         foreach ($datos as $row) {
             $sub_array = array();
@@ -552,17 +561,15 @@ switch ($_GET['accion']) {
             if (strlen($descripcion) > 30) {
                 $descripcion = wordwrap($descripcion, 30, "<br>", true);
             }
-
             $sub_array[] = $descripcion;
             $data[] = $sub_array;
         }
-        $results = array(
+        echo json_encode(array(
             "sEcho" => 1,
             "iTotalRecords" => count($data),
             "iTotalDisplayRecords" => count($data),
             "aaData" => $data
-        );
-        echo json_encode($results);
+        ));
         break;
 
     case 'get_tareas_x_usuario_x_usu_id':
@@ -595,8 +602,15 @@ switch ($_GET['accion']) {
         break;
 
     case 'getDatosParaEventDrop':
-        $datos = $timesummary->getDatosParaEventDrop($_POST['id']);
-        echo json_encode($datos);
+        $id = (int) ($_POST['id'] ?? 0);
+
+        if (!$timesummary->es_carga_del_usuario($id, $_SESSION['usu_id'])) {
+            http_response_code(403);
+            echo json_encode(["error" => "No tiene permisos sobre esta carga"]);
+            exit;
+        }
+
+        echo json_encode($timesummary->getDatosParaEventDrop($id));
         break;
 
     case 'verificar_conflictos_rango':

@@ -20,6 +20,11 @@ if (isset($_SESSION['usu_id'])) {
             box-shadow: 0 0 0 3px rgba(220, 53, 69, .35) !important;
         }
 
+        .fc-dia-clonar {
+            background-color: rgba(13, 110, 253, .15) !important;
+            outline: 2px dashed #0d6efd;
+            outline-offset: -2px;
+        }
     </style>
 
     <div class="page-content">
@@ -128,8 +133,9 @@ if (isset($_SESSION['usu_id'])) {
     document.addEventListener('DOMContentLoaded', function() {
         var tabla;
         var calendarEl = document.getElementById('calendar');
-        
+
         const tareasSeleccionadas = new Set();
+
         function limpiarSeleccionTareas() {
             tareasSeleccionadas.clear();
             calendarEl.querySelectorAll('.fc-evento-seleccionado')
@@ -766,7 +772,7 @@ if (isset($_SESSION['usu_id'])) {
                     info.revert();
                 });
             },
-                        eventDidMount: function(info) {
+            eventDidMount: function(info) {
                 info.el.dataset.eventId = info.event.id;
                 if (tareasSeleccionadas.has(String(info.event.id))) {
                     info.el.classList.add('fc-evento-seleccionado');
@@ -855,9 +861,7 @@ if (isset($_SESSION['usu_id'])) {
                     location.reload();
                     huboUpdate = false;
                 }
-
             });
-
         });
 
         document.getElementById("btnVerHorasExtrasTimesummary").addEventListener("click", function() {
@@ -915,14 +919,156 @@ if (isset($_SESSION['usu_id'])) {
         });
         calendar.render();
 
+        let clon = null;
+        let ignorarProximoClick = false;
+
+        function limpiarClon() {
+            if (clon) clon.dias.forEach(celda => celda.classList.remove('fc-dia-clonar'));
+            clon = null;
+        }
+
+        calendarEl.addEventListener('mousedown', function(e) {
+            if (!(e.ctrlKey || e.metaKey) || e.button !== 0) return;
+            const elEvento = e.target.closest('.fc-event');
+            if (!elEvento || !elEvento.dataset.eventId) return;
+
+            const evento = calendar.getEventById(elEvento.dataset.eventId);
+            if (!evento) return;
+
+            e.preventDefault();
+            clon = {
+                eventoId: evento.id,
+                fechaOrigen: toLocalDateStr(evento.start),
+                dias: new Map()
+            };
+        }, true);
+
+        calendarEl.addEventListener('mouseover', function(e) {
+            if (!clon) return;
+            const celda = e.target.closest('.fc-daygrid-day[data-date]');
+            if (!celda) return;
+
+            const fecha = celda.getAttribute('data-date');
+            if (fecha === clon.fechaOrigen || clon.dias.has(fecha)) return;
+
+            celda.classList.add('fc-dia-clonar');
+            clon.dias.set(fecha, celda);
+        });
+
+        document.addEventListener('mouseup', function() {
+            if (!clon) return;
+
+            if (clon.dias.size === 0) {
+                limpiarClon();
+                return;
+            }
+
+            ignorarProximoClick = true;
+            setTimeout(() => {
+                ignorarProximoClick = false;
+            }, 0);
+            const datos = clon;
+            const evento = calendar.getEventById(datos.eventoId);
+            const fechas = [...datos.dias.keys()].sort();
+            limpiarClon();
+            if (!evento) return;
+
+            const inicioH = evento.start.toTimeString().slice(0, 5);
+            const finH = (evento.end || new Date(evento.start.getTime() + 3600000)).toTimeString().slice(0, 5);
+
+            const libres = [],
+                ocupados = [];
+            fechas.forEach(f => {
+                const ini = new Date(`${f}T${inicioH}`);
+                const fin = new Date(`${f}T${finH}`);
+                const choca = calendar.getEvents().some(ev => {
+                    const evFin = ev.end || new Date(ev.start.getTime() + 3600000);
+                    return toLocalDateStr(ev.start) === f && ini < evFin && fin > ev.start;
+                });
+                (choca ? ocupados : libres).push(f);
+            });
+
+            const fmt = f => f.split('-').reverse().join('-');
+
+            if (libres.length === 0) {
+                Swal.fire({
+                    icon: "warning",
+                    title: "Sin días disponibles",
+                    text: "Todos los días seleccionados tienen una tarea en ese horario."
+                });
+                return;
+            }
+
+            let html = `Horario: <b>${inicioH} - ${finH}</b><br><br>Se copiará en:<br><small>${libres.map(fmt).join('<br>')}</small>`;
+            if (ocupados.length) {
+                html += `<br><br><small class="text-danger">Se omiten por conflicto horario:<br>${ocupados.map(fmt).join('<br>')}</small>`;
+            }
+
+            Swal.fire({
+                icon: "question",
+                title: `¿Clonar la tarea en ${libres.length} día(s)?`,
+                html: html,
+                showCancelButton: true,
+                confirmButtonText: "Sí, clonar",
+                cancelButtonText: "Cancelar"
+            }).then(result => {
+                if (!result.isConfirmed) return;
+
+                $.post(URL + "Controller/ctrTimesummary.php?accion=getDatosParaEventDrop", {
+                    id: evento.id
+                }, function(data) {
+                    if (!data || data.error) {
+                        Swal.fire({
+                            icon: "error",
+                            title: "Error",
+                            text: "No se pudieron obtener los datos de la tarea"
+                        });
+                        return;
+                    }
+
+                    const peticiones = libres.map(fecha => $.post(URL + "Controller/ctrTimesummary.php?accion=insert_tarea", {
+                        id_proyecto_gestionado: data.id_proyecto_gestionado == 209 ? 0 : data.id_proyecto_gestionado,
+                        id_producto: data.id_producto,
+                        id_tarea: data.id_tarea,
+                        es_telecom: data.id_proyecto_gestionado == 0 ? "Telecom" : "",
+                        fecha: fecha,
+                        hora_desde: data.hora_desde.slice(0, 5),
+                        hora_hasta: data.hora_hasta.slice(0, 5),
+                        descripcion: data.descripcion,
+                        id_pm_calidad: data.id_pm_calidad
+                    }, null, "json"));
+
+                    Promise.allSettled(peticiones).then(resultados => {
+                        const ok = resultados.filter(r => r.status === 'fulfilled').length;
+                        const fallidas = resultados.length - ok;
+
+                        Swal.fire({
+                            icon: fallidas ? "warning" : "success",
+                            title: fallidas ? "Clonado parcial" : "Bien",
+                            text: `Se crearon ${ok} copia(s)` + (fallidas ? `, ${fallidas} no se pudieron crear.` : '.'),
+                            timer: fallidas ? undefined : 1300,
+                            showConfirmButton: !!fallidas
+                        });
+                        calendar.refetchEvents();
+                        refrescarTablaTS();
+                    });
+                }, "json");
+            });
+        });
+
         calendarEl.addEventListener('click', function(e) {
+            if (ignorarProximoClick) {
+                ignorarProximoClick = false;
+                e.preventDefault();
+                e.stopPropagation();
+                return;
+            }
             if (!(e.ctrlKey || e.metaKey)) return;
 
             const elEvento = e.target.closest('.fc-event');
             if (!elEvento || !elEvento.dataset.eventId) return;
 
             e.preventDefault();
-
             e.stopPropagation();
 
             const id = String(elEvento.dataset.eventId);
@@ -965,12 +1111,22 @@ if (isset($_SESSION['usu_id'])) {
                 $.post(URL + "Controller/ctrTimesummary.php?accion=delete_tareas_por_ids", {
                     ids: JSON.stringify(ids)
                 }, function(resp) {
-                    Swal.fire({ icon: "success", title: "Bien", text: resp.success, timer: 1000, showConfirmButton: false });
+                    Swal.fire({
+                        icon: "success",
+                        title: "Bien",
+                        text: resp.success,
+                        timer: 1000,
+                        showConfirmButton: false
+                    });
                     limpiarSeleccionTareas();
                     calendar.refetchEvents();
                     refrescarTablaTS();
                 }, "json").fail(function(xhr) {
-                    Swal.fire({ icon: "error", title: "Error", text: xhr.responseJSON?.error || "No se pudieron borrar las tareas" });
+                    Swal.fire({
+                        icon: "error",
+                        title: "Error",
+                        text: xhr.responseJSON?.error || "No se pudieron borrar las tareas"
+                    });
                     limpiarSeleccionTareas();
                 });
             });
