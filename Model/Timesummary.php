@@ -135,7 +135,6 @@ class timesummary extends Conexion
     {
         $conn = parent::get_conexion();
 
-        // Misma validación que el insert: formato HH:MM y fin > inicio
         $validacion = self::validar_horas_minutos(substr($hora_desde, 0, 5), substr($hora_hasta, 0, 5));
         if (!$validacion['success']) {
             error_log("updateTarea rechazado (id={$id}): " . $validacion['error']);
@@ -159,7 +158,7 @@ class timesummary extends Conexion
         $stmt->bindValue(":horas_consumidas", $horasConsumidas, PDO::PARAM_STR);
         try {
             $stmt->execute();
-            return $stmt->rowCount() > 0;
+            return true; // 0 filas afectadas = sin cambios, no es un error
         } catch (PDOException $e) {
             error_log("Error en updateTarea: " . $e->getMessage());
             return false;
