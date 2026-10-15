@@ -13,6 +13,13 @@ if (isset($_SESSION['usu_id'])) {
         .fc-event:hover {
             color: #ebebeb !important;
         }
+
+        .fc-evento-seleccionado {
+            outline: 2px solid #dc3545 !important;
+            outline-offset: 1px;
+            box-shadow: 0 0 0 3px rgba(220, 53, 69, .35) !important;
+        }
+
     </style>
 
     <div class="page-content">
@@ -121,6 +128,14 @@ if (isset($_SESSION['usu_id'])) {
     document.addEventListener('DOMContentLoaded', function() {
         var tabla;
         var calendarEl = document.getElementById('calendar');
+        
+        const tareasSeleccionadas = new Set();
+        function limpiarSeleccionTareas() {
+            tareasSeleccionadas.clear();
+            calendarEl.querySelectorAll('.fc-evento-seleccionado')
+                .forEach(el => el.classList.remove('fc-evento-seleccionado'));
+        }
+
         var calendar = new FullCalendar.Calendar(calendarEl, {
             initialView: 'dayGridMonth',
 
@@ -142,6 +157,9 @@ if (isset($_SESSION['usu_id'])) {
             editable: true,
             default: true,
             selectMirror: true,
+            datesSet: function() {
+                limpiarSeleccionTareas();
+            },
             dateClick: function(info) {
                 let FECHA = info.dateStr;
                 $("#fechaSeleccionada").text(FECHA);
@@ -748,7 +766,12 @@ if (isset($_SESSION['usu_id'])) {
                     info.revert();
                 });
             },
-            eventDidMount: function(info) {
+                        eventDidMount: function(info) {
+                info.el.dataset.eventId = info.event.id;
+                if (tareasSeleccionadas.has(String(info.event.id))) {
+                    info.el.classList.add('fc-evento-seleccionado');
+                }
+
                 if (info.event.extendedProps.es_telecom) {
                     info.el.style.backgroundColor = '#abb9e8';
                     info.el.title = 'Tarea computada a Telecom, no a proyectos';
@@ -891,6 +914,67 @@ if (isset($_SESSION['usu_id'])) {
             });
         });
         calendar.render();
+
+        calendarEl.addEventListener('click', function(e) {
+            if (!(e.ctrlKey || e.metaKey)) return;
+
+            const elEvento = e.target.closest('.fc-event');
+            if (!elEvento || !elEvento.dataset.eventId) return;
+
+            e.preventDefault();
+
+            e.stopPropagation();
+
+            const id = String(elEvento.dataset.eventId);
+            if (tareasSeleccionadas.has(id)) {
+                tareasSeleccionadas.delete(id);
+                elEvento.classList.remove('fc-evento-seleccionado');
+            } else {
+                tareasSeleccionadas.add(id);
+                elEvento.classList.add('fc-evento-seleccionado');
+            }
+        }, true);
+
+        document.addEventListener('keyup', function(e) {
+            if ((e.key !== 'Control' && e.key !== 'Meta') || tareasSeleccionadas.size === 0) return;
+            const ids = [...tareasSeleccionadas];
+            const eventos = ids.map(id => calendar.getEventById(id)).filter(Boolean)
+                .sort((a, b) => a.start - b.start);
+
+            const hora = d => d ? d.toTimeString().slice(0, 5) : '';
+            const escapar = t => $('<div>').text(t || '').html();
+
+            const lista = eventos.map(ev =>
+                `${toLocalDateStr(ev.start).split('-').reverse().join('-')} · ${hora(ev.start)}-${hora(ev.end)} · ${escapar(ev.title)}`
+            ).join('<br>');
+
+            Swal.fire({
+                icon: "warning",
+                title: `¿Desea borrar ${ids.length} tarea(s)?`,
+                html: `<small>${lista}</small>`,
+                showCancelButton: true,
+                confirmButtonText: "Sí, borrar",
+                cancelButtonText: "Cancelar",
+                confirmButtonColor: "#d33"
+            }).then(result => {
+                if (!result.isConfirmed) {
+                    limpiarSeleccionTareas();
+                    return;
+                }
+
+                $.post(URL + "Controller/ctrTimesummary.php?accion=delete_tareas_por_ids", {
+                    ids: JSON.stringify(ids)
+                }, function(resp) {
+                    Swal.fire({ icon: "success", title: "Bien", text: resp.success, timer: 1000, showConfirmButton: false });
+                    limpiarSeleccionTareas();
+                    calendar.refetchEvents();
+                    refrescarTablaTS();
+                }, "json").fail(function(xhr) {
+                    Swal.fire({ icon: "error", title: "Error", text: xhr.responseJSON?.error || "No se pudieron borrar las tareas" });
+                    limpiarSeleccionTareas();
+                });
+            });
+        });
     });
 
     $.post(URL + "Controller/ctrTimesummary.php?accion=datos_tabla_ts",

@@ -216,6 +216,32 @@ switch ($_GET['accion']) {
         }
         break;
 
+    case 'delete_tareas_por_ids':
+        $ids = json_decode($_POST['ids'] ?? '[]', true);
+
+        if (!is_array($ids) || empty($ids) || count($ids) > 100) {
+            http_response_code(400);
+            echo json_encode(["error" => "Selección de tareas inválida"]);
+            exit;
+        }
+
+        // Solo enteros positivos
+        $ids = array_values(array_unique(array_filter(array_map('intval', $ids), fn($i) => $i > 0)));
+        if (empty($ids)) {
+            http_response_code(400);
+            echo json_encode(["error" => "Selección de tareas inválida"]);
+            exit;
+        }
+
+        try {
+            $borradas = $timesummary->delete_tareas_por_ids($_SESSION['usu_id'], $ids);
+            echo json_encode(["success" => "Se eliminaron {$borradas} tarea(s)"]);
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode(["error" => "Error al borrar las tareas"]);
+        }
+        break;
+
     case 'updateTarea':
         $id         = (int) ($_POST['id'] ?? 0);
         $hora_desde = $_POST['hora_desde'] ?? '';

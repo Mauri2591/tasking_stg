@@ -121,6 +121,16 @@ class timesummary extends Conexion
         return (bool) $stmt->fetchColumn();
     }
 
+    public function delete_tareas_por_ids($usu_id, array $ids)
+    {
+        $conn = parent::get_conexion();
+        $placeholders = implode(',', array_fill(0, count($ids), '?'));
+        $sql = "DELETE FROM timesummary_carga WHERE usu_id = ? AND id IN ($placeholders)";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute(array_merge([(int) $usu_id], $ids));
+        return $stmt->rowCount();
+    }
+
     public function updateTarea($id, $hora_desde, $hora_hasta, $id_tarea, $descripcion)
     {
         $conn = parent::get_conexion();
