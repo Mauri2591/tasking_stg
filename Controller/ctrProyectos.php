@@ -695,7 +695,7 @@ switch ($_GET['proy']) {
         $proyecto->activar_host_x_id($_SESSION['usu_id'], $_POST['id_proyecto_cantidad_servicios'], $_POST['host_id']);
         break;
 
-  case 'update_proyecto':
+    case 'update_proyecto':
         /* =====================================================
             * 0. VALIDACIÓN DEL ID
             * ===================================================== */
@@ -2633,7 +2633,7 @@ switch ($_GET['proy']) {
             ?>
             <br>
             <br>
-            <?php
+        <?php
         }
         break;
 
@@ -2690,8 +2690,12 @@ switch ($_GET['proy']) {
 
     case 'get_sectores_x_sector_id':
         $data = $proyecto->get_sectores_x_sector_id($_SESSION['sector_id']);
-        // var_dump($data);
         if ($_SESSION['sector_id'] != 4) {
+            $button = '<button type="button" onclick="btnPreNuevos(' . $_SESSION['sector_id'] . ')" class="btn btn-sm" value="' . $_SESSION['sector_id'] . '">En Cola <i class="ri-stack-line"></i></button>';        ?>
+            <div class="col d-flex align-items-center justify-content-center" style="min-width: 150px; flex: 0 0 auto;">
+                <?= $button; ?>
+            </div>
+            <?php
             foreach ($data as $val) {
             ?>
                 <a type="button" href="<?php echo URL . "View/Home/" . $val['nombre_ruta']; ?>" class="col" id="botonesProductos" style="min-width: 150px; flex: 0 0 auto; text-align: center;">
@@ -2701,8 +2705,7 @@ switch ($_GET['proy']) {
                             <?php if (!empty($val['total'])): ?>
                                 <i title="Nuevos para trabajar" class="ri-add-circle-fill text-success fs-16 float-end align-middle"></i>
                             <?php else: ?>
-                                <i title="Sin proyectos para trabajar"
-                                    class="ri-indeterminate-circle-fill text-danger fs-16 float-end align-middle"></i>
+                                <i title="Sin proyectos para trabajar" class="ri-indeterminate-circle-fill text-danger fs-16 float-end align-middle"></i>
                             <?php endif; ?>
                         </h5>
                         <div class="d-flex align-items-center">
@@ -3229,6 +3232,73 @@ TXT;
             'dim'     => $okDim,
             'usu'     => $okUsu,
         ]);
+        break;
+
+    case 'getProyectosPreNuevos':
+        $estados_id = isset($_POST['estados_id']) ? (int) $_POST['estados_id'] : 0;
+        $datos = $proyecto->getProyectosPreNuevos($_SESSION['sector_id'], $estados_id);
+        $data = array();
+        $session_usu_id = $_SESSION['usu_id'];
+        $session_sector_id = $_SESSION['sector_id'];
+
+        foreach ($datos as $row) {
+            $sub_array = array();
+            $ids_asignados = explode(',', $row['usu_id_asignado'] ?? '');
+
+            $sub_array[] = $row['titulo'];
+
+            $sub_array[] = $row['fech_inicio'] == ''
+                ? 'Sin fecha'
+                : '<span class="badge bg-light text-dark">' . $row['fech_inicio'] . '</span>';
+
+            $sub_array[] = $row['fech_fin'] == ''
+                ? 'Sin fecha'
+                : '<span class="badge bg-light text-dark">' . $row['fech_fin'] . '</span>';
+
+            if (!empty($row['posicion_recurrencia'])) {
+                $sub_array[] = '<span class="badge bg-success text-light border border-success">'
+                    . $row['posicion_recurrencia'] . '</span>';
+            } else if (is_null($row['posicion_recurrencia']) && $row['id_proyecto_recurrencia'] > 0) {
+                $sub_array[] = '<span class="badge bg-light text-success border border-success">Actualizar<br>Recurrente</span>';
+            } else {
+                $sub_array[] = '-';
+            }
+
+            $sub_array[] = $row['rechequeo'] == "SI"
+                ? '<span class="badge bg-danger">SI</span>'
+                : '-';
+
+            $sub_array[] = '<span class="badge bg-light text-dark">' . $row['creador_proy'] . '</span>';
+
+            $sub_array[] = '<span class="badge bg-light text-dark">' . $row['categoria'] . '</span>';
+
+            $sub_array[] = '<span class="badge bg-light text-dark">' . $row['cats_nom'] . '</span>';
+
+            $sub_array[] = $row['hs_dimensionadas'] == ""
+                ? "Sin hs"
+                : '<span class="badge bg-light text-dark">' . $row['hs_dimensionadas'] . '</span>';
+            if (!empty($row['usu_nom_asignado'])) {
+                $sub_array[] = '<span class="badge bg-info text-light">' . $row['usu_nom_asignado'] . '</span>';
+            } else {
+                $sub_array[] = '<span class="badge bg-light border border-dark text-dark">Sin asignar</span>';
+            }
+
+            // ACTIVOS
+            // $sub_array[] = '<span type="button" onclick="ver_hosts_eh('
+            //     . $row['id_proyecto_gestionado']
+            //     . ')"><i class="text-secondary fs-18 ri-global-line" title="Ver hosts"></i></span>';
+
+            $sub_array[] = '<button onclick="pasarProyectoaNuevo(' . $row['id_proyecto_gestionado'] . ')" class="btn btn-primary btn-sm py-0">Nuevo</button>';
+
+            $data[] = $sub_array;
+        }
+
+        echo json_encode(array(
+            "sEcho" => 1,
+            "iTotalRecords" => count($data),
+            "iTotalDisplayRecords" => count($data),
+            "aaData" => $data
+        ));
         break;
 
     default:

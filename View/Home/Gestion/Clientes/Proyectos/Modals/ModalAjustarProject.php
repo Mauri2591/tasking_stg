@@ -3,6 +3,13 @@
     aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
+
+            <div id="loader_modal_alta_proy"
+                style="position:absolute; inset:0; z-index:1060; display:none; flex-direction:column; align-items:center; justify-content:flex-center; margin-top: 1rem; padding-bottom:3rem; background:rgba(255,255,255,0.85); border-radius:inherit;">
+                <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status"></div>
+                <span class="mt-3 fw-semibold text-primary">Cargando datos...</span>
+            </div>
+
             <div class="card-body">
                 <h5 class="mb-0 pb-0">Crear Proyecto</h5>
                 <!-- <code>Los campos con (*) son obligatorios</code> -->
@@ -199,7 +206,7 @@
                                             <input class="form-control form-control-sm" id="fecha_contrato" type="date">
                                         </div>
 
-                                         <div class="mb-3 col-sm-3">
+                                        <div class="mb-3 col-sm-3">
                                             <span class="badge bg-light fs-10 mb-1 text-dark">Plazo Meses</span>
                                             <input class="form-control form-control-sm" type="number" title="Ingrese un valor numerico" autocomplete="off" id="plazo_meses" name="plazo_meses">
                                         </div>
@@ -233,7 +240,7 @@
                                             <input class="form-control form-control-sm" id="fech_fin_proy_nuevo" type="date">
                                         </div>
 
-                                       
+
                                     </div>
                                 </div>
                             </div>
@@ -325,28 +332,38 @@
                         <hr>
                         <br>
                         <div id="cont_btn_Modal_Ajustar_proy" class="text-end mt-3">
-                            <button id="btn_crear_proyecto" type="submit" class="btn btn-sm btn-primary">Crear</button>
 
-                            <button id="btn_eliminar_proyecto"
-                                class="btn btn-sm text-light" style="background-color: #f06548;">Eliminar</button>
+                            <div class="d-flex justify-content-end">
+                                <div class="border text-end rounded bg-light p-2" style="width: 25rem;">
 
-                            <button id="btn_cancelar_proyecto" type="submit" class="btn btn-sm text-light"
-                                style="background-color: #d4a66a;">Cancelar</button>
+                                    <div>
 
-                            <button id="btn_fin_sin_implementar" type="submit" class="btn btn-sm text-light"
-                                style="background-color: #957763;">Fin sin impl</button>
+                                    </div>
+                                    <button id="btn_eliminar_proyecto"
+                                        class="btn btn-sm text-light" style="background-color: #f06548;">Eliminar</button>
 
-                            <button id="btn_editar_proyecto" type="button" class="btn btn-sm btn-success text-light">
-                                Guardar Edición
-                            </button>
+                                    <button id="btn_cancelar_proyecto" type="submit" class="btn btn-sm text-light"
+                                        style="background-color: #d4a66a;">Cancelar</button>
 
-                            <button id="btn_cambiar_estado_proyecto" type="submit"
-                                class="btn btn-sm text-light" style="background-color: #405189;">Cambiar
-                                a Nuevo</button>
+                                    <button id="btn_fin_sin_implementar" type="submit" class="btn btn-sm text-light"
+                                        style="background-color: #957763;">Fin sin impl</button>
 
-                            <button type="button" id="btn_cancelar_proyecto" class="btn btn-sm btn-light"
+                                    <br><br>
+                                    
+                                    <button id="btn_editar_proyecto" type="button" class="btn btn-sm btn-success text-light">
+                                        Guardar Edición
+                                    </button>
+                                    <button id="btn_crear_proyecto" type="submit" class="btn btn-sm btn-primary">Crear Proyecto</button>
+                                    <button id="btn_cambiar_estado_proyecto" type="submit"
+                                        class="btn btn-sm text-light" style="background-color: #405189;">Cambiar
+                                        a Nuevo</button>
+                                    <button id="btn_cambiar_estado_proyecto_pre_nuevo" type="submit"
+                                        class="btn btn-sm text-light" style="background-color:#4F46E5;">Pre-Nuevo</button>
+
+                                </div>
+                            </div>
+                            <button type="button" id="btn_cancelar_proyecto" class="btn btn-sm mt-3 btn-light border border-dark"
                                 data-bs-dismiss="modal">Cerrar</button>
-
                         </div>
                         <div id="cont_mje_proy_crear">
 

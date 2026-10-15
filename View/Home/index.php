@@ -8,6 +8,7 @@ if (isset($_SESSION['usu_id'])) {
     include_once __DIR__ . "/Public/Template/head.php";
     ?>
     <style>
+       
         .scroll-fina {
             overflow-x: auto;
             scrollbar-width: thin;
@@ -33,6 +34,41 @@ if (isset($_SESSION['usu_id'])) {
 
         #botonesProductos:hover {
             background-color: #e5ebffff;
+        }
+
+        button[onclick^="btnPreNuevos"] {
+            background-color: #3e33ffb8;
+            color: #fff;
+            transition: all 0.25s ease;
+            padding: .5rem 1.5rem;
+        }
+
+        button[onclick^="btnPreNuevos"]:hover {
+            background-color: #3e33ff;
+            color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(62, 51, 255, 0.4);
+        }
+
+        button[onclick^="btnPreNuevos"]:hover i {
+            display: inline-block;
+            animation: enColaBounce 0.6s ease;
+        }
+
+        @keyframes enColaBounce {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            30% {
+                transform: translateY(-4px);
+            }
+
+            60% {
+                transform: translateY(2px);
+            }
         }
     </style>
     <?php
@@ -116,6 +152,7 @@ if (isset($_SESSION['usu_id'])) {
     <!-- End Page-content -->
     <?php
     include_once __DIR__ . "/Modals/mdlProyectos.php";
+    include_once __DIR__ . "/Modals/mdlProyectosPreNuevos.php";
     include_once __DIR__ . "/Public/Template/footer.php";
     ?>
     <script>
@@ -279,18 +316,18 @@ if (isset($_SESSION['usu_id'])) {
         <?php endif; ?>
 
         <script>
+            var tabla;
             document.addEventListener("DOMContentLoaded", function() {
                 $.post("../../Controller/ctrProyectos.php?proy=get_sectores_x_sector_id",
                     function(data, textStatus, jqXHR) {
                         $("#cont_get_categorias_x_sector").html(data);
+
                     },
                     "html"
                 );
 
-
                 $.post("../../Controller/ctrProyectos.php?proy=grafico_get_total_servicios",
                     function(data, textStatus, jqXHR) {
-                        // Suponiendo que 'data' es un array de objetos tipo: [{cat_nom: 'Pentest', total: 5}, ...]
                         const labels = data.map(elem => elem.cat_nom);
                         const values = data.map(elem => elem.total);
 
@@ -322,6 +359,110 @@ if (isset($_SESSION['usu_id'])) {
                     },
                     "json"
                 );
+            });
+
+            function btnPreNuevos(session_id) {
+                $("#mdlProyectosPreNuevos").modal("show");
+
+                tabla = $("#table-proyectos-pre-nuevos").dataTable({
+                    "aProcessing": true,
+                    "aServerSide": true,
+                    "ordering": true,
+                    "lengthChange": true,
+                    "lengthMenu": [
+                        [10, 20, 50, -1],
+                        [10, 20, 50, "Todas"]
+                    ],
+                    dom: 'lBfrtip',
+                    "searching": true,
+                    colReorder: true,
+                    "ajax": {
+                        url: URL + "Controller/ctrProyectos.php?proy=getProyectosPreNuevos",
+                        type: "post",
+                        dataType: "json",
+                        data: {
+                            sector_id: session_id,
+                            estados_id: 26
+                        },
+                        error: function(e) {}
+                    },
+                    "order": [
+                        [0, "asc"]
+                    ],
+                    "bDestroy": true,
+                    "responsive": true,
+                    "bInfo": true,
+                    "iDisplayLength": 20,
+                    "autoWith": false,
+                    "language": {
+                        "sProcessing": "Procesando..",
+                        "sLengthMenu": "Mostrar _MENU_ registros",
+                        "sZeroRecords": "No se encontraron resultados..",
+                        "sEmptyTable": "Ninguna tarea disponible en esta tabla",
+                        "sInfo": "Mostrando un total de _TOTAL_ registros",
+                        "sInfoEmpty": "Mostrando un total de 0 registros",
+                        "sInfoFiltered": "(Filtrado de un total de _MAX_ registros)",
+                        "sInfoPostFix": "",
+                        "sSearch": "Buscar: ",
+                        "sUrl": "",
+                        "sInfoThousands": ",",
+                        "sLoadingRecords": "Cargando",
+                        "oPaginate": {
+                            "sFirst": "Primero",
+                            "sLast": "Ùltimo",
+                            "sNext": "Siguiente",
+                            "sPrevious": "Anterior"
+                        },
+                        "oAria": {
+                            "sSortAscending": ":Activar para ordenar la columna de manera ascendiente",
+                            "sSortDescending": ":Activar para ordenar la columna de manera descendiente"
+                        }
+                    }
+                });
+            }
+
+            let huboCambiosEnCola = false;
+
+            function pasarProyectoaNuevo(id_proyecto_gestionado) {
+                Swal.fire({
+                    icon: "info",
+                    title: "Atención!",
+                    text: '¿Desea pasar a Nuevo este proyecto?',
+                    showConfirmButton: true,
+                    showCancelButton: true
+                }).then(async (result) => {
+                    if (!result.isConfirmed) return;
+                    try {
+                        await $.post(URL + "Controller/ctrProyectos.php?proy=update_estado_proy", {
+                            id: id_proyecto_gestionado,
+                            estados_id: 1
+                        }, null, "json");
+
+                        huboCambiosEnCola = true;
+                        $('#table-proyectos-pre-nuevos').DataTable().ajax.reload(null, false);
+
+                        Swal.fire({
+                            icon: "success",
+                            title: "Bien",
+                            text: "Proyecto pasado a Nuevo!",
+                            timer: 1200,
+                            showConfirmButton: false
+                        });
+                    } catch (err) {
+                        console.error(err);
+                        Swal.fire({
+                            icon: "error",
+                            title: "Error",
+                            text: "No se pudo actualizar el proyecto."
+                        });
+                    }
+                });
+            }
+
+            $("#mdlProyectosPreNuevos").on("hidden.bs.modal", function() {
+                if (huboCambiosEnCola) {
+                    window.location.reload();
+                }
             });
 
             document.getElementById("idCheckValidarUsuPass2").addEventListener("change", function() {
@@ -544,7 +685,10 @@ if (isset($_SESSION['usu_id'])) {
                 });
             }
         </script>
-
+        <div id="loader_modal_alta_proy" class="loader-global">
+            <div class="spinner-border text-light" style="width: 3rem; height: 3rem;" role="status"></div>
+            <span class="mt-3 fw-semibold text-light">Cargando datos...</span>
+        </div>
     <?php endif; ?>
 
 <?php } else {

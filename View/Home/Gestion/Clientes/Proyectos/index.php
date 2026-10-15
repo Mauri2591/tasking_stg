@@ -64,7 +64,7 @@ if (isset($_SESSION['usu_id'])) {
                                 <span class="d-none d-sm-block">En Curso</span>
                             </a>
                         </li>
-                          <li class="nav-item">
+                        <li class="nav-item">
                             <a class="nav-link" data-bs-toggle="tab" href="#tab_bitacora" role="tab" aria-selected="false">
                                 <span class="d-block d-sm-none"><i class="mdi mdi-account"></i></span>
                                 <span class="d-none d-sm-block">Bitacora</span>
@@ -76,7 +76,7 @@ if (isset($_SESSION['usu_id'])) {
                                 <span class="d-none d-sm-block">Realizados por Sector</span>
                             </a>
                         </li>
-                          <li class="nav-item">
+                        <li class="nav-item">
                             <a class="nav-link" data-bs-toggle="tab" href="#tab_cross_sell_sectores" role="tab" aria-selected="false">
                                 <span class="d-block d-sm-none"><i class="mdi mdi-account"></i></span>
                                 <span class="d-none d-sm-block">Cross-Sell</span>
@@ -296,7 +296,7 @@ if (isset($_SESSION['usu_id'])) {
                             </div>
                         </div>
 
-                         <div class="tab-pane" id="tab_bitacora" role="tabpanel">
+                        <div class="tab-pane" id="tab_bitacora" role="tabpanel">
                             <div class="card card-body">
                                 <table id="table_bitacora" style="text-align: center; width: 100%;">
                                     <thead style="text-align: center;">
@@ -405,10 +405,12 @@ if (isset($_SESSION['usu_id'])) {
                     </div>
                 </div>
             </div>
-
         <?php endif; ?>
-
     </div>
+    <div id="loader_modal_alta_proy" class="loader-global">
+            <div class="spinner-border text-light" style="width: 3rem; height: 3rem;" role="status"></div>
+            <span class="mt-3 fw-semibold text-light">Cargando datos...</span>
+        </div>
     </div>
     <!-- End Page-content -->
     <?php

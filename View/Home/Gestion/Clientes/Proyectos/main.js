@@ -1034,6 +1034,17 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
     $("#id_proyecto_cantidad_servicios").val(id_proyecto_cantidad_servicios);
     $("#proy_id").val(proy_id);
 
+    // Loader: se muestra ya y se oculta cuando terminan todas las peticiones
+    $("#loader_modal_alta_proy").css("display", "flex");
+    $(document).off("ajaxStop.loaderAlta").one("ajaxStop.loaderAlta", function () {
+        $("#loader_modal_alta_proy").fadeOut(200);
+        const elRefPro = document.getElementById("client_refPro_proy_nuevo");
+        if (elRefPro) elRefPro.focus();
+    });
+
+    // Seguridad: si algo queda colgado, se libera a los 15 s
+    setTimeout(() => $("#loader_modal_alta_proy").fadeOut(200), 15000);
+
     // Placeholder mientras cargan los combos (evita ver ETHICAL HACKING por default)
     if (id) {
         const cargando = '<option value="">Cargando...</option>';
@@ -1222,6 +1233,7 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
     $("#ModalAltaProject").modal("show");
     $("#btn_crear_proyecto").show();
     $("#btn_cambiar_estado_proyecto").hide();
+    $("#btn_cambiar_estado_proyecto_pre_nuevo").hide();
     $("#btn_eliminar_proyecto").show();
     $("#btn_finalizar_estado_proyecto").hide();
     $("#btn_editar_proyecto").hide();
@@ -1352,6 +1364,7 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
             $("#cont_activos_ips_urls_otros").hide();
             $("#btn_crear_proyecto").hide();
             $("#btn_cambiar_estado_proyecto").show();
+            $("#btn_cambiar_estado_proyecto_pre_nuevo").show();
             $("#btn_eliminar_proyecto").show();
             $("#btn_finalizar_estado_proyecto").show();
             $("#btn_editar_proyecto").show();
@@ -1428,18 +1441,20 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
                         showConfirmButton: false,
                         timer: 1500
                     });
-                } else {
+                    return;
+                }
+
+                Swal.fire({
+                    icon: "question",
+                    title: "Atención!",
+                    text: "¿Desea pasar el proyecto a Nuevo?",
+                    showCancelButton: true,
+                    showConfirmButtonText: true
+                }).then((result) => {
+                    if (!result.isConfirmed) return;
+
                     $.post("../../../../../Controller/ctrProyectos.php?proy=cambiar_a_abierto", {
                             id: $("#id_proyecto_gestionado").val()
-                        },
-                        function (data, textStatus, jqXHR) {
-                            Swal.fire({
-                                icon: "success",
-                                title: "Bien",
-                                text: "Proyecto pasado a nuevo!",
-                                showConfirmButton: false,
-                                timer: 1500
-                            });
                         },
                         "json"
                     );
@@ -1477,7 +1492,73 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
                         showConfirmButton: false
                     });
                     $("#ModalAltaProject").modal("hide");
+                });
+            });
+
+
+            $("#btn_cambiar_estado_proyecto_pre_nuevo").off().on("click", function (e) {
+                e.preventDefault();
+
+                if ($("#fech_ini_proy_nuevo").val() == '' || VALIDAR_SI_HAY_FECHA_INICIO == false) {
+                    Swal.fire({
+                        icon: "warning",
+                        title: "Error",
+                        text: "Debe seleccionar una fecha inicio",
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                    return;
                 }
+
+                Swal.fire({
+                    icon: "question",
+                    title: "Atención!",
+                    text: "¿Desea pasar el proyecto a Pre-Nuevo?",
+                    showCancelButton: true,
+                    showConfirmButton: true
+                }).then((result) => {
+                    if (!result.isConfirmed) return;
+
+                    $.post("../../../../../Controller/ctrProyectos.php?proy=cambiar_estado", {
+                            estados_id: 26,
+                            id: $("#id_proyecto_gestionado").val()
+                        },
+                        "json"
+                    );
+
+                    $.post(
+                        "../../../../../Controller/ctrAuditoria.php?case=insert_audit_estados_proyecto", {
+                            id_proyecto_gestionado: $("#id_proyecto_gestionado").val(),
+                            estados_id: 26
+                        }
+                    );
+
+                    const tablas = [
+                        "#table_proyectos_borrador",
+                        "#table_proyectos_nuevos_eh_vas",
+                        "#table_proyectos_en_proceso",
+                        "#table_proyectos_recurrencia",
+                        "#table_proyectos_total_calidad",
+                        "#table_bitacora"
+                    ];
+
+                    setTimeout(() => {
+                        tablas.forEach(function (tabla) {
+                            if ($.fn.DataTable.isDataTable(tabla)) {
+                                $(tabla).DataTable().ajax.reload(null, false);
+                            }
+                        });
+                    }, 500);
+
+                    Swal.fire({
+                        icon: "success",
+                        title: "Bien",
+                        text: "Proyecto pasado a Pre-Nuevo!",
+                        timer: 1500,
+                        showConfirmButton: false
+                    });
+                    $("#ModalAltaProject").modal("hide");
+                });
             });
 
             // ===============================
@@ -1628,9 +1709,6 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
             "json"
         );
     }
-
-    const elRefPro = document.getElementById("client_refPro_proy_nuevo");
-    if (elRefPro) elRefPro.focus();
 
     // ===============================
     // FIX D: combos por defecto (sector 1) SOLO para proyecto nuevo
