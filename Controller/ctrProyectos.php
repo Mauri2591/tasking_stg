@@ -3247,9 +3247,23 @@ TXT;
 
             $sub_array[] = $row['titulo'];
 
-            $sub_array[] = $row['fech_inicio'] == ''
-                ? 'Sin fecha'
-                : '<span class="badge bg-light text-dark">' . $row['fech_inicio'] . '</span>';
+            // INICIO
+            if ($row['fech_inicio'] == '') {
+                $sub_array[] = 'Sin fecha';
+            } else {
+                $hoy = new DateTime('today');
+                $fechaRow = DateTime::createFromFormat('d-m-Y', $row['fech_inicio'])->setTime(0, 0);
+
+                if ($fechaRow == $hoy) {
+                    $clase = 'border border-3 border-warning';
+                } elseif ($fechaRow < $hoy) {
+                    $clase = 'border border-3 border-danger';
+                } else {
+                    $clase = '';
+                }
+
+                $sub_array[] = '<span class="badge bg-light text-dark ' . $clase . '">' . $row['fech_inicio'] . '</span>';
+            }
 
             $sub_array[] = $row['fech_fin'] == ''
                 ? 'Sin fecha'
