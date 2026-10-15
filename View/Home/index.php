@@ -402,7 +402,6 @@ if (isset($_SESSION['usu_id'])) {
                     }
                 };
 
-                // ===== TAB 1: PRE-NUEVOS =====
                 tabla = $("#table-proyectos-pre-nuevos").dataTable({
                     "aProcessing": true,
                     "aServerSide": true,
@@ -425,6 +424,10 @@ if (isset($_SESSION['usu_id'])) {
                         },
                         error: function(e) {}
                     },
+                    "columnDefs": [{
+                        "className": "text-center align-middle",
+                        "targets": "_all"
+                    }],
                     "order": [
                         [0, "asc"]
                     ],
@@ -436,7 +439,6 @@ if (isset($_SESSION['usu_id'])) {
                     "language": idioma
                 });
 
-                // ===== TAB 2: RECURRENTES PENDIENTES =====
                 $("#table-proyectos-recurrentes-sector").dataTable({
                     "aProcessing": true,
                     "aServerSide": true,
@@ -454,6 +456,10 @@ if (isset($_SESSION['usu_id'])) {
                         dataType: "json",
                         error: function(e) {}
                     },
+                    "columnDefs": [{
+                        "className": "text-center align-middle",
+                        "targets": "_all"
+                    }],
                     "order": [
                         [0, "asc"]
                     ],
