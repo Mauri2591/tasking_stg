@@ -777,9 +777,11 @@ if (isset($_SESSION['usu_id'])) {
                 },
                 function(data, textStatus, jqXHR) {
                     $("#referencia_proy").text(data.refProy)
+                    $("#referencia_proy").attr('title','REFERENCIA '+data.refProy)
                     $("#dimensionamiento").text(data.dimensionamiento)
                     $("#estadoProyecto").text(data.estado)
                     document.getElementById("estadoProyecto").style.backgroundColor = data.color_estado;
+                    document.getElementById("estadoProyecto").setAttribute('title','ESTADO DEL PROYECTO '+data.estado)
 
                     if (data.estado == 'REALIZADO' || data.estado == 'CERRADO CALIDAD')
 
@@ -824,12 +826,15 @@ if (isset($_SESSION['usu_id'])) {
                         case 1:
                             $("#prioridad").addClass("bg-light   text-success").text(
                                 "Baja");
+                            $("#prioridad").attr('title',"PRIORIDAD BAJA")
                             break;
                         case 2:
                             $("#prioridad").addClass("bg-warning text-dark").text("Media");
+                            $("#prioridad").attr('title',"PRIORIDAD MEDIA")
                             break;
                         case 3:
                             $("#prioridad").addClass("bg-danger text-light").text("Alta");
+                            $("#prioridad").attr('title',"PRIORIDAD ALTA")
                             break;
                         default:
                             "";
@@ -842,7 +847,7 @@ if (isset($_SESSION['usu_id'])) {
                         subCatNom;
                     $("#titulo_subCategoria")
                         .text(subCatTruncado)
-                        .attr("title", subCatNom);
+                        .attr("title", 'TIPO DE PRODUCTO '+subCatNom);
                     if (data.captura_imagen == null) {
                         $("#fech_inicio").text(data.fech_inicio);
                         $("#fech_fin").text(data.fech_fin);
@@ -880,7 +885,7 @@ if (isset($_SESSION['usu_id'])) {
                         CatNom;
                     $("#titulo_categoria")
                         .text(CatTruncado)
-                        .attr("title", CatNom);
+                        .attr("title", 'PRODUCTO '+CatNom);
 
                     $("#titulo_servicio").text(data.titulo);
                     $("#parrafo_descripcion_proy").text("NOTA: " + data.descripcion);
