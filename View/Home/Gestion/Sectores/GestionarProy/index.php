@@ -48,7 +48,6 @@ if (isset($_SESSION['usu_id'])) {
         <div class="container-fluid">
 
             <?php
-            include_once __DIR__ . "/../Modales/mdlAgregarUsuarioProy.php";
             include_once __DIR__ . "/../Modales/mdlPipeline.php";
             include_once __DIR__ . "/../Modales/mdlLogsProyectos.php";
             include_once __DIR__ . "/../Modales/mdlEnviarCorreoCliente.php";
@@ -493,9 +492,6 @@ if (isset($_SESSION['usu_id'])) {
                                             <span style="font-size: .75rem; font-weight: 500;"
                                                 class="badge bg-light text-dark mx-2 mt-2 mb-3 d-inline-flex align-items-center gap-1">
                                                 Usuarios Asignados
-                                                <i onclick="agregarUsuario(<?php echo Openssl::get_ssl_decrypt($_GET['p']) ?>)" title="Agregar nuevo usuario al proyecto" type="button" id="boton_agregar_usuarios_proy"
-                                                    class="ri-user-add-line text-danger fw-bold fs-5"
-                                                    style="cursor: pointer; display: none;"></i>
                                             </span>
 
                                             <ul class="bg-light"
@@ -1775,26 +1771,6 @@ if (isset($_SESSION['usu_id'])) {
             );
         }
 
-        function agregarUsuario() {
-            $("#ModalAgregarUsuarioProy").modal("show");
-            $.post("../../../../../Controller/ctrProyectos.php?proy=get_sector_x_proy", {
-                    id: id_proyecto_gestionado
-                },
-                function(data, textStatus, jqXHR) {
-                    let SECTOR_ID = data.sector_id;
-                    $.post("../../../../../Controller/ctrProyectos.php?proy=get_usuarios_x_sector_agregar_a_proy", {
-                            sector_id: SECTOR_ID
-                        },
-                        function(data, textStatus, jqXHR) {
-                            $("#combo_usuarios_agregar_proy").html(data)
-                        },
-                        "html"
-                    );
-                },
-                "json"
-            );
-        }
-
         function insert_usuarios_proyecto() {
             $.post("../../../../../Controller/ctrProyectos.php?proy=insert_usuarios_proyecto_abierto", {
                     id_proyecto_gestionado: id_proyecto_gestionado,
@@ -1812,10 +1788,6 @@ if (isset($_SESSION['usu_id'])) {
                     estados_id: 20
                 }
             );
-
-            setTimeout(() => {
-                $("#ModalAgregarUsuarioProy").modal("hide");
-            }, 1000);
             Swal.fire({
                 icon: "success",
                 title: "Bien",
