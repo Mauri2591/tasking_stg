@@ -806,9 +806,8 @@ class Reportes
             <tr style='background-color:{$color}'>
                 <td style=text-align:center;><strong>{$evento}</strong></td>
                 <td style=text-align:center;>{$row['fecha']}</td>
-                <td style=text-align:center;>" . strtolower($row['usu_correo']) . "</td>
                 <td style=text-align:center;>" . strtolower($row['ip']) . "</td>
-                <td style='text-align:center'>{$estado_badge}</td>
+                <td style=text-align:center;>" . strtolower($row['usu_correo']) . "</td>
                 <td style=text-align:center;>{$row['sector_nombre']}</td>
             </tr>";
         }
@@ -884,9 +883,8 @@ class Reportes
                     <tr>
                         <th style='width:12%; text-align:center;'>Evento</th>
                         <th style='width:20%; text-align:center;'>Fecha y Hora</th>
-                        <th style='width:30%; text-align:center;'>Usuario</th>
                         <th style='width:20%; text-align:center;'>Ip Addr</th>
-                        <th style='width:10%; text-align:center;'>Estado</th>
+                        <th style='width:30%; text-align:center;'>Usuario</th>
                         <th style='width:23%; text-align:center;'>Sector</th>
                     </tr>
                 </thead>
