@@ -1311,7 +1311,7 @@ if (isset($_SESSION['usu_id'])) {
                     });
 
                     xhr.addEventListener('load', function() {
-                        document.getElementById('btn_finalizar_proyecto').disabled = false; // 👈
+                        document.getElementById('btn_finalizar_proyecto').disabled = false;
                         document.getElementById('cont_progreso').style.display = 'none';
                         document.getElementById('progreso').style.width = '0%';
                         document.getElementById('porcentaje-texto').textContent = '0%';

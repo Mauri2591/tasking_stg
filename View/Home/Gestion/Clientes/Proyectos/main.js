@@ -2597,6 +2597,7 @@ function cambiar_a_pausa(id_proyecto_gestionado) {
     Swal.fire({
         icon: "info",
         title: "¿Desea pasar el proyecto a estado En Pausa?",
+        text: "Se le enviará por Outlook un correo a los usuarios asignados.",
         showConfirmButton: true,
         showCancelButton: true
     }).then(async (result) => {
