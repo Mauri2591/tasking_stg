@@ -534,14 +534,30 @@ switch ($_GET['accion']) {
         }
         break;
 
-       case 'get_tareas_x_usuario':
-        if ($_SESSION['sector_id'] != '4') {
+    case 'get_tareas_x_usuario':
+        $usu_id = (int) ($_POST['usu_id'] ?? 0);
+
+        if ($usu_id <= 0) {
+            echo json_encode(["sEcho" => 1, "iTotalRecords" => 0, "iTotalDisplayRecords" => 0, "aaData" => []]);
+            exit;
+        }
+
+        $permitido = false;
+        if ($_SESSION['sector_id'] == '4') {
+            $permitido = true;
+        } elseif (($_SESSION['lider'] ?? '') == 'SI') {
+            // El líder solo puede ver usuarios de su propio sector
+            $usuarios_sector = array_column($timesummary->get_usuarios_por_sector($_SESSION['sector_id']), 'usu_id');
+            $permitido = in_array($usu_id, array_map('intval', $usuarios_sector), true);
+        }
+
+        if (!$permitido) {
             http_response_code(403);
             echo json_encode(["error" => "Sin permisos"]);
             exit;
         }
 
-        $datos = $timesummary->get_tareas_x_usuario((int) ($_POST['usu_id'] ?? 0));
+        $datos = $timesummary->get_tareas_x_usuario($usu_id);
         $data = array();
         foreach ($datos as $row) {
             $sub_array = array();
