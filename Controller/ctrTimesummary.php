@@ -534,7 +534,7 @@ switch ($_GET['accion']) {
         }
         break;
 
-    case 'get_tareas_x_usuario':
+        case 'get_tareas_x_usuario':
         $usu_id = (int) ($_POST['usu_id'] ?? 0);
 
         if ($usu_id <= 0) {
@@ -557,27 +557,22 @@ switch ($_GET['accion']) {
             exit;
         }
 
+        $e = fn($v) => htmlspecialchars((string)($v ?? ''), ENT_QUOTES, 'UTF-8');
+        $wrap = fn($v) => str_replace("\n", "<br>", $e(wordwrap((string)($v ?? ''), 30, "\n", true)));
+
         $datos = $timesummary->get_tareas_x_usuario($usu_id);
         $data = array();
         foreach ($datos as $row) {
             $sub_array = array();
-            $cliente = $row['cliente'];
-            if (strlen($cliente) > 30) {
-                $cliente = wordwrap($cliente, 30, "<br>", true);
-            }
-            $sub_array[] = $cliente;
-            $sub_array[] = $row['referencia'];
-            $sub_array[] = $row['producto'];
-            $sub_array[] = $row['tarea'];
+            $sub_array[] = $wrap($row['cliente']);
+            $sub_array[] = $e($row['referencia']);
+            $sub_array[] = $e($row['producto']);
+            $sub_array[] = $e($row['tarea']);
             $sub_array[] = date('d-m-Y', strtotime($row['fecha']));
-            $sub_array[] = $row['hora_desde'];
-            $sub_array[] = $row['hora_hasta'];
-            $sub_array[] = $row['horas_consumidas'];
-            $descripcion = $row['descripcion'];
-            if (strlen($descripcion) > 30) {
-                $descripcion = wordwrap($descripcion, 30, "<br>", true);
-            }
-            $sub_array[] = $descripcion;
+            $sub_array[] = $e($row['hora_desde']);
+            $sub_array[] = $e($row['hora_hasta']);
+            $sub_array[] = $e($row['horas_consumidas']);
+            $sub_array[] = $wrap($row['descripcion']);
             $data[] = $sub_array;
         }
         echo json_encode(array(
