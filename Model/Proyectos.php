@@ -2018,7 +2018,7 @@ GROUP BY
     prio.prioridad,
     tmc.cat_nom,
     pm_concat.id_pm_calidad 
-ORDER BY id_proyecto_cantidad_servicios ASC";
+    ORDER BY pg.fech_inicio IS NULL DESC, pg.fech_inicio DESC, pcs.id ASC";
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(1, htmlspecialchars($estados_id, ENT_QUOTES), PDO::PARAM_INT);
         $stmt->execute();

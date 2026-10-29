@@ -178,8 +178,9 @@ $(document).ready(function () {
     tabla = $("#table_proyectos_realizados").DataTable({
         "aProcessing": true,
         "aServerSide": true,
-        "ordering": true, //  respetar el ORDER BY del SQL
-        "lengthChange": false, //  corregido el typo
+        "ordering": true,
+        "order": [], //  respetar el ORDER BY del SQL
+        "lengthChange": false,
         dom: 'Bfrtip',
         "searching": true,
         lenghtChange: false,
