@@ -320,9 +320,10 @@ GROUP BY
     pcs.id, pcs.proy_id, pcs.numero_servicio, pcs.fech_crea, 
     p.cantidad_servicios, c.client_rs, u.usu_nom,
     s.sector_nombre, tc.cat_nom, tp.pais_nombre,
-    pg.id, pg.id_proyecto_recurrencia, pm_concat.id_pm_calidad
+    pg.id, pg.id_proyecto_recurrencia, pm_concat.id_pm_calidad,
+    pg.fech_inicio
 
-ORDER BY pcs.proy_id ASC, pcs.numero_servicio ASC";
+ORDER BY pg.fech_inicio IS NULL DESC, pg.fech_inicio DESC, pcs.proy_id ASC, pcs.numero_servicio DESC";
         $stmt = $conn->prepare($sql);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);

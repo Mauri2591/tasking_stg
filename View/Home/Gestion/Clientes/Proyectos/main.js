@@ -31,7 +31,7 @@ $(document).ready(function () {
             error: function (e) {}
         },
         "order": [
-            [0, "asc"]
+            [1, "desc"]
         ], //Ordenar descendentemente
         "bDestroy": true,
         "responsive": true,

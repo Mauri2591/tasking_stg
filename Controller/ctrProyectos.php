@@ -599,8 +599,25 @@ switch ($_GET['proy']) {
             $clase = isset($colores_prioridad[$row['prioridad']])
                 ? $colores_prioridad[$row['prioridad']]
                 : "badge bg-light text-dark";
+            
             $sub_array[] = '<span class="' . $clase . '">' . $row['prioridad'] . '</span>';
-            $sub_array[] = '<span class="badge bg-light text-dark">' . $row['fech_inicio'] . '</span>';
+            
+            if ($row['fech_inicio'] == '') {
+                $sub_array[] = 'Sin fecha';
+            } else {
+                $hoy = new DateTime('today');
+                $fechaRow = DateTime::createFromFormat('d-m-Y', $row['fech_inicio'])->setTime(0, 0);
+
+                if ($fechaRow == $hoy) {
+                    $clase = 'border border-3 border-warning';
+                } elseif ($fechaRow < $hoy) {
+                    $clase = 'border border-3 border-danger';
+                } else {
+                    $clase = '';
+                }
+
+                $sub_array[] = '<span class="badge bg-light text-dark ' . $clase . '">' . $row['fech_inicio'] . '</span>';
+            }
 
             $sub_array[] = strtoupper($row['client_rs']);
             $sub_array[] = '<p class="text-center p-0 m-0">' . strtoupper($row['refProy']) . '</p>';
