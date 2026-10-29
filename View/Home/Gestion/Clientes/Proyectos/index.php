@@ -298,6 +298,9 @@ if (isset($_SESSION['usu_id'])) {
 
                         <div class="tab-pane" id="tab_bitacora" role="tabpanel">
                             <div class="card card-body">
+                                <div style="display: flex; justify-content: end; height: 1.5rem;">
+                                    <span class="mb-4"><span class="badge bg-primary fs-12">Reporte Bitacora <i class="ri-exchange-dollar-fill fs-16 fw-normal text-warning"></i> </span><i onclick="mdlDescargarExcelProyectosBitacora()" class="ri-file-excel-2-fill text-success fs-22" type="button" title="Descargar excel"></i></span>
+                                </div>
                                 <table id="table_bitacora" style="text-align: center; width: 100%;">
                                     <thead style="text-align: center;">
                                         <tr style="text-align: center;">
@@ -408,9 +411,9 @@ if (isset($_SESSION['usu_id'])) {
         <?php endif; ?>
     </div>
     <div id="loader_modal_alta_proy" class="loader-global">
-            <div class="spinner-border text-light" style="width: 3rem; height: 3rem;" role="status"></div>
-            <span class="mt-3 fw-semibold text-light">Cargando datos...</span>
-        </div>
+        <div class="spinner-border text-light" style="width: 3rem; height: 3rem;" role="status"></div>
+        <span class="mt-3 fw-semibold text-light">Cargando datos...</span>
+    </div>
     </div>
     <!-- End Page-content -->
     <?php
@@ -423,3 +426,4 @@ if (isset($_SESSION['usu_id'])) {
 ?>
 
 <script src="main.js?sheet=<?php echo rand() ?>"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>

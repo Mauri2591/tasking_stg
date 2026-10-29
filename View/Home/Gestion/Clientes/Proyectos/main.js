@@ -3501,6 +3501,60 @@ function mdlDescargarExcelProyectosTotal() {
     $("#modalDescargarExcelProyectosTotal").modal("show");
 }
 
+function mdlDescargarExcelProyectosBitacora() {
+    const tabla = $('#table_bitacora').DataTable();
+
+    // Saca el HTML (badges, <br>) sin ejecutar nada
+    const limpiar = (valor) => {
+        const html = String(valor ?? '').replace(/<br\s*\/?>/gi, ', ');
+        return new DOMParser().parseFromString(html, 'text/html').body.textContent.trim();
+    };
+
+    // Encabezados sin la columna ACCION
+    const encabezados = tabla.columns().header().toArray()
+        .map(th => th.textContent.trim())
+        .slice(0, -1);
+
+    // Solo filas filtradas, en el orden actual
+    const filas = tabla.rows({
+            search: 'applied',
+            order: 'applied'
+        }).data().toArray()
+        .map(fila => Object.values(fila).slice(0, -1).map(limpiar));
+
+    if (!filas.length) {
+        Swal.fire({
+            icon: "warning",
+            title: "Sin datos",
+            text: "No hay registros para exportar",
+            timer: 1500,
+            showConfirmButton: false
+        });
+        return;
+    }
+
+    const hoja = XLSX.utils.aoa_to_sheet([encabezados, ...filas]);
+    hoja['!autofilter'] = {
+        ref: hoja['!ref']
+    };
+    hoja['!cols'] = encabezados.map((h, i) => ({
+        wch: Math.min(50, Math.max(h.length, ...filas.map(f => String(f[i] ?? '').length)) + 2)
+    }));
+    const libro = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(libro, hoja, 'Bitacora');
+
+    const base64 = XLSX.write(libro, {
+        bookType: 'xlsx',
+        type: 'base64'
+    });
+    const link = document.createElement('a');
+    link.href = 'data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,' + base64;
+    link.download = 'Reporte_Bitacora_' + new Date().toISOString().slice(0, 10) + '.xlsx';
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+}
+
 function mdlDescargarExcelProyectosCrossSell() {
     document.location.href = `../../../../../Controller/ctrReportes.php?case=reporteExcelProyectosCrossSell`;
 }
