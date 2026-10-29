@@ -2300,7 +2300,7 @@ switch ($_GET['proy']) {
         $colores_prioridad = array("BAJO" => "badge border border-success text-success", "MEDIO" => "badge border border-warning text-warning", "ALTO" => "badge border border-danger text-danger");
         foreach ($datos as $row) {
             $sub_array = array();
-             if ($row['fech_inicio'] == '') {
+            if ($row['fech_inicio'] == '') {
                 $sub_array[] = 'Sin fecha';
             } else {
                 $hoy = new DateTime('today');
@@ -2316,7 +2316,23 @@ switch ($_GET['proy']) {
 
                 $sub_array[] = '<span class="badge bg-light text-dark ' . $clase . '">' . $row['fech_inicio'] . '</span>';
             }
-            $sub_array[] = '<span class="badge bg-light text-dark badge-wrap" data-placement="top" title="' . $row['fech_fin'] . '">' . $row['fech_fin'] . '</span>';
+
+            if ($row['fech_fin'] == '') {
+                $sub_array[] = 'Sin fecha';
+            } else {
+                $hoy = new DateTime('today');
+                $fechaRow = DateTime::createFromFormat('d-m-Y', $row['fech_fin'])->setTime(0, 0);
+
+                if ($fechaRow == $hoy) {
+                    $clase = 'border border-3 border-warning';
+                } elseif ($fechaRow < $hoy) {
+                    $clase = 'border border-3 border-danger';
+                } else {
+                    $clase = '';
+                }
+
+                $sub_array[] = '<span class="badge bg-light text-dark ' . $clase . '">' . $row['fech_fin'] . '</span>';
+            }
             $sub_array[] = $row['client_rs'];
             $sub_array[] = $row['referencia'];
             $sub_array[] = $_SESSION['sector_id'] == "4" ? '<span class="badge bg-light text-dark" title="Asignarme como PM" type="button" onclick="asignarPm(' . $row['id_proyecto_gestionado'] . "," . $row['id_pm_calidad'] . ')">' . $row['creador_proy'] . '</span>' : '<span class="badge bg-light text-dark">' . $row['creador_proy'] . '</span>';
