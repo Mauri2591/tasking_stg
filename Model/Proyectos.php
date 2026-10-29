@@ -1784,7 +1784,7 @@ GROUP BY
     prio.id,
     prio.prioridad,
     tmc.cat_nom
-ORDER BY id_proyecto_cantidad_servicios ASC";
+    ORDER BY pg.fech_inicio DESC";
         $stmt = $conn->prepare($sql);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
