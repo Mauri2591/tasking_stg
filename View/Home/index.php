@@ -428,9 +428,7 @@ if (isset($_SESSION['usu_id'])) {
                         "className": "text-center align-middle",
                         "targets": "_all"
                     }],
-                    "order": [
-                        [0, "asc"]
-                    ],
+                    "order": [],
                     "bDestroy": true,
                     "responsive": true,
                     "bInfo": true,

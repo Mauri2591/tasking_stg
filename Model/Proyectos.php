@@ -3912,8 +3912,7 @@ GROUP BY
     pr.id_proyecto_cantidad_servicios,
     pg.id_proyecto_recurrencia,
     proyecto_rechequeo.id
-    ORDER BY 
-    id_proyecto_cantidad_servicios ASC";
+    ORDER BY pg.fech_inicio IS NULL, pg.fech_inicio ASC, pcs.id ASC";
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(':sector_id', $sector_id, PDO::PARAM_INT);
         $stmt->bindValue(':estados_id', $estados_id, PDO::PARAM_INT);
