@@ -142,11 +142,10 @@ switch ($_GET['accion']) {
         $datosTelecom = $timesummary->getDatosTelecom();
         $htmlOption = '';
 
-        // Agregar siempre Telecom primero
         if (!empty($datosTelecom)) {
             foreach ($datosTelecom as $telecom) {
                 $idCliente = htmlspecialchars($telecom['client_id'], ENT_QUOTES, 'UTF-8');
-                $nombreCliente = strtoupper(htmlspecialchars($telecom['client_rs'], ENT_QUOTES, 'UTF-8'));
+                $nombreCliente = htmlspecialchars(mb_strtoupper($telecom['client_rs'], 'UTF-8'), ENT_QUOTES, 'UTF-8');
                 $htmlOption .= "<option value=\"$idCliente\" data-pm=\"\">$nombreCliente</option>";
             }
         }
@@ -164,10 +163,7 @@ switch ($_GET['accion']) {
 
                 $htmlOption .= "<option value=\"$idProyecto\" data-pm=\"$idPm\">$titulo</option>";
             }
-        } else {
-            $htmlOption .= '';
         }
-
         echo $htmlOption;
         break;
 
@@ -306,36 +302,24 @@ switch ($_GET['accion']) {
 
     case 'datos_tabla_ts':
         $datos = $timesummary->get_titulos_proyectos($_SESSION['usu_id']);
-        $datosTelecom = $timesummary->getDatosTelecom();
         $htmlTable = '';
-        // Primero agrego datosTelecom
-        // foreach ($datosTelecom as $telecom) {
-        //     $htmlTable .= '
-        //     <br>
-        //     <tr>
-        //     <td class="px-1 text-center">' . htmlspecialchars(strtoupper($telecom['client_rs'])) . '</td>
-        //     <td class="px-1 text-center bg-light" style="border:.1rem solid gainsboro">-</td>
-        //     <td class="px-1 text-center bg-light" style="border:.1rem solid gainsboro">-</td>
-        //     <td class="px-1 text-center bg-light" style="border:.1rem solid gainsboro">-</td>
-        //     <td class="px-1 text-center bg-light" style="border:.1rem solid gainsboro">-</td>
-        //     <td class="px-1 text-center bg-light" style="border:.1rem solid gainsboro">-</td>
-        // </tr>';
-        // }
-
+        $e = function ($v) {
+            return htmlspecialchars($v ?? '', ENT_QUOTES, 'UTF-8');
+        };
         // Luego agrego el resto según la lógica
         if ($_SESSION['sector_id'] == "4") {
             foreach ($datos as $val) {
                 $htmlTable .= '
             <tr>
-                <td title="' . $val['titulo'] . '" class="px-1 text-center">' . $val['titulo'] . '</td>
-                <td class="px-1 text-center">' . $val['periodo'] . '</td>
-                <td title="' . $val['producto'] . '" class="px-1 text-center">' . substr($val['producto'], 0, 10) . '</td>
-                <td class="px-1 text-center bg-light" style="border:.1rem solid gainsboro">' . $val['hs_dimensionadas'] . '</td>
-                <td class="px-1 text-center bg-light fw-bold" style="border:.1rem solid gainsboro">' . $val['horas_consumidas'] . '</td>
+                <td title="' . $e($val['titulo']) . '" class="px-1 text-center">' . $e($val['titulo']) . '</td>
+                <td class="px-1 text-center">' . $e($val['periodo']) . '</td>
+                <td title="' . $e($val['producto']) . '" class="px-1 text-center">' . $e(substr($val['producto'] ?? '', 0, 10)) . '</td>
+                <td class="px-1 text-center bg-light" style="border:.1rem solid gainsboro">' . $e($val['hs_dimensionadas']) . '</td>
+                <td class="px-1 text-center bg-light fw-bold" style="border:.1rem solid gainsboro">' . $e($val['horas_consumidas']) . '</td>
                 ' . (
                     $val['comparacion_horas'] == "HORAS_TOTAL_MENOR_QUE_DIM"
-                    ? '<td class="px-1 text-center bg-light fw-bold text-success"  style="border:.1rem solid gainsboro">' . $val['horas_total'] . '</td>'
-                    : '<td class="px-1 text-center bg-light fw-bold text-danger"  style="border:.1rem solid gainsboro">' . $val['horas_total'] . '</td>'
+                    ? '<td class="px-1 text-center bg-light fw-bold text-success"  style="border:.1rem solid gainsboro">' . $e($val['horas_total']) . '</td>'
+                    : '<td class="px-1 text-center bg-light fw-bold text-danger"  style="border:.1rem solid gainsboro">' . $e($val['horas_total']) . '</td>'
                 ) . '
             </tr>';
             }
@@ -346,25 +330,23 @@ switch ($_GET['accion']) {
                 if (!in_array($id_proyecto, $proyectos_mostrados)) {
                     $htmlTable .= '
                 <tr>
-                   <td title="' . $val['titulo'] . '" class="px-1 text-center">' . $val['titulo'] . '</td>
-                   <td class="px-1 text-center">' . $val['periodo'] . '</td>
-                    <td title="' . $val['producto'] . '" class="px-1 text-center">' . substr($val['producto'], 0, 10) . '</td>
-                    <td class="px-1 text-center bg-light" style="border:.1rem solid gainsboro">' . $val['hs_dimensionadas'] . '</td>
-                    <td class="px-1 text-center bg-light fw-bold" style="border:.1rem solid gainsboro">' . $val['horas_consumidas'] . '</td>
+                    <td title="' . $e($val['titulo']) . '" class="px-1 text-center">' . $e($val['titulo']) . '</td>
+                    <td class="px-1 text-center">' . $e($val['periodo']) . '</td>
+                    <td title="' . $e($val['producto']) . '" class="px-1 text-center">' . $e(substr($val['producto'] ?? '', 0, 10)) . '</td>
+                    <td class="px-1 text-center bg-light" style="border:.1rem solid gainsboro">' . $e($val['hs_dimensionadas']) . '</td>
+                    <td class="px-1 text-center bg-light fw-bold" style="border:.1rem solid gainsboro">' . $e($val['horas_consumidas']) . '</td>
                     ' . (
                         $val['comparacion_horas'] == "HORAS_TOTAL_MENOR_QUE_DIM"
-                        ? '<td class="px-1 text-center fw-bold text-success bg-light" style="border:.1rem solid gainsboro">' . $val['horas_total'] . '</td>'
-                        : '<td class="px-1 text-center fw-bold text-danger bg-light" style="border:.1rem solid gainsboro">' . $val['horas_total'] . '</td>'
+                        ? '<td class="px-1 text-center fw-bold text-success bg-light" style="border:.1rem solid gainsboro">' . $e($val['horas_total']) . '</td>'
+                        : '<td class="px-1 text-center fw-bold text-danger bg-light" style="border:.1rem solid gainsboro">' . $e($val['horas_total']) . '</td>'
                     ) . '
-                </tr></tr>';
+                </tr>';
                     $proyectos_mostrados[] = $id_proyecto;
                 }
             }
         }
         echo $htmlTable;
         break;
-
-
 
     case 'get_validar_si_hay_tareas_activas':
         $data = $timesummary->get_validar_si_hay_tareas_activas($_SESSION['usu_id']);
@@ -534,7 +516,7 @@ switch ($_GET['accion']) {
         }
         break;
 
-        case 'get_tareas_x_usuario':
+    case 'get_tareas_x_usuario':
         $usu_id = (int) ($_POST['usu_id'] ?? 0);
 
         if ($usu_id <= 0) {

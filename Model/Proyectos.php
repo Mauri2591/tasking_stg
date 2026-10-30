@@ -237,7 +237,7 @@ class Proyectos extends Conexion
     DATE_FORMAT(pg.fech_inicio, '%d-%m-%Y') AS fech_inicio, 
     p.cantidad_servicios, 
     c.client_rs, 
-    pm_concat.id_pm_calidad AS id_pm_calidad,
+    pmc.id_pm_calidad AS id_pm_calidad,
     COALESCE(
         pm_concat.pm_calidad_nombres,
         GROUP_CONCAT(
@@ -312,6 +312,11 @@ LEFT JOIN (
     WHERE tse.id_pm_calidad IS NOT NULL AND tse.est = 1
     GROUP BY tse.id_proyecto_gestionado
 ) pm_concat ON pm_concat.id_proyecto_gestionado = pg.id
+LEFT JOIN (
+    SELECT id_proyecto_gestionado, MAX(id) AS id_pm_calidad
+    FROM pm_calidad
+    GROUP BY id_proyecto_gestionado
+) pmc ON pmc.id_proyecto_gestionado = pg.id
 
 WHERE pcs.est = 1 
   AND (pg.estados_id IS NULL OR pg.estados_id = 14)
@@ -320,7 +325,7 @@ GROUP BY
     pcs.id, pcs.proy_id, pcs.numero_servicio, pcs.fech_crea, 
     p.cantidad_servicios, c.client_rs, u.usu_nom,
     s.sector_nombre, tc.cat_nom, tp.pais_nombre,
-    pg.id, pg.id_proyecto_recurrencia, pm_concat.id_pm_calidad,
+    pg.id, pg.id_proyecto_recurrencia, pmc.id_pm_calidad,
     pg.fech_inicio
 
 ORDER BY pg.fech_inicio IS NULL DESC, pg.fech_inicio DESC, pcs.proy_id ASC, pcs.numero_servicio DESC";
@@ -1490,7 +1495,7 @@ ORDER BY id_proyecto_cantidad_servicios ASC";
     c.client_rs, 
     tm_estados.estados_nombre AS estado,
     tm_estados.CatColor AS color_estado,
-    pm_concat.id_pm_calidad AS id_pm_calidad,
+    pmc.id_pm_calidad AS id_pm_calidad,
 
     COALESCE(
         pm_concat.pm_calidad_nombres,
@@ -1602,6 +1607,12 @@ LEFT JOIN (
 ) pm_concat 
 ON pm_concat.id_proyecto_gestionado = pg.id
 
+LEFT JOIN (
+    SELECT id_proyecto_gestionado, MAX(id) AS id_pm_calidad
+    FROM pm_calidad
+    GROUP BY id_proyecto_gestionado
+) pmc ON pmc.id_proyecto_gestionado = pg.id
+
 WHERE 
     pcs.est = 1 
     AND (pg.estados_id = 1 OR pg.estados_id = 2)
@@ -1644,7 +1655,7 @@ ORDER BY id_proyecto_cantidad_servicios ASC";
     c.client_rs, 
     tm_estados.estados_nombre AS estado,
     tm_estados.CatColor AS color_estado,
-    pm_concat.id_pm_calidad AS id_pm_calidad,
+    pmc.id_pm_calidad AS id_pm_calidad,
     s.sector_nombre,
     s.color AS sector_color,
     s.sector_id,
@@ -1761,6 +1772,12 @@ LEFT JOIN (
     GROUP BY tse.id_proyecto_gestionado
 ) pm_concat 
 ON pm_concat.id_proyecto_gestionado = pg.id
+
+LEFT JOIN (
+    SELECT id_proyecto_gestionado, MAX(id) AS id_pm_calidad
+    FROM pm_calidad
+    GROUP BY id_proyecto_gestionado
+) pmc ON pmc.id_proyecto_gestionado = pg.id
 
 WHERE 
     pcs.est = 1 

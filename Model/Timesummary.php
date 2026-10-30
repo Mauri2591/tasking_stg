@@ -192,7 +192,7 @@ class timesummary extends Conexion
         $conn = parent::get_conexion();
         $conn->exec("SET lc_time_names = 'es_ES'");
 
-        $estados = [1, 2, 3, 4, 14];
+        $estados = [1, 2, 3, 4, 14, 25, 26];
 
         $placeholders = implode(',', array_fill(0, count($estados), '?'));
         $params = array_merge([$usu_asignado], $estados);
@@ -481,7 +481,7 @@ END AS posicion_recurrencia,
         ON dim.id_proyecto_gestionado = pg.id
 
     WHERE 
-        e.estados_id IN (1,2,3,4,14)
+        e.estados_id IN (1,2,3,4,14, 25, 26)
         AND pg.titulo LIKE CONCAT('%', ?, '%')
 
     GROUP BY 
