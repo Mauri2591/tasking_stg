@@ -1347,7 +1347,7 @@ ORDER BY clientes.client_rs";
     {
         $conn = parent::get_conexion();
         $sector_id = $_SESSION['sector_id'];
-        if ($sector_id == 4) {
+        if ($sector_id == 4 || $sector_id == 9) {
             $sql = "SELECT
                 clientes.client_id,
                 clientes.client_rs,

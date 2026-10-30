@@ -37,7 +37,7 @@ if (isset($_SESSION['usu_id'])) {
         <!-- container-fluid -->
 
         <?php
-        if ($_SESSION['sector_id'] == "4"):
+        if ($_SESSION['sector_id'] == "4" || $_SESSION['sector_id'] == 9):
         ?>
             <!-- container-fluid -->
             <div class="col-lg-12" style="margin-left: 5px;">
@@ -107,7 +107,9 @@ if (isset($_SESSION['usu_id'])) {
                                             <th style="width: 20px;text-align: center;">SECTOR</th>
                                             <th style="width: 20px;text-align: center;">PRODUCTO</th>
                                             <th style="width: 20px;text-align: center;">ASIGNADO</th>
-                                            <th style="width: 10px;text-align: center;"></th>
+                                            <?php if ($_SESSION['sector_id'] != 9): ?>
+                                                <th style="width: 10px;text-align: center;"></th>
+                                            <?php endif; ?>
                                             <!-- <th style="width: 30px;text-align: center;"></th> -->
                                         </tr>
                                     </thead>
@@ -123,7 +125,9 @@ if (isset($_SESSION['usu_id'])) {
                                             <td style="width: 30px;"></td>
                                             <td style="width: 30px;"></td>
                                             <td style="width: 30px;"></td>
-                                            <td style="width: 30px;"></td>
+                                            <?php if ($_SESSION['sector_id'] != 9): ?>
+                                                <td style="width: 30px;"></td>
+                                            <?php endif; ?>
                                             <!-- <td style="width: 30px;"></td> -->
                                         </tr>
                                     </tbody>
@@ -166,9 +170,11 @@ if (isset($_SESSION['usu_id'])) {
                         <div class="tab-pane" id="tab_total" role="tabpanel">
                             <div class="card card-body">
                                 <table id="table_proyectos_total_calidad" style="text-align: center; width: 100%;">
-                                    <div style="display: flex; justify-content: end; height: 1.5rem;">
-                                        <span class="mb-4"><span class="badge bg-primary fs-12">Reporte Clientes</span><i onclick="mdlDescargarExcelProyectosTotal()" class="ri-file-excel-2-fill text-success fs-22" type="button" title="Descargar documento"></i></span>
-                                    </div>
+                                    <?php if ($_SESSION['sector_id'] != 9): ?>
+                                        <div style="display: flex; justify-content: end; height: 1.5rem;">
+                                            <span class="mb-4"><span class="badge bg-primary fs-12">Reporte Clientes</span><i onclick="mdlDescargarExcelProyectosTotal()" class="ri-file-excel-2-fill text-success fs-22" type="button" title="Descargar documento"></i></span>
+                                        </div>
+                                    <?php endif; ?>
                                     <thead style="text-align: center;">
                                         <tr style="text-align: center;">
                                             <th style="width: 400px;text-align: center;">CLIENTE</th>
@@ -205,7 +211,9 @@ if (isset($_SESSION['usu_id'])) {
                                             <th style="width: 10px;text-align: center;">HS</th>
                                             <th style="width: 10px;text-align: center;">ASIGNADO</th>
                                             <th style="width: 10px; text-align: center;">ESTADO</th>
-                                            <th style="width: 10px;text-align: center;"></th>
+                                            <?php if ($_SESSION['sector_id'] != 9): ?>
+                                                <th style="width: 10px;text-align: center;"></th>
+                                            <?php endif; ?>
                                         </tr>
                                     </thead>
                                     <tbody style="text-align: center;">
@@ -221,7 +229,9 @@ if (isset($_SESSION['usu_id'])) {
                                             <td style="width: 10px;"></td>
                                             <td style="width: 10px;"></td>
                                             <td style="width: 10px;"></td>
-                                            <td style="width: 10px;"></td>
+                                            <?php if ($_SESSION['sector_id'] != 9): ?>
+                                                <td style="width: 10px;"></td>
+                                            <?php endif; ?>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -242,9 +252,11 @@ if (isset($_SESSION['usu_id'])) {
                                             <th style="width: 30px;text-align: center;">TIPO</th>
                                             <th style="width: 30px;text-align: center;">HS</th>
                                             <th style="width: 30px;text-align: center;">ASIGNADO</th>
-                                            <th style="width: 30px;text-align: center;">ACTIVOS</th>
-                                            <th style="width: 30px;text-align: center;">Ver</th>
-                                            <th style="width: 30px;text-align: center;"></th>
+                                            <?php if ($_SESSION['sector_id'] != 9): ?>
+                                                <th style="width: 30px;text-align: center;">ACTIVOS</th>
+                                                <th style="width: 30px;text-align: center;">Ver</th>
+                                                <th style="width: 30px;text-align: center;"></th>
+                                            <?php endif; ?>
                                         </tr>
                                     </thead>
                                     <tbody style="text-align: center;">
@@ -258,9 +270,11 @@ if (isset($_SESSION['usu_id'])) {
                                             <td style="width: 30px;"></td>
                                             <td style="width: 30px;"></td>
                                             <td style="width: 30px;"></td>
-                                            <td style="width: 30px;"></td>
-                                            <td style="width: 30px;"></td>
-                                            <td style="width: 30px;"></td>
+                                            <?php if ($_SESSION['sector_id'] != 9): ?>
+                                                <td style="width: 30px;"></td>
+                                                <td style="width: 30px;"></td>
+                                                <td style="width: 30px;"></td>
+                                            <?php endif; ?>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -269,9 +283,11 @@ if (isset($_SESSION['usu_id'])) {
 
                         <div class="tab-pane" id="tab_cross_sell_sectores" role="tabpanel">
                             <div class="card card-body">
-                                <div style="display: flex; justify-content: end; height: 1.5rem;">
-                                    <span class="mb-4"><span class="badge bg-primary fs-12">Reporte Cross-Sell <i class="ri-exchange-dollar-fill fs-16 fw-normal text-warning"></i> </span><i onclick="mdlDescargarExcelProyectosCrossSell()" class="ri-file-excel-2-fill text-success fs-22" type="button" title="Descargar excel"></i></span>
-                                </div>
+                                <?php if ($_SESSION['sector_id'] != 9): ?>
+                                    <div style="display: flex; justify-content: end; height: 1.5rem;">
+                                        <span class="mb-4"><span class="badge bg-primary fs-12">Reporte Cross-Sell <i class="ri-exchange-dollar-fill fs-16 fw-normal text-warning"></i> </span><i onclick="mdlDescargarExcelProyectosCrossSell()" class="ri-file-excel-2-fill text-success fs-22" type="button" title="Descargar excel"></i></span>
+                                    </div>
+                                <?php endif; ?>
                                 <table id="table_cross_sell_sectores" style="text-align: center; width: 100%;">
                                     <thead style="text-align: center;">
                                         <tr style="text-align: center;">
@@ -298,9 +314,11 @@ if (isset($_SESSION['usu_id'])) {
 
                         <div class="tab-pane" id="tab_bitacora" role="tabpanel">
                             <div class="card card-body">
-                                <div style="display: flex; justify-content: end; height: 1.5rem;">
-                                    <span class="mb-4"><span class="badge bg-primary fs-12">Reporte Bitacora <i class="ri-exchange-dollar-fill fs-16 fw-normal text-warning"></i> </span><i onclick="mdlDescargarExcelProyectosBitacora()" class="ri-file-excel-2-fill text-success fs-22" type="button" title="Descargar excel"></i></span>
-                                </div>
+                                <?php if ($_SESSION['sector_id'] != 9): ?>
+                                    <div style="display: flex; justify-content: end; height: 1.5rem;">
+                                        <span class="mb-4"><span class="badge bg-primary fs-12">Reporte Bitacora <i class="ri-exchange-dollar-fill fs-16 fw-normal text-warning"></i> </span><i onclick="mdlDescargarExcelProyectosBitacora()" class="ri-file-excel-2-fill text-success fs-22" type="button" title="Descargar excel"></i></span>
+                                    </div>
+                                <?php endif; ?>
                                 <table id="table_bitacora" style="text-align: center; width: 100%;">
                                     <thead style="text-align: center;">
                                         <tr style="text-align: center;">
@@ -314,7 +332,9 @@ if (isset($_SESSION['usu_id'])) {
                                             <th style="width: 300px;text-align: center;">TIPO</th>
                                             <th style="width: 300px;text-align: center;">HORAS</th>
                                             <th style="width: 300px;text-align: center;">ESTADO</th>
-                                            <th style="width: 300px;text-align: center;">ACCION</th>
+                                            <?php if ($_SESSION['sector_id'] != 9): ?>
+                                                <th style="width: 300px;text-align: center;">ACCION</th>
+                                            <?php endif; ?>
                                         </tr>
                                     </thead>
                                     <tbody style="text-align: center;">
@@ -426,4 +446,3 @@ if (isset($_SESSION['usu_id'])) {
 ?>
 
 <script src="main.js?sheet=<?php echo rand() ?>"></script>
-<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>

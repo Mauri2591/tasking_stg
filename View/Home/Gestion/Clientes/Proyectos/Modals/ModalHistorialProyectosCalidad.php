@@ -16,7 +16,7 @@
                     <label style="border: .1rem solid #e9ebec" class="form-control-sm text-dark badge bg-light" for="mostrar_historico">Ver historico<input type="checkbox" id="mostrar_historico" class="mx-1"></label>
                 </div>
 
-                <?php if ($_SESSION['sector_id'] == "4"): ?>
+                <?php if ($_SESSION['sector_id'] == "4"  || $_SESSION['sector_id'] == "9"): ?>
 
                     <div class="card card-body">
                         <div class="table-responsive">
@@ -35,8 +35,12 @@
                                         <th style="width: 5px;text-align: center;">PROD</th>
                                         <th style="width: 5px;text-align: center;">HS</th>
                                         <th style="width: 5px;text-align: center;">ESTADO</th>
-                                        <th style="width: 5px;text-align: center;">AGREGAR <br>RETEST</th>
-                                        <th style="width: 5px;text-align: center;"></th>
+                                        <?php if ($_SESSION['sector_id'] != 9): ?>
+                                            <th style="width: 5px;text-align: center;">AGREGAR <br>RETEST</th>
+                                        <?php endif; ?>
+                                        <?php if ($_SESSION['sector_id'] != 9): ?>
+                                            <th style="width: 5px;text-align: center;"></th>
+                                        <?php endif; ?>
                                         <?php if ($_SESSION['usu_id'] == 104): ?>
                                             <th style="width: 5px;text-align: center;"></th>
                                         <?php endif; ?>
@@ -56,8 +60,11 @@
                                         <td style="width: 5%;"></td>
                                         <td style="width: 5%;"></td>
                                         <td style="width: 5%;"></td>
-                                        <td style="width: 5%;"></td>
-                                        <td style="width: 5%;"></td>
+                                        <?php if ($_SESSION['sector_id'] != 9): ?>
+                                            <td style="width: 5%;"></td>
+                                        <?php endif; ?> <?php if ($_SESSION['sector_id'] != 9): ?>
+                                            <td style="width: 5%;"></td>
+                                        <?php endif; ?>
                                         <?php if ($_SESSION['usu_id'] == 104): ?>
                                             <td style="width: 5%;"></td>
                                         <?php endif; ?>

@@ -58,20 +58,22 @@ if (isset($_SESSION['usu_id'])) {
         <div class="col-lg-12">
             <div class="card-body d-flex bg-light p-0">
                 <div class="col-lg-12">
-                    <?php if ($_SESSION['sector_id'] == "4"): ?>
+                    <?php if ($_SESSION['sector_id'] == "4" || $_SESSION['sector_id'] == "9"): ?>
                         <div class="card-body">
                             <div style="display: flex; justify-content: end;">
                                 <div class="btn-group-vertical" role="group">
                                     <div class="btn-group" role="group">
-                                        <button id="btnGroupVerticalDrop1" type="button"
-                                            class="btn btn-primary text-light py-0 px-2 dropdown-toggle"
-                                            data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            Reportes
-                                        </button>
-                                        <div class="dropdown-menu py-1" aria-labelledby="btnGroupVerticalDrop1">
-                                            <a onclick="mdlDeReporteDocx()" class="dropdown-item" href="#"><i title="Descargar Docx" class="fs-22 text-secondary ri-file-word-fill"></i></a>
-                                            <a onclick="mdlDeReporteXlsx()" class="dropdown-item" href="#"><i title="Descargar Xlsx" class="fs-22 text-success ri-file-excel-fill"></i></a>
-                                        </div>
+                                        <?php if ($_SESSION['sector_id'] != 9): ?>
+                                            <button id="btnGroupVerticalDrop1" type="button"
+                                                class="btn btn-primary text-light py-0 px-2 dropdown-toggle"
+                                                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                Reportes
+                                            </button>
+                                            <div class="dropdown-menu py-1" aria-labelledby="btnGroupVerticalDrop1">
+                                                <a onclick="mdlDeReporteDocx()" class="dropdown-item" href="#"><i title="Descargar Docx" class="fs-22 text-secondary ri-file-word-fill"></i></a>
+                                                <a onclick="mdlDeReporteXlsx()" class="dropdown-item" href="#"><i title="Descargar Xlsx" class="fs-22 text-success ri-file-excel-fill"></i></a>
+                                            </div>
+                                        <?php endif; ?>
                                     </div>
                                 </div>
                             </div>
@@ -189,7 +191,7 @@ if (isset($_SESSION['usu_id'])) {
                 "aProcessing": true,
                 "aServerSide": true,
                 order: [
-                    
+
                 ],
                 autoWidth: false,
                 dom: 'Bfrtip',
@@ -261,8 +263,8 @@ if (isset($_SESSION['usu_id'])) {
                 "aServerSide": true,
                 autoWidth: false,
                 order: [
-                   
-                ], 
+
+                ],
                 dom: 'Bfrtip',
                 columns: [{
                         width: "25%"
@@ -300,7 +302,6 @@ if (isset($_SESSION['usu_id'])) {
                     dataType: "json"
                 },
 
-                // 🔴 ESTO ES LO ÚNICO NUEVO
                 columnDefs: [{
                     targets: "_all",
                     className: "text-center"
@@ -322,19 +323,6 @@ if (isset($_SESSION['usu_id'])) {
                     }
                 }
             });
-            // $.post("../../../../Controller/ctrTimesummary.php?accion=get_sectores", function(data) {
-            //     $("#tab_sectores").html(data);
-            //     let tabActivo = $("#tab_sectores .nav-link.active");
-            //     let sectorId = tabActivo.data("sector-id");
-            //     cargarUsuarios(sectorId);
-            // });
-            // $("#tab_sectores").on("click", ".nav-link", function(e) {
-            //     e.preventDefault();
-            //     $("#tab_sectores .nav-link").removeClass("active");
-            //     $(this).addClass("active");
-            //     let sectorId = $(this).data("sector-id");
-            //     cargarUsuarios(sectorId);
-            // });
 
             //VA DESPUÉS DE INICIALIZAR LAS TABLAS
             function cargarUsuarios(sectorId) {
@@ -357,7 +345,7 @@ if (isset($_SESSION['usu_id'])) {
                     "html");
             }
 
-            <?php if ($_SESSION['sector_id'] == "4"): ?>
+            <?php if ($_SESSION['sector_id'] == "4" || $_SESSION['sector_id'] == "9"): ?>
                 $.post("../../../../Controller/ctrTimesummary.php?accion=get_sectores", function(data) {
                     $("#tab_sectores").html(data);
                     let sectorId = $("#tab_sectores .nav-link.active").data("sector-id");

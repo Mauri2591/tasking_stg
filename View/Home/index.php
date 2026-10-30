@@ -119,7 +119,7 @@ if (isset($_SESSION['usu_id'])) {
             </div>
         </div>
 
-        <?php if ($_SESSION['sector_id'] != "4"): ?>
+        <?php if ($_SESSION['sector_id'] != "4" && $_SESSION['sector_id'] != "9"): ?>
             <!-- container-fluid -->
             <div class="col-lg-12">
                 <div class="row">
@@ -139,8 +139,6 @@ if (isset($_SESSION['usu_id'])) {
             <div class="col-lg-12">
                 <div class="card">
                     <div class="row mt-2">
-                        <!-- <p class="text-center"> <span class="badge bg-light text-primary mt-1">Total de proyectos cerrados</span>
-                        </p> -->
                         <div class="col-lg-8">
                             <div class="card">
                                 <canvas id="barra_servicios" width="400" height="210"></canvas>
@@ -178,7 +176,7 @@ if (isset($_SESSION['usu_id'])) {
     <?php unset($_SESSION['bienvenido']); ?>
 
     <?php
-    if (($_SESSION['sector_id']) != "4"):
+        if ($_SESSION['sector_id'] != "4" && $_SESSION['sector_id'] != "9") :
     ?>
         <?php if ($_SESSION['sector_id'] == 1): ?>
             <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
@@ -373,10 +371,7 @@ if (isset($_SESSION['usu_id'])) {
 
             function btnPreNuevos(session_id) {
                 $("#mdlProyectosPreNuevos").modal("show");
-
-                // Siempre abrir en el primer tab
                 bootstrap.Tab.getOrCreateInstance(document.getElementById('tab-pre-nuevos-btn')).show();
-
                 const idioma = {
                     "sProcessing": "Procesando..",
                     "sLengthMenu": "Mostrar _MENU_ registros",
@@ -642,10 +637,8 @@ if (isset($_SESSION['usu_id'])) {
                 );
                 $.post("../../Controller/ctrProyectos.php?proy=grafico_get_total_servicios_por_sector",
                     function(data, textStatus, jqXHR) {
-                        // Suponiendo que 'data' es un array de objetos tipo: [{cat_nom: 'Pentest', total: 5}, ...]
                         const labels = data.map(elem => elem.sector_nombre);
                         const values = data.map(elem => elem.total);
-
                         const ctx = document.getElementById("pie_servicios").getContext("2d");
                         new Chart(ctx, {
                             type: 'pie',

@@ -38,12 +38,16 @@
                     <div class="dropdown ms-sm-3 header-item topbar-user">
                         <button style="background-color: #eaeaea; border: .1rem solid #e0e0e0;" type="button" class="btn px-2 py-0" id="page-header-user-dropdown" data-bs-toggle="dropdown"
                             aria-haspopup="true" aria-expanded="false">
+                           
                             <span class="d-flex align-items-center">
+                            
                                 <i class=" ri-user-2-fill fs-20 text-info"></i>
                                 <span class="text-start ms-xl-2">
                                     <span
                                         class="d-none d-xl-inline-block ms-1 fw-medium user-name-text"><?php echo $_SESSION['usu_nom'] ?></span>
                                 </span>
+                                     <span
+                                class="d-none d-xl-inline-block ms-1 border border-dark badge fw-medium user-name-text"><?php echo $_SESSION['sector_nombre'] ?></span>
                             </span>
                         </button>
 
@@ -100,7 +104,7 @@
                 <div id="two-column-menu">
                 </div>
                 <ul class="navbar-nav mt-3" id="navbar-nav">
-                    <?php if (isset($_SESSION) && $_SESSION['rol_id'] == 1): ?>
+                    <?php if (isset($_SESSION) && $_SESSION['rol_id'] == 1 || $_SESSION['sector_id'] == 9): ?>
                         <ul class="navbar-nav" id="navbar-nav">
                             <li class="menu-title"><i class="ri-more-fill"></i> <span data-key="t-pages">Proyectos</span>
                             </li>
@@ -111,34 +115,43 @@
                                 </a>
                                 <div class="collapse menu-dropdown" id="sidebarApps">
                                     <ul class="nav nav-sm flex-column">
-                                        <li class="nav-item">
-                                            <a href="<?php echo URL . "View/Home/Gestion/Usuarios/" ?>" class="nav-link"
-                                                data-key="t-calendar">Usuarios</a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a href="<?php echo URL . "View/Home/Gestion/Clientes/" ?>" class="nav-link"
-                                                data-key="t-chat">Clientes</a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a href="<?php echo URL . "View/Home/Gestion/Integraciones/" ?>"
-                                                class="nav-link" data-key="t-chat">Integraciones</a>
-                                        </li>
+                                        <?php if ($_SESSION['sector_id'] != 9): ?>
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Usuarios/" ?>" class="nav-link"
+                                                    data-key="t-calendar">Usuarios</a>
+                                            </li>
+                                        <?php endif; ?>
+                                        <?php if ($_SESSION['sector_id'] != 9): ?>
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Clientes/" ?>" class="nav-link"
+                                                    data-key="t-chat">Clientes</a>
+                                            </li>
+                                        <?php endif; ?>
+                                        <?php if ($_SESSION['sector_id'] != 9): ?>
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Integraciones/" ?>"
+                                                    class="nav-link" data-key="t-chat">Integraciones</a>
+                                            </li>
+                                        <?php endif; ?>
                                         <li class="nav-item">
                                             <a href="<?php echo URL . "View/Home/Gestion/Clientes/Proyectos/" ?>"
                                                 class="nav-link" data-key="t-chat">Proyectos</a>
                                         </li>
-                                        <li class="nav-item">
-                                            <a href="<?php echo URL . "View/Home/Gestion/Activos/" ?>"
-                                                class="nav-link" data-key="t-chat">Activos</a>
-                                        </li>
-
+                                        <?php if ($_SESSION['sector_id'] != 9): ?>
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Activos/" ?>"
+                                                    class="nav-link" data-key="t-chat">Activos</a>
+                                            </li>
+                                        <?php endif; ?>
                                     </ul>
                                 </div>
                             </li>
 
                             <li class="nav-item">
-                                <a href="#sidebarSector" class="nav-link collapsed" data-bs-toggle="collapse" role="button"
-                                    aria-expanded="false" aria-controls="sidebarSector" data-key="t-email">Sector</a>
+                                <?php if ($_SESSION['sector_id'] != 9): ?>
+                                    <a href="#sidebarSector" class="nav-link collapsed" data-bs-toggle="collapse" role="button"
+                                        aria-expanded="false" aria-controls="sidebarSector" data-key="t-email">Sector</a>
+                                <?php endif; ?>
                                 <div class="menu-dropdown collapse" id="sidebarSector">
                                     <ul class="nav nav-sm flex-column">
                                         <li class="nav-item">
@@ -170,9 +183,11 @@
                                 </div>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link collapsed" href="#sidebarServicios" data-bs-toggle="collapse"
-                                    role="button" aria-expanded="false" aria-controls="sidebarServicios"
-                                    data-key="t-email">Productos</a>
+                                <?php if ($_SESSION['sector_id'] != 9): ?>
+                                    <a class="nav-link collapsed" href="#sidebarServicios" data-bs-toggle="collapse"
+                                        role="button" aria-expanded="false" aria-controls="sidebarServicios"
+                                        data-key="t-email">Productos</a>
+                                <?php endif; ?>
                                 <div class="menu-dropdown collapse" id="sidebarServicios">
                                     <ul class="nav nav-sm flex-column">
                                         <li class="nav-item">
@@ -242,10 +257,12 @@
                                     data-key="t-email">Timesummary</a>
                                 <div class="menu-dropdown collapse" id="sidebarTimesummary">
                                     <ul class="nav nav-sm flex-column">
-                                        <li class="nav-item">
-                                            <a href="<?php echo URL . "View/Home/Apps/Timesummary/"; ?>"
-                                                class="nav-link" data-key="t-mailbox">Calendario</a>
-                                        </li>
+                                        <?php if ($_SESSION['sector_id'] != 9): ?>
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Apps/Timesummary/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Calendario</a>
+                                            </li>
+                                        <?php endif; ?>
                                         <li class="nav-item">
                                             <a href="<?php echo URL . "View/Home/Apps/Timesummary/Status.php"; ?>"
                                                 class="nav-link" data-key="t-mailbox">Status</a>
@@ -902,7 +919,7 @@
                                 <?php endif; ?>
                                 <?php break; ?>
 
-                                <?php
+                            <?php
                             case '8':
                             ?>
                                 <li class="nav-item">
@@ -914,7 +931,7 @@
                                                 <a href="<?php echo URL . "View/Home/Gestion/Sectores/Platforms&Architecture/CloudSecurity/"; ?>"
                                                     class="nav-link" data-key="t-mailbox">Cloud Security</a>
                                             </li>
-                                             <li class="nav-item">
+                                            <li class="nav-item">
                                                 <a href="<?php echo URL . "View/Home/Gestion/Sectores/Platforms&Architecture/Consultoria/"; ?>"
                                                     class="nav-link" data-key="t-mailbox">Consultoria</a>
                                             </li>
@@ -930,7 +947,7 @@
                                                 <a href="<?php echo URL . "View/Home/Gestion/Sectores/Platforms&Architecture/eGRC/"; ?>"
                                                     class="nav-link" data-key="t-mailbox">eGRC</a>
                                             </li>
-                                             <li class="nav-item">
+                                            <li class="nav-item">
                                                 <a href="<?php echo URL . "View/Home/Gestion/Sectores/Platforms&Architecture/DigitalSecurity/"; ?>"
                                                     class="nav-link" data-key="t-mailbox">Digital Security</a>
                                             </li>
@@ -938,7 +955,7 @@
                                                 <a href="<?php echo URL . "View/Home/Gestion/Sectores/Platforms&Architecture/FirmaDigital/"; ?>"
                                                     class="nav-link" data-key="t-mailbox">Firma Digital</a>
                                             </li>
-                                             <li class="nav-item">
+                                            <li class="nav-item">
                                                 <a href="<?php echo URL . "View/Home/Gestion/Sectores/Platforms&Architecture/Forcepoint/"; ?>"
                                                     class="nav-link" data-key="t-mailbox">Forcepoint</a>
                                             </li>
@@ -950,15 +967,15 @@
                                                 <a href="<?php echo URL . "View/Home/Gestion/Sectores/Platforms&Architecture/IdentidadDigital/"; ?>"
                                                     class="nav-link" data-key="t-mailbox">Identidad Digital</a>
                                             </li>
-                                             <li class="nav-item">
+                                            <li class="nav-item">
                                                 <a href="<?php echo URL . "View/Home/Gestion/Sectores/Platforms&Architecture/PasswordLess/"; ?>"
                                                     class="nav-link" data-key="t-mailbox">PasswordLess</a>
                                             </li>
-                                             <li class="nav-item">
+                                            <li class="nav-item">
                                                 <a href="<?php echo URL . "View/Home/Gestion/Sectores/Platforms&Architecture/Qualys/"; ?>"
                                                     class="nav-link" data-key="t-mailbox">Qualys</a>
                                             </li>
-                                             <li class="nav-item">
+                                            <li class="nav-item">
                                                 <a href="<?php echo URL . "View/Home/Gestion/Sectores/Platforms&Architecture/Uem/"; ?>"
                                                     class="nav-link" data-key="t-mailbox">Uem</a>
                                             </li>

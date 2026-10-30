@@ -347,7 +347,10 @@ if (isset($_SESSION['usu_id'])) {
 
 
                                         <div class="col-xl-5 bg-success" style="border:.1rem solid gray;margin-right: 2px; border-radius: 5px;">
-                                            <div style="display: flex; justify-content:end; align-items: center; margin-top:.1rem; margin-bottom: .2rem;">
+                                            <div style="display: flex; align-items: center; width: 100%; margin-top:.1rem; margin-bottom: .2rem;">
+                                                <span class="badge bg-light border border-success text-success mx-2 me-auto d-inline-flex align-items-center gap-1 px-1 w-auto">
+                                                    Documento<span title="Descargar el documento adjunto en el proyecto" id="documento_proy"></span>
+                                                </span>
                                                 <span id="boton_validar_usu_asignado" type="button" onclick="editarParcial(<?php echo (int) Openssl::get_ssl_decrypt($_GET['pg']) ?>)" style="background-color: #24bbff; display: none;" class="badge border py-1">
                                                     <span style="display: inline-flex; align-items: center; gap: 4px;">
                                                         Editar Parcial <i class="ri-file-text-fill fs-14" style="line-height: 1;"></i>
@@ -474,13 +477,6 @@ if (isset($_SESSION['usu_id'])) {
                                                 </div>
                                             </div><!-- end card body -->
                                         </div><!-- end card -->
-                                        <span
-                                            class="badge bg-light border border-success text-success mx-2 mt-2 mb-3 d-inline-flex align-items-center gap-2 w-auto">
-                                            Documento
-                                            <span title="Descargar el documento adjunto en el proyecto"
-                                                id="documento_proy"></span>
-                                        </span>
-                                        <br>
 
                                         <div id="contHerramientas">
 
@@ -773,11 +769,11 @@ if (isset($_SESSION['usu_id'])) {
                 },
                 function(data, textStatus, jqXHR) {
                     $("#referencia_proy").text(data.refProy)
-                    $("#referencia_proy").attr('title','REFERENCIA '+data.refProy)
+                    $("#referencia_proy").attr('title', 'REFERENCIA ' + data.refProy)
                     $("#dimensionamiento").text(data.dimensionamiento)
                     $("#estadoProyecto").text(data.estado)
                     document.getElementById("estadoProyecto").style.backgroundColor = data.color_estado;
-                    document.getElementById("estadoProyecto").setAttribute('title','ESTADO DEL PROYECTO '+data.estado)
+                    document.getElementById("estadoProyecto").setAttribute('title', 'ESTADO DEL PROYECTO ' + data.estado)
 
                     if (data.estado == 'REALIZADO' || data.estado == 'CERRADO CALIDAD')
 
@@ -822,28 +818,27 @@ if (isset($_SESSION['usu_id'])) {
                         case 1:
                             $("#prioridad").addClass("bg-light   text-success").text(
                                 "Baja");
-                            $("#prioridad").attr('title',"PRIORIDAD BAJA")
+                            $("#prioridad").attr('title', "PRIORIDAD BAJA")
                             break;
                         case 2:
                             $("#prioridad").addClass("bg-warning text-dark").text("Media");
-                            $("#prioridad").attr('title',"PRIORIDAD MEDIA")
+                            $("#prioridad").attr('title', "PRIORIDAD MEDIA")
                             break;
                         case 3:
                             $("#prioridad").addClass("bg-danger text-light").text("Alta");
-                            $("#prioridad").attr('title',"PRIORIDAD ALTA")
+                            $("#prioridad").attr('title', "PRIORIDAD ALTA")
                             break;
                         default:
                             "";
                             break;
                     }
-
                     let subCatNom = data.cats_nom || "";
                     let subCatTruncado = subCatNom.length > 30 ?
                         subCatNom.substring(0, 30) + "..." :
                         subCatNom;
                     $("#titulo_subCategoria")
                         .text(subCatTruncado)
-                        .attr("title", 'TIPO DE PRODUCTO '+subCatNom);
+                        .attr("title", 'TIPO DE PRODUCTO ' + subCatNom);
                     if (data.captura_imagen == null) {
                         $("#fech_inicio").text(data.fech_inicio);
                         $("#fech_fin").text(data.fech_fin);
@@ -854,7 +849,7 @@ if (isset($_SESSION['usu_id'])) {
                         if (data.archivo) {
                             let archivo = data.archivo;
                             let li_archivo = `<a href="${URL}/View/Home/Public/Uploads/Calidad/${archivo}" download target="_blank">
-                                            <i class=" ri-file-download-line text-success" style="font-size:1.3rem"></i>
+                                            <i class=" ri-file-download-line text-success" style="font-size:1.1rem"></i>
                                         </a>`;
                             $("#documento_proy").html(li_archivo)
                         } else {
@@ -881,7 +876,7 @@ if (isset($_SESSION['usu_id'])) {
                         CatNom;
                     $("#titulo_categoria")
                         .text(CatTruncado)
-                        .attr("title", 'PRODUCTO '+CatNom);
+                        .attr("title", 'PRODUCTO ' + CatNom);
 
                     $("#titulo_servicio").text(data.titulo);
                     $("#parrafo_descripcion_proy").text("NOTA: " + data.descripcion);

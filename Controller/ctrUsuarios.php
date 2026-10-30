@@ -118,9 +118,7 @@ switch ($_GET['usuarios']) {
             $usu_correo,
             password_hash("111", PASSWORD_DEFAULT),
             $usu_tel,
-            (int)$sector_id,
-            2
-        );
+            (int)$sector_id, 2);
         echo json_encode(["Success" => "OK"]);
         break;
 

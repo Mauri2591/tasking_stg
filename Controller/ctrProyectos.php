@@ -636,7 +636,9 @@ switch ($_GET['proy']) {
                 : '<span style="background-color:' . $row['sector_color'] . '" class="badge">' . $row['sector_nombre'] . '</span>';
             $sub_array[] = isset($row['cat_nom']) == '' ? '<span>Sin asignar</span>' : '<span class="badge bg-light text-dark">' . $row['cat_nom'] . '</span>';
             $sub_array[] = isset($row['usu_nom_asignado']) == '' ? '<span>Sin asignar</span>' : '<span class="badge bg-info text-light">' . $row['usu_nom_asignado'] . '</span>';
-            $sub_array[] = '<span type="button" onclick="gestionar_proy_borrador(' . $row['proy_id'] . ',' . $row['id_proyecto_cantidad_servicios'] . ',' . $row['id_proyecto_gestionado'] . ')" data-placement="top" title="Gestionar Borrador"><i class="ri-send-plane-fill text-primary fs-16"></i></span>';
+            if ($_SESSION['sector_id'] != 9) {
+                $sub_array[] = '<span type="button" onclick="gestionar_proy_borrador(' . $row['proy_id'] . ',' . $row['id_proyecto_cantidad_servicios'] . ',' . $row['id_proyecto_gestionado'] . ')" data-placement="top" title="Gestionar Borrador"><i class="ri-send-plane-fill text-primary fs-16"></i></span>';
+            }
             $data[] = $sub_array;
         }
         $results = array(
@@ -2269,28 +2271,29 @@ switch ($_GET['proy']) {
             }
             $sub_array[] = '<span style="background-color:' . $row['color_estado'] . '" class="badge text-light">' . $row['estado'] . '</span>';
 
-            switch ($row['sector_id']) {
-                case '1':
-                    $sub_array[] = '<a href="' . URL . 'View/Home/Gestion/Sectores/GestionarProy/?p=' . Openssl::set_ssl_encrypt($row['id_proyecto_cantidad_servicios']) . '&pg=' . Openssl::set_ssl_encrypt($row['id_proyecto_gestionado']) . '"rel="noopener noreferrer" title="Ver proyecto"><i class="ri-send-plane-fill text-primary fs-18"></i></a>';
-                    break;
-                case '2':
-                    $sub_array[] = '<a href="' . URL . 'View/Home/Gestion/Sectores/GestionarProy/?p=' . Openssl::set_ssl_encrypt($row['id_proyecto_cantidad_servicios']) . '&pg=' . Openssl::set_ssl_encrypt($row['id_proyecto_gestionado']) . '"rel="noopener noreferrer" title="Ver proyecto"><i class="ri-send-plane-fill text-primary fs-18"></i></a>';
-                    break;
-                case '3':
-                    $sub_array[] = '<a href="' . URL . 'View/Home/Gestion/Sectores/GestionarProy/?p=' . Openssl::set_ssl_encrypt($row['id_proyecto_cantidad_servicios']) . '&pg=' . Openssl::set_ssl_encrypt($row['id_proyecto_gestionado']) . '"rel="noopener noreferrer" title="Ver proyecto"><i class="ri-send-plane-fill text-primary fs-18"></i></a>';
-                    break;
-                case '4':
-                    $sub_array[] = '<a href="' . URL . 'View/Home/Gestion/Sectores/GestionarProy/?p=' . Openssl::set_ssl_encrypt($row['id_proyecto_cantidad_servicios']) . '&pg=' . Openssl::set_ssl_encrypt($row['id_proyecto_gestionado']) . '"rel="noopener noreferrer" title="Ver proyecto"><i class="ri-send-plane-fill text-primary fs-18"></i></a>';
-                    break;
-                case '5':
-                    $sub_array[] = '<a href="' . URL . 'View/Home/Gestion/Sectores/GestionarProy/?p=' . Openssl::set_ssl_encrypt($row['id_proyecto_cantidad_servicios']) . '&pg=' . Openssl::set_ssl_encrypt($row['id_proyecto_gestionado']) . '"rel="noopener noreferrer" title="Ver proyecto"><i class="ri-send-plane-fill text-primary fs-18"></i></a>';
-                    break;
-                default:
-                    $sub_array[] = '<a href="' . URL . 'View/Home/Gestion/Sectores/GestionarProy/?p=' . Openssl::set_ssl_encrypt($row['id_proyecto_cantidad_servicios']) . '&pg=' . Openssl::set_ssl_encrypt($row['id_proyecto_gestionado']) . '"rel="noopener noreferrer" title="Ver proyecto"><i class="ri-send-plane-fill text-primary fs-18"></i></a>';
-                    break;
-            }
+            if ($_SESSION['sector_id'] != 9) {
+                switch ($row['sector_id']) {
+                    case '1':
+                        $sub_array[] = '<a href="' . URL . 'View/Home/Gestion/Sectores/GestionarProy/?p=' . Openssl::set_ssl_encrypt($row['id_proyecto_cantidad_servicios']) . '&pg=' . Openssl::set_ssl_encrypt($row['id_proyecto_gestionado']) . '"rel="noopener noreferrer" title="Ver proyecto"><i class="ri-send-plane-fill text-primary fs-18"></i></a>';
+                        break;
+                    case '2':
+                        $sub_array[] = '<a href="' . URL . 'View/Home/Gestion/Sectores/GestionarProy/?p=' . Openssl::set_ssl_encrypt($row['id_proyecto_cantidad_servicios']) . '&pg=' . Openssl::set_ssl_encrypt($row['id_proyecto_gestionado']) . '"rel="noopener noreferrer" title="Ver proyecto"><i class="ri-send-plane-fill text-primary fs-18"></i></a>';
+                        break;
+                    case '3':
+                        $sub_array[] = '<a href="' . URL . 'View/Home/Gestion/Sectores/GestionarProy/?p=' . Openssl::set_ssl_encrypt($row['id_proyecto_cantidad_servicios']) . '&pg=' . Openssl::set_ssl_encrypt($row['id_proyecto_gestionado']) . '"rel="noopener noreferrer" title="Ver proyecto"><i class="ri-send-plane-fill text-primary fs-18"></i></a>';
+                        break;
+                    case '4':
+                        $sub_array[] = '<a href="' . URL . 'View/Home/Gestion/Sectores/GestionarProy/?p=' . Openssl::set_ssl_encrypt($row['id_proyecto_cantidad_servicios']) . '&pg=' . Openssl::set_ssl_encrypt($row['id_proyecto_gestionado']) . '"rel="noopener noreferrer" title="Ver proyecto"><i class="ri-send-plane-fill text-primary fs-18"></i></a>';
+                        break;
+                    case '5':
+                        $sub_array[] = '<a href="' . URL . 'View/Home/Gestion/Sectores/GestionarProy/?p=' . Openssl::set_ssl_encrypt($row['id_proyecto_cantidad_servicios']) . '&pg=' . Openssl::set_ssl_encrypt($row['id_proyecto_gestionado']) . '"rel="noopener noreferrer" title="Ver proyecto"><i class="ri-send-plane-fill text-primary fs-18"></i></a>';
+                        break;
+                    default:
+                        $sub_array[] = '<a href="' . URL . 'View/Home/Gestion/Sectores/GestionarProy/?p=' . Openssl::set_ssl_encrypt($row['id_proyecto_cantidad_servicios']) . '&pg=' . Openssl::set_ssl_encrypt($row['id_proyecto_gestionado']) . '"rel="noopener noreferrer" title="Ver proyecto"><i class="ri-send-plane-fill text-primary fs-18"></i></a>';
+                        break;
+                }
 
-            $sub_array[] = '<div class="btn-group btn-group-sm p-0" role="group" aria-label="Button group with nested dropdown">
+                $sub_array[] = '<div class="btn-group btn-group-sm p-0" role="group" aria-label="Button group with nested dropdown">
                                 <div class="btn-group p-0" role="group">
                                     <button id="btnGroupDrop1" type="button" class="btn btn-primary btn-sm dropdown-toggle py-0" data-bs-toggle="dropdown" aria-expanded="false">
                                         Estado
@@ -2300,6 +2303,7 @@ switch ($_GET['proy']) {
                                     </ul>
                                 </div>
                             </div>';
+            }
             $data[] = $sub_array;
         }
         $results = array(
@@ -2393,10 +2397,10 @@ switch ($_GET['proy']) {
         echo json_encode($results);
         break;
 
-       case 'insert_nuevo_pm':
-           $ok = $proyecto->insert_nuevo_pm($_POST['id_pm_calidad'], $_SESSION['usu_id'], $_POST['id_proyecto_gestionado']);
-           echo json_encode(['status' => $ok ? 'ok' : 'error']);
-           break;
+    case 'insert_nuevo_pm':
+        $ok = $proyecto->insert_nuevo_pm($_POST['id_pm_calidad'], $_SESSION['usu_id'], $_POST['id_proyecto_gestionado']);
+        echo json_encode(['status' => $ok ? 'ok' : 'error']);
+        break;
 
     case 'get_proyectos_realizados_vista_calidad':
         $datos = $proyecto->get_proyectos_realizados_vista_calidad($_POST['estados_id']);
@@ -2453,10 +2457,11 @@ switch ($_GET['proy']) {
                     $sub_array[] = isset($row['usu_nom_asignado']) == '' ? '<span class="badge bg-light text-dark">Sin asignar</span>' : '<span class="badge bg-info text-light">' . $row['usu_nom_asignado'] . '</span>';
                     break;
             }
-            $sub_array[] = '<span type="button" onclick="ver_hosts_eh(' . $row['id_proyecto_gestionado'] . ' )"><i class="text-secondary fs-18 ri-global-line" data-placement="top" title="Ver hosts"></i></span>';
-            switch ($row['estados_id']) {
-                case '1':
-                    $sub_array[] = '<div class="btn-group btn-group-sm p-0" role="group" aria-label="Button group with nested dropdown">
+            if ($_SESSION['sector_id'] != 9) {
+                $sub_array[] = '<span type="button" onclick="ver_hosts_eh(' . $row['id_proyecto_gestionado'] . ' )"><i class="text-secondary fs-18 ri-global-line" data-placement="top" title="Ver hosts"></i></span>';
+                switch ($row['estados_id']) {
+                    case '1':
+                        $sub_array[] = '<div class="btn-group btn-group-sm p-0" role="group" aria-label="Button group with nested dropdown">
                                 <div class="btn-group p-0" role="group">
                                     <button id="btnGroupDrop1" type="button" class="btn btn-primary btn-sm dropdown-toggle py-0" data-bs-toggle="dropdown" aria-expanded="false">
                                         Estado
@@ -2466,15 +2471,15 @@ switch ($_GET['proy']) {
                                     </ul>
                                 </div>
                             </div>';
-                    break;
+                        break;
 
-                case '2':
-                    $sub_array[] = '<a href="' . URL . 'View/Home/Gestion/Sectores/GestionarProy/?p=' . Openssl::set_ssl_encrypt($row['id_proyecto_cantidad_servicios']) . '&pg=' . Openssl::set_ssl_encrypt($row['id_proyecto_gestionado']) . '" target="_blank" rel="noopener noreferrer" title="Ver proyecto"><i class="ri-send-plane-fill text-primary fs-18"></i></a>';
-                    break;
+                    case '2':
+                        $sub_array[] = '<a href="' . URL . 'View/Home/Gestion/Sectores/GestionarProy/?p=' . Openssl::set_ssl_encrypt($row['id_proyecto_cantidad_servicios']) . '&pg=' . Openssl::set_ssl_encrypt($row['id_proyecto_gestionado']) . '" target="_blank" rel="noopener noreferrer" title="Ver proyecto"><i class="ri-send-plane-fill text-primary fs-18"></i></a>';
+                        break;
 
-                case '3':
-                    $sub_array[] = '<a href="' . URL . 'View/Home/Gestion/Sectores/GestionarProy/?p=' . Openssl::set_ssl_encrypt($row['id_proyecto_cantidad_servicios']) . '&pg=' . Openssl::set_ssl_encrypt($row['id_proyecto_gestionado']) . '" target="_blank" rel="noopener noreferrer" title="Ver proyecto"><i class="ri-send-plane-fill text-primary fs-18"></i></a>';
-                    $sub_array[] = '<div class="btn-group btn-group-sm p-0" role="group" aria-label="Button group with nested dropdown">
+                    case '3':
+                        $sub_array[] = '<a href="' . URL . 'View/Home/Gestion/Sectores/GestionarProy/?p=' . Openssl::set_ssl_encrypt($row['id_proyecto_cantidad_servicios']) . '&pg=' . Openssl::set_ssl_encrypt($row['id_proyecto_gestionado']) . '" target="_blank" rel="noopener noreferrer" title="Ver proyecto"><i class="ri-send-plane-fill text-primary fs-18"></i></a>';
+                        $sub_array[] = '<div class="btn-group btn-group-sm p-0" role="group" aria-label="Button group with nested dropdown">
                                 <div class="btn-group p-0" role="group">
                                     <button id="btnGroupDrop1" type="button" class="btn btn-primary btn-sm dropdown-toggle py-0" data-bs-toggle="dropdown" aria-expanded="false">
                                         Estado
@@ -2486,11 +2491,12 @@ switch ($_GET['proy']) {
                                     </ul>
                                 </div>
                             </div>';
-                    break;
+                        break;
 
-                case '4':
-                    $sub_array[] = '<a href="' . URL . 'View/Home/Gestion/Sectores/GestionarProy/?p=' . Openssl::set_ssl_encrypt($row['id_proyecto_cantidad_servicios']) . '"rel="noopener noreferrer" title="Ver proyecto"><i class="ri-send-plane-fill text-primary fs-18"></i></a>';
-                    break;
+                    case '4':
+                        $sub_array[] = '<a href="' . URL . 'View/Home/Gestion/Sectores/GestionarProy/?p=' . Openssl::set_ssl_encrypt($row['id_proyecto_cantidad_servicios']) . '"rel="noopener noreferrer" title="Ver proyecto"><i class="ri-send-plane-fill text-primary fs-18"></i></a>';
+                        break;
+                }
             }
             $data[] = $sub_array;
         }
@@ -2789,8 +2795,9 @@ switch ($_GET['proy']) {
 
     case 'get_sectores_x_sector_id':
         $data = $proyecto->get_sectores_x_sector_id($_SESSION['sector_id']);
-        if ($_SESSION['sector_id'] != 4) {
-            $button = '<button type="button" onclick="btnPreNuevos(' . $_SESSION['sector_id'] . ')" class="btn btn-sm" value="' . $_SESSION['sector_id'] . '">En Cola <i class="ri-stack-line"></i></button>';        ?>
+        if ($_SESSION['sector_id'] != 4 && $_SESSION['sector_id'] != 9) {
+            $button = '<button type="button" onclick="btnPreNuevos(' . $_SESSION['sector_id'] . ')" class="btn btn-sm" value="' . $_SESSION['sector_id'] . '">En Cola <i class="ri-stack-line"></i></button>';
+        ?>
             <div class="col d-flex align-items-center justify-content-center" style="min-width: 150px; flex: 0 0 auto;">
                 <?= $button; ?>
             </div>
@@ -2851,7 +2858,7 @@ switch ($_GET['proy']) {
         break;
 
     case 'get_proyectos_total':
-        if ($_SESSION['sector_id'] == "4") {
+        if ($_SESSION['sector_id'] == "4" || $_SESSION['sector_id'] == "9") {
             $datos = $proyecto->get_proyectos_total();
             $data = array();
             $colores = array("ETHICAL HACKING" => "bg-warning text-dark", "SOC" => "bg-dark text-light", "SASE" => "bg-info text-light", "CALIDAD Y PROCESOS" => "bg-light text-dark", "INCIDENT RESPONSE" => "bg-danger text-light");
@@ -2916,9 +2923,23 @@ switch ($_GET['proy']) {
 
             $sub_array[] = '<p class="text-center my-0 badge bg-light text-dark fs-10">' . $fech_crea . '</p>';
 
-            $sub_array[] = '<p class="text-center my-0 badge bg-light text-dark fs-10">' . $fech_inicio . '</p>';
+                       $hoy = new DateTime('today');
+            $claseFecha = function ($fecha_raw) use ($hoy) {
+                if (empty($fecha_raw)) {
+                    return '';
+                }
+                $f = (new DateTime($fecha_raw))->setTime(0, 0);
+                if ($f == $hoy) {
+                    return 'border border-3 border-warning';
+                }
+                if ($f < $hoy) {
+                    return 'border border-3 border-danger';
+                }
+                return '';
+            };
 
-            $sub_array[] = '<p class="text-center my-0 badge bg-light text-dark fs-10">' . $fech_fin . '</p>';
+            $sub_array[] = '<p class="text-center my-0 badge bg-light text-dark fs-10 ' . $claseFecha($row['fech_inicio'] ?? null) . '">' . $fech_inicio . '</p>';
+            $sub_array[] = '<p class="text-center my-0 badge bg-light text-dark fs-10 ' . $claseFecha($row['fech_fin'] ?? null) . '">' . $fech_fin . '</p>';
 
             $sub_array[] = htmlspecialchars($titulo);
 
@@ -2946,18 +2967,20 @@ switch ($_GET['proy']) {
                 }
             }
 
-            if ($_SESSION['sector_id'] == "4" && $estado == "BORRADOR") {
-                $sub_array[] = '<span><i class="ri-subtract-line" style="color:#CCC"></i></span>';
-            } elseif ($_SESSION['sector_id'] != "4" && $estado == "BORRADOR") {
-                $sub_array[] = '<span><i class="ri-subtract-line" style="color:#CCC"></i></span>';
-            } else {
-                $sub_array[] = '<a href="' . URL . 'View/Home/Gestion/Sectores/GestionarProy/?p=' .
-                    Openssl::set_ssl_encrypt($id_proyecto_cantidad_servicios) .
-                    '&pg=' . Openssl::set_ssl_encrypt($id) .
-                    '" target="_blank" rel="noopener noreferrer" title="Ver proyecto"><i class="ri-send-plane-fill text-primary fs-18"></i></a>';
-            }
-            if ($_SESSION['usu_id'] == 104) {
-                $sub_array[] = '<div class="btn-group btn-group-sm p-0" role="group" aria-label="Button group with nested dropdown">
+            if ($_SESSION['sector_id'] != 9) {
+                if ($_SESSION['sector_id'] == "4" && $estado == "BORRADOR") {
+                    $sub_array[] = '<span><i class="ri-subtract-line" style="color:#CCC"></i></span>';
+                } elseif ($_SESSION['sector_id'] != "4" && $estado == "BORRADOR") {
+                    $sub_array[] = '<span><i class="ri-subtract-line" style="color:#CCC"></i></span>';
+                } else {
+                    $sub_array[] = '<a href="' . URL . 'View/Home/Gestion/Sectores/GestionarProy/?p=' .
+                        Openssl::set_ssl_encrypt($id_proyecto_cantidad_servicios) .
+                        '&pg=' . Openssl::set_ssl_encrypt($id) .
+                        '" target="_blank" rel="noopener noreferrer" title="Ver proyecto"><i class="ri-send-plane-fill text-primary fs-18"></i></a>';
+                }
+
+                if ($_SESSION['usu_id'] == 104) {
+                    $sub_array[] = '<div class="btn-group btn-group-sm p-0" role="group" aria-label="Button group with nested dropdown">
                             <div class="btn-group p-0" role="group">
                                 <button id="btnGroupDrop1" type="button" class="btn btn-primary btn-sm dropdown-toggle py-0" data-bs-toggle="dropdown" aria-expanded="false">
                                     Estado
@@ -2968,6 +2991,7 @@ switch ($_GET['proy']) {
                                 </ul>
                             </div>
                         </div>';
+                }
             }
             $data[] = $sub_array;
         }

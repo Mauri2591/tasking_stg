@@ -2755,8 +2755,7 @@ GROUP BY
     {
         $conn = parent::get_conexion();
 
-        if ($sector_id != 4) {
-            // Sector específico: sus proyectos cerrados + los de INCIDENT RESPONSE (cat_id=26)
+        if ($sector_id != 4 && $sector_id != 9) {
             $sql = "SELECT 
                     tm_categoria.cat_nom,
                     sectores.sector_nombre,
@@ -2941,7 +2940,7 @@ ORDER BY cantidad_proyectos DESC";
     LEFT JOIN dimensionamiento ON dimensionamiento.id_proyecto_gestionado=pg.id
     WHERE cl.client_id = :client_id
     AND (
-        (:sector_id = 4) OR (pg.cat_id IN (
+        (:sector_id = 4) OR (:sector_id = 9) OR (pg.cat_id IN (
             SELECT cat_id FROM tm_categoria WHERE sector_id = :sector_id OR cat_id = 26
         ))
     )";
@@ -2977,11 +2976,13 @@ ORDER BY cantidad_proyectos DESC";
     {
         $conn = parent::get_conexion();
 
-        $join_pg_sector = $sector_id != 4
+        $ve_todo = in_array((int)$sector_id, [4, 9]);
+
+        $join_pg_sector = !$ve_todo
             ? "AND (pg.sector_id = :sector_id_pg OR tc.cat_id = 26)"
             : "";
 
-        $where_tc_sector = $sector_id != 4
+        $where_tc_sector = !$ve_todo
             ? "AND (tc.sector_id = :sector_id OR tc.cat_id = 26)"
             : "";
 
@@ -3006,7 +3007,7 @@ ORDER BY cantidad_proyectos DESC";
                 CASE WHEN COUNT(pg.id) > 0 THEN 0 ELSE 1 END,
                 COUNT(pg.id) DESC";
         $stmt = $conn->prepare($sql);
-        if ($sector_id != 4) {
+        if (!$ve_todo) {
             $stmt->bindValue(':sector_id', $sector_id, PDO::PARAM_INT);
             $stmt->bindValue(':sector_id_pg', $sector_id, PDO::PARAM_INT);
         }

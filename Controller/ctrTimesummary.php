@@ -525,7 +525,7 @@ switch ($_GET['accion']) {
         }
 
         $permitido = false;
-        if ($_SESSION['sector_id'] == '4') {
+        if ($_SESSION['sector_id'] == '4' || $_SESSION['sector_id'] == '9') {
             $permitido = true;
         } elseif (($_SESSION['lider'] ?? '') == 'SI') {
             // El líder solo puede ver usuarios de su propio sector

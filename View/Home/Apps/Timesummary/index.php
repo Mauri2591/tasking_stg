@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . "/../../../../Config/Conexion.php";
 require_once __DIR__ . "/../../../../Config/Config.php";
-if (isset($_SESSION['usu_id'])) {
+if (isset($_SESSION['usu_id']) && $_SESSION['sector_id'] != 9) {
     require_once __DIR__ . "/../../../../Model/Clases/Headers.php";
     Headers::get_cors();
     include_once __DIR__ . "/../../Public/Template/head.php";
