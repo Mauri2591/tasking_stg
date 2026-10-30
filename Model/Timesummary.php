@@ -952,12 +952,13 @@ ORDER BY clientes.client_rs";
             )
             ELSE NULL
         END AS hs_resto,
-        CONCAT(tm_usuario_pm.usu_nom, ' ',
-            TIME_FORMAT(
-                SEC_TO_TIME(SUM(DISTINCT CASE WHEN horas_usuarios.id_pm_calidad = pm_calidad.id THEN horas_usuarios.total_segundos ELSE 0 END)),
-                '%H:%i'
-            )
+        
+        GROUP_CONCAT(
+            DISTINCT CASE WHEN horas_usuarios.id_pm_calidad = pm_calidad.id THEN
+                CONCAT(horas_usuarios.usu_nom, ' ', TIME_FORMAT(SEC_TO_TIME(horas_usuarios.total_segundos), '%H:%i'))
+            END SEPARATOR ', '
         ) AS usuario_pm_calidad,
+
         TIME_FORMAT(
             SEC_TO_TIME(SUM(DISTINCT CASE WHEN horas_usuarios.id_pm_calidad = pm_calidad.id THEN horas_usuarios.total_segundos ELSE 0 END)),
             '%H:%i'
@@ -1012,8 +1013,7 @@ ORDER BY clientes.client_rs";
             sectores.sector_nombre,
             proyecto_gestionado.fech_inicio,
             proyecto_gestionado.fech_fin,
-            dimensionamiento.hs_dimensionadas,
-            tm_usuario_pm.usu_nom
+            dimensionamiento.hs_dimensionadas
         ORDER BY clientes.client_rs";
 
         $stmt = $conn->prepare($sql);
@@ -1076,17 +1076,13 @@ ORDER BY clientes.client_rs";
             )
             ELSE NULL
         END AS hs_resto,
-        CASE 
-            WHEN SUM(DISTINCT CASE WHEN horas_usuarios.id_pm_calidad = pm_calidad.id THEN horas_usuarios.total_segundos ELSE 0 END) = 0
-            THEN NULL
-            ELSE CONCAT(
-                tm_usuario_pm.usu_nom, ' ',
-                TIME_FORMAT(
-                    SEC_TO_TIME(SUM(DISTINCT CASE WHEN horas_usuarios.id_pm_calidad = pm_calidad.id THEN horas_usuarios.total_segundos ELSE 0 END)),
-                    '%H:%i'
-                )
-            )
-        END AS usuario_pm_calidad,
+        
+        GROUP_CONCAT(
+            DISTINCT CASE WHEN horas_usuarios.id_pm_calidad = pm_calidad.id THEN
+                CONCAT(horas_usuarios.usu_nom, ' ', TIME_FORMAT(SEC_TO_TIME(horas_usuarios.total_segundos), '%H:%i'))
+            END SEPARATOR ', '
+        ) AS usuario_pm_calidad,
+
         CASE 
             WHEN SUM(DISTINCT CASE WHEN horas_usuarios.id_pm_calidad = pm_calidad.id THEN horas_usuarios.total_segundos ELSE 0 END) = 0 
             THEN NULL
@@ -1143,8 +1139,7 @@ ORDER BY clientes.client_rs";
         sectores.sector_nombre,
         proyecto_gestionado.fech_inicio,
         proyecto_gestionado.fech_fin,
-        dimensionamiento.hs_dimensionadas,
-        tm_usuario_pm.usu_nom
+        dimensionamiento.hs_dimensionadas
     ORDER BY clientes.client_rs";
 
         $stmt = $conn->prepare($sql);
@@ -1200,12 +1195,13 @@ ORDER BY clientes.client_rs";
             )
             ELSE NULL
         END AS hs_resto,
-        CONCAT(tm_usuario_pm.usu_nom, ' ',
-            TIME_FORMAT(
-                SEC_TO_TIME(SUM(DISTINCT CASE WHEN horas_usuarios.id_pm_calidad = pm_calidad.id THEN horas_usuarios.total_segundos ELSE 0 END)),
-                '%H:%i'
-            )
+        
+        GROUP_CONCAT(
+            DISTINCT CASE WHEN horas_usuarios.id_pm_calidad = pm_calidad.id THEN
+                CONCAT(horas_usuarios.usu_nom, ' ', TIME_FORMAT(SEC_TO_TIME(horas_usuarios.total_segundos), '%H:%i'))
+            END SEPARATOR ', '
         ) AS usuario_pm_calidad,
+
         TIME_FORMAT(
             SEC_TO_TIME(SUM(DISTINCT CASE WHEN horas_usuarios.id_pm_calidad = pm_calidad.id THEN horas_usuarios.total_segundos ELSE 0 END)),
             '%H:%i'
@@ -1261,8 +1257,7 @@ ORDER BY clientes.client_rs";
             sectores.sector_nombre,
             proyecto_gestionado.fech_inicio,
             proyecto_gestionado.fech_fin,
-            dimensionamiento.hs_dimensionadas,
-            tm_usuario_pm.usu_nom
+            dimensionamiento.hs_dimensionadas
         ORDER BY clientes.client_rs";
 
         $stmt = $conn->prepare($sql);
@@ -1558,8 +1553,13 @@ ORDER BY clientes.client_rs";
                 OR EXISTS (SELECT 1 FROM usuario_proyecto up
                            WHERE up.id_proyecto_gestionado = pg.id
                              AND up.usu_asignado = ?
-                             AND up.est = 1))",
-            [$id_proyecto, $usu_id, $usu_id]
+                             AND up.est = 1)
+                OR EXISTS (SELECT 1 FROM timesummary_estados tse
+                           WHERE tse.id_proyecto_gestionado = pg.id
+                             AND tse.usuario_asignado = ?
+                             AND tse.id_pm_calidad IS NOT NULL
+                             AND tse.est = 1))",
+            [$id_proyecto, $usu_id, $usu_id, $usu_id]
         );
 
         return $asignado ? null : "Proyecto inexistente o no asignado";
