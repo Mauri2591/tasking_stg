@@ -3639,32 +3639,38 @@ function gestionar_proy_recurrente(id_proyecto_cantidad_servicios, conteo_id_rec
 }
 
 function asignarPm(id_proyecto_gestionado, id_pm_calidad) {
-    if (id_pm_calidad && id_pm_calidad !== 'null' && id_pm_calidad !== 'undefined') {
+
+console.log('proyecto:', id_proyecto_gestionado, 'pm:', id_pm_calidad);
+    if (!id_pm_calidad || id_pm_calidad === 'null' || id_pm_calidad === 'undefined') {
         Swal.fire({
-            icon: "info",
-            title: "Atencion",
-            text: "Desea asignarse como PM de este proyecto?",
-            showConfirmButton: true,
-            showCancelButton: true
-        }).then((result) => {
-            if (result.isConfirmed) {
-                $.post("../../../../../Controller/ctrProyectos.php?proy=insert_nuevo_pm", {
-                        id_pm_calidad: id_pm_calidad,
-                        id_proyecto_gestionado: id_proyecto_gestionado
+            icon: "error",
+            title: "Error",
+            text: "No se puede asignar como PM a este proyecto"
+        });
+        return;
+    }
 
-                    },
-                    function (data, textStatus, jqXHR) {
+    Swal.fire({
+        icon: "info",
+        title: "Atencion",
+        text: "Desea asignarse como PM de este proyecto?",
+        showConfirmButton: true,
+        showCancelButton: true
+    }).then((result) => {
+        if (!result.isConfirmed) return;
 
-                    },
-                    "json"
-                );
-                setTimeout(() => {
-                    if ($.fn.DataTable.isDataTable('#table_proyectos_en_proceso')) {
-                        $('#table_proyectos_en_proceso').DataTable().ajax.reload(null, false);
-                        $('#table_proyectos_borrador').DataTable().ajax.reload(null, false);
-                        $("#table_proyectos_realizados").DataTable().ajax.reload(null, false);
+        $.post("../../../../../Controller/ctrProyectos.php?proy=insert_nuevo_pm", {
+                id_pm_calidad: id_pm_calidad,
+                id_proyecto_gestionado: id_proyecto_gestionado
+            }, null, "json")
+            .done(function (data) {
+                ['#table_proyectos_en_proceso', '#table_proyectos_borrador', '#table_proyectos_realizados', '#table_bitacora']
+                .forEach(function (t) {
+                    if ($.fn.DataTable.isDataTable(t)) {
+                        $(t).DataTable().ajax.reload(null, false);
                     }
-                }, 100);
+                });
+
                 Swal.fire({
                     icon: "success",
                     title: "Bien",
@@ -3672,18 +3678,15 @@ function asignarPm(id_proyecto_gestionado, id_pm_calidad) {
                     timer: 1000,
                     showConfirmButton: false
                 });
-            }
-        })
-    } else {
-        Swal.fire({
-            icon: "error",
-            title: "Error",
-            text: "No se puede asignar como PM a este proyecto",
-            showConfirmButton: false,
-            showCancelButton: true
-        })
-    }
-
+            })
+            .fail(function () {
+                Swal.fire({
+                    icon: "error",
+                    title: "Error",
+                    text: "No se pudo asignar el PM"
+                });
+            });
+    });
 }
 
 $("#btnPasarRecurrenteABorrador").off("click").on("click", function () {

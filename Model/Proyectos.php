@@ -1794,12 +1794,14 @@ GROUP BY
     public function insert_nuevo_pm($id_pm_calidad, $usuario_asignado, $id_proyecto_gestionado)
     {
         $conn = parent::get_conexion();
-        $sql = "INSERT INTO timesummary_estados (id_pm_calidad, usuario_asignado,id_proyecto_gestionado) VALUES (:id_pm_calidad, :usuario_asignado,:id_proyecto_gestionado)";
+        $sql = "INSERT INTO timesummary_estados (id_pm_calidad, usuario_asignado, id_proyecto_gestionado, est)
+                VALUES (:id_pm_calidad, :usuario_asignado, :id_proyecto_gestionado, 1)
+                ON DUPLICATE KEY UPDATE id_pm_calidad = VALUES(id_pm_calidad), est = 1";
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(":id_pm_calidad", $id_pm_calidad, PDO::PARAM_INT);
         $stmt->bindValue(":usuario_asignado", $usuario_asignado, PDO::PARAM_INT);
         $stmt->bindValue(":id_proyecto_gestionado", $id_proyecto_gestionado, PDO::PARAM_INT);
-        $stmt->execute();
+        return $stmt->execute();
     }
     public function get_proyectos_($estados_id)
     {

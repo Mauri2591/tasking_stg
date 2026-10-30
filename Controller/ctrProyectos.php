@@ -621,8 +621,7 @@ switch ($_GET['proy']) {
 
             $sub_array[] = strtoupper($row['client_rs']);
             $sub_array[] = '<p class="text-center p-0 m-0">' . strtoupper($row['refProy']) . '</p>';
-            $sub_array[] = $_SESSION['sector_id'] == "4" ? '<span class="badge bg-light text-dark" title="Asignarme como PM" type="button" onclick="asignarPm(' . $row['id_proyecto_gestionado'] . "," . $row['id_pm_calidad'] . ')">' . $row['creador_proy'] . '</span>' : '<span class="badge bg-light text-dark">' . $row['creador_proy'] . '</span>';
-
+            $sub_array[] = $_SESSION['sector_id'] == "4" ? '<span class="badge bg-light text-dark" title="Asignarme como PM" type="button" onclick="asignarPm(' . $row['id_proyecto_gestionado'] . "," . $_SESSION['usu_id'] . ')">' . $row['creador_proy'] . '</span>' : '<span class="badge bg-light text-dark">' . $row['creador_proy'] . '</span>';
             if (!empty($row['posicion_recurrencia'])) {
                 $sub_array[] = '<span class="badge bg-success text-light border border-success">' . $row['posicion_recurrencia'] . '</span>';
             } else if (is_null($row['posicion_recurrencia']) && $row['id_proyecto_recurrencia'] > 0) {
@@ -2248,7 +2247,7 @@ switch ($_GET['proy']) {
                 : "badge bg-light text-dark";
             $sub_array[] = $row['client_rs'];
             $sub_array[] = $row['refProy'];
-            $sub_array[] = $_SESSION['sector_id'] == "4" ? '<span class="badge bg-light text-dark" title="Asignarme como PM" type="button" onclick="asignarPm(' . $row['id_proyecto_gestionado'] . "," . $row['id_pm_calidad'] . ')">' . $row['creador_proy'] . '</span>' : '<span class="badge bg-light text-dark">' . $row['creador_proy'] . '</span>';
+            $sub_array[] = $_SESSION['sector_id'] == "4" ? '<span class="badge bg-light text-dark" title="Asignarme como PM" type="button" onclick="asignarPm(' . $row['id_proyecto_gestionado'] . "," . $_SESSION['usu_id'] . ')">' . $row['creador_proy'] . '</span>' : '<span class="badge bg-light text-dark">' . $row['creador_proy'] . '</span>';
 
             $sub_array[] = $row['posicion_recurrencia'] == '' ? '-' : '<span class="badge bg-success">' . $row['posicion_recurrencia'] . '</span>';
 
@@ -2352,7 +2351,7 @@ switch ($_GET['proy']) {
             }
             $sub_array[] = $row['client_rs'];
             $sub_array[] = $row['referencia'];
-            $sub_array[] = $_SESSION['sector_id'] == "4" ? '<span class="badge bg-light text-dark" title="Asignarme como PM" type="button" onclick="asignarPm(' . $row['id_proyecto_gestionado'] . "," . $row['id_pm_calidad'] . ')">' . $row['creador_proy'] . '</span>' : '<span class="badge bg-light text-dark">' . $row['creador_proy'] . '</span>';
+            $sub_array[] = $_SESSION['sector_id'] == "4" ? '<span class="badge bg-light text-dark" title="Asignarme como PM" type="button" onclick="asignarPm(' . $row['id_proyecto_gestionado'] . "," . $_SESSION['usu_id'] . ')">' . $row['creador_proy'] . '</span>' : '<span class="badge bg-light text-dark">' . $row['creador_proy'] . '</span>';
             $sub_array[] = empty($row['sector_nombre'])
                 ? '<span>Sin asignar</span>'
                 : '<span style="background-color:' . $row['sector_color'] . '" class="badge">' . $row['sector_nombre'] . '</span>';
@@ -2393,9 +2392,10 @@ switch ($_GET['proy']) {
         echo json_encode($results);
         break;
 
-    case 'insert_nuevo_pm':
-        $proyecto->insert_nuevo_pm($_POST['id_pm_calidad'], $_SESSION['usu_id'], $_POST['id_proyecto_gestionado']);
-        break;
+       case 'insert_nuevo_pm':
+           $ok = $proyecto->insert_nuevo_pm($_SESSION['usu_id'], $_SESSION['usu_id'], $_POST['id_proyecto_gestionado']);
+           echo json_encode(['status' => $ok ? 'ok' : 'error']);
+           break;
 
     case 'get_proyectos_realizados_vista_calidad':
         $datos = $proyecto->get_proyectos_realizados_vista_calidad($_POST['estados_id']);
@@ -2437,7 +2437,7 @@ switch ($_GET['proy']) {
             }
 
             $sub_array[] = $row['titulo'];
-            $sub_array[] = $_SESSION['sector_id'] == "4" ? '<span class="badge bg-light text-dark" title="Asignarme como PM" type="button" onclick="asignarPm(' . $row['id_proyecto_gestionado'] . "," . $row['id_pm_calidad'] . ')">' . $row['creador_proy'] . '</span>' : '<span class="badge bg-light text-dark">' . $row['creador_proy'] . '</span>';
+            $sub_array[] = $_SESSION['sector_id'] == "4" ? '<span class="badge bg-light text-dark" title="Asignarme como PM" type="button" onclick="asignarPm(' . $row['id_proyecto_gestionado'] . "," . $_SESSION['usu_id'] . ')">' . $row['creador_proy'] . '</span>' : '<span class="badge bg-light text-dark">' . $row['creador_proy'] . '</span>';
             $sub_array[] = empty($row['sector_nombre'])
                 ? '<span>Sin asignar</span>'
                 : '<span style="background-color:' . $row['sector_color'] . '" class="badge">' . $row['sector_nombre'] . '</span>';
