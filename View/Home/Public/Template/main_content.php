@@ -38,16 +38,16 @@
                     <div class="dropdown ms-sm-3 header-item topbar-user">
                         <button style="background-color: #eaeaea; border: .1rem solid #e0e0e0;" type="button" class="btn px-2 py-0" id="page-header-user-dropdown" data-bs-toggle="dropdown"
                             aria-haspopup="true" aria-expanded="false">
-                           
+
                             <span class="d-flex align-items-center">
-                            
+
                                 <i class=" ri-user-2-fill fs-20 text-info"></i>
                                 <span class="text-start ms-xl-2">
                                     <span
                                         class="d-none d-xl-inline-block ms-1 fw-medium user-name-text"><?php echo $_SESSION['usu_nom'] ?></span>
                                 </span>
-                                     <span
-                                class="d-none d-xl-inline-block ms-1 border border-dark badge fw-medium user-name-text"><?php echo $_SESSION['sector_nombre'] ?></span>
+                                <span
+                                    class="d-none d-xl-inline-block ms-1 border border-dark badge fw-medium user-name-text"><?php echo $_SESSION['sector_nombre'] ?></span>
                             </span>
                         </button>
 
@@ -275,7 +275,7 @@
                                 </div>
                             </li>
 
-                            <?php if ($_SESSION['rol_id'] == 1): ?>
+                            <?php if ($_SESSION['rol_id'] == 1 || $_SESSION['sector_id'] == 9): ?>
                                 <li class="nav-item">
                                     <a class="nav-link collapsed" href="#sidebarAuditoria" data-bs-toggle="collapse"
                                         role="button" aria-expanded="false" aria-controls="sidebarAuditoria"

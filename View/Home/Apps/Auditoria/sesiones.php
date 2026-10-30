@@ -26,9 +26,11 @@ if (isset($_SESSION['usu_id'])) {
 
         <div class="col-xl-12">
             <div class="card crm-widget">
-                <div style="display: flex; justify-content: end; height: 1.5rem; margin: .5rem;">
-                    <span class="mb-4"><span class="badge bg-primary fs-12">Reporte Logs Sesiones</span><i onclick="mdlReportePdfSesiones()" class="ri-file-pdf-fill text-danger fs-22" type="button" title="Descargar documento PDF"></i></span>
-                </div>
+                <?php if ($_SESSION['sector_id'] != 9): ?>
+                    <div style="display: flex; justify-content: end; height: 1.5rem; margin: .5rem;">
+                        <span class="mb-4"><span class="badge bg-primary fs-12">Reporte Logs Sesiones</span><i onclick="mdlReportePdfSesiones()" class="ri-file-pdf-fill text-danger fs-22" type="button" title="Descargar documento PDF"></i></span>
+                    </div>
+                <?php endif; ?>
                 <div class="card-body p-0">
                     <table id="tablaUsuariosSesiones" class="table table-bordered table-hover w-100">
                         <thead>
@@ -137,9 +139,6 @@ if (isset($_SESSION['usu_id'])) {
                 }
             }
         });
-
-
-
     });
 
     function mdlReportePdfSesiones() {

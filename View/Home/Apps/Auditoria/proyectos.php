@@ -37,9 +37,11 @@ if (isset($_SESSION['usu_id'])) {
 
         <div class="col-xl-12">
             <div class="card crm-widget">
-                <div style="display: flex; justify-content: end; height: 1.5rem; margin:.5rem">
-                    <span class="mb-4"><span class="badge bg-primary fs-12">Reporte Logs Proyectos</span><i onclick="mdlRreportePdfProyectos()" class="ri-file-pdf-fill text-danger fs-22" type="button" title="Descargar documento PDF"></i></span>
-                </div>
+                <?php if ($_SESSION['sector_id'] != 9): ?>
+                    <div style="display: flex; justify-content: end; height: 1.5rem; margin:.5rem">
+                        <span class="mb-4"><span class="badge bg-primary fs-12">Reporte Logs Proyectos</span><i onclick="mdlRreportePdfProyectos()" class="ri-file-pdf-fill text-danger fs-22" type="button" title="Descargar documento PDF"></i></span>
+                    </div>
+                <?php endif; ?>
                 <div class="card-body p-0">
                     <table id="tablaAuditoriaProyectos" class="table table-hover table-bordered w-100">
                         <thead>
@@ -58,7 +60,7 @@ if (isset($_SESSION['usu_id'])) {
             </div>
         </div>
     </div>
-<?php include_once __DIR__."/Modals/mdlProyectos.php"; ?>
+    <?php include_once __DIR__ . "/Modals/mdlProyectos.php"; ?>
 
     <?php
     include_once __DIR__ . "/../../Public/Template/footer.php";
@@ -76,8 +78,8 @@ if (isset($_SESSION['usu_id'])) {
     const formReporte = modalDescargar?.querySelector('form');
 
     document.addEventListener("DOMContentLoaded", function() {
-        
-    if (modalDescargar) {
+
+        if (modalDescargar) {
             modalDescargar.addEventListener('show.bs.modal', () => {
                 const hoy = new Date();
                 const año = hoy.getFullYear();
@@ -121,8 +123,7 @@ if (isset($_SESSION['usu_id'])) {
                 dataType: "json",
                 error: function(e) {}
             },
-            "order": [
-            ],
+            "order": [],
             "bDestroy": true,
             "responsive": false,
             "bInfo": true,
@@ -184,6 +185,4 @@ if (isset($_SESSION['usu_id'])) {
     function mdlRreportePdfProyectos() {
         $("#ModalDescargarPdfProyectos").modal("show");
     }
-
-
 </script>
