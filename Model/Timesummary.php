@@ -635,7 +635,7 @@ END AS posicion_recurrencia,
     public function get_sectores()
     {
         $conn = parent::get_conexion();
-        $sql = "SELECT sector_id, sector_nombre FROM sectores WHERE est=1 AND sector_id != 5";
+        $sql = "SELECT sector_id, sector_nombre FROM sectores WHERE est=1 AND sector_id NOT IN (5,9)";
         $stmt = $conn->prepare($sql);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
