@@ -988,6 +988,14 @@ switch ($_GET['proy']) {
         }
         break;
 
+    case 'get_combo_productos_tipos':
+        $data = $proyecto->productos_tipos((int)($_POST['producto_id'] ?? 0));
+        // echo '<option value="">Seleccione tipo</option>';
+        foreach ($data as $row) {
+            echo '<option value="' . (int)$row['tipo_id'] . '">' . htmlspecialchars($row['tipo'], ENT_QUOTES, 'UTF-8') . '</option>';
+        }
+        break;
+
     case 'get_combo_subcategorias_x_sector':
         // $htmlOption = '';
         $datos = $proyecto->get_combo_subcategorias_x_sector($_POST['sector_id']);
@@ -2923,7 +2931,7 @@ switch ($_GET['proy']) {
 
             $sub_array[] = '<p class="text-center my-0 badge bg-light text-dark fs-10">' . $fech_crea . '</p>';
 
-                       $hoy = new DateTime('today');
+            $hoy = new DateTime('today');
             $claseFecha = function ($fecha_raw) use ($hoy) {
                 if (empty($fecha_raw)) {
                     return '';

@@ -20,7 +20,7 @@ if (isset($_SESSION['usu_id'])) {
                     <div class="page-title-box d-sm-flex align-items-center justify-content-between bg-light">
                         <h4 class="mb-sm-0"><span style="background-color: #067525;" class="badge text-light border border-dark">
                             PLATFORMS Y ARCHITECTURE</span>
-                            <span style="background-color: #067525;" class="badge text-light border border-dark">CLOUD SECURITY</span>
+                            <span style="background-color: #067525;" class="badge text-light border border-dark">CLSIFICACIÓN DE ACTIVOS</span>
                         </h4>
                     </div>
                 </div>
@@ -70,7 +70,7 @@ if (isset($_SESSION['usu_id'])) {
 
                             <div class="tab-pane active" id="tab_nuevos" role="tabpanel">
                                 <div class="card card-body">
-                                    <table id="table_proyectos_nuevos_platforms_y_architecture_pentest" style="text-align: center; width: 100%;">
+                                    <table id="table_proyectos_nuevos_clasificacion_de_activos" style="text-align: center; width: 100%;">
                                         <thead style="text-align: center;">
                                             <tr style="text-align: center;">
                                                 <th style="width: 300px;text-align: center;">TITULO</th>
@@ -111,7 +111,7 @@ if (isset($_SESSION['usu_id'])) {
                             <div class="tab-pane" id="tab_abiertos" role="tabpanel">
                                 <div class="tab-pane active" id="tab_nuevos" role="tabpanel">
                                     <div class="card card-body">
-                                        <table id="table_proyectos_abiertos_eh_pentest"
+                                        <table id="table_proyectos_abiertos_clasificacion_de_activos"
                                             style="text-align: center; width: 100%;">
                                             <thead style="text-align: center;">
                                                 <tr style="text-align: center;">
@@ -149,7 +149,7 @@ if (isset($_SESSION['usu_id'])) {
                             <div class="tab-pane" id="tab_realizados" role="tabpanel">
                                 <div class="tab-pane active" id="tab_nuevos" role="tabpanel">
                                     <div class="card card-body">
-                                        <table id="table_proyectos_realizados_eh_pentest"
+                                        <table id="table_proyectos_realizados_clasificacion_de_activos"
                                             style="text-align: center; width: 100%;">
                                             <thead style="text-align: center;">
                                                 <tr style="text-align: center;">
@@ -185,7 +185,7 @@ if (isset($_SESSION['usu_id'])) {
                             <div class="tab-pane" id="tab_cerrado_calidad" role="tabpanel">
                                 <div class="tab-pane active" id="tab_nuevos" role="tabpanel">
                                     <div class="card card-body">
-                                        <table id="table_proyectos_cerrado_calidad_eh_pentest"
+                                        <table id="table_proyectos_cerrado_calidad_clasificacion_de_activos"
                                             style="text-align: center; width: 100%;">
                                             <thead style="text-align: center;">
                                                 <tr style="text-align: center;">

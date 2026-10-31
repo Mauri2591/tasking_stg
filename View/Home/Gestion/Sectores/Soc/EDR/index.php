@@ -2,14 +2,12 @@
 require_once __DIR__ . "/../../../../../../Config/Conexion.php";
 require_once __DIR__ . "/../../../../../../Config/Config.php";
 if (isset($_SESSION['usu_id'])) {
-    require_once __DIR__ . "/../../../../../../Config/Config.php";
     require_once __DIR__ . "/../../../../../../Model/Clases/Headers.php";
 
     Headers::get_cors();
 ?>
 
     <?php
-    include_once __DIR__ . "/../../../../Public/Template/head.php";
     include_once __DIR__ . "/../../../../Public/Template/head.php";
     include_once __DIR__ . "/../../../../Public/Template/main_content.php";
     ?>
@@ -21,7 +19,7 @@ if (isset($_SESSION['usu_id'])) {
                 <div class="col-12">
                     <div class="page-title-box d-sm-flex align-items-center justify-content-between bg-light">
                         <h4 class="mb-sm-0"><span class="badge bg-dark text-light">SOC</span><span
-                                class="badge text-light mx-1" style="background-color:#299cdb">EDR</span>
+                                class="badge text-light mx-1" style="background-color:#212529">EDR</span>
                         </h4>
                     </div>
                 </div>

@@ -1,5 +1,5 @@
 $(document).ready(function () {
-    tabla = $("#table_proyectos_nuevos_platforms_y_architecture_pentest").dataTable({
+    tabla = $("#table_proyectos_nuevos_clasificacion_de_activos").dataTable({
         "aProcessing": true,
         "aServerSide": true,
         dom: 'Bfrtip',
@@ -57,7 +57,7 @@ $(document).ready(function () {
         }
     });
 
-    tabla = $("#table_proyectos_abiertos_eh_pentest").dataTable({
+    tabla = $("#table_proyectos_abiertos_clasificacion_de_activos").dataTable({
         "aProcessing": true,
         "aServerSide": true,
         dom: 'Bfrtip',
@@ -115,7 +115,7 @@ $(document).ready(function () {
         }
     });
 
-    tabla = $("#table_proyectos_realizados_eh_pentest").dataTable({
+    tabla = $("#table_proyectos_realizados_clasificacion_de_activos").dataTable({
         "aProcessing": true,
         "aServerSide": true,
         dom: 'Bfrtip',
@@ -173,7 +173,7 @@ $(document).ready(function () {
         }
     });
 
-    tabla = $("#table_proyectos_cerrado_calidad_eh_pentest").dataTable({
+    tabla = $("#table_proyectos_cerrado_calidad_clasificacion_de_activos").dataTable({
         "aProcessing": true,
         "aServerSide": true,
         dom: 'Bfrtip',
@@ -233,7 +233,7 @@ $(document).ready(function () {
 
 });
 
-function cambiar_proy_eh_pentest(id_proyecto_gestionado) {
+function cambiar_proy_clasificacion_de_activos(id_proyecto_gestionado) {
     Swal.fire({
         icon: "info",
         title: "Desea pasar el proyecto a Borrador?",
@@ -258,8 +258,8 @@ function cambiar_proy_eh_pentest(id_proyecto_gestionado) {
                 showConfirmButton: false
             });
             setTimeout(() => {
-                if ($.fn.DataTable.isDataTable('#table_proyectos_nuevos_platforms_y_architecture_pentest')) {
-                    $('#table_proyectos_nuevos_platforms_y_architecture_pentest').DataTable().ajax.reload(null, false);
+                if ($.fn.DataTable.isDataTable('#table_proyectos_nuevos_clasificacion_de_activos')) {
+                    $('#table_proyectos_nuevos_clasificacion_de_activos').DataTable().ajax.reload(null, false);
                 }
                 if ($.fn.DataTable.isDataTable('#table_proyectos_borrador')) {
                     $('#table_proyectos_borrador').DataTable().ajax.reload(null, false);
@@ -301,14 +301,14 @@ function cambiar_a_borrador(id_proyecto_gestionado) {
             });
 
             setTimeout(() => {
-                if ($.fn.DataTable.isDataTable('#table_proyectos_nuevos_platforms_y_architecture_pentest')) {
-                    $('#table_proyectos_nuevos_platforms_y_architecture_pentest').DataTable().ajax.reload(null, false);
+                if ($.fn.DataTable.isDataTable('#table_proyectos_nuevos_clasificacion_de_activos')) {
+                    $('#table_proyectos_nuevos_clasificacion_de_activos').DataTable().ajax.reload(null, false);
                 }
                 if ($.fn.DataTable.isDataTable('#table_proyectos_borrador')) {
                     $('#table_proyectos_borrador').DataTable().ajax.reload(null, false);
                 }
-                if ($.fn.DataTable.isDataTable('#table_proyectos_abiertos_eh_pentest')) {
-                    $('#table_proyectos_abiertos_eh_pentest').DataTable().ajax.reload(null, false);
+                if ($.fn.DataTable.isDataTable('#table_proyectos_abiertos_clasificacion_de_activos')) {
+                    $('#table_proyectos_abiertos_clasificacion_de_activos').DataTable().ajax.reload(null, false);
                 }
             }, 500);
 
@@ -348,11 +348,11 @@ function cambiar_a_abierto(id_proyecto_gestionado) {
             });
 
             setTimeout(() => {
-                if ($.fn.DataTable.isDataTable('#table_proyectos_nuevos_platforms_y_architecture_pentest')) {
-                    $('#table_proyectos_nuevos_platforms_y_architecture_pentest').DataTable().ajax.reload(null, false);
+                if ($.fn.DataTable.isDataTable('#table_proyectos_nuevos_clasificacion_de_activos')) {
+                    $('#table_proyectos_nuevos_clasificacion_de_activos').DataTable().ajax.reload(null, false);
                 }
-                if ($.fn.DataTable.isDataTable('#table_proyectos_abiertos_eh_pentest')) {
-                    $('#table_proyectos_abiertos_eh_pentest').DataTable().ajax.reload(null, false);
+                if ($.fn.DataTable.isDataTable('#table_proyectos_abiertos_clasificacion_de_activos')) {
+                    $('#table_proyectos_abiertos_clasificacion_de_activos').DataTable().ajax.reload(null, false);
                 }
             }, 500);
         }
@@ -391,8 +391,8 @@ function asignar_proyecto(id_proyecto_gestionado) {
             });
 
             setTimeout(() => {
-                if ($.fn.DataTable.isDataTable('#table_proyectos_nuevos_platforms_y_architecture_pentest')) {
-                    $('#table_proyectos_nuevos_platforms_y_architecture_pentest').DataTable().ajax.reload(null, false);
+                if ($.fn.DataTable.isDataTable('#table_proyectos_nuevos_clasificacion_de_activos')) {
+                    $('#table_proyectos_nuevos_clasificacion_de_activos').DataTable().ajax.reload(null, false);
                 }
             }, 500);
         }
@@ -482,9 +482,9 @@ function cambiar_a_nuevo(id_proyecto_gestionado) {
                         }
                     );
                     setTimeout(() => {
-                        if ($.fn.DataTable.isDataTable('#table_proyectos_nuevos_platforms_y_architecture_pentest')) {
-                            $('#table_proyectos_abiertos_eh_pentest').DataTable().ajax.reload(null, false);
-                            $('#table_proyectos_nuevos_platforms_y_architecture_pentest').DataTable().ajax.reload(null, false);
+                        if ($.fn.DataTable.isDataTable('#table_proyectos_nuevos_clasificacion_de_activos')) {
+                            $('#table_proyectos_abiertos_clasificacion_de_activos').DataTable().ajax.reload(null, false);
+                            $('#table_proyectos_nuevos_clasificacion_de_activos').DataTable().ajax.reload(null, false);
                         }
                     }, 500);
 
@@ -526,9 +526,9 @@ function cambiar_a_realizado(id_proyecto_gestionado) {
                 showConfirmButton: false
             });
             setTimeout(() => {
-                if ($.fn.DataTable.isDataTable('#table_proyectos_nuevos_platforms_y_architecture_pentest')) {
-                    $('#table_proyectos_abiertos_eh_pentest').DataTable().ajax.reload(null, false);
-                    $('#table_proyectos_realizados_eh_pentest').DataTable().ajax.reload(null, false);
+                if ($.fn.DataTable.isDataTable('#table_proyectos_nuevos_clasificacion_de_activos')) {
+                    $('#table_proyectos_abiertos_clasificacion_de_activos').DataTable().ajax.reload(null, false);
+                    $('#table_proyectos_realizados_clasificacion_de_activos').DataTable().ajax.reload(null, false);
                 }
             }, 500);
         }

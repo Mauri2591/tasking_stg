@@ -348,7 +348,7 @@ if (isset($_SESSION['usu_id'])) {
 
                                         <div class="col-xl-5 bg-success" style="border:.1rem solid gray;margin-right: 2px; border-radius: 5px;">
                                             <div style="display: flex; align-items: center; width: 100%; margin-top:.1rem; margin-bottom: .2rem;">
-                                                <span class="badge bg-light border border-success text-success mx-2 me-auto d-inline-flex align-items-center gap-1 px-1 w-auto">
+                                                <span class="badge bg-light border border-success text-success me-auto d-inline-flex align-items-center gap-1 px-1 w-auto">
                                                     Documento<span title="Descargar el documento adjunto en el proyecto" id="documento_proy"></span>
                                                 </span>
                                                 <span id="boton_validar_usu_asignado" type="button" onclick="editarParcial(<?php echo (int) Openssl::get_ssl_decrypt($_GET['pg']) ?>)" style="background-color: #24bbff; display: none;" class="badge border py-1">

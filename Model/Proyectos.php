@@ -2373,7 +2373,7 @@ GROUP BY
     public function get_combo_categorias_x_sector(int $sector_id)
     {
         $conn = parent::get_conexion();
-        $sql = "SELECT cat_id, cat_nom FROM tm_categoria WHERE sector_id = ? AND est = 1";
+        $sql = "SELECT cat_id, cat_nom FROM tm_categoria WHERE sector_id = ? AND est = 1 ORDER BY cat_nom";
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(1, $sector_id, PDO::PARAM_INT);
         $stmt->execute();
@@ -3939,5 +3939,27 @@ GROUP BY
         $stmt->execute();
         $datos = $stmt->fetchAll(PDO::FETCH_ASSOC);
         return count($datos) > 0 ? $datos : [];
+    }
+
+    public function productos_tipos($producto_id)
+    {
+        $conn = parent::get_conexion();
+        $sql = "SELECT productos_tipos.tipo_id,
+            tm_categoria.cat_nom AS producto, 
+            tm_categoria.est AS producto_estado, tm_subcategoria.cats_nom AS tipo, 
+            tm_subcategoria.est AS tipo_estado, productos_tipos.est AS estado_producto_tipo 
+            FROM productos_tipos INNER JOIN tm_categoria 
+            ON tm_categoria.cat_id=productos_tipos.producto_id 
+            INNER JOIN tm_subcategoria 
+            ON productos_tipos.tipo_id=tm_subcategoria.cats_id
+            WHERE productos_tipos.producto_id = :producto_id
+            AND productos_tipos.est = 1 
+            AND tm_categoria.est = 1 
+            AND tm_subcategoria.est = 1
+            ORDER BY tm_categoria.cat_nom, tm_subcategoria.cats_nom";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue(":producto_id", $producto_id, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }
