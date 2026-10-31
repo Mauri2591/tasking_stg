@@ -1269,7 +1269,6 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
             console.error("No se encontró el id_proyecto_gestionado");
             return null;
         }
-
         formData.append('id', idProyecto);
         formData.append('id_proyecto_gestionado', idProyecto);
         formData.append('cat_id', $("#combo_categoria_proy_nuevo").val());
@@ -1287,15 +1286,12 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
         formData.append('fech_fin', $("#fech_fin_proy_nuevo").val());
         formData.append('fech_vantive', $("#fech_vantive").val());
         formData.append('hs_dimensionadas', hs_dimensionadas);
-
         formData.append('fecha_contrato', $("#fecha_contrato").val());
         formData.append('plazo_meses', $("#plazo_meses").val());
         formData.append('posee_licencias', $("#posee_licencias").val());
         formData.append('fecha_vencimiento_licencias', $("#fecha_vencimiento_licencias").val());
         return formData;
     }
-
-
 
     $.post("../../../../../Controller/ctrProyectos.php?proy=get_client_y_pais_para_proy_borrador", {
         proy_id: proy_id
@@ -1319,14 +1315,12 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
         TITULO_EDITADO_MANUAL = false;
 
         $("#proy_cliente_periodo").text(data.titulo);
-
         // Registrar eventos
         $("#client_refPro_proy_nuevo").off("input").on("input", actualizarTitulo);
         $("#combo_recurrente_proy_nuevo").off("change").on("change", actualizarTitulo);
         $("#titulo_client_rs_alta_proy").off("input").on("input", function () {
             TITULO_EDITADO_MANUAL = true;
         });
-
     }, "json");
 
     $("#combo_categoria_proy_nuevo").prop("disabled", false);
@@ -1405,8 +1399,8 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
                 $("#combo_categoria_proy_nuevo").val(data.cat_id);
             });
 
-            $.post("../../../../../Controller/ctrProyectos.php?proy=get_combo_subcategorias_x_sector", {
-                sector_id: data.sector_id
+            $.post("../../../../../Controller/ctrProyectos.php?proy=get_combo_productos_tipos", {
+                producto_id: data.cat_id
             }, function (res) {
                 $("#combo_subcategoria_proy_nuevo").html(res);
                 $("#combo_subcategoria_proy_nuevo").val(data.cats_id);
@@ -3866,9 +3860,9 @@ function editar_proyecto(id_proyecto_gestionado) {
 
             $.ajax({
                 type: "POST",
-                url: URL + 'Controller/ctrProyectos.php?proy=get_combo_subcategorias_x_sector',
+                url: URL + 'Controller/ctrProyectos.php?proy=get_combo_productos_tipos',
                 data: {
-                    sector_id: proyecto.sector_id
+                    producto_id: proyecto.cat_id
                 },
                 dataType: "html",
                 success: function (options) {

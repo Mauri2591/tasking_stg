@@ -3740,8 +3740,9 @@ ORDER BY producto, mes DESC";
         proyecto_gestionado.titulo AS titulo, proyecto_gestionado.refProy AS referencia, 
         proyecto_gestionado.correo_envio_cliente AS correo_envio_cliente,
         proyecto_gestionado.cats_id AS tipo, 
+        proyecto_gestionado.cat_id AS cat_id,
         proyecto_gestionado.correo_envio_cliente_copias AS correo_envio_cliente_copias, 
-        proyecto_gestionado.descripcion, proyecto_gestionado.cats_id AS tipo,
+        proyecto_gestionado.descripcion,
         proyecto_gestionado.sector_id AS sector_id,
         dimensionamiento.hs_dimensionadas AS dimensionamiento,
         proyecto_gestionado.fecha_contrato AS fecha_contrato,
@@ -3756,7 +3757,7 @@ ORDER BY producto, mes DESC";
         $stmt->bindValue(":id", $id, PDO::PARAM_INT);
         $stmt->execute();
         $datos = $stmt->fetch(PDO::FETCH_ASSOC);
-        return count($datos) > 0 ? $datos : [];
+        return $datos ?: [];
     }
 
     public function update_parcial_pg(int $id, array $datos)
