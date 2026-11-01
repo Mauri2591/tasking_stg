@@ -155,6 +155,7 @@ class Proyectos extends Conexion
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(":id_proyecto_gestionado", $id_proyecto_gestionado, PDO::PARAM_INT);
         $stmt->execute();
+        return $stmt->rowCount();
     }
 
     public function get_datos_proyectos_tasking()
@@ -3169,16 +3170,21 @@ ORDER BY cantidad_proyectos DESC";
     {
         $conn = parent::get_conexion();
         $sql = "SELECT 
-    pg.titulo AS TITULO,
-    pg.refProy AS REFERENCIA,
-    sectores.sector_nombre AS SECTOR,
-    tm_categoria.cat_nom AS CATEGORIA,
-    tm_subcategoria.cats_nom AS TIPO,
-    CONCAT(d.hs_dimensionadas, 'hs') AS DIMENSIONAMIENTO,
-    prioridad.prioridad AS PRIORIDAD,
-    creador.usu_correo AS CREADOR,
-    pg.fech_vantive AS FECHA_VANTIVE,
-    pg.fech_crea AS FECHA_CREACION,
+    COALESCE(NULLIF(TRIM(pg.titulo), ''), 'NO POSEE') AS TITULO,
+    COALESCE(NULLIF(TRIM(pg.refProy), ''), 'NO POSEE') AS REFERENCIA,
+    COALESCE(NULLIF(TRIM(sectores.sector_nombre), ''), 'NO POSEE') AS SECTOR,
+    COALESCE(NULLIF(TRIM(tm_categoria.cat_nom), ''), 'NO POSEE') AS CATEGORIA,
+    COALESCE(NULLIF(TRIM(tm_subcategoria.cats_nom), ''), 'NO POSEE') AS TIPO,
+    COALESCE(CONCAT(NULLIF(TRIM(d.hs_dimensionadas), ''), 'hs'), 'NO POSEE') AS DIMENSIONAMIENTO,
+    COALESCE(NULLIF(TRIM(prioridad.prioridad), ''), 'NO POSEE') AS PRIORIDAD,
+    COALESCE(NULLIF(TRIM(creador.usu_correo), ''), 'NO POSEE') AS CREADOR,
+    COALESCE(DATE_FORMAT(pg.fech_vantive, '%d-%m-%Y'), 'NO POSEE') AS FECHA_VANTIVE,
+    COALESCE(DATE_FORMAT(pg.fech_crea, '%d-%m-%Y'), 'NO POSEE') AS FECHA_CREACION,
+    COALESCE(DATE_FORMAT(pg.fecha_contrato, '%d-%m-%Y'), 'NO POSEE') AS FECHA_CONTRATO,
+    COALESCE(NULLIF(TRIM(pg.plazo_meses), ''), 'NO POSEE') AS PLAZO_MESES,
+    COALESCE(NULLIF(TRIM(pg.posee_licencias), ''), 'NO POSEE') AS POSEE_LICENCIAS,
+    COALESCE(DATE_FORMAT(pg.fecha_vencimiento_licencias, '%d-%m-%Y'), 'NO POSEE') AS FECHA_VENCIMIENTO_LICENCIAS,
+    COALESCE(NULLIF(GROUP_CONCAT(DISTINCT NULLIF(TRIM(pg.correo_envio_cliente), '') SEPARATOR ','), ''), 'NO POSEE') AS CORREO_ENVIO_CLIENTE,
     CASE 
         WHEN pg.archivo IS NOT NULL AND pg.archivo <> '' 
         THEN 'POSEE' 
@@ -3189,28 +3195,27 @@ ORDER BY cantidad_proyectos DESC";
         THEN 'POSEE' 
         ELSE 'NO POSEE' 
     END AS CAPTURA_IMAGEN
-        FROM proyecto_gestionado pg
+    FROM proyecto_gestionado pg
+    LEFT JOIN tm_categoria 
+        ON pg.cat_id = tm_categoria.cat_id
+    LEFT JOIN tm_subcategoria 
+        ON pg.cats_id = tm_subcategoria.cats_id
+    LEFT JOIN sectores 
+        ON pg.sector_id = sectores.sector_id
+    LEFT JOIN tm_usuario AS creador 
+        ON pg.usu_crea = creador.usu_id
+    LEFT JOIN prioridad 
+        ON pg.prioridad_id = prioridad.id
+    LEFT JOIN dimensionamiento d
+        ON d.id_proyecto_gestionado = pg.id
+    WHERE pg.id = (
+        SELECT MIN(id)
+        FROM proyecto_gestionado
+        WHERE id_proyecto_cantidad_servicios = :id_proyecto_cantidad_servicios
+    )
+    GROUP BY pg.id
+    LIMIT 1";
 
-        LEFT JOIN tm_categoria 
-            ON pg.cat_id = tm_categoria.cat_id
-        LEFT JOIN tm_subcategoria 
-            ON pg.cats_id = tm_subcategoria.cats_id
-        LEFT JOIN sectores 
-            ON pg.sector_id = sectores.sector_id
-        LEFT JOIN tm_usuario AS creador 
-            ON pg.usu_crea = creador.usu_id
-        LEFT JOIN prioridad 
-            ON pg.prioridad_id = prioridad.id
-
-        LEFT JOIN dimensionamiento d
-            ON d.id_proyecto_gestionado = pg.id
-
-        WHERE pg.id = (
-            SELECT MIN(id)
-            FROM proyecto_gestionado
-            WHERE id_proyecto_cantidad_servicios = :id_proyecto_cantidad_servicios
-        )
-        LIMIT 1";
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(":id_proyecto_cantidad_servicios", $id_proyecto_cantidad_servicios, PDO::PARAM_INT);
         $stmt->execute();
@@ -3279,6 +3284,11 @@ ORDER BY cantidad_proyectos DESC";
     pg.captura_imagen,
     pg.fech_crea,
     pg.est,
+    pg.fecha_contrato,
+    pg.plazo_meses,
+    pg.posee_licencias,
+    pg.fecha_vencimiento_licencias,
+    pg.correo_envio_cliente,
     d.hs_dimensionadas,
     pr_first.primer_recurrencia_id
 FROM proyecto_gestionado pg
@@ -3291,7 +3301,7 @@ LEFT JOIN (
 ) pr_first
     ON pr_first.id_proyecto_cantidad_servicios = pg.id_proyecto_cantidad_servicios
 LEFT JOIN dimensionamiento d
-    ON d.id_proyecto_gestionado = pg.id   -- dimensionamiento se relaciona con proyecto_gestionado
+    ON d.id_proyecto_gestionado = pg.id
 WHERE pg.id_proyecto_cantidad_servicios = :id_proyecto_cantidad_servicios";
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(":id_proyecto_cantidad_servicios", $id_proyecto_cantidad_servicios, PDO::PARAM_INT);
@@ -3315,43 +3325,58 @@ WHERE pg.id_proyecto_cantidad_servicios = :id_proyecto_cantidad_servicios";
         $archivo,
         $captura_imagen,
         $fech_crea,
-        $est
+        $est,
+        $fecha_contrato,
+        $plazo_meses,
+        $posee_licencias,
+        $fecha_vencimiento_licencias,
+        $correo_envio_cliente
     ) {
         $conn = parent::get_conexion();
         $sql = "INSERT INTO proyecto_gestionado (
-                id_proyecto_cantidad_servicios,
-                cat_id,
-                cats_id,
-                sector_id,
-                usu_crea,
-                prioridad_id,
-                estados_id,
-                titulo,
-                descripcion,
-                refProy,
-                recurrencia,
-                fech_vantive,
-                archivo,
-                captura_imagen,
-                fech_crea,
-                est
-            ) VALUES (
-                :id_proyecto_cantidad_servicios,
-                :cat_id,
-                :cats_id,
-                :sector_id,
-                :usu_crea,
-                :prioridad_id,
-                :estados_id,
-                :titulo,
-                :descripcion,
-                :refProy,
-                :recurrencia,
-                :fech_vantive,
-                :archivo,
-                :captura_imagen,
-                :fech_crea,
-                :est)";
+            id_proyecto_cantidad_servicios,
+            cat_id,
+            cats_id,
+            sector_id,
+            usu_crea,
+            prioridad_id,
+            estados_id,
+            titulo,
+            descripcion,
+            refProy,
+            recurrencia,
+            fech_vantive,
+            archivo,
+            captura_imagen,
+            fech_crea,
+            est,
+            fecha_contrato,
+            plazo_meses,
+            posee_licencias,
+            fecha_vencimiento_licencias,
+            correo_envio_cliente
+        ) VALUES (
+            :id_proyecto_cantidad_servicios,
+            :cat_id,
+            :cats_id,
+            :sector_id,
+            :usu_crea,
+            :prioridad_id,
+            :estados_id,
+            :titulo,
+            :descripcion,
+            :refProy,
+            :recurrencia,
+            :fech_vantive,
+            :archivo,
+            :captura_imagen,
+            :fech_crea,
+            :est,
+            :fecha_contrato,
+            :plazo_meses,
+            :posee_licencias,
+            :fecha_vencimiento_licencias,
+            :correo_envio_cliente)";
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(":id_proyecto_cantidad_servicios", $id_proyecto_cantidad_servicios, PDO::PARAM_INT);
         $stmt->bindValue(":cat_id", $cat_id, PDO::PARAM_INT);
@@ -3369,10 +3394,14 @@ WHERE pg.id_proyecto_cantidad_servicios = :id_proyecto_cantidad_servicios";
         $stmt->bindValue(":captura_imagen", $captura_imagen, PDO::PARAM_STR);
         $stmt->bindValue(":fech_crea", $fech_crea, PDO::PARAM_STR);
         $stmt->bindValue(":est", $est, PDO::PARAM_INT);
+        $stmt->bindValue(":fecha_contrato", $fecha_contrato, $fecha_contrato === null ? PDO::PARAM_NULL : PDO::PARAM_STR);
+        $stmt->bindValue(":plazo_meses", $plazo_meses, $plazo_meses === null ? PDO::PARAM_NULL : PDO::PARAM_INT);
+        $stmt->bindValue(":posee_licencias", $posee_licencias, $posee_licencias === null ? PDO::PARAM_NULL : PDO::PARAM_STR);
+        $stmt->bindValue(":fecha_vencimiento_licencias", $fecha_vencimiento_licencias, $fecha_vencimiento_licencias === null ? PDO::PARAM_NULL : PDO::PARAM_STR);
+        $stmt->bindValue(":correo_envio_cliente", $correo_envio_cliente, $correo_envio_cliente === null ? PDO::PARAM_NULL : PDO::PARAM_STR);
         $stmt->execute();
         return $conn->lastInsertId();
     }
-
     public function insert_dimensionamiento_recurrente_proy_gestionado($id_proyecto_gestionado, $hs_dimensionadas, $usu_crea)
     {
         $conn = parent::get_conexion();

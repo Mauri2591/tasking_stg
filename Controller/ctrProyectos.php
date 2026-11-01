@@ -529,7 +529,14 @@ switch ($_GET['proy']) {
         break;
 
     case 'inhabilitar_proyectos_DesarrolloTasking':
-        echo json_encode($proyecto->inhabilitar_proyectos_DesarrolloTasking($_POST['id_proyecto_gestionado']));
+        $id = (int)($_POST['id_proyecto_gestionado'] ?? 0);
+        if (!$id) {
+            http_response_code(400);
+            echo json_encode(['status' => 'error', 'message' => 'ID inválido']);
+            break;
+        }
+        $filas = $proyecto->inhabilitar_proyectos_DesarrolloTasking($id);
+        echo json_encode(['status' => 'ok', 'filas' => $filas]);
         break;
 
     case 'get_sector_x_proy':
@@ -3163,6 +3170,10 @@ TXT;
         break;
 
     case 'insert_recurrente_proy_gestionado':
+        $nullSiVacio = function ($key) {
+            return (isset($_POST[$key]) && $_POST[$key] !== '') ? $_POST[$key] : null;
+        };
+
         $id_proyecto_gestionado = $proyecto->insert_recurrente_proy_gestionado(
             $_POST['id_proyecto_cantidad_servicios'],
             $_POST['cat_id'],
@@ -3179,7 +3190,12 @@ TXT;
             $_POST['archivo'],
             $_POST['captura_imagen'],
             $_POST['fech_crea'],
-            $_POST['est']
+            $_POST['est'],
+            $nullSiVacio('fecha_contrato'),
+            $nullSiVacio('plazo_meses'),
+            $nullSiVacio('posee_licencias'),
+            $nullSiVacio('fecha_vencimiento_licencias'),
+            $nullSiVacio('correo_envio_cliente')
         );
         echo json_encode([
             "Status" => "success",

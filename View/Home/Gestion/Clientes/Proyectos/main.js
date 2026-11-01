@@ -1144,6 +1144,7 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
     $.post("../../../../../Controller/ctrProyectos.php?proy=validar_si_es_recurrente", {
             id_proyecto_cantidad_servicios: id_proyecto_cantidad_servicios
         },
+
         function (data, textStatus, jqXHR) {
             if (data.validacion_recurrente == "SI_RECURRENTE") {
                 UPDATE_PROY_RECURRENCIA = true;
@@ -1168,19 +1169,38 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
                                     const ID = data.id;
 
                                     if (ACTIVO == 'NO') {
-                                        $.post("../../../../../Controller/ctrProyectos.php?proy=update_proyecto_recurrencia", {
-                                            id: ID,
-                                            id_proyecto_gestionado: $("#id_proyecto_gestionado").val()
+                                        $.when(
+                                            $.post("../../../../../Controller/ctrProyectos.php?proy=update_proyecto_recurrencia", {
+                                                id: ID,
+                                                id_proyecto_gestionado: $("#id_proyecto_gestionado").val()
+                                            }),
+                                            $.post("../../../../../Controller/ctrProyectos.php?proy=update_id_proyecto_recurrencia_proyecto_gestionado", {
+                                                id: id,
+                                                id_proyecto_recurrencia: ID
+                                            })
+                                        ).done(function () {
+                                            Toastify({
+                                                text: "Proyecto agregado a la recurrencia correctamente",
+                                                duration: 1000,
+                                                gravity: "top",
+                                                position: "right",
+                                                backgroundColor: "#0ab39c",
+                                            }).showToast();
+
+                                            if ($.fn.DataTable.isDataTable('#table_proyectos_borrador')) {
+                                                $("#table_proyectos_borrador").DataTable().ajax.reload(null, false);
+                                            }
+                                            if ($.fn.DataTable.isDataTable('#table_proyectos_recurrencia')) {
+                                                $('#table_proyectos_recurrencia').DataTable().ajax.reload(null, false);
+                                            }
+                                        }).fail(function (xhr) {
+                                            console.error("Error al actualizar recurrencia:", xhr.responseText);
                                         });
-                                        $.post("../../../../../Controller/ctrProyectos.php?proy=update_id_proyecto_recurrencia_proyecto_gestionado", {
-                                            id: id,
-                                            id_proyecto_recurrencia: ID
-                                        });
-                                        // $.post("../../../../../Controller/ctrProyectos.php?proy=update_proyecto_recurrencia_posicion_recurrencia", { id: id, id_proyecto_recurrencia: ID });
                                     }
                                 },
                                 "json"
                             );
+
                             $.post("../../../../../Controller/ctrProyectos.php?proy=get_datos_proyecto_creado", {
                                     id: $("#mdl_id_proyecto_gestionado").val()
                                 },
@@ -1191,21 +1211,6 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
                                 },
                                 "json"
                             );
-                            setTimeout(() => {
-                                Toastify({
-                                    text: "Proyecto agregado a la recurrencia correctamente",
-                                    duration: 1000,
-                                    gravity: "top",
-                                    position: "right",
-                                    backgroundColor: "#0ab39c",
-                                }).showToast();
-                                if ($.fn.DataTable.isDataTable('#table_proyectos_borrador')) {
-                                    $("#table_proyectos_borrador").DataTable().ajax.reload(null, false);
-                                }
-                                if ($.fn.DataTable.isDataTable('#table_proyectos_recurrencia')) {
-                                    $('#table_proyectos_recurrencia').DataTable().ajax.reload(null, false);
-                                }
-                            }, 300);
                         }
                     },
                     "json"
@@ -3453,7 +3458,7 @@ function crearRechequeo(id) {
                         if (data.id_proyecto_recurrencia === null) data.id_proyecto_recurrencia = 0;
                         if (data.archivo === null) data.archivo = "";
 
-                        // Agregamos lo que el backend necesita
+                        // Agrego lo que el backend necesita
                         data.id_proyecto_gestionado = ID_ORIGINAL;
                         data.posicion_recurrencia = POSICION_RECURRENCIA;
                         data.id_proyecto_gestionado_origen = id;
@@ -3636,7 +3641,12 @@ function gestionar_proy_recurrente(id_proyecto_cantidad_servicios, conteo_id_rec
                 archivo: response.archivo,
                 captura_imagen: response.captura_imagen,
                 fech_crea: response.fech_crea,
-                est: response.est
+                est: response.est,
+                fecha_contrato: response.fecha_contrato,
+                plazo_meses: response.plazo_meses,
+                posee_licencias: response.posee_licencias,
+                fecha_vencimiento_licencias: response.fecha_vencimiento_licencias,
+                correo_envio_cliente: response.correo_envio_cliente
             };
         },
         error: function (xhr, status, error) {
@@ -3716,7 +3726,7 @@ $("#btnPasarRecurrenteABorrador").off("click").on("click", function () {
         dataType: "json",
         success: function (response) {
             if (response.Status === "success") {
-                const idPG = response.id_proyecto_gestionado; // 🔑 ID real recién creado
+                const idPG = response.id_proyecto_gestionado; // ID real recién creado
 
                 $.post("../../../../../Controller/ctrProyectos.php?proy=insertar_usuarios_a_recurrente", {
                         id_proyecto_gestionado: idPG,
