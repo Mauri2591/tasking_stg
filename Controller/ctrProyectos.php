@@ -3195,7 +3195,8 @@ TXT;
             $nullSiVacio('plazo_meses'),
             $nullSiVacio('posee_licencias'),
             $nullSiVacio('fecha_vencimiento_licencias'),
-            $nullSiVacio('correo_envio_cliente')
+            $nullSiVacio('correo_envio_cliente'),
+            $nullSiVacio('correo_envio_cliente_copias')
         );
         echo json_encode([
             "Status" => "success",

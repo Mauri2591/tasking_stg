@@ -3646,7 +3646,8 @@ function gestionar_proy_recurrente(id_proyecto_cantidad_servicios, conteo_id_rec
                 plazo_meses: response.plazo_meses,
                 posee_licencias: response.posee_licencias,
                 fecha_vencimiento_licencias: response.fecha_vencimiento_licencias,
-                correo_envio_cliente: response.correo_envio_cliente
+                correo_envio_cliente: response.correo_envio_cliente,
+                correo_envio_cliente_copias: response.correo_envio_cliente_copias
             };
         },
         error: function (xhr, status, error) {

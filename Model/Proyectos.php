@@ -3185,6 +3185,7 @@ ORDER BY cantidad_proyectos DESC";
     COALESCE(NULLIF(TRIM(pg.posee_licencias), ''), 'NO POSEE') AS POSEE_LICENCIAS,
     COALESCE(DATE_FORMAT(pg.fecha_vencimiento_licencias, '%d-%m-%Y'), 'NO POSEE') AS FECHA_VENCIMIENTO_LICENCIAS,
     COALESCE(NULLIF(GROUP_CONCAT(DISTINCT NULLIF(TRIM(pg.correo_envio_cliente), '') SEPARATOR ','), ''), 'NO POSEE') AS CORREO_ENVIO_CLIENTE,
+    COALESCE(NULLIF(GROUP_CONCAT(DISTINCT NULLIF(TRIM(pg.correo_envio_cliente_copias), '') SEPARATOR ','), ''), 'NO POSEE') AS CORREO_ENVIO_CLIENTE_COPIAS,
     CASE 
         WHEN pg.archivo IS NOT NULL AND pg.archivo <> '' 
         THEN 'POSEE' 
@@ -3289,6 +3290,7 @@ ORDER BY cantidad_proyectos DESC";
     pg.posee_licencias,
     pg.fecha_vencimiento_licencias,
     pg.correo_envio_cliente,
+    pg.correo_envio_cliente_copias,
     d.hs_dimensionadas,
     pr_first.primer_recurrencia_id
 FROM proyecto_gestionado pg
@@ -3330,7 +3332,8 @@ WHERE pg.id_proyecto_cantidad_servicios = :id_proyecto_cantidad_servicios";
         $plazo_meses,
         $posee_licencias,
         $fecha_vencimiento_licencias,
-        $correo_envio_cliente
+        $correo_envio_cliente,
+        $correo_envio_cliente_copias
     ) {
         $conn = parent::get_conexion();
         $sql = "INSERT INTO proyecto_gestionado (
@@ -3354,7 +3357,8 @@ WHERE pg.id_proyecto_cantidad_servicios = :id_proyecto_cantidad_servicios";
             plazo_meses,
             posee_licencias,
             fecha_vencimiento_licencias,
-            correo_envio_cliente
+            correo_envio_cliente,
+            correo_envio_cliente_copias
         ) VALUES (
             :id_proyecto_cantidad_servicios,
             :cat_id,
@@ -3376,7 +3380,8 @@ WHERE pg.id_proyecto_cantidad_servicios = :id_proyecto_cantidad_servicios";
             :plazo_meses,
             :posee_licencias,
             :fecha_vencimiento_licencias,
-            :correo_envio_cliente)";
+            :correo_envio_cliente,
+            :correo_envio_cliente_copias)";
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(":id_proyecto_cantidad_servicios", $id_proyecto_cantidad_servicios, PDO::PARAM_INT);
         $stmt->bindValue(":cat_id", $cat_id, PDO::PARAM_INT);
@@ -3399,6 +3404,7 @@ WHERE pg.id_proyecto_cantidad_servicios = :id_proyecto_cantidad_servicios";
         $stmt->bindValue(":posee_licencias", $posee_licencias, $posee_licencias === null ? PDO::PARAM_NULL : PDO::PARAM_STR);
         $stmt->bindValue(":fecha_vencimiento_licencias", $fecha_vencimiento_licencias, $fecha_vencimiento_licencias === null ? PDO::PARAM_NULL : PDO::PARAM_STR);
         $stmt->bindValue(":correo_envio_cliente", $correo_envio_cliente, $correo_envio_cliente === null ? PDO::PARAM_NULL : PDO::PARAM_STR);
+        $stmt->bindValue(":correo_envio_cliente_copias", $correo_envio_cliente_copias, $correo_envio_cliente_copias === null ? PDO::PARAM_NULL : PDO::PARAM_STR);
         $stmt->execute();
         return $conn->lastInsertId();
     }
