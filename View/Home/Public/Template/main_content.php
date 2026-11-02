@@ -298,6 +298,24 @@
                                     </div>
                                 </li>
                             <?php endif; ?>
+
+                            <?php if ($_SESSION['sector_id'] == 1 || $_SESSION['sector_id'] == 4 || $_SESSION['lider'] == 'SI'): ?>
+                                <li class="menu-title"><i class="ri-more-fill"></i> <span data-key="t-pages">Info</span>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link collapsed" href="#sidebarRecursos" data-bs-toggle="collapse"
+                                        role="button" aria-expanded="false" aria-controls="sidebarRecursos"
+                                        data-key="t-email">Recursos</a>
+                                    <div class="menu-dropdown collapse" id="sidebarRecursos">
+                                        <ul class="nav nav-sm flex-column">
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "docs/index.html"; ?>" target="_blank" rel="noopener"
+                                                    class="nav-link" data-key="t-mailbox">Documentación Técnica</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </li>
+                            <?php endif; ?>
                         </ul>
                     <?php elseif (isset($_SESSION) && $_SESSION['rol_id'] == 2): ?>
                         <?php switch ($_SESSION['sector_id']) {
@@ -1131,7 +1149,7 @@
                                 echo json_encode(["Error" => "Case default"]);
                                 break; ?>
                         <?php } ?>
-                        
+
                         <?php if ($_SESSION['sector_id'] == 1 || $_SESSION['sector_id'] == 4 || $_SESSION['lider'] == 'SI'): ?>
                             <li class="menu-title"><i class="ri-more-fill"></i> <span data-key="t-pages">Info</span>
                             </li>
@@ -1142,7 +1160,7 @@
                                 <div class="menu-dropdown collapse" id="sidebarRecursos">
                                     <ul class="nav nav-sm flex-column">
                                         <li class="nav-item">
-                                            <a href="<?php echo URL . "docs/"; ?>" target="_blank" rel="noopener"
+                                            <a href="<?php echo URL . "docs/index.html"; ?>" target="_blank" rel="noopener"
                                                 class="nav-link" data-key="t-mailbox">Documentación Técnica</a>
                                         </li>
                                     </ul>
