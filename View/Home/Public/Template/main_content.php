@@ -194,8 +194,12 @@
                                             <a href="<?php echo URL . "View/Home/Gestion/Sectores/CalidadYProcesos/IR/"; ?>"
                                                 class="nav-link" data-key="t-mailbox">Incident Response</a>
                                         </li>
-                                        <li class="nav-item">
-                                            <a href="<?php echo URL . "View/Home/Gestion/Sectores/CalidadYProcesos/SOC/"; ?>"
+                                           <li class="nav-item">
+                                            <a href="<?php echo URL . "View/Home/Gestion/Sectores/CalidadYProcesos/CalidadYProcesos/"; ?>"
+                                                class="nav-link" data-key="t-mailbox">Calidad y Procesos</a>
+                                        </li>
+                                        <!-- <li class="nav-item">
+                                            <a href="<?php echo URL . "View/Home/Gestion/Sectores/CalidadYProcesos/CalidadYProcesos/"; ?>"
                                                 class="nav-link" data-key="t-mailbox">SOC</a>
                                         </li>
                                         <li class="nav-item">
@@ -245,7 +249,7 @@
                                         <li class="nav-item">
                                             <a href="<?php echo URL . "View/Home/Gestion/Sectores/CalidadYProcesos/Nuevas_Soluciones/"; ?>"
                                                 class="nav-link" data-key="t-mailbox">Nuevas Soluciones</a>
-                                        </li>
+                                        </li> -->
                                     </ul>
                                 </div>
                             </li>
@@ -733,6 +737,10 @@
                                                 <li class="nav-item">
                                                     <a href="<?php echo URL . "View/Home/Gestion/Sectores/CalidadYProcesos/IR/"; ?>"
                                                         class="nav-link" data-key="t-mailbox">Incident Response</a>
+                                                </li>
+                                                 <li class="nav-item">
+                                                    <a href="<?php echo URL . "View/Home/Gestion/Sectores/CalidadYProcesos/SOC/"; ?>"
+                                                        class="nav-link" data-key="t-mailbox">Calidad y Procesos</a>
                                                 </li>
                                                 <li class="nav-item">
                                                     <a href="<?php echo URL . "View/Home/Gestion/Sectores/CalidadYProcesos/SOC/"; ?>"

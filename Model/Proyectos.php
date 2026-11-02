@@ -2393,7 +2393,7 @@ GROUP BY
     public function get_sectores()
     {
         $conn = parent::get_conexion();
-        $sql = "SELECT sector_id, sector_nombre FROM sectores WHERE est=1";
+        $sql = "SELECT sector_id, sector_nombre FROM sectores WHERE sector_id != 9 AND est=1";
         $stmt = $conn->prepare($sql);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
