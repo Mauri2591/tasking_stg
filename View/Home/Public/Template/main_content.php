@@ -194,7 +194,7 @@
                                             <a href="<?php echo URL . "View/Home/Gestion/Sectores/CalidadYProcesos/IR/"; ?>"
                                                 class="nav-link" data-key="t-mailbox">Incident Response</a>
                                         </li>
-                                           <li class="nav-item">
+                                        <li class="nav-item">
                                             <a href="<?php echo URL . "View/Home/Gestion/Sectores/CalidadYProcesos/CalidadYProcesos/"; ?>"
                                                 class="nav-link" data-key="t-mailbox">Calidad y Procesos</a>
                                         </li>
@@ -738,7 +738,7 @@
                                                     <a href="<?php echo URL . "View/Home/Gestion/Sectores/CalidadYProcesos/IR/"; ?>"
                                                         class="nav-link" data-key="t-mailbox">Incident Response</a>
                                                 </li>
-                                                 <li class="nav-item">
+                                                <li class="nav-item">
                                                     <a href="<?php echo URL . "View/Home/Gestion/Sectores/CalidadYProcesos/SOC/"; ?>"
                                                         class="nav-link" data-key="t-mailbox">Calidad y Procesos</a>
                                                 </li>
@@ -825,7 +825,7 @@
                                     </li>
                                 </ul>
                             <?php
-                            break;
+                                break;
                             case '6':
                             ?>
                                 <li class="nav-item">
@@ -1130,8 +1130,25 @@
                             default:
                                 echo json_encode(["Error" => "Case default"]);
                                 break; ?>
-
                         <?php } ?>
+                        
+                        <?php if ($_SESSION['sector_id'] == 1 || $_SESSION['sector_id'] == 4 || $_SESSION['lider'] == 'SI'): ?>
+                            <li class="menu-title"><i class="ri-more-fill"></i> <span data-key="t-pages">Info</span>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link collapsed" href="#sidebarRecursos" data-bs-toggle="collapse"
+                                    role="button" aria-expanded="false" aria-controls="sidebarRecursos"
+                                    data-key="t-email">Recursos</a>
+                                <div class="menu-dropdown collapse" id="sidebarRecursos">
+                                    <ul class="nav nav-sm flex-column">
+                                        <li class="nav-item">
+                                            <a href="<?php echo URL . "docs/"; ?>" target="_blank" rel="noopener"
+                                                class="nav-link" data-key="t-mailbox">Documentación Técnica</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>
+                        <?php endif; ?>
             </div>
         <?php endif; ?>
 
