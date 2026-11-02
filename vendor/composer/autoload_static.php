@@ -99,6 +99,10 @@ class ComposerStaticInit127b1e6c13eb213007547c9e92331712
     );
 
     public static $prefixLengthsPsr4 = array (
+        'p' => 
+        array (
+            'phpDocumentor\\' => 14,
+        ),
         'Z' => 
         array (
             'ZipStream\\' => 10,
@@ -123,6 +127,7 @@ class ComposerStaticInit127b1e6c13eb213007547c9e92331712
             'PhpOffice\\PhpWord\\' => 18,
             'PhpOffice\\PhpSpreadsheet\\' => 25,
             'PhpOffice\\Math\\' => 15,
+            'PharIo\\ComposerDistributor\\' => 27,
             'PHPMailer\\PHPMailer\\' => 20,
         ),
         'M' => 
@@ -159,6 +164,10 @@ class ComposerStaticInit127b1e6c13eb213007547c9e92331712
     );
 
     public static $prefixDirsPsr4 = array (
+        'phpDocumentor\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/phpdocumentor/shim/src',
+        ),
         'ZipStream\\' => 
         array (
             0 => __DIR__ . '/..' . '/maennchen/zipstream-php/src',
@@ -197,8 +206,8 @@ class ComposerStaticInit127b1e6c13eb213007547c9e92331712
         ),
         'Psr\\Http\\Message\\' => 
         array (
-            0 => __DIR__ . '/..' . '/psr/http-message/src',
-            1 => __DIR__ . '/..' . '/psr/http-factory/src',
+            0 => __DIR__ . '/..' . '/psr/http-factory/src',
+            1 => __DIR__ . '/..' . '/psr/http-message/src',
         ),
         'Psr\\Http\\Client\\' => 
         array (
@@ -223,6 +232,10 @@ class ComposerStaticInit127b1e6c13eb213007547c9e92331712
         'PhpOffice\\Math\\' => 
         array (
             0 => __DIR__ . '/..' . '/phpoffice/math/src/Math',
+        ),
+        'PharIo\\ComposerDistributor\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/phar-io/composer-distributor/src',
         ),
         'PHPMailer\\PHPMailer\\' => 
         array (
@@ -336,6 +349,20 @@ class ComposerStaticInit127b1e6c13eb213007547c9e92331712
         'Google_Task_Retryable' => __DIR__ . '/..' . '/google/apiclient/src/aliases.php',
         'Google_Task_Runner' => __DIR__ . '/..' . '/google/apiclient/src/aliases.php',
         'Google_Utils_UriTemplate' => __DIR__ . '/..' . '/google/apiclient/src/aliases.php',
+        'PharIo\\Executor\\Exception' => __DIR__ . '/..' . '/phar-io/executor/src/ExecutorException.php',
+        'PharIo\\Executor\\Executor' => __DIR__ . '/..' . '/phar-io/executor/src/Executor.php',
+        'PharIo\\Executor\\ExecutorResult' => __DIR__ . '/..' . '/phar-io/executor/src/ExecutorResult.php',
+        'PharIo\\FileSystem\\Directory' => __DIR__ . '/..' . '/phar-io/filesystem/src/Directory.php',
+        'PharIo\\FileSystem\\DirectoryException' => __DIR__ . '/..' . '/phar-io/filesystem/src/DirectoryException.php',
+        'PharIo\\FileSystem\\Exception' => __DIR__ . '/..' . '/phar-io/filesystem/src/Exception.php',
+        'PharIo\\FileSystem\\File' => __DIR__ . '/..' . '/phar-io/filesystem/src/File.php',
+        'PharIo\\FileSystem\\Filename' => __DIR__ . '/..' . '/phar-io/filesystem/src/Filename.php',
+        'PharIo\\FileSystem\\FilenameException' => __DIR__ . '/..' . '/phar-io/filesystem/src/FilenameException.php',
+        'PharIo\\FileSystem\\LastModifiedDate' => __DIR__ . '/..' . '/phar-io/filesystem/src/LastModifiedDate.php',
+        'PharIo\\GnuPG\\ErrorStrings' => __DIR__ . '/..' . '/phar-io/gnupg/src/ErrorStrings.php',
+        'PharIo\\GnuPG\\Exception' => __DIR__ . '/..' . '/phar-io/gnupg/src/Exception.php',
+        'PharIo\\GnuPG\\Factory' => __DIR__ . '/..' . '/phar-io/gnupg/src/Factory.php',
+        'PharIo\\GnuPG\\GnuPG' => __DIR__ . '/..' . '/phar-io/gnupg/src/GnuPG.php',
         'PhpToken' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/PhpToken.php',
         'Random\\BrokenRandomEngineError' => __DIR__ . '/..' . '/symfony/polyfill-php82/Resources/stubs/Random/BrokenRandomEngineError.php',
         'Random\\CryptoSafeEngine' => __DIR__ . '/..' . '/symfony/polyfill-php82/Resources/stubs/Random/CryptoSafeEngine.php',
