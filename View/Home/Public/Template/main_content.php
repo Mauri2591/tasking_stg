@@ -1151,7 +1151,7 @@
                         <?php } ?>
 
                         <?php if ($_SESSION['sector_id'] == 1 || $_SESSION['sector_id'] == 4 || $_SESSION['lider'] == 'SI'): ?>
-                            <li class="menu-title"><i class="ri-more-fill"></i> <span data-key="t-pages">Info</span>
+                            <li class="menu-title"><i class="ri-more-fill"></i> <span data-key="t-pages">+ Info</span>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link collapsed" href="#sidebarRecursos" data-bs-toggle="collapse"
