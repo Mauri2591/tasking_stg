@@ -253,6 +253,7 @@
                                     </ul>
                                 </div>
                             </li>
+                            <hr style="width: 85%; color:#e0e0e0; margin: 1rem auto;">
                             <li class="menu-title"><i class="ri-more-fill"></i> <span data-key="t-pages">Apps</span>
                             </li>
                             <li class="nav-item">
@@ -279,42 +280,48 @@
                                 </div>
                             </li>
 
-                            <?php if ($_SESSION['rol_id'] == 1 || $_SESSION['sector_id'] == 9): ?>
-                                <li class="nav-item">
-                                    <a class="nav-link collapsed" href="#sidebarAuditoria" data-bs-toggle="collapse"
-                                        role="button" aria-expanded="false" aria-controls="sidebarAuditoria"
-                                        data-key="t-email">Auditoria</a>
-                                    <div class="menu-dropdown collapse" id="sidebarAuditoria">
-                                        <ul class="nav nav-sm flex-column">
-                                            <li class="nav-item">
-                                                <a href="<?php echo URL . "View/Home/Apps/Auditoria/proyectos.php"; ?>"
-                                                    class="nav-link" data-key="t-mailbox">Proyectos</a>
-                                            </li>
-                                            <li class="nav-item">
-                                                <a href="<?php echo URL . "View/Home/Apps/Auditoria/sesiones.php"; ?>"
-                                                    class="nav-link" data-key="t-mailbox">Sesiones</a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </li>
-                            <?php endif; ?>
-
-                            <?php if ($_SESSION['sector_id'] == 1 || $_SESSION['sector_id'] == 4 || $_SESSION['lider'] == 'SI'): ?>
+                            <?php
+                            $verAuditoria = ($_SESSION['lider'] == 'SI' || $_SESSION['sector_id'] == 4);
+                            $verRecursos  = ($_SESSION['sector_id'] == 1 || $_SESSION['sector_id'] == 4 || $_SESSION['lider'] == 'SI');
+                            ?>
+                            <?php if ($verAuditoria || $verRecursos): ?>
+                                <hr style="width: 85%; color:#e0e0e0; margin: 1rem auto;">
                                 <li class="menu-title"><i class="ri-more-fill"></i> <span data-key="t-pages">+ Info</span>
                                 </li>
-                                <li class="nav-item">
-                                    <a class="nav-link collapsed" href="#sidebarRecursos" data-bs-toggle="collapse"
-                                        role="button" aria-expanded="false" aria-controls="sidebarRecursos"
-                                        data-key="t-email">Recursos</a>
-                                    <div class="menu-dropdown collapse" id="sidebarRecursos">
-                                        <ul class="nav nav-sm flex-column">
-                                            <li class="nav-item">
-                                                <a href="<?php echo URL . "docs/index.html"; ?>" target="_blank" rel="noopener"
-                                                    class="nav-link" data-key="t-mailbox">Documentación Técnica</a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </li>
+                                <?php if ($verAuditoria): ?>
+                                    <li class="nav-item">
+                                        <a class="nav-link collapsed" href="#sidebarAuditoria" data-bs-toggle="collapse"
+                                            role="button" aria-expanded="false" aria-controls="sidebarAuditoria"
+                                            data-key="t-email">Auditoria</a>
+                                        <div class="menu-dropdown collapse" id="sidebarAuditoria">
+                                            <ul class="nav nav-sm flex-column">
+                                                <li class="nav-item">
+                                                    <a href="<?php echo URL . "View/Home/Apps/Auditoria/proyectos.php"; ?>"
+                                                        class="nav-link" data-key="t-mailbox">Proyectos</a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a href="<?php echo URL . "View/Home/Apps/Auditoria/sesiones.php"; ?>"
+                                                        class="nav-link" data-key="t-mailbox">Sesiones</a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </li>
+                                <?php endif; ?>
+                                <?php if ($verRecursos): ?>
+                                    <li class="nav-item">
+                                        <a class="nav-link collapsed" href="#sidebarRecursos" data-bs-toggle="collapse"
+                                            role="button" aria-expanded="false" aria-controls="sidebarRecursos"
+                                            data-key="t-email">Recursos</a>
+                                        <div class="menu-dropdown collapse" id="sidebarRecursos">
+                                            <ul class="nav nav-sm flex-column">
+                                                <li class="nav-item">
+                                                    <a href="<?php echo URL . "docs/index.html"; ?>" target="_blank" rel="noopener"
+                                                        class="nav-link" data-key="t-mailbox">Documentación Técnica</a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </li>
+                                <?php endif; ?>
                             <?php endif; ?>
                         </ul>
                     <?php elseif (isset($_SESSION) && $_SESSION['rol_id'] == 2): ?>
@@ -417,6 +424,7 @@
                                         </ul>
                                 </li>
 
+                                <hr style="width: 85%; color:#e0e0e0; margin: 1rem auto;">
                                 <li class="menu-title"><i class="ri-more-fill"></i> <span data-key="t-pages">Apps</span>
                                 </li>
                                 <li class="nav-item">
@@ -442,25 +450,6 @@
                                         </ul>
                                     </div>
                                 </li>
-                                <?php if ($_SESSION['lider'] == "SI"): ?>
-                                    <li class="nav-item">
-                                        <a class="nav-link collapsed" href="#sidebarAuditoria" data-bs-toggle="collapse"
-                                            role="button" aria-expanded="false" aria-controls="sidebarAuditoria"
-                                            data-key="t-email">Auditoria</a>
-                                        <div class="menu-dropdown collapse" id="sidebarAuditoria">
-                                            <ul class="nav nav-sm flex-column">
-                                                <li class="nav-item">
-                                                    <a href="<?php echo URL . "View/Home/Apps/Auditoria/proyectos.php"; ?>"
-                                                        class="nav-link" data-key="t-mailbox">Proyectos</a>
-                                                </li>
-                                                <li class="nav-item">
-                                                    <a href="<?php echo URL . "View/Home/Apps/Auditoria/sesiones.php"; ?>"
-                                                        class="nav-link" data-key="t-mailbox">Sesiones</a>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </li>
-                                <?php endif; ?>
                             <?php
                                 break;
                             case '2':
@@ -515,6 +504,7 @@
                                 </li>
 
 
+                                <hr style="width: 85%; color:#e0e0e0; margin: 1rem auto;">
                                 <li class="menu-title"><i class="ri-more-fill"></i> <span data-key="t-pages">Apps</span>
                                 </li>
                                 <li class="nav-item">
@@ -540,25 +530,6 @@
                                         </ul>
                                     </div>
                                 </li>
-                                <?php if ($_SESSION['lider'] == "SI"): ?>
-                                    <li class="nav-item">
-                                        <a class="nav-link collapsed" href="#sidebarAuditoria" data-bs-toggle="collapse"
-                                            role="button" aria-expanded="false" aria-controls="sidebarAuditoria"
-                                            data-key="t-email">Auditoria</a>
-                                        <div class="menu-dropdown collapse" id="sidebarAuditoria">
-                                            <ul class="nav nav-sm flex-column">
-                                                <li class="nav-item">
-                                                    <a href="<?php echo URL . "View/Home/Apps/Auditoria/proyectos.php"; ?>"
-                                                        class="nav-link" data-key="t-mailbox">Proyectos</a>
-                                                </li>
-                                                <li class="nav-item">
-                                                    <a href="<?php echo URL . "View/Home/Apps/Auditoria/sesiones.php"; ?>"
-                                                        class="nav-link" data-key="t-mailbox">Sesiones</a>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </li>
-                                <?php endif; ?>
                             <?php
                                 break;
                             case '3':
@@ -671,6 +642,7 @@
                                 </li>
 
 
+                                <hr style="width: 85%; color:#e0e0e0; margin: 1rem auto;">
                                 <li class="menu-title"><i class="ri-more-fill"></i> <span data-key="t-pages">Apps</span>
                                 </li>
                                 <li class="nav-item">
@@ -696,25 +668,6 @@
                                         </ul>
                                     </div>
                                 </li>
-                                <?php if ($_SESSION['lider'] == "SI"): ?>
-                                    <li class="nav-item">
-                                        <a class="nav-link collapsed" href="#sidebarAuditoria" data-bs-toggle="collapse"
-                                            role="button" aria-expanded="false" aria-controls="sidebarAuditoria"
-                                            data-key="t-email">Auditoria</a>
-                                        <div class="menu-dropdown collapse" id="sidebarAuditoria">
-                                            <ul class="nav nav-sm flex-column">
-                                                <li class="nav-item">
-                                                    <a href="<?php echo URL . "View/Home/Apps/Auditoria/proyectos.php"; ?>"
-                                                        class="nav-link" data-key="t-mailbox">Proyectos</a>
-                                                </li>
-                                                <li class="nav-item">
-                                                    <a href="<?php echo URL . "View/Home/Apps/Auditoria/sesiones.php"; ?>"
-                                                        class="nav-link" data-key="t-mailbox">Sesiones</a>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </li>
-                                <?php endif; ?>
                             <?php
                                 break;
                             case '4':
@@ -817,6 +770,7 @@
                                     </li>
 
 
+                                    <hr style="width: 85%; color:#e0e0e0; margin: 1rem auto;">
                                     <li class="menu-title"><i class="ri-more-fill"></i> <span data-key="t-pages">Apps</span>
                                     </li>
                                     <li class="nav-item">
@@ -887,6 +841,7 @@
                                     </div>
                                 </li>
 
+                                <hr style="width: 85%; color:#e0e0e0; margin: 1rem auto;">
                                 <li class="menu-title"><i class="ri-more-fill"></i> <span data-key="t-pages">Apps</span>
                                 </li>
                                 <li class="nav-item">
@@ -912,25 +867,6 @@
                                         </ul>
                                     </div>
                                 </li>
-                                <?php if ($_SESSION['lider'] == "SI"): ?>
-                                    <li class="nav-item">
-                                        <a class="nav-link collapsed" href="#sidebarAuditoria" data-bs-toggle="collapse"
-                                            role="button" aria-expanded="false" aria-controls="sidebarAuditoria"
-                                            data-key="t-email">Auditoria</a>
-                                        <div class="menu-dropdown collapse" id="sidebarAuditoria">
-                                            <ul class="nav nav-sm flex-column">
-                                                <li class="nav-item">
-                                                    <a href="<?php echo URL . "View/Home/Apps/Auditoria/proyectos.php"; ?>"
-                                                        class="nav-link" data-key="t-mailbox">Proyectos</a>
-                                                </li>
-                                                <li class="nav-item">
-                                                    <a href="<?php echo URL . "View/Home/Apps/Auditoria/sesiones.php"; ?>"
-                                                        class="nav-link" data-key="t-mailbox">Sesiones</a>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </li>
-                                <?php endif; ?>
                                 <?php break; ?>
 
                             <?php
@@ -973,6 +909,7 @@
                                     </div>
                                 </li>
 
+                                <hr style="width: 85%; color:#e0e0e0; margin: 1rem auto;">
                                 <li class="menu-title"><i class="ri-more-fill"></i> <span data-key="t-pages">Apps</span>
                                 </li>
                                 <li class="nav-item">
@@ -998,25 +935,6 @@
                                         </ul>
                                     </div>
                                 </li>
-                                <?php if ($_SESSION['lider'] == "SI"): ?>
-                                    <li class="nav-item">
-                                        <a class="nav-link collapsed" href="#sidebarAuditoria" data-bs-toggle="collapse"
-                                            role="button" aria-expanded="false" aria-controls="sidebarAuditoria"
-                                            data-key="t-email">Auditoria</a>
-                                        <div class="menu-dropdown collapse" id="sidebarAuditoria">
-                                            <ul class="nav nav-sm flex-column">
-                                                <li class="nav-item">
-                                                    <a href="<?php echo URL . "View/Home/Apps/Auditoria/proyectos.php"; ?>"
-                                                        class="nav-link" data-key="t-mailbox">Proyectos</a>
-                                                </li>
-                                                <li class="nav-item">
-                                                    <a href="<?php echo URL . "View/Home/Apps/Auditoria/sesiones.php"; ?>"
-                                                        class="nav-link" data-key="t-mailbox">Sesiones</a>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </li>
-                                <?php endif; ?>
                                 <?php break; ?>
 
                             <?php
@@ -1098,7 +1016,7 @@
                                         </ul>
                                     </div>
                                 </li>
-
+                                <hr style="width: 85%; color:#e0e0e0; margin: 1rem auto;">
                                 <li class="menu-title"><i class="ri-more-fill"></i> <span data-key="t-pages">Apps</span>
                                 </li>
                                 <li class="nav-item">
@@ -1124,25 +1042,6 @@
                                         </ul>
                                     </div>
                                 </li>
-                                <?php if ($_SESSION['lider'] == "SI"): ?>
-                                    <li class="nav-item">
-                                        <a class="nav-link collapsed" href="#sidebarAuditoria" data-bs-toggle="collapse"
-                                            role="button" aria-expanded="false" aria-controls="sidebarAuditoria"
-                                            data-key="t-email">Auditoria</a>
-                                        <div class="menu-dropdown collapse" id="sidebarAuditoria">
-                                            <ul class="nav nav-sm flex-column">
-                                                <li class="nav-item">
-                                                    <a href="<?php echo URL . "View/Home/Apps/Auditoria/proyectos.php"; ?>"
-                                                        class="nav-link" data-key="t-mailbox">Proyectos</a>
-                                                </li>
-                                                <li class="nav-item">
-                                                    <a href="<?php echo URL . "View/Home/Apps/Auditoria/sesiones.php"; ?>"
-                                                        class="nav-link" data-key="t-mailbox">Sesiones</a>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </li>
-                                <?php endif; ?>
                                 <?php break; ?>
                             <?php
                             default:
@@ -1150,22 +1049,48 @@
                                 break; ?>
                         <?php } ?>
 
-                        <?php if ($_SESSION['sector_id'] == 1 || $_SESSION['sector_id'] == 4 || $_SESSION['lider'] == 'SI'): ?>
+                        <?php
+                        $verAuditoria = ($_SESSION['lider'] == 'SI' || $_SESSION['sector_id'] == 4);
+                        $verRecursos  = ($_SESSION['sector_id'] == 1 || $_SESSION['sector_id'] == 4 || $_SESSION['lider'] == 'SI');
+                        ?>
+                        <?php if ($verAuditoria || $verRecursos): ?>
+                            <hr style="width: 85%; color:#e0e0e0; margin: 1rem auto;">
                             <li class="menu-title"><i class="ri-more-fill"></i> <span data-key="t-pages">+ Info</span>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link collapsed" href="#sidebarRecursos" data-bs-toggle="collapse"
-                                    role="button" aria-expanded="false" aria-controls="sidebarRecursos"
-                                    data-key="t-email">Recursos</a>
-                                <div class="menu-dropdown collapse" id="sidebarRecursos">
-                                    <ul class="nav nav-sm flex-column">
-                                        <li class="nav-item">
-                                            <a href="<?php echo URL . "docs/index.html"; ?>" target="_blank" rel="noopener"
-                                                class="nav-link" data-key="t-mailbox">Documentación Técnica</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </li>
+                            <?php if ($verAuditoria): ?>
+                                <li class="nav-item">
+                                    <a class="nav-link collapsed" href="#sidebarAuditoria" data-bs-toggle="collapse"
+                                        role="button" aria-expanded="false" aria-controls="sidebarAuditoria"
+                                        data-key="t-email">Auditoria</a>
+                                    <div class="menu-dropdown collapse" id="sidebarAuditoria">
+                                        <ul class="nav nav-sm flex-column">
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Apps/Auditoria/proyectos.php"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Proyectos</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Apps/Auditoria/sesiones.php"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Sesiones</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </li>
+                            <?php endif; ?>
+                            <?php if ($verRecursos): ?>
+                                <li class="nav-item">
+                                    <a class="nav-link collapsed" href="#sidebarRecursos" data-bs-toggle="collapse"
+                                        role="button" aria-expanded="false" aria-controls="sidebarRecursos"
+                                        data-key="t-email">Recursos</a>
+                                    <div class="menu-dropdown collapse" id="sidebarRecursos">
+                                        <ul class="nav nav-sm flex-column">
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "docs/index.html"; ?>" target="_blank" rel="noopener"
+                                                    class="nav-link" data-key="t-mailbox">Documentación Técnica</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </li>
+                            <?php endif; ?>
                         <?php endif; ?>
             </div>
         <?php endif; ?>

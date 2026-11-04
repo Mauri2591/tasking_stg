@@ -1,0 +1,1196 @@
+<body>
+    <!-- Begin page -->
+    <div id="layout-wrapper">
+        <header id="page-topbar">
+            <div class="layout-width">
+                <div class="navbar-header bg-light">
+                    <div class="d-flex">
+                        <!-- LOGO -->
+                        <div class="navbar-brand-box horizontal-logo mb-4 mt-2">
+                            <a href="index.html" class="logo logo-dark">
+                                <span class="logo-sm">
+                                    <img class="mt-5"
+                                        src="<?php echo URL ?>View/Home/Public/velzon/assets/images/personal-blanco-nuevo.png"
+                                        alt="logo telecom" height="22">
+                                </span>
+                                <span class="logo-lg">
+                                    <img class="mt-5"
+                                        src="<?php echo URL ?>View/Home/Public/velzon/assets/images/personal-blanco-nuevo.png"
+                                        alt="logo telecom" height="17">
+                                </span>
+                            </a>
+                        </div>
+
+                        <button type="button"
+                            class="btn btn-sm px-3 fs-16 header-item vertical-menu-btn topnav-hamburger"
+                            id="topnav-hamburger-icon">
+                            <span class="hamburger-icon">
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                            </span>
+                        </button>
+
+                        <!-- App Search-->
+
+                    </div>
+
+                    <div class="dropdown ms-sm-3 header-item topbar-user">
+                        <button style="background-color: #eaeaea; border: .1rem solid #e0e0e0;" type="button" class="btn px-2 py-0" id="page-header-user-dropdown" data-bs-toggle="dropdown"
+                            aria-haspopup="true" aria-expanded="false">
+
+                            <span class="d-flex align-items-center">
+
+                                <i class=" ri-user-2-fill fs-20 text-info"></i>
+                                <span class="text-start ms-xl-2">
+                                    <span
+                                        class="d-none d-xl-inline-block ms-1 fw-medium user-name-text"><?php echo $_SESSION['usu_nom'] ?></span>
+                                </span>
+                                <span
+                                    class="d-none d-xl-inline-block ms-1 border border-dark badge fw-medium user-name-text"><?php echo $_SESSION['sector_nombre'] ?></span>
+                            </span>
+                        </button>
+
+                        <div class="dropdown-menu dropdown-menu-end">
+                            <!-- item-->
+                            <a class="dropdown-item" onclick="btnEditPerfil()" href="#"><i
+                                    class="mdi mdi-account-circle text-muted fs-16 align-middle me-1"></i> <span
+                                    class="align-middle">Mi Perfil</span></a>
+                            <a class="dropdown-item" href="<?php echo URL . "View/Home/Logout.php" ?>"><i
+                                    class=" ri-logout-box-line text-muted fs-16 align-middle me-1"></i>
+                                <span class="align-middle">Salir</span></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    </div>
+    </header>
+    <!-- ========== App Menu ========== -->
+    <div class="app-menu navbar-menu">
+        <!-- LOGO -->
+        <div class="navbar-brand-box mb-4 mt-2">
+            <!-- Dark Logo-->
+            <a href="index.html" class="logo logo-dark">
+                <span class="logo-sm">
+                    <img src="<?php echo URL ?>View/Home/Public/velzon/assets/images/personal-blanco-nuevo.png" alt=""
+                        height="22">
+                </span>
+                <span class="logo-lg">
+                    <img src="<?php echo URL ?>View/Home/Public/velzon/assets/images/personal-blanco-nuevo.png" alt=""
+                        height="17">
+                </span>
+            </a>
+            <!-- Light Logo-->
+            <a href="<?php echo URL . "View/Home/"; ?>" class="logo logo-light">
+                <span class="logo-sm">
+                    <img src="<?php echo URL ?>View/Home/Public/velzon/assets/images/personal-blanco-nuevo.png" alt=""
+                        height="22">
+                </span>
+                <span class="logo-lg p-0">
+                    <h1> <img class="mt-5"
+                            src="<?php echo URL ?>View/Home/Public/velzon/assets/images/personal-blanco-nuevo.png" alt="">
+                    </h1>
+                </span>
+            </a>
+
+            <button type="button" class="btn btn-sm p-0 fs-20 header-item float-end btn-vertical-sm-hover"
+                id="vertical-hover">
+                <i class="ri-record-circle-line"></i>
+            </button>
+        </div>
+
+        <div id="scrollbar">
+            <div class="container-fluid">
+                <div id="two-column-menu">
+                </div>
+                <ul class="navbar-nav mt-3" id="navbar-nav">
+                    <?php if (isset($_SESSION) && $_SESSION['rol_id'] == 1 || $_SESSION['sector_id'] == 9): ?>
+                        <ul class="navbar-nav" id="navbar-nav">
+                            <li class="menu-title"><i class="ri-more-fill"></i> <span data-key="t-pages">Proyectos</span>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link menu-link" href="#sidebarApps" data-bs-toggle="collapse" role="button"
+                                    aria-expanded="false" aria-controls="sidebarApps">
+                                    <span data-key="t-apps">Gestion</span>
+                                </a>
+                                <div class="collapse menu-dropdown" id="sidebarApps">
+                                    <ul class="nav nav-sm flex-column">
+                                        <?php if ($_SESSION['sector_id'] != 9): ?>
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Usuarios/" ?>" class="nav-link"
+                                                    data-key="t-calendar">Usuarios</a>
+                                            </li>
+                                        <?php endif; ?>
+                                        <?php if ($_SESSION['sector_id'] != 9): ?>
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Clientes/" ?>" class="nav-link"
+                                                    data-key="t-chat">Clientes</a>
+                                            </li>
+                                        <?php endif; ?>
+                                        <?php if ($_SESSION['sector_id'] != 9): ?>
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Integraciones/" ?>"
+                                                    class="nav-link" data-key="t-chat">Integraciones</a>
+                                            </li>
+                                        <?php endif; ?>
+                                        <li class="nav-item">
+                                            <a href="<?php echo URL . "View/Home/Gestion/Clientes/Proyectos/" ?>"
+                                                class="nav-link" data-key="t-chat">Proyectos</a>
+                                        </li>
+                                        <?php if ($_SESSION['sector_id'] != 9): ?>
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Activos/" ?>"
+                                                    class="nav-link" data-key="t-chat">Activos</a>
+                                            </li>
+                                        <?php endif; ?>
+                                    </ul>
+                                </div>
+                            </li>
+
+                            <li class="nav-item">
+                                <?php if ($_SESSION['sector_id'] != 9): ?>
+                                    <a href="#sidebarSector" class="nav-link collapsed" data-bs-toggle="collapse" role="button"
+                                        aria-expanded="false" aria-controls="sidebarSector" data-key="t-email">Sector</a>
+                                <?php endif; ?>
+                                <div class="menu-dropdown collapse" id="sidebarSector">
+                                    <ul class="nav nav-sm flex-column">
+                                        <li class="nav-item">
+                                            <a href="<?php echo URL . "View/Home/Gestion/Sectores/EthicalHacking/"; ?>"
+                                                class="nav-link" data-key="t-mailbox">Ethical Hacking</a>
+                                        </li>
+
+                                        <li class="nav-item">
+                                            <a href="<?php echo URL . "View/Home/Gestion/Sectores/Soc/"; ?>"
+                                                class="nav-link" data-key="t-mailbox">Soc</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="<?php echo URL . "View/Home/Gestion/Sectores/Sase/"; ?>"
+                                                class="nav-link" data-key="t-mailbox">Sase</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="<?php echo URL . "View/Home/Gestion/Sectores/Consulting/"; ?>"
+                                                class="nav-link" data-key="t-mailbox">Consulting</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="<?php echo URL . "View/Home/Gestion/Sectores/FunctionalServices&Delivery/"; ?>"
+                                                class="nav-link" data-key="t-mailbox">Functional Services & Delivery</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="<?php echo URL . "View/Home/Gestion/Sectores/Platforms&Architecture/"; ?>"
+                                                class="nav-link" data-key="t-mailbox">Platforms Y Architecture</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>
+                            <li class="nav-item">
+                                <?php if ($_SESSION['sector_id'] != 9): ?>
+                                    <a class="nav-link collapsed" href="#sidebarServicios" data-bs-toggle="collapse"
+                                        role="button" aria-expanded="false" aria-controls="sidebarServicios"
+                                        data-key="t-email">Productos</a>
+                                <?php endif; ?>
+                                <div class="menu-dropdown collapse" id="sidebarServicios">
+                                    <ul class="nav nav-sm flex-column">
+                                        <li class="nav-item">
+                                            <a href="<?php echo URL . "View/Home/Gestion/Sectores/CalidadYProcesos/IR/"; ?>"
+                                                class="nav-link" data-key="t-mailbox">Incident Response</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="<?php echo URL . "View/Home/Gestion/Sectores/CalidadYProcesos/CalidadYProcesos/"; ?>"
+                                                class="nav-link" data-key="t-mailbox">Calidad y Procesos</a>
+                                        </li>
+                                        <!-- <li class="nav-item">
+                                            <a href="<?php echo URL . "View/Home/Gestion/Sectores/CalidadYProcesos/CalidadYProcesos/"; ?>"
+                                                class="nav-link" data-key="t-mailbox">SOC</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="<?php echo URL . "View/Home/Gestion/Sectores/CalidadYProcesos/SASE/"; ?>"
+                                                class="nav-link" data-key="t-mailbox">SASE</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="<?php echo URL . "View/Home/Gestion/Sectores/CalidadYProcesos/EH/"; ?>"
+                                                class="nav-link" data-key="t-mailbox">EH</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="<?php echo URL . "View/Home/Gestion/Sectores/CalidadYProcesos/Gestion_Estrategica/"; ?>"
+                                                class="nav-link" data-key="t-mailbox">Gestion Estrategica</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="<?php echo URL . "View/Home/Gestion/Sectores/CalidadYProcesos/Consulting_Grc/"; ?>"
+                                                class="nav-link" data-key="t-mailbox">Consulting GRC</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="<?php echo URL . "View/Home/Gestion/Sectores/CalidadYProcesos/Procesos/"; ?>"
+                                                class="nav-link" data-key="t-mailbox">Procesos</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="<?php echo URL . "View/Home/Gestion/Sectores/CalidadYProcesos/Funtional_Services/"; ?>"
+                                                class="nav-link" data-key="t-mailbox">Funtional Services</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="<?php echo URL . "View/Home/Gestion/Sectores/CalidadYProcesos/Consultoria/"; ?>"
+                                                class="nav-link" data-key="t-mailbox">Consultoria</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="<?php echo URL . "View/Home/Gestion/Sectores/CalidadYProcesos/Platforms_Development/"; ?>"
+                                                class="nav-link" data-key="t-mailbox">Platforms Development</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="<?php echo URL . "View/Home/Gestion/Sectores/CalidadYProcesos/Proyecto_No_Estandar/"; ?>"
+                                                class="nav-link" data-key="t-mailbox">Proyecto no estandar</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="<?php echo URL . "View/Home/Gestion/Sectores/CalidadYProcesos/Desarrollo_Interno/"; ?>"
+                                                class="nav-link" data-key="t-mailbox">Desarrollo Interno</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="<?php echo URL . "View/Home/Gestion/Sectores/CalidadYProcesos/Cloud/"; ?>"
+                                                class="nav-link" data-key="t-mailbox">Cloud</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="<?php echo URL . "View/Home/Gestion/Sectores/CalidadYProcesos/Nuevas_Soluciones/"; ?>"
+                                                class="nav-link" data-key="t-mailbox">Nuevas Soluciones</a>
+                                        </li> -->
+                                    </ul>
+                                </div>
+                            </li>
+                            <hr style="width: 85%; color:#e0e0e0; margin: 0 auto;">
+                            <li class="menu-title"><i class="ri-more-fill"></i> <span data-key="t-pages">Apps</span>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link collapsed" href="#sidebarTimesummary" data-bs-toggle="collapse"
+                                    role="button" aria-expanded="false" aria-controls="sidebarTimesummary"
+                                    data-key="t-email">Timesummary</a>
+                                <div class="menu-dropdown collapse" id="sidebarTimesummary">
+                                    <ul class="nav nav-sm flex-column">
+                                        <?php if ($_SESSION['sector_id'] != 9): ?>
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Apps/Timesummary/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Calendario</a>
+                                            </li>
+                                        <?php endif; ?>
+                                        <li class="nav-item">
+                                            <a href="<?php echo URL . "View/Home/Apps/Timesummary/Status.php"; ?>"
+                                                class="nav-link" data-key="t-mailbox">Status</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="<?php echo URL . "View/Home/Apps/Timesummary/Consultas.php"; ?>"
+                                                class="nav-link" data-key="t-mailbox">Consultas</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>
+
+                            <?php if ($_SESSION['rol_id'] == 1 || $_SESSION['sector_id'] == 9): ?>
+                                <li class="nav-item">
+                                    <a class="nav-link collapsed" href="#sidebarAuditoria" data-bs-toggle="collapse"
+                                        role="button" aria-expanded="false" aria-controls="sidebarAuditoria"
+                                        data-key="t-email">Auditoria</a>
+                                    <div class="menu-dropdown collapse" id="sidebarAuditoria">
+                                        <ul class="nav nav-sm flex-column">
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Apps/Auditoria/proyectos.php"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Proyectos</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Apps/Auditoria/sesiones.php"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Sesiones</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </li>
+                            <?php endif; ?>
+
+                            <?php if ($_SESSION['sector_id'] == 1 || $_SESSION['sector_id'] == 4 || $_SESSION['lider'] == 'SI'): ?>
+                                <hr style="width: 85%; color:#e0e0e0; margin: 0 auto;">
+                                <li class="menu-title"><i class="ri-more-fill"></i> <span data-key="t-pages">+ Info</span>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link collapsed" href="#sidebarRecursos" data-bs-toggle="collapse"
+                                        role="button" aria-expanded="false" aria-controls="sidebarRecursos"
+                                        data-key="t-email">Recursos</a>
+                                    <div class="menu-dropdown collapse" id="sidebarRecursos">
+                                        <ul class="nav nav-sm flex-column">
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "docs/index.html"; ?>" target="_blank" rel="noopener"
+                                                    class="nav-link" data-key="t-mailbox">Documentación Técnica</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </li>
+                            <?php endif; ?>
+                        </ul>
+                    <?php elseif (isset($_SESSION) && $_SESSION['rol_id'] == 2): ?>
+                        <?php switch ($_SESSION['sector_id']) {
+                            case '1':
+                        ?>
+                                <li class="nav-item">
+                                    <a href="#sidebarEmail" class="nav-link collapsed" data-bs-toggle="collapse" role="button"
+                                        aria-expanded="false" aria-controls="sidebarEmail" data-key="t-email">Productos</a>
+                                    <div class="menu-dropdown collapse" id="sidebarEmail">
+                                        <ul class="nav nav-sm flex-column">
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/EthicalHacking/AdversaryEmulation/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Adversary Emulation</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/EthicalHacking/AssumedBreachAssessment/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Assumed Breach Assessment</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/EthicalHacking/GestionContinuaDeVulnerabilidades/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Gestion continua de vulnerabilidades</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/EthicalHacking/CybersecurityConsultingFlex/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Cybersecurity Consulting Flex</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/EthicalHacking/Va/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Va's</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/EthicalHacking/VaExpress/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Va Express</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/EthicalHacking/Pentest/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Pentest</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/EthicalHacking/Sast/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">SAST</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/EthicalHacking/PentestWifi/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Pentest Wifi</a>
+                                            </li>
+                                            <!-- <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/EthicalHacking/RedTeam/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Red Team</a>
+                                            </li> -->
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/EthicalHacking/ProyectoNoEstandar/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Proyecto No Estandar </a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/EthicalHacking/CBI/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">CBI</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/EthicalHacking/Consultoria/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Consultoria</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/EthicalHacking/DesarrolloInterno/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Desarrollo Interno</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/EthicalHacking/Tetra/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Tetra</a>
+                                            </li>
+
+
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/IR/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Incident Response</a>
+                                            </li>
+
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/EthicalHacking/InteligenciaDeExposicionDigitaOsint/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Inteligencia De Exposicion Digital - Osint</a>
+                                            </li>
+
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Clientes/Proyectos/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">TOTAL</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="#sidebarActivos" class="nav-link collapsed" data-bs-toggle="collapse" role="button"
+                                        aria-expanded="false" aria-controls="sidebarActivos" data-key="t-email">Gestion</a>
+                                    <div class="menu-dropdown collapse" id="sidebarActivos">
+                                        <ul class="nav nav-sm flex-column">
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/EthicalHacking/Gestion/Activos/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Activos</a>
+                                            </li>
+                                        </ul>
+                                </li>
+
+                                <hr style="width: 85%; color:#e0e0e0; margin: 0 auto;">
+                                <li class="menu-title"><i class="ri-more-fill"></i> <span data-key="t-pages">Apps</span>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link collapsed" href="#sidebarTimesummary" data-bs-toggle="collapse"
+                                        role="button" aria-expanded="false" aria-controls="sidebarTimesummary"
+                                        data-key="t-email">Timesummary</a>
+                                    <div class="menu-dropdown collapse" id="sidebarTimesummary">
+                                        <ul class="nav nav-sm flex-column">
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Apps/Timesummary/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Calendario</a>
+                                            </li>
+                                            <?php if ($_SESSION['lider'] == "SI"): ?>
+                                                <li class="nav-item">
+                                                    <a href="<?php echo URL . "View/Home/Apps/Timesummary/Status.php"; ?>"
+                                                        class="nav-link" data-key="t-mailbox">Status</a>
+                                                </li>
+                                            <?php endif; ?>
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Apps/Timesummary/Consultas.php"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Consultas</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </li>
+                                <?php if ($_SESSION['lider'] == "SI"): ?>
+                                    <li class="nav-item">
+                                        <a class="nav-link collapsed" href="#sidebarAuditoria" data-bs-toggle="collapse"
+                                            role="button" aria-expanded="false" aria-controls="sidebarAuditoria"
+                                            data-key="t-email">Auditoria</a>
+                                        <div class="menu-dropdown collapse" id="sidebarAuditoria">
+                                            <ul class="nav nav-sm flex-column">
+                                                <li class="nav-item">
+                                                    <a href="<?php echo URL . "View/Home/Apps/Auditoria/proyectos.php"; ?>"
+                                                        class="nav-link" data-key="t-mailbox">Proyectos</a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a href="<?php echo URL . "View/Home/Apps/Auditoria/sesiones.php"; ?>"
+                                                        class="nav-link" data-key="t-mailbox">Sesiones</a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </li>
+                                <?php endif; ?>
+                            <?php
+                                break;
+                            case '2':
+                            ?>
+                                <li class="nav-item">
+                                    <a href="#sidebarEmail" class="nav-link collapsed" data-bs-toggle="collapse" role="button"
+                                        aria-expanded="false" aria-controls="sidebarEmail" data-key="t-email">Productos</a>
+                                    <div class="menu-dropdown collapse" id="sidebarEmail">
+                                        <ul class="nav nav-sm flex-column">
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/SOC/SOC/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">SOC</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/SOC/CBI/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">CBI</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/SOC/Consultoria_SSPP/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Consultoria - SSPP</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/SOC/CyberScoring/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Cyber Scoring</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/SOC/Soar/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">SOAR</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/SOC/EDR/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">EDR</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/SOC/DesarrolloInterno/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Desarrollo Interno</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/SOC/PROYECTO_NO_ESTANDAR/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Proyecto no Estandar</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/SOC/IR/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Incident Response</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Clientes/Proyectos/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">TOTAL</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </li>
+
+
+                                <hr style="width: 85%; color:#e0e0e0; margin: 0 auto;">
+                                <li class="menu-title"><i class="ri-more-fill"></i> <span data-key="t-pages">Apps</span>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link collapsed" href="#sidebarTimesummary" data-bs-toggle="collapse"
+                                        role="button" aria-expanded="false" aria-controls="sidebarTimesummary"
+                                        data-key="t-email">Timesummary</a>
+                                    <div class="menu-dropdown collapse" id="sidebarTimesummary">
+                                        <ul class="nav nav-sm flex-column">
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Apps/Timesummary/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Calendario</a>
+                                            </li>
+                                            <?php if ($_SESSION['lider'] == "SI"): ?>
+                                                <li class="nav-item">
+                                                    <a href="<?php echo URL . "View/Home/Apps/Timesummary/Status.php"; ?>"
+                                                        class="nav-link" data-key="t-mailbox">Status</a>
+                                                </li>
+                                            <?php endif; ?>
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Apps/Timesummary/Consultas.php"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Consultas</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </li>
+                                <?php if ($_SESSION['lider'] == "SI"): ?>
+                                    <li class="nav-item">
+                                        <a class="nav-link collapsed" href="#sidebarAuditoria" data-bs-toggle="collapse"
+                                            role="button" aria-expanded="false" aria-controls="sidebarAuditoria"
+                                            data-key="t-email">Auditoria</a>
+                                        <div class="menu-dropdown collapse" id="sidebarAuditoria">
+                                            <ul class="nav nav-sm flex-column">
+                                                <li class="nav-item">
+                                                    <a href="<?php echo URL . "View/Home/Apps/Auditoria/proyectos.php"; ?>"
+                                                        class="nav-link" data-key="t-mailbox">Proyectos</a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a href="<?php echo URL . "View/Home/Apps/Auditoria/sesiones.php"; ?>"
+                                                        class="nav-link" data-key="t-mailbox">Sesiones</a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </li>
+                                <?php endif; ?>
+                            <?php
+                                break;
+                            case '3':
+                            ?>
+                                <li class="nav-item">
+                                    <a href="#sidebarEmail" class="nav-link collapsed" data-bs-toggle="collapse" role="button"
+                                        aria-expanded="false" aria-controls="sidebarEmail" data-key="t-email">Productos</a>
+                                    <div class="menu-dropdown collapse" id="sidebarEmail">
+                                        <ul class="nav nav-sm flex-column">
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/SASE/APN_Privado/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">APN Privado</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/SASE/FirewallHardening/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Firewall Hardening</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/SASE/Consultoria_SSPP/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Consultoria SSPP</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/SASE/FazFmgAsAService/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">FazFmg as a Service</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/SASE/Navegacion_segura/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Navegacion Segura</a>
+                                            </li>
+
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/SASE/NextGenFirewall/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">NextGen Firewall</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/SASE/NetworkFirewall/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Network Firewall</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/SASE/PlatformsDeployment/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Platforms Deployment</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/SASE/Secure_id/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Secure ID</a>
+                                            </li>
+
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/SASE/Servicios_gestionados/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Servicios Gestionados</a>
+                                            </li>
+
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/SASE/Cloud/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Cloud</a>
+                                            </li>
+
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/SASE/Cloudflare/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Cloudflare</a>
+                                            </li>
+
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/SASE/DesarrolloInterno/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Desarrollo Interno</a>
+                                            </li>
+
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/SASE/Soporte/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Soporte</a>
+                                            </li>
+
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/SASE/Mitigacion_ddos/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Mitigacion DDOS</a>
+                                            </li>
+
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/SASE/Proyecto_no_estandar/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Proyecto no Estandar</a>
+                                            </li>
+
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/SASE/Soluciones_fortinet/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Soluciones Fortinet</a>
+                                            </li>
+
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/SASE/CBI/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">CBI</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/SASE/Servicios_profesionales/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Servicios Profesionales</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/SASE/IR/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Incident Response</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/SASE/WafAsAService/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Waf as a Service</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Clientes/Proyectos/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">TOTAL</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </li>
+
+
+                                <hr style="width: 85%; color:#e0e0e0; margin: 0 auto;">
+                                <li class="menu-title"><i class="ri-more-fill"></i> <span data-key="t-pages">Apps</span>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link collapsed" href="#sidebarTimesummary" data-bs-toggle="collapse"
+                                        role="button" aria-expanded="false" aria-controls="sidebarTimesummary"
+                                        data-key="t-email">Timesummary</a>
+                                    <div class="menu-dropdown collapse" id="sidebarTimesummary">
+                                        <ul class="nav nav-sm flex-column">
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Apps/Timesummary/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Calendario</a>
+                                            </li>
+                                            <?php if ($_SESSION['lider'] == "SI"): ?>
+                                                <li class="nav-item">
+                                                    <a href="<?php echo URL . "View/Home/Apps/Timesummary/Status.php"; ?>"
+                                                        class="nav-link" data-key="t-mailbox">Status</a>
+                                                </li>
+                                            <?php endif; ?>
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Apps/Timesummary/Consultas.php"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Consultas</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </li>
+                                <?php if ($_SESSION['lider'] == "SI"): ?>
+                                    <li class="nav-item">
+                                        <a class="nav-link collapsed" href="#sidebarAuditoria" data-bs-toggle="collapse"
+                                            role="button" aria-expanded="false" aria-controls="sidebarAuditoria"
+                                            data-key="t-email">Auditoria</a>
+                                        <div class="menu-dropdown collapse" id="sidebarAuditoria">
+                                            <ul class="nav nav-sm flex-column">
+                                                <li class="nav-item">
+                                                    <a href="<?php echo URL . "View/Home/Apps/Auditoria/proyectos.php"; ?>"
+                                                        class="nav-link" data-key="t-mailbox">Proyectos</a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a href="<?php echo URL . "View/Home/Apps/Auditoria/sesiones.php"; ?>"
+                                                        class="nav-link" data-key="t-mailbox">Sesiones</a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </li>
+                                <?php endif; ?>
+                            <?php
+                                break;
+                            case '4':
+                            ?>
+                                <ul class="navbar-nav" id="navbar-nav">
+                                    <li class="menu-title"><span data-key="t-menu">Menu</span></li>
+                                    <li class="nav-item">
+                                        <a href="#sidebarSector" class="nav-link collapsed" data-bs-toggle="collapse" role="button"
+                                            aria-expanded="false" aria-controls="sidebarSector" data-key="t-email">Sector</a>
+                                        <div class="menu-dropdown collapse" id="sidebarSector">
+                                            <ul class="nav nav-sm flex-column">
+                                                <li class="nav-item">
+                                                    <a href="<?php echo URL . "View/Home/Gestion/Sectores/EthicalHacking/"; ?>"
+                                                        class="nav-link" data-key="t-mailbox">Ethical Hacking</a>
+                                                </li>
+
+                                                <li class="nav-item">
+                                                    <a href="<?php echo URL . "View/Home/Gestion/Sectores/Soc/"; ?>"
+                                                        class="nav-link" data-key="t-mailbox">Soc</a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a href="<?php echo URL . "View/Home/Gestion/Sectores/Sase/"; ?>"
+                                                        class="nav-link" data-key="t-mailbox">Sase</a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a href="<?php echo URL . "View/Home/Gestion/Sectores/Consulting/"; ?>"
+                                                        class="nav-link" data-key="t-mailbox">Consulting</a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link collapsed" href="#sidebarServicios" data-bs-toggle="collapse"
+                                            role="button" aria-expanded="false" aria-controls="sidebarServicios"
+                                            data-key="t-email">Productos</a>
+                                        <div class="menu-dropdown collapse" id="sidebarServicios">
+                                            <ul class="nav nav-sm flex-column">
+                                                <li class="nav-item">
+                                                    <a href="<?php echo URL . "View/Home/Gestion/Sectores/CalidadYProcesos/IR/"; ?>"
+                                                        class="nav-link" data-key="t-mailbox">Incident Response</a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a href="<?php echo URL . "View/Home/Gestion/Sectores/CalidadYProcesos/SOC/"; ?>"
+                                                        class="nav-link" data-key="t-mailbox">Calidad y Procesos</a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a href="<?php echo URL . "View/Home/Gestion/Sectores/CalidadYProcesos/SOC/"; ?>"
+                                                        class="nav-link" data-key="t-mailbox">SOC</a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a href="<?php echo URL . "View/Home/Gestion/Sectores/CalidadYProcesos/SASE/"; ?>"
+                                                        class="nav-link" data-key="t-mailbox">SASE</a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a href="<?php echo URL . "View/Home/Gestion/Sectores/CalidadYProcesos/EH/"; ?>"
+                                                        class="nav-link" data-key="t-mailbox">EH</a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a href="<?php echo URL . "View/Home/Gestion/Sectores/CalidadYProcesos/Gestion_Estrategica/"; ?>"
+                                                        class="nav-link" data-key="t-mailbox">Gestion Estrategica</a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a href="<?php echo URL . "View/Home/Gestion/Sectores/CalidadYProcesos/Consulting_Grc/"; ?>"
+                                                        class="nav-link" data-key="t-mailbox">Consulting GRC</a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a href="<?php echo URL . "View/Home/Gestion/Sectores/CalidadYProcesos/Procesos/"; ?>"
+                                                        class="nav-link" data-key="t-mailbox">Procesos</a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a href="<?php echo URL . "View/Home/Gestion/Sectores/CalidadYProcesos/Funtional_Services/"; ?>"
+                                                        class="nav-link" data-key="t-mailbox">Funtional Services</a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a href="<?php echo URL . "View/Home/Gestion/Sectores/CalidadYProcesos/Consultoria/"; ?>"
+                                                        class="nav-link" data-key="t-mailbox">Consultoria</a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a href="<?php echo URL . "View/Home/Gestion/Sectores/CalidadYProcesos/Platforms_Development/"; ?>"
+                                                        class="nav-link" data-key="t-mailbox">Platforms Development</a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a href="<?php echo URL . "View/Home/Gestion/Sectores/CalidadYProcesos/Proyecto_No_Estandar/"; ?>"
+                                                        class="nav-link" data-key="t-mailbox">Proyecto no estandar</a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a href="<?php echo URL . "View/Home/Gestion/Sectores/CalidadYProcesos/Desarrollo_Interno/"; ?>"
+                                                        class="nav-link" data-key="t-mailbox">Desarrollo Interno</a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a href="<?php echo URL . "View/Home/Gestion/Sectores/CalidadYProcesos/Cloud/"; ?>"
+                                                        class="nav-link" data-key="t-mailbox">Cloud</a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a href="<?php echo URL . "View/Home/Gestion/Sectores/CalidadYProcesos/Nuevas_Soluciones/"; ?>"
+                                                        class="nav-link" data-key="t-mailbox">Nuevas Soluciones</a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </li>
+
+
+                                    <hr style="width: 85%; color:#e0e0e0; margin: 0 auto;">
+                                    <li class="menu-title"><i class="ri-more-fill"></i> <span data-key="t-pages">Apps</span>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link collapsed" href="#sidebarTimesummary" data-bs-toggle="collapse"
+                                            role="button" aria-expanded="false" aria-controls="sidebarTimesummary"
+                                            data-key="t-email">Timesummary</a>
+                                        <div class="menu-dropdown collapse" id="sidebarTimesummary">
+                                            <ul class="nav nav-sm flex-column">
+                                                <li class="nav-item">
+                                                    <a href="<?php echo URL . "View/Home/Apps/Timesummary/"; ?>"
+                                                        class="nav-link" data-key="t-mailbox">Calendario</a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a href="<?php echo URL . "View/Home/Apps/Timesummary/Status.php"; ?>"
+                                                        class="nav-link" data-key="t-mailbox">Status</a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a href="<?php echo URL . "View/Home/Apps/Timesummary/Consultas.php"; ?>"
+                                                        class="nav-link" data-key="t-mailbox">Consultas</a>
+                                                </li>
+                                            </ul>
+
+                                        </div>
+                                    </li>
+                                </ul>
+                            <?php
+                                break;
+                            case '6':
+                            ?>
+                                <li class="nav-item">
+                                    <a href="#sidebarEmail" class="nav-link collapsed" data-bs-toggle="collapse" role="button"
+                                        aria-expanded="false" aria-controls="sidebarEmail" data-key="t-email">Productos</a>
+                                    <div class="menu-dropdown collapse" id="sidebarEmail">
+                                        <ul class="nav nav-sm flex-column">
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/Consulting/FirmaElectronica/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Firma Electronica</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/Consulting/Ciberawareness/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Ciberawareness</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/Consulting/ConsultoriaIt/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Consultoria IT</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/Consulting/ConsultoriaOt/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Consultoria OT</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/Consulting/DesarrolloInterno/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Desarrollo Interno</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/Consulting/ProyectoNoEstandar/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Proyecto No Estandar</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/Consulting/eGrcLite/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">eGRC Lite</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/Consulting/IdentidadDigital/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Identidad Digital</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </li>
+
+                                <hr style="width: 85%; color:#e0e0e0; margin: 0 auto;">
+                                <li class="menu-title"><i class="ri-more-fill"></i> <span data-key="t-pages">Apps</span>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link collapsed" href="#sidebarTimesummary" data-bs-toggle="collapse"
+                                        role="button" aria-expanded="false" aria-controls="sidebarTimesummary"
+                                        data-key="t-email">Timesummary</a>
+                                    <div class="menu-dropdown collapse" id="sidebarTimesummary">
+                                        <ul class="nav nav-sm flex-column">
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Apps/Timesummary/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Calendario</a>
+                                            </li>
+                                            <?php if ($_SESSION['lider'] == "SI"): ?>
+                                                <li class="nav-item">
+                                                    <a href="<?php echo URL . "View/Home/Apps/Timesummary/Status.php"; ?>"
+                                                        class="nav-link" data-key="t-mailbox">Status</a>
+                                                </li>
+                                            <?php endif; ?>
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Apps/Timesummary/Consultas.php"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Consultas</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </li>
+                                <?php if ($_SESSION['lider'] == "SI"): ?>
+                                    <li class="nav-item">
+                                        <a class="nav-link collapsed" href="#sidebarAuditoria" data-bs-toggle="collapse"
+                                            role="button" aria-expanded="false" aria-controls="sidebarAuditoria"
+                                            data-key="t-email">Auditoria</a>
+                                        <div class="menu-dropdown collapse" id="sidebarAuditoria">
+                                            <ul class="nav nav-sm flex-column">
+                                                <li class="nav-item">
+                                                    <a href="<?php echo URL . "View/Home/Apps/Auditoria/proyectos.php"; ?>"
+                                                        class="nav-link" data-key="t-mailbox">Proyectos</a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a href="<?php echo URL . "View/Home/Apps/Auditoria/sesiones.php"; ?>"
+                                                        class="nav-link" data-key="t-mailbox">Sesiones</a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </li>
+                                <?php endif; ?>
+                                <?php break; ?>
+
+                            <?php
+                            case '7':
+                            ?>
+                                <li class="nav-item">
+                                    <a href="#sidebarEmail" class="nav-link collapsed" data-bs-toggle="collapse" role="button"
+                                        aria-expanded="false" aria-controls="sidebarEmail" data-key="t-email">Productos</a>
+                                    <div class="menu-dropdown collapse" id="sidebarEmail">
+                                        <ul class="nav nav-sm flex-column">
+                                            <!-- <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/FunctionalServices&Delivery/eGRCArcher/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">eGRC Archer</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/FunctionalServices&Delivery/DLP_Purview/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">DLP Purview</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/FunctionalServices&Delivery/DLP_Fortra/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">DLP Fortra</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/FunctionalServices&Delivery/DLPFortiDLP/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">DLP FortiDLP</a>
+                                            </li> -->
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/FunctionalServices&Delivery/DLP/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">DLP</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/FunctionalServices&Delivery/eGRC/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">eGRC</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/FunctionalServices&Delivery/ProyectoNoEstandar/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">PROYECTO NO ESTANDAR</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </li>
+
+                                <hr style="width: 85%; color:#e0e0e0; margin: 0 auto;">
+                                <li class="menu-title"><i class="ri-more-fill"></i> <span data-key="t-pages">Apps</span>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link collapsed" href="#sidebarTimesummary" data-bs-toggle="collapse"
+                                        role="button" aria-expanded="false" aria-controls="sidebarTimesummary"
+                                        data-key="t-email">Timesummary</a>
+                                    <div class="menu-dropdown collapse" id="sidebarTimesummary">
+                                        <ul class="nav nav-sm flex-column">
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Apps/Timesummary/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Calendario</a>
+                                            </li>
+                                            <?php if ($_SESSION['lider'] == "SI"): ?>
+                                                <li class="nav-item">
+                                                    <a href="<?php echo URL . "View/Home/Apps/Timesummary/Status.php"; ?>"
+                                                        class="nav-link" data-key="t-mailbox">Status</a>
+                                                </li>
+                                            <?php endif; ?>
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Apps/Timesummary/Consultas.php"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Consultas</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </li>
+                                <?php if ($_SESSION['lider'] == "SI"): ?>
+                                    <li class="nav-item">
+                                        <a class="nav-link collapsed" href="#sidebarAuditoria" data-bs-toggle="collapse"
+                                            role="button" aria-expanded="false" aria-controls="sidebarAuditoria"
+                                            data-key="t-email">Auditoria</a>
+                                        <div class="menu-dropdown collapse" id="sidebarAuditoria">
+                                            <ul class="nav nav-sm flex-column">
+                                                <li class="nav-item">
+                                                    <a href="<?php echo URL . "View/Home/Apps/Auditoria/proyectos.php"; ?>"
+                                                        class="nav-link" data-key="t-mailbox">Proyectos</a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a href="<?php echo URL . "View/Home/Apps/Auditoria/sesiones.php"; ?>"
+                                                        class="nav-link" data-key="t-mailbox">Sesiones</a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </li>
+                                <?php endif; ?>
+                                <?php break; ?>
+
+                            <?php
+                            case '8':
+                            ?>
+                                <li class="nav-item">
+                                    <a href="#sidebarEmail" class="nav-link collapsed" data-bs-toggle="collapse" role="button"
+                                        aria-expanded="false" aria-controls="sidebarEmail" data-key="t-email">Productos</a>
+                                    <div class="menu-dropdown collapse" id="sidebarEmail">
+                                        <ul class="nav nav-sm flex-column">
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/Platforms&Architecture/CloudSecurity/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Cloud Security</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/Platforms&Architecture/Consultoria/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Consultoria</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/Platforms&Architecture/DesarrolloInterno/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Desarrollo Interno</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/Platforms&Architecture/ClasificacionActivos/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Clasificación Activos</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/Platforms&Architecture/eGRC/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">eGRC</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/Platforms&Architecture/DigitalSecurity/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Digital Security</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/Platforms&Architecture/FirmaDigital/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Firma Digital</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/Platforms&Architecture/Forcepoint/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Forcepoint</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/Platforms&Architecture/Fortalecimiento/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Fortalecimiento</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/Platforms&Architecture/IdentidadDigital/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Identidad Digital</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/Platforms&Architecture/MobileSecurity/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Mobile Security</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/Platforms&Architecture/PasswordLess/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">PasswordLess</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/Platforms&Architecture/Qualys/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Qualys</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/Platforms&Architecture/Uem/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Uem</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL ?>View/Home/Gestion/Sectores/Platforms&Architecture/GeoUem/" class="nav-link">Geo + UEM</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL ?>View/Home/Gestion/Sectores/Platforms&Architecture/MailFileServerSecurity/" class="nav-link">Mail, File & Server Security</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL ?>View/Home/Gestion/Sectores/Platforms&Architecture/CloudNativeProtection/" class="nav-link">Cloud Native Protection</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL ?>View/Home/Gestion/Sectores/Platforms&Architecture/PlatformsDeployment/" class="nav-link">Platforms Deployment</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </li>
+                                <hr style="width: 85%; color:#e0e0e0; margin: 0 auto;">
+                                <li class="menu-title"><i class="ri-more-fill"></i> <span data-key="t-pages">Apps</span>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link collapsed" href="#sidebarTimesummary" data-bs-toggle="collapse"
+                                        role="button" aria-expanded="false" aria-controls="sidebarTimesummary"
+                                        data-key="t-email">Timesummary</a>
+                                    <div class="menu-dropdown collapse" id="sidebarTimesummary">
+                                        <ul class="nav nav-sm flex-column">
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Apps/Timesummary/"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Calendario</a>
+                                            </li>
+                                            <?php if ($_SESSION['lider'] == "SI"): ?>
+                                                <li class="nav-item">
+                                                    <a href="<?php echo URL . "View/Home/Apps/Timesummary/Status.php"; ?>"
+                                                        class="nav-link" data-key="t-mailbox">Status</a>
+                                                </li>
+                                            <?php endif; ?>
+                                            <li class="nav-item">
+                                                <a href="<?php echo URL . "View/Home/Apps/Timesummary/Consultas.php"; ?>"
+                                                    class="nav-link" data-key="t-mailbox">Consultas</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </li>
+                                <?php if ($_SESSION['lider'] == "SI"): ?>
+                                    <li class="nav-item">
+                                        <a class="nav-link collapsed" href="#sidebarAuditoria" data-bs-toggle="collapse"
+                                            role="button" aria-expanded="false" aria-controls="sidebarAuditoria"
+                                            data-key="t-email">Auditoria</a>
+                                        <div class="menu-dropdown collapse" id="sidebarAuditoria">
+                                            <ul class="nav nav-sm flex-column">
+                                                <li class="nav-item">
+                                                    <a href="<?php echo URL . "View/Home/Apps/Auditoria/proyectos.php"; ?>"
+                                                        class="nav-link" data-key="t-mailbox">Proyectos</a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a href="<?php echo URL . "View/Home/Apps/Auditoria/sesiones.php"; ?>"
+                                                        class="nav-link" data-key="t-mailbox">Sesiones</a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </li>
+                                <?php endif; ?>
+                                <?php break; ?>
+                            <?php
+                            default:
+                                echo json_encode(["Error" => "Case default"]);
+                                break; ?>
+                        <?php } ?>
+
+                        <?php if ($_SESSION['sector_id'] == 1 || $_SESSION['sector_id'] == 4 || $_SESSION['lider'] == 'SI'): ?>
+
+                            <hr style="width: 85%; color:#e0e0e0; margin: 0 auto;">
+                            <li class="menu-title"><i class="ri-more-fill"></i> <span data-key="t-pages">+ Info</span>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link collapsed" href="#sidebarRecursos" data-bs-toggle="collapse"
+                                    role="button" aria-expanded="false" aria-controls="sidebarRecursos"
+                                    data-key="t-email">Recursos</a>
+                                <div class="menu-dropdown collapse" id="sidebarRecursos">
+                                    <ul class="nav nav-sm flex-column">
+                                        <li class="nav-item">
+                                            <a href="<?php echo URL . "docs/index.html"; ?>" target="_blank" rel="noopener"
+                                                class="nav-link" data-key="t-mailbox">Documentación Técnica</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>
+                        <?php endif; ?>
+            </div>
+        <?php endif; ?>
+
+        </div>
+        <!-- Sidebar -->
+    </div>
+
+    <div class="sidebar-background"></div>
+    </div>
+    <!-- Left Sidebar End -->
+    <!-- Vertical Overlay-->
+    <div class="vertical-overlay"></div>
+
+    <!-- ============================================================== -->
+    <!-- Start right Content here -->
+    <!-- ============================================================== -->
+    <div class="main-content">
