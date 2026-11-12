@@ -411,77 +411,6 @@ if (isset($_SESSION['usu_id'])) {
 
         document.addEventListener("DOMContentLoaded", function() {
 
-            function mostrar_contenedores_de_activos(id_proyecto_gestionado) {
-                $.ajax({
-                    type: "POST",
-                    url: "../../../../../Controller/ctrProyectos.php?proy=get_sector_x_proy",
-                    data: {
-                        id: id_proyecto_gestionado
-                    },
-                    dataType: "json",
-                    success: function(response) {
-
-                        switch (response.sector_id) {
-
-                            case 1:
-                                $("#contenedor_ips").show();
-                                $("#contenedor_urls").show();
-                                $("#contenedor_otros").show();
-                                break;
-
-                            case 2:
-                                $("#contenedor_dispositivos").show();
-                                $("#contenedor_agentes").show();
-                                $("#contenedor_otros").show();
-                                break;
-
-                            case 3:
-                                $("#contenedor_ips").show();
-                                $("#contenedor_equipos").show();
-                                $("#contenedor_otros").show();
-                                break;
-
-                            case 4:
-                                $("#contenedor_ips_y_descripcion").text("NO POSEE HOSTS");
-                                break;
-
-                            case 5:
-                                $("#contenedor_ips").show();
-                                $("#contenedor_equipos").show();
-                                $("#contenedor_otros").show();
-                                $("#contenedor_dispositivos").show();
-                                $("#contenedor_agentes").show();
-                                $("#contenedor_urls").show();
-                                break;
-
-                            case 6:
-                                $("#contenedor_casillas").show();
-                                $("#contenedor_tematica").show();
-                                $("#contenedor_campanias").show();
-                                $("#contenedor_adicionales").show();
-                                $("#contenedor_transacciones").show();
-                                break;
-
-                            case 7:
-                                $("#contenedor_servidores_on_prem").show();
-                                $("#contenedor_servidores_cloud").show();
-                                $("#contenedor_licencias_on_prem").show();
-                                $("#contenedor_licencias_cloud").show();
-                                $("#contenedor_modulos_on_prem").show();
-                                $("#contenedor_modulos_cloud").show();
-                                break;
-
-                            case 8:
-                                $("#contenedor_casillas").show();
-                                $("#contenedor_tematica").show();
-                                $("#contenedor_campanias").show();
-                                break;
-                        }
-                        $("#contenedor_ips_y_descripcion").css("opacity", "1");
-                    }
-                });
-            }
-
             if (ESTADO_PROYECTO == 1 || ESTADO_PROYECTO == 2 || ESTADO_PROYECTO == 14) {
                 $("#btn_finalizar_proyecto").show();
             } else {
@@ -1107,7 +1036,7 @@ if (isset($_SESSION['usu_id'])) {
                     });
                 });
             }
-            mostrar_contenedores_de_activos(id_proyecto_gestionado)
+
             finalizar_proyecto(id_proyecto_gestionado);
 
 
