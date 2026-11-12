@@ -6,6 +6,7 @@ if (isset($_SESSION['usu_id'])) {
     require_once __DIR__ . "/../../../../../Model/Clases/Headers.php";
     require_once __DIR__ . "/../../../../../Model/Clases/Redirect.php";
     require_once __DIR__ . "/../../../../../Model/Proyectos.php";
+    require_once __DIR__ . "/../../../../../Model/Activos.php";
 
     Headers::get_cors();
     $params = Redirect::validateProyectoParams();
@@ -35,6 +36,10 @@ if (isset($_SESSION['usu_id'])) {
     foreach ($datos_correos_internos as $interno) {
         $internos_por_desc[$interno['id_envio_correo_cliente']][] = $interno;
     }
+
+    $activosModel = new Activos();
+    $activos = $activosModel->getActivosPorSector($pg_id);
+    $hosts   = $activosModel->getHostsPorProyecto($pg_id);
     //----------------------------------------------------------------------------
 
 ?>
@@ -141,212 +146,42 @@ if (isset($_SESSION['usu_id'])) {
                                 </div>
 
                                 <div class="col-lg-12 p-2 mt-1">
-                                    <div id="contenedor_ips_y_descripcion" class="row d-flex justify-content-evenly" style="opacity:0;">
-                                        <div id="contenedor_ips" style="display:none;" class="col-ms-2 col text-center">
-                                            <span type="button"
-                                                onclick="copiar_ips(<?php echo isset($_GET['p']) ? Openssl::get_ssl_decrypt($_GET['p']) : ''; ?>)"
-                                                class="btn btn-sm py-0 px-1 btn-outline-success waves-effect waves-light mb-2">Ips<i
-                                                    class=" ri-file-copy-line"></i></span>
-                                            <div style="max-height: 220px;  min-height: 220px; overflow-y: scroll; border-radius: 5px;"
-                                                class=" border border-success">
-                                                <div class="text-center" id="cont_ip"></div>
+                                    <div id="contenedor_ips_y_descripcion" class="row g-2">
+                                        <!-- INICIO COPIAR ACTIVOS -->
+                                        <div class="col-lg-7 col-12">
+                                            <div class="d-flex gap-2 pb-2" style="overflow-x: auto;">
+                                                <?php if (empty($activos)): ?>
+                                                    <div class="w-100 text-center">NO POSEE HOSTS</div>
+                                                <?php endif; ?>
+
+                                                <?php foreach ($activos as $a):
+                                                    $tipo  = $a['tipo_activo'];
+                                                    $lista = $hosts[$tipo] ?? [];
+                                                    $tipoE = htmlspecialchars($tipo, ENT_QUOTES, 'UTF-8');
+                                                ?>
+                                                    <div class="text-center" style="flex: 1 0 170px; max-width: 260px;">
+                                                        <span type="button" data-tipo="<?= $tipoE ?>" onclick="copiarActivo(this)"
+                                                            class="btn btn-sm py-0 px-1 btn-outline-success waves-effect waves-light mb-2 text-nowrap">
+                                                            <?= $tipoE ?> <i class="ri-file-copy-line"></i>
+                                                        </span>
+                                                        <div style="height: 220px; overflow: auto; border-radius: 5px;" class="border border-success">
+                                                            <div class="text-center lista-hosts" style="white-space: nowrap; width: max-content; min-width: 100%;">
+                                                                <?php if ($lista): ?>
+                                                                    <?php foreach ($lista as $h): ?>
+                                                                        <div><span class="badge bg-light text-dark"><?= htmlspecialchars($h, ENT_QUOTES, 'UTF-8') ?></span></div>
+                                                                    <?php endforeach; ?>
+                                                                <?php else: ?>
+                                                                    <span class="text-muted">No hay activos</span>
+                                                                <?php endif; ?>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                <?php endforeach; ?>
                                             </div>
                                         </div>
+                                        <!-- FINAL COPIAR ACTIVOS -->
 
-                                        <div id="contenedor_urls" style="display:none;" class="col-ms-4 col text-center">
-                                            <span type="button"
-                                                onclick="copiar_urls(<?php echo isset($_GET['p']) ? Openssl::get_ssl_decrypt($_GET['p']) : ''; ?>)"
-                                                class="btn btn-sm py-0 px-1 btn-outline-success waves-effect waves-light mb-2">Urls
-                                                <i class=" ri-file-copy-line"></i></span>
-                                            <div style="max-height: 220px; min-height: 220px;overflow-y: scroll;border-radius: 5px;"
-                                                class=" border border-success">
-                                                <div class="text-center" id="cont_url"></div>
-                                            </div>
-                                        </div>
-
-                                        <div id="contenedor_aplicaciones" style="display:none;" class="col-ms-2 col text-center">
-                                            <span type="button"
-                                                onclick="copiar_aplicaciones(<?php echo isset($_GET['p']) ? Openssl::get_ssl_decrypt($_GET['p']) : ''; ?>)"
-                                                class="btn btn-sm py-0 px-1 btn-outline-success waves-effect waves-light mb-2">Aplicaciones<i
-                                                    class=" ri-file-copy-line"></i></span>
-                                            <div style="max-height: 220px;  min-height: 220px; overflow-y: scroll; border-radius: 5px;"
-                                                class=" border border-success">
-                                                <div class="text-center" id="cont_aplicacion"></div>
-                                            </div>
-                                        </div>
-
-                                        <div id="contenedor_dispositivos" style="display:none;" class="col-ms-2 col text-center">
-                                            <span type="button"
-                                                onclick="copiar_dispositivos(<?php echo isset($_GET['p']) ? Openssl::get_ssl_decrypt($_GET['p']) : ''; ?>)"
-                                                class="btn btn-sm py-0 px-1 btn-outline-success waves-effect waves-light mb-2">Dispositivos<i
-                                                    class=" ri-file-copy-line"></i></span>
-                                            <div style="max-height: 220px;  min-height: 220px; overflow-y: scroll; border-radius: 5px;"
-                                                class=" border border-success">
-                                                <div class="text-center" id="cont_dispositivos"></div>
-                                            </div>
-                                        </div>
-
-                                        <div id="contenedor_agentes" style="display:none;" class="col-ms-2 col text-center">
-                                            <span type="button"
-                                                onclick="copiar_agentes(<?php echo isset($_GET['p']) ? Openssl::get_ssl_decrypt($_GET['p']) : ''; ?>)"
-                                                class="btn btn-sm py-0 px-1 btn-outline-success waves-effect waves-light mb-2">Agentes<i
-                                                    class=" ri-file-copy-line"></i></span>
-                                            <div style="max-height: 220px;  min-height: 220px; overflow-y: scroll; border-radius: 5px;"
-                                                class=" border border-success">
-                                                <div class="text-center" id="cont_agentes"></div>
-                                            </div>
-                                        </div>
-
-                                        <div id="contenedor_equipos" style="display:none;" class="col-ms-2 col text-center">
-                                            <span type="button"
-                                                onclick="copiar_equipos(<?php echo isset($_GET['p']) ? Openssl::get_ssl_decrypt($_GET['p']) : ''; ?>)"
-                                                class="btn btn-sm py-0 px-1 btn-outline-success waves-effect waves-light mb-2">Equipos<i
-                                                    class=" ri-file-copy-line"></i></span>
-                                            <div style="max-height: 220px;  min-height: 220px; overflow-y: scroll; border-radius: 5px;"
-                                                class=" border border-success">
-                                                <div class="text-center" id="cont_equipos"></div>
-                                            </div>
-                                        </div>
-
-                                        <div id="contenedor_otros" style="display:none;" class="col-ms-2 col text-center">
-                                            <span type="button"
-                                                onclick="copiar_otros(<?php echo isset($_GET['p']) ? Openssl::get_ssl_decrypt($_GET['p']) : ''; ?>)"
-                                                class="btn btn-sm py-0 px-1 btn-outline-success waves-effect waves-light mb-2 ">Otros<i
-                                                    class=" ri-file-copy-line"></i></span>
-                                            <div style="max-height: 220px; min-height: 220px; overflow-y: scroll;border-radius: 5px;"
-                                                class=" border border-success">
-                                                <div class="text-center" id="cont_otro"></div>
-                                            </div>
-                                        </div>
-
-                                        <!-- CONSULTING -->
-                                        <div id="contenedor_casillas" style="display:none;" class="col-ms-2 col text-center">
-                                            <span type="button"
-                                                onclick="copiar_casillas(<?php echo isset($_GET['p']) ? Openssl::get_ssl_decrypt($_GET['p']) : ''; ?>)"
-                                                class="btn btn-sm py-0 px-1 btn-outline-success waves-effect waves-light mb-2">Casillas<i
-                                                    class=" ri-file-copy-line"></i></span>
-                                            <div style="max-height: 220px;  min-height: 220px; overflow-y: scroll; border-radius: 5px;"
-                                                class=" border border-success">
-                                                <div class="text-center" id="cont_casillas"></div>
-                                            </div>
-                                        </div>
-
-                                        <div id="contenedor_tematica" style="display:none;" class="col-ms-2 col text-center">
-                                            <span type="button"
-                                                onclick="copiar_tematica(<?php echo isset($_GET['p']) ? Openssl::get_ssl_decrypt($_GET['p']) : ''; ?>)"
-                                                class="btn btn-sm py-0 px-1 btn-outline-success waves-effect waves-light mb-2">Tematicas<i
-                                                    class=" ri-file-copy-line"></i></span>
-                                            <div style="max-height: 220px;  min-height: 220px; overflow-y: scroll; border-radius: 5px;"
-                                                class=" border border-success">
-                                                <div class="text-center" id="cont_tematicas"></div>
-                                            </div>
-                                        </div>
-
-                                        <div id="contenedor_campanias" style="display:none;" class="col-ms-2 col text-center">
-                                            <span type="button"
-                                                onclick="copiar_campanias(<?php echo isset($_GET['p']) ? Openssl::get_ssl_decrypt($_GET['p']) : ''; ?>)"
-                                                class="btn btn-sm py-0 px-1 btn-outline-success waves-effect waves-light mb-2">Campañas<i
-                                                    class=" ri-file-copy-line"></i></span>
-                                            <div style="max-height: 220px;  min-height: 220px; overflow-y: scroll; border-radius: 5px;"
-                                                class=" border border-success">
-                                                <div class="text-center" id="cont_campanias"></div>
-                                            </div>
-                                        </div>
-
-                                        <div id="contenedor_transacciones" style="display:none;" class="col-ms-2 col text-center">
-                                            <span type="button"
-                                                onclick="copiar_transacciones(<?php echo isset($_GET['p']) ? Openssl::get_ssl_decrypt($_GET['p']) : ''; ?>)"
-                                                class="btn btn-sm py-0 px-1 btn-outline-success waves-effect waves-light mb-2">Transacciones<i
-                                                    class=" ri-file-copy-line"></i></span>
-                                            <div style="max-height: 220px;  min-height: 220px; overflow-y: scroll; border-radius: 5px;"
-                                                class=" border border-success">
-                                                <div class="text-center" id="cont_transacciones"></div>
-                                            </div>
-                                        </div>
-
-                                        <div id="contenedor_adicionales" style="display:none;" class="col-ms-2 col text-center">
-                                            <span type="button"
-                                                onclick="copiar_adicionales(<?php echo isset($_GET['p']) ? Openssl::get_ssl_decrypt($_GET['p']) : ''; ?>)"
-                                                class="btn btn-sm py-0 px-1 btn-outline-success waves-effect waves-light mb-2">Adicionales<i
-                                                    class=" ri-file-copy-line"></i></span>
-                                            <div style="max-height: 220px;  min-height: 220px; overflow-y: scroll; border-radius: 5px;"
-                                                class=" border border-success">
-                                                <div class="text-center" id="cont_adicionales"></div>
-                                            </div>
-                                        </div>
-                                        <!-- CONSULTING -->
-
-
-                                        <!-- FUNCTIONAL SERVICES -->
-                                        <div id="contenedor_servidores_on_prem" style="display:none;" class="col-ms-2 col text-center">
-                                            <span type="button"
-                                                onclick="copiar_servidores_on_prem(<?php echo isset($_GET['p']) ? Openssl::get_ssl_decrypt($_GET['p']) : ''; ?>)"
-                                                class="btn btn-sm py-0 px-1 btn-outline-success waves-effect waves-light mb-2">Servidores On-prem<i
-                                                    class=" ri-file-copy-line"></i></span>
-                                            <div style="max-height: 220px;  min-height: 220px; overflow-y: scroll; border-radius: 5px;"
-                                                class=" border border-success">
-                                                <div class="text-center" id="cont_servidores_on_prem"></div>
-                                            </div>
-                                        </div>
-
-                                        <div id="contenedor_servidores_cloud" style="display:none;" class="col-ms-2 col text-center">
-                                            <span type="button"
-                                                onclick="copiar_servidores_cloud(<?php echo isset($_GET['p']) ? Openssl::get_ssl_decrypt($_GET['p']) : ''; ?>)"
-                                                class="btn btn-sm py-0 px-1 btn-outline-success waves-effect waves-light mb-2">Servidores Cloud<i
-                                                    class=" ri-file-copy-line"></i></span>
-                                            <div style="max-height: 220px;  min-height: 220px; overflow-y: scroll; border-radius: 5px;"
-                                                class=" border border-success">
-                                                <div class="text-center" id="cont_servidores_cloud"></div>
-                                            </div>
-                                        </div>
-
-                                        <div id="contenedor_licencias_on_prem" style="display:none;" class="col-ms-2 col text-center">
-                                            <span type="button"
-                                                onclick="copiar_licencias_on_prem(<?php echo isset($_GET['p']) ? Openssl::get_ssl_decrypt($_GET['p']) : ''; ?>)"
-                                                class="btn btn-sm py-0 px-1 btn-outline-success waves-effect waves-light mb-2">Licencias On-prem<i
-                                                    class=" ri-file-copy-line"></i></span>
-                                            <div style="max-height: 220px;  min-height: 220px; overflow-y: scroll; border-radius: 5px;"
-                                                class=" border border-success">
-                                                <div class="text-center" id="cont_licencias_on_prem"></div>
-                                            </div>
-                                        </div>
-
-                                        <div id="contenedor_licencias_cloud" style="display:none;" class="col-ms-2 col text-center">
-                                            <span type="button"
-                                                onclick="copiar_licencias_cloud(<?php echo isset($_GET['p']) ? Openssl::get_ssl_decrypt($_GET['p']) : ''; ?>)"
-                                                class="btn btn-sm py-0 px-1 btn-outline-success waves-effect waves-light mb-2">Licencias Cloud<i
-                                                    class=" ri-file-copy-line"></i></span>
-                                            <div style="max-height: 220px;  min-height: 220px; overflow-y: scroll; border-radius: 5px;"
-                                                class=" border border-success">
-                                                <div class="text-center" id="cont_licencias_cloud"></div>
-                                            </div>
-                                        </div>
-
-                                        <div id="contenedor_modulos_on_prem" style="display:none;" class="col-ms-2 col text-center">
-                                            <span type="button"
-                                                onclick="copiar_modulos_on_prem(<?php echo isset($_GET['p']) ? Openssl::get_ssl_decrypt($_GET['p']) : ''; ?>)"
-                                                class="btn btn-sm py-0 px-1 btn-outline-success waves-effect waves-light mb-2">Modulos On-prem<i
-                                                    class=" ri-file-copy-line"></i></span>
-                                            <div style="max-height: 220px;  min-height: 220px; overflow-y: scroll; border-radius: 5px;"
-                                                class=" border border-success">
-                                                <div class="text-center" id="cont_modulos_on_prem"></div>
-                                            </div>
-                                        </div>
-
-                                        <div id="contenedor_modulos_cloud" style="display:none;" class="col-ms-2 col text-center">
-                                            <span type="button"
-                                                onclick="copiar_modulos_cloud(<?php echo isset($_GET['p']) ? Openssl::get_ssl_decrypt($_GET['p']) : ''; ?>)"
-                                                class="btn btn-sm py-0 px-1 btn-outline-success waves-effect waves-light mb-2">Modulos Cloud<i
-                                                    class=" ri-file-copy-line"></i></span>
-                                            <div style="max-height: 220px;  min-height: 220px; overflow-y: scroll; border-radius: 5px;"
-                                                class=" border border-success">
-                                                <div class="text-center" id="cont_modulos_cloud"></div>
-                                            </div>
-                                        </div>
-                                        <!-- FUNCTIONAL SERVICES -->
-
-
-                                        <div class="col-xl-5 bg-success" style="border:.1rem solid gray;margin-right: 2px; border-radius: 5px;">
+                                        <div class="col-lg-5 col-12 bg-success" style="border:.1rem solid gray; border-radius: 5px;">
                                             <div style="display: flex; align-items: center; width: 100%; margin-top:.1rem; margin-bottom: .2rem;">
                                                 <span class="badge bg-light border border-success text-success me-auto d-inline-flex align-items-center gap-1 px-1 w-auto">
                                                     Documento<span title="Descargar el documento adjunto en el proyecto" id="documento_proy"></span>
@@ -363,31 +198,23 @@ if (isset($_SESSION['usu_id'])) {
                                             <div class="d-flex align-items-center">
                                                 <div class="d-flex align-items-center mt-1">
                                                     <span class="p-0 border border-light badge bg-light"><span style="width: 4.5rem; font-size: .6rem;" id="estadoProyecto" class="badge mx-1 text-light"></span></span>
-                                                    <span style="width: 3.5rem;" id="prioridad" class="badge mx-1" style="width: 3rem;"></span>
-                                                    <span style="width: 10rem;" id="titulo_categoria"
-                                                        class="badge bg-light text-dark mx-1"></span>
-                                                    <span style="width: 10rem;" id="titulo_subCategoria"
-                                                        class="badge bg-light text-dark mx-1"></span>
+                                                    <span style="width: 3.5rem;" id="prioridad" class="badge mx-1"></span>
+                                                    <span style="width: 10rem;" id="titulo_categoria" class="badge bg-light text-dark mx-1"></span>
+                                                    <span style="width: 10rem;" id="titulo_subCategoria" class="badge bg-light text-dark mx-1"></span>
                                                 </div>
                                             </div>
 
-
                                             <div style="display: flex; margin-top: .2rem;">
                                                 <span class="badge bg-light text-dark mx-1">Ref: <span id="referencia_proy"></span></span>
-
-                                                <span style="width: 7rem;"
-
-                                                    class="me-2 badge bg-light text-primary ">Desde:
+                                                <span style="width: 7rem;" class="me-2 badge bg-light text-primary">Desde:
                                                     <span id="fech_inicio" class="text-dark"></span>
                                                 </span>
-                                                <span style="width: 7rem;"
-                                                    class="me-2 badge bg-light text-primary ">Hasta:
+                                                <span style="width: 7rem;" class="me-2 badge bg-light text-primary">Hasta:
                                                     <span id="fech_fin" class="text-dark"></span>
                                                 </span>
                                                 <span id="rechequeo" style="display: none; color:orangered" class="badge ml-1 bg-light"></span>
                                                 <span id="cont_dimensionamiento" class="badge mx-1 text-primary bg-light fs-10">Horas: <span class="fw-bold" id="dimensionamiento"></span></span>
                                                 <span id="proy_recurrencia" style="display: none; color:orangered" class="badge ml-1 bg-light"></span>
-
                                             </div>
 
                                             <div style="display: flex; margin-top: .2rem;">
@@ -395,45 +222,17 @@ if (isset($_SESSION['usu_id'])) {
                                             </div>
 
                                             <div class="card-body p-0">
-                                                <div data-simplebar="init" style="max-height: 200px;">
-                                                    <div class="simplebar-wrapper"
-                                                        style="margin: 0px; text-justify: distribute;">
-                                                        <div class="simplebar-height-auto-observer-wrapper">
-                                                            <div class="simplebar-height-auto-observer"></div>
-                                                        </div>
-                                                        <div class="simplebar-mask">
-                                                            <div class="simplebar-offset" style="right: 0px; bottom: 0px;">
-                                                                <div class="simplebar-content-wrapper" tabindex="0"
-                                                                    role="region" aria-label="scrollable content">
-                                                                    <div class="simplebar-content bg-dark"
-                                                                        style="padding: 10px; border-radius: 5px;">
-                                                                        <p style="font-size: .8rem; font-family:monospace; max-height: 160px;  min-height: 160px; overflow: hidden scroll;"
-                                                                            class="text-light mb-2 px-1"
-                                                                            id="parrafo_descripcion_proy">
-                                                                        </p>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="simplebar-placeholder"
-                                                            style="width: auto; height: 339px;"></div>
-                                                    </div>
-                                                    <div class="simplebar-track simplebar-horizontal"
-                                                        style="visibility: hidden;">
-                                                        <div class="simplebar-scrollbar" style="width: 0px; display: none;">
-                                                        </div>
-                                                    </div>
-                                                    <div class="simplebar-track simplebar-vertical"
-                                                        style="visibility: visible;">
-                                                        <div class="simplebar-scrollbar"
-                                                            style="height: 194px; transform: translate3d(0px, 0px, 0px); display: block;">
-                                                        </div>
-                                                    </div>
-                                                </div><!-- end card body -->
-                                            </div><!-- end card -->
+                                                <div class="bg-dark" style="padding: 10px; border-radius: 5px; margin-bottom: .3rem;">
+                                                    <p style="font-size: .8rem; font-family:monospace; height: 160px; overflow-y: auto;"
+                                                        class="text-light mb-0 px-1"
+                                                        id="parrafo_descripcion_proy">
+                                                    </p>
+                                                </div>
+                                            </div>
                                         </div>
-                                    </div>
-                                </div>
+
+                                    </div><!-- cierra #contenedor_ips_y_descripcion -->
+                                </div><!-- cierra col-lg-12 p-2 -->
 
                                 <div class="col-lg-12 row">
                                     <div class="col-xl-10">
@@ -1829,310 +1628,23 @@ if (isset($_SESSION['usu_id'])) {
 
         }
 
-        function copiar_ips(id_proyecto_cantidad_servicios) {
-            Toastify({
-                text: "¡IPs copiadas!",
-                duration: 2000,
-                gravity: "top",
-                position: "right",
-                backgroundColor: "#0ab39c",
-            }).showToast();
-
-            let contenido = document.getElementById("cont_ip").innerText.trim();
-            navigator.clipboard.writeText(contenido).then(function() {
-                toast.success('Successfully toasted!')
-            }).catch(function(error) {
-                console.error("Error al copiar: ", error);
-            });
+        //------------------------  INICIO COPIAR ACTIVOS  -------------------------------
+        function copiarActivo(btn) {
+            const lista = btn.parentElement.querySelector(".lista-hosts");
+            if (!lista || lista.querySelector(".text-muted")) return;
+            navigator.clipboard.writeText(lista.innerText.trim())
+                .then(() => {
+                    Toastify({
+                        text: `¡${btn.dataset.tipo} copiados!`,
+                        duration: 2000,
+                        gravity: "top",
+                        position: "right",
+                        backgroundColor: "#0ab39c",
+                    }).showToast();
+                })
+                .catch(err => console.error("Error al copiar: ", err));
         }
-
-        function copiar_urls(id_proyecto_cantidad_servicios) {
-            Toastify({
-                text: "Urls copiadas!",
-                duration: 2000,
-                gravity: "top",
-                position: "right",
-                backgroundColor: "#0ab39c",
-            }).showToast();
-
-            let contenido = document.getElementById("cont_url").innerText.trim();
-            navigator.clipboard.writeText(contenido).then(function() {
-                toast.success('Successfully toasted!')
-            }).catch(function(error) {
-                console.error("Error al copiar: ", error);
-            });
-        }
-
-        function copiar_dispositivos(id_proyecto_cantidad_servicios) {
-            Toastify({
-                text: "Dispositivos copiadas!",
-                duration: 2000,
-                gravity: "top",
-                position: "right",
-                backgroundColor: "#0ab39c",
-            }).showToast();
-
-            let contenido = document.getElementById("cont_dispositivos").innerText.trim();
-            navigator.clipboard.writeText(contenido).then(function() {
-                toast.success('Successfully toasted!')
-            }).catch(function(error) {
-                console.error("Error al copiar: ", error);
-            });
-        }
-
-        function copiar_agentes(id_proyecto_cantidad_servicios) {
-            Toastify({
-                text: "Agentes copiados!",
-                duration: 2000,
-                gravity: "top",
-                position: "right",
-                backgroundColor: "#0ab39c",
-            }).showToast();
-
-            let contenido = document.getElementById("cont_agentes").innerText.trim();
-            navigator.clipboard.writeText(contenido).then(function() {
-                toast.success('Successfully toasted!')
-            }).catch(function(error) {
-                console.error("Error al copiar: ", error);
-            });
-        }
-
-        function copiar_equipos(id_proyecto_cantidad_servicios) {
-            Toastify({
-                text: "Equipos copiados!",
-                duration: 2000,
-                gravity: "top",
-                position: "right",
-                backgroundColor: "#0ab39c",
-            }).showToast();
-
-            let contenido = document.getElementById("cont_equipos").innerText.trim();
-            navigator.clipboard.writeText(contenido).then(function() {
-                toast.success('Successfully toasted!')
-            }).catch(function(error) {
-                console.error("Error al copiar: ", error);
-            });
-        }
-
-        function copiar_otros(id_proyecto_cantidad_servicios) {
-            Toastify({
-                text: "¡Activos copiados!",
-                duration: 2000,
-                gravity: "top",
-                position: "right",
-                backgroundColor: "#0ab39c",
-            }).showToast();
-
-            let contenido = document.getElementById("cont_otro").innerText.trim();
-            navigator.clipboard.writeText(contenido).then(function() {
-                toast.success('Successfully toasted!')
-            }).catch(function(error) {
-                console.error("Error al copiar: ", error);
-            });
-        }
-
-        //CONSULTING -------------------------------------------------------
-        function copiar_casillas(id_proyecto_cantidad_servicios) {
-            Toastify({
-                text: "¡Activos copiados!",
-                duration: 2000,
-                gravity: "top",
-                position: "right",
-                backgroundColor: "#0ab39c",
-            }).showToast();
-            let contenido = document.getElementById("cont_casillas").innerText.trim();
-            navigator.clipboard.writeText(contenido).then(function() {
-                toast.success('Successfully toasted!')
-            }).catch(function(error) {
-                console.error("Error al copiar: ", error);
-            });
-        }
-
-        function copiar_tematica(id_proyecto_cantidad_servicios) {
-            Toastify({
-                text: "¡Activos copiados!",
-                duration: 2000,
-                gravity: "top",
-                position: "right",
-                backgroundColor: "#0ab39c",
-            }).showToast();
-            let contenido = document.getElementById("cont_tematica").innerText.trim();
-            navigator.clipboard.writeText(contenido).then(function() {
-                toast.success('Successfully toasted!')
-            }).catch(function(error) {
-                console.error("Error al copiar: ", error);
-            });
-        }
-
-        function copiar_campanias(id_proyecto_cantidad_servicios) {
-            Toastify({
-                text: "¡Activos copiados!",
-                duration: 2000,
-                gravity: "top",
-                position: "right",
-                backgroundColor: "#0ab39c",
-            }).showToast();
-            let contenido = document.getElementById("cont_campanias").innerText.trim();
-            navigator.clipboard.writeText(contenido).then(function() {
-                toast.success('Successfully toasted!')
-            }).catch(function(error) {
-                console.error("Error al copiar: ", error);
-            });
-        }
-
-        function copiar_transacciones(id_proyecto_cantidad_servicios) {
-            Toastify({
-                text: "¡Activos copiados!",
-                duration: 2000,
-                gravity: "top",
-                position: "right",
-                backgroundColor: "#0ab39c",
-            }).showToast();
-            let contenido = document.getElementById("cont_transacciones").innerText.trim();
-            navigator.clipboard.writeText(contenido).then(function() {
-                toast.success('Successfully toasted!')
-            }).catch(function(error) {
-                console.error("Error al copiar: ", error);
-            });
-        }
-
-        function copiar_adicionales(id_proyecto_cantidad_servicios) {
-            Toastify({
-                text: "¡Activos copiados!",
-                duration: 2000,
-                gravity: "top",
-                position: "right",
-                backgroundColor: "#0ab39c",
-            }).showToast();
-            let contenido = document.getElementById("cont_adicionales").innerText.trim();
-            navigator.clipboard.writeText(contenido).then(function() {
-                toast.success('Successfully toasted!')
-            }).catch(function(error) {
-                console.error("Error al copiar: ", error);
-            });
-        }
-        //CONSULTING -------------------------------------------------------
-
-        function copiar_aplicaciones(id_proyecto_cantidad_servicios) {
-            Toastify({
-                text: "¡Activos copiados!",
-                duration: 2000,
-                gravity: "top",
-                position: "right",
-                backgroundColor: "#0ab39c",
-            }).showToast();
-
-            let contenido = document.getElementById("cont_aplicacion").innerText.trim();
-            navigator.clipboard.writeText(contenido).then(function() {
-                toast.success('Successfully toasted!')
-            }).catch(function(error) {
-                console.error("Error al copiar: ", error);
-            });
-        }
-
-        //FUNCTIONAL SERVICES -------------------------------------------------------
-        function copiar_servidores_on_prem(id_proyecto_cantidad_servicios) {
-            Toastify({
-                text: "¡Activos copiados!",
-                duration: 2000,
-                gravity: "top",
-                position: "right",
-                backgroundColor: "#0ab39c",
-            }).showToast();
-
-            let contenido = document.getElementById("cont_servidores_on_prem").innerText.trim();
-            navigator.clipboard.writeText(contenido).then(function() {
-                toast.success('Successfully toasted!')
-            }).catch(function(error) {
-                console.error("Error al copiar: ", error);
-            });
-        }
-
-        function copiar_servidores_cloud(id_proyecto_cantidad_servicios) {
-            Toastify({
-                text: "¡Activos copiados!",
-                duration: 2000,
-                gravity: "top",
-                position: "right",
-                backgroundColor: "#0ab39c",
-            }).showToast();
-
-            let contenido = document.getElementById("cont_servidores_cloud").innerText.trim();
-            navigator.clipboard.writeText(contenido).then(function() {
-                toast.success('Successfully toasted!')
-            }).catch(function(error) {
-                console.error("Error al copiar: ", error);
-            });
-        }
-
-        function copiar_licencias_on_prem(id_proyecto_cantidad_servicios) {
-            Toastify({
-                text: "¡Activos copiados!",
-                duration: 2000,
-                gravity: "top",
-                position: "right",
-                backgroundColor: "#0ab39c",
-            }).showToast();
-
-            let contenido = document.getElementById("cont_licencias_on_prem").innerText.trim();
-            navigator.clipboard.writeText(contenido).then(function() {
-                toast.success('Successfully toasted!')
-            }).catch(function(error) {
-                console.error("Error al copiar: ", error);
-            });
-        }
-
-        function copiar_licencias_cloud(id_proyecto_cantidad_servicios) {
-            Toastify({
-                text: "¡Activos copiados!",
-                duration: 2000,
-                gravity: "top",
-                position: "right",
-                backgroundColor: "#0ab39c",
-            }).showToast();
-
-            let contenido = document.getElementById("cont_licencias_cloud").innerText.trim();
-            navigator.clipboard.writeText(contenido).then(function() {
-                toast.success('Successfully toasted!')
-            }).catch(function(error) {
-                console.error("Error al copiar: ", error);
-            });
-        }
-
-        function copiar_modulos_on_prem(id_proyecto_cantidad_servicios) {
-            Toastify({
-                text: "¡Activos copiados!",
-                duration: 2000,
-                gravity: "top",
-                position: "right",
-                backgroundColor: "#0ab39c",
-            }).showToast();
-
-            let contenido = document.getElementById("cont_modulos_on_prem").innerText.trim();
-            navigator.clipboard.writeText(contenido).then(function() {
-                toast.success('Successfully toasted!')
-            }).catch(function(error) {
-                console.error("Error al copiar: ", error);
-            });
-        }
-
-        function copiar_modulos_cloud(id_proyecto_cantidad_servicios) {
-            Toastify({
-                text: "¡Activos copiados!",
-                duration: 2000,
-                gravity: "top",
-                position: "right",
-                backgroundColor: "#0ab39c",
-            }).showToast();
-
-            let contenido = document.getElementById("cont_modulos_cloud").innerText.trim();
-            navigator.clipboard.writeText(contenido).then(function() {
-                toast.success('Successfully toasted!')
-            }).catch(function(error) {
-                console.error("Error al copiar: ", error);
-            });
-        }
-        //FUNCTIONAL SERVICES -------------------------------------------------------
+        //------------------------  FIN COPIAR ACTIVOS  -------------------------------
 
         const btn_update_parcial = document.getElementById("btn_update_parcial");
         const modalEditarParcial = document.getElementById("ModalEditarProyectoParcial");
