@@ -3418,16 +3418,15 @@ function crearRechequeo(id) {
 
             Swal.fire({
                 icon: "warning",
-                text: "Desea crear un Retest de este Proyecto?",
+                title: "¿Desea crear un Retest de este Proyecto?",
                 showCancelButton: true,
-                confirmButtonText: "Sí, crear",
+                confirmButtonText: "Si",
                 cancelButtonText: "Cancelar"
             }).then((result) => {
                 if (result.isConfirmed) {
                     Swal.fire({
                         icon: "question",
-                        title: "Tipo de Retest",
-                        text: "¿Qué tipo de Retest desea crear?",
+                        title: "¿Qué tipo de Retest desea crear?",
                         showCancelButton: true,
                         confirmButtonText: "Retest Completo",
                         cancelButtonText: "Retest sobre Hallazgos",

@@ -32,17 +32,17 @@
                                         <th style="width: 5%;text-align: center;">RECURRENCIA</th>
                                         <th style="width: 5%;text-align: center;">RETEST</th>
                                         <th style="width: 5%px;text-align: center;">SECTOR</th>
-                                        <th style="width: 5px;text-align: center;">PROD</th>
+                                        <th style="width: 5px;text-align: center;">PRODUCTO</th>
                                         <th style="width: 5px;text-align: center;">HS</th>
                                         <th style="width: 5px;text-align: center;">ESTADO</th>
                                         <?php if ($_SESSION['sector_id'] != 9): ?>
                                             <th style="width: 5px;text-align: center;">AGREGAR <br>RETEST</th>
                                         <?php endif; ?>
                                         <?php if ($_SESSION['sector_id'] != 9): ?>
-                                            <th style="width: 5px;text-align: center;"></th>
+                                            <th style="width: 5px;text-align: center;">VER</th>
                                         <?php endif; ?>
                                         <?php if ($_SESSION['usu_id'] == 104): ?>
-                                            <th style="width: 5px;text-align: center;"></th>
+                                            <th style="width: 5px;text-align: center;">ACCION</th>
                                         <?php endif; ?>
                                     </tr>
                                 </thead>
@@ -90,10 +90,10 @@
                                         <th style="width: 5%;text-align: center;">RECURRENCIA</th>
                                         <th style="width: 5%;text-align: center;">RETEST</th>
                                         <th style="width: 5%px;text-align: center;">SECTOR</th>
-                                        <th style="width: 5px;text-align: center;">PROD</th>
+                                        <th style="width: 5px;text-align: center;">PRODUCTO</th>
                                         <th style="width: 5px;text-align: center;">HS</th>
                                         <th style="width: 5px;text-align: center;">ESTADO</th>
-                                        <th style="width: 5px;text-align: center;"></th>
+                                        <th style="width: 5px;text-align: center;">VER</th>
                                     </tr>
                                 </thead>
                                 <tbody style="text-align: center;">

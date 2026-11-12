@@ -108,7 +108,7 @@ if (isset($_SESSION['usu_id'])) {
                                             <th style="width: 20px;text-align: center;">PRODUCTO</th>
                                             <th style="width: 20px;text-align: center;">ASIGNADO</th>
                                             <?php if ($_SESSION['sector_id'] != 9): ?>
-                                                <th style="width: 10px;text-align: center;"></th>
+                                                <th style="width: 10px;text-align: center;">GESTIONAR</th>
                                             <?php endif; ?>
                                             <!-- <th style="width: 30px;text-align: center;"></th> -->
                                         </tr>
@@ -179,7 +179,7 @@ if (isset($_SESSION['usu_id'])) {
                                         <tr style="text-align: center;">
                                             <th style="width: 400px;text-align: center;">CLIENTE</th>
                                             <th style="width: 20px;text-align: center;">PROYECTOS</th>
-                                            <th style="width: 20px;text-align: center;"></th>
+                                            <th style="width: 20px;text-align: center;">VER</th>
 
                                         </tr>
                                     </thead>
@@ -212,7 +212,7 @@ if (isset($_SESSION['usu_id'])) {
                                             <th style="width: 10px;text-align: center;">ASIGNADO</th>
                                             <th style="width: 10px; text-align: center;">ESTADO</th>
                                             <?php if ($_SESSION['sector_id'] != 9): ?>
-                                                <th style="width: 10px;text-align: center;"></th>
+                                                <th style="width: 10px;text-align: center;">VER</th>
                                             <?php endif; ?>
                                         </tr>
                                     </thead>
@@ -253,8 +253,8 @@ if (isset($_SESSION['usu_id'])) {
                                             <th style="width: 30px;text-align: center;">HS</th>
                                             <th style="width: 30px;text-align: center;">ASIGNADO</th>
                                             <?php if ($_SESSION['sector_id'] != 9): ?>
-                                                <th style="width: 30px;text-align: center;"></th>
-                                                <th style="width: 30px;text-align: center;"></th>
+                                                <th style="width: 30px;text-align: center;">VER</th>
+                                                <th style="width: 30px;text-align: center;">ACCION</th>
                                             <?php endif; ?>
                                         </tr>
                                     </thead>
@@ -396,7 +396,7 @@ if (isset($_SESSION['usu_id'])) {
                                         <tr>
                                             <th style="width: 400px;text-align: center;">CLIENTE</th>
                                             <th style="width: 20px;text-align: center;">PROYECTOS</th>
-                                            <th style="width: 20px;text-align: center;"></th>
+                                            <th style="width: 20px;text-align: center;">VER</th>
                                         </tr>
                                     </thead>
                                     <tbody style="text-align: center;">
