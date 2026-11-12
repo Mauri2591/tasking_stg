@@ -149,7 +149,7 @@ if (isset($_SESSION['usu_id'])) {
                                     <div id="contenedor_ips_y_descripcion" class="row g-2">
                                         <!-- INICIO COPIAR ACTIVOS -->
                                         <div class="col-lg-7 col-12">
-                                            <div class="d-flex gap-2 pb-2" style="overflow-x: auto;">
+                                            <div class="d-flex gap-2 py-2 px-3 border rounded-2" style="overflow-x: auto;">
                                                 <?php
                                                 usort(
                                                     $activos,
