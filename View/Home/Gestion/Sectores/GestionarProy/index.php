@@ -151,7 +151,13 @@ if (isset($_SESSION['usu_id'])) {
                                         <div class="col-lg-7 col-12">
                                             <div class="d-flex gap-2 pb-2" style="overflow-x: auto;">
                                                 <?php
-                                                usort($activos, fn($a, $b) => empty($hosts[$a['tipo_activo']]) <=> empty($hosts[$b['tipo_activo']]));
+                                                usort(
+                                                    $activos,
+                                                    fn($a, $b) =>
+                                                    [empty($hosts[$a['tipo_activo']]), $a['tipo_activo'] === 'OTROS']
+                                                        <=>
+                                                        [empty($hosts[$b['tipo_activo']]), $b['tipo_activo'] === 'OTROS']
+                                                );
                                                 ?>
                                                 <?php if (empty($activos)): ?>
                                                     <div class="w-100 text-center">NO POSEE HOSTS</div>
