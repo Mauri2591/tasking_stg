@@ -27,7 +27,7 @@
                     <div class="input-group input-group-sm mt-1">
                         <span class="input-group-text" id="inputGroup-sizing-sm">EMAIL<span
                                 class="badge text-danger p-0 m-0 fs-12">*</span></span>
-                        <input id="usu_correo" type="text" class="form-control" aria-label="Sizing example input"
+                        <input id="usu_correo" autocomplete="current-password" type="text" class="form-control" aria-label="Sizing example input"
                             aria-describedby="inputGroup-sizing-sm">
                     </div>
 
@@ -40,7 +40,7 @@
                             PASSWORD<span class="badge text-danger p-0 m-0 fs-12">*</span>
                         </span>
 
-                        <input id="usu_pass" disabled name="usu_pass" type="password" class="form-control" aria-describedby="inputGroup-sizing-sm">
+                        <input id="usu_pass" autocomplete="current-password" disabled name="usu_pass" type="password" class="form-control" aria-describedby="inputGroup-sizing-sm">
                     </div>
 
                     <div>
@@ -85,7 +85,7 @@
                     <div class="input-group input-group-sm mt-1">
                         <span class="input-group-text" id="inputGroup-sizing-sm">EMAIL<span
                                 class="badge text-danger p-0 m-0 fs-12">*</span></span>
-                        <input id="usu_correo2" type="text" class="form-control" aria-label="Sizing example input"
+                        <input id="usu_correo2" autocomplete="current-password" type="text" class="form-control" aria-label="Sizing example input"
                             aria-describedby="inputGroup-sizing-sm">
                     </div>
 
@@ -98,7 +98,7 @@
                             PASSWORD<span class="badge text-danger p-0 m-0 fs-12">*</span>
                         </span>
 
-                        <input id="usu_pass2" disabled name="usu_pass2" type="password" class="form-control" aria-describedby="inputGroup-sizing-sm">
+                        <input id="usu_pass2" disabled name="usu_pass2" autocomplete="current-password"  type="password" class="form-control" aria-describedby="inputGroup-sizing-sm">
                     </div>
 
                     <div>

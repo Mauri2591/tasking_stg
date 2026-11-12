@@ -440,18 +440,6 @@ if (isset($_SESSION['usu_id'])) {
                 "html"
             );
 
-            $.post("../../../../../Controller/ctrProyectos.php?proy=validar_boton_mostrar_agregar_usuario_proy", {
-                id_proyecto_gestionado: id_proyecto_gestionado
-            }, function(data) {
-                let parsed = JSON.parse(data); // Ahora parsed es "ok" sin comillas extra
-
-                if (parsed === "ok") {
-                    document.getElementById("boton_agregar_usuarios_proy").style.display = "flex";
-                } else if (parsed === "error") {
-                    document.getElementById("boton_agregar_usuarios_proy").style.display = "none";
-                }
-            });
-
             function validar_boton_usuario_asignado_y_calidad() {
                 $.post("../../../../../Controller/ctrProyectos.php?proy=validar_boton_usuario_asignado_y_calidad", {
                     id_proyecto_gestionado: id_proyecto_gestionado
