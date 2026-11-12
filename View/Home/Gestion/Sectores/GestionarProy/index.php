@@ -150,6 +150,9 @@ if (isset($_SESSION['usu_id'])) {
                                         <!-- INICIO COPIAR ACTIVOS -->
                                         <div class="col-lg-7 col-12">
                                             <div class="d-flex gap-2 pb-2" style="overflow-x: auto;">
+                                                <?php
+                                                usort($activos, fn($a, $b) => empty($hosts[$a['tipo_activo']]) <=> empty($hosts[$b['tipo_activo']]));
+                                                ?>
                                                 <?php if (empty($activos)): ?>
                                                     <div class="w-100 text-center">NO POSEE HOSTS</div>
                                                 <?php endif; ?>
