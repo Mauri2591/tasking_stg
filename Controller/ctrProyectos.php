@@ -1921,9 +1921,7 @@ switch ($_GET['proy']) {
             }
 
             $sub_array[] = '<span class="badge bg-light text-dark">' . $row['creador_proy'] . '</span>';
-            $sub_array[] = strlen($row['cats_nom']) > 20
-                ? '<span class="badge bg-light text-dark">' . substr($row['cats_nom'], 0, 17) . '...' . '</span>'
-                : '<span class="badge bg-light text-dark">' . $row['cats_nom'] . '</span>';
+            $sub_array[] = '<span class="badge bg-light text-dark">' . $row['cats_nom'] . '</span>';
             $sub_array[] = $row['hs_dimensionadas'] == ""
                 ? "Sin hs"
                 : '<span class="badge bg-light text-dark">' . $row['hs_dimensionadas'] . '</span>';
@@ -1936,9 +1934,9 @@ switch ($_GET['proy']) {
                 switch ($row['estados_id']) {
                     case '1':
                     case '2':
-                        $sub_array[] = '<span type="button" onclick="ver_hosts_eh(' . $row['id_proyecto_gestionado'] . ' )">
-                        <i class="text-secondary fs-18 ri-global-line" title="Ver hosts"></i>
-                    </span>';
+                        //     $sub_array[] = '<span type="button" onclick="ver_hosts_eh(' . $row['id_proyecto_gestionado'] . ' )">
+                        //     <i class="text-secondary fs-18 ri-global-line" title="Ver hosts"></i>
+                        // </span>';
                         if ($row['estados_id'] == 2) {
                             $sub_array[] = '<a href="' . URL . 'View/Home/Gestion/Sectores/GestionarProy/?p='
                                 . Openssl::set_ssl_encrypt($row['id_proyecto_cantidad_servicios']) . '&pg='
@@ -1982,9 +1980,30 @@ switch ($_GET['proy']) {
                         break;
 
                     case '3':
+                        $sub_array[] = '<a href="' . URL . 'View/Home/Gestion/Sectores/GestionarProy/?p='
+                            . Openssl::set_ssl_encrypt($row['id_proyecto_cantidad_servicios']) . '&pg='
+                            . Openssl::set_ssl_encrypt($row['id_proyecto_gestionado'])
+                            . '" target="_blank" title="Ver proyecto">
+                        <i class="ri-send-plane-fill text-primary fs-18"></i></a>';
+                        if($_SESSION['sector_id'] == 4){
+                        $sub_array[] = '<div class="btn-group btn-group-sm p-0" role="group" aria-label="Button group with nested dropdown">
+                                <div class="btn-group p-0" role="group">
+                                    <button id="btnGroupDrop1" type="button" class="btn btn-primary btn-sm dropdown-toggle py-0" data-bs-toggle="dropdown" aria-expanded="false">
+                                        Estado
+                                    </button>
+                                    <ul class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+                                        <li><a class="dropdown-item" type="button" onclick="cerrar_proyecto(' . $row['id_proyecto_gestionado'] . ')">Cerrar proyecto</a></li>
+                                    </ul>
+                                </div>
+                            </div>';
+                        }else{
+                            $sub_array[]='';
+                        }
+                        break;
+
                     case '4':
-                        $sub_array[] = '<span type="button" onclick="ver_hosts_eh(' . $row['id_proyecto_gestionado'] . ')">
-                        <i class="text-secondary fs-18 ri-global-line" title="Ver hosts"></i></span>';
+                        // $sub_array[] = '<span type="button" onclick="ver_hosts_eh(' . $row['id_proyecto_gestionado'] . ')">
+                        // <i class="text-secondary fs-18 ri-global-line" title="Ver hosts"></i></span>';
                         $sub_array[] = '<a href="' . URL . 'View/Home/Gestion/Sectores/GestionarProy/?p='
                             . Openssl::set_ssl_encrypt($row['id_proyecto_cantidad_servicios']) . '&pg='
                             . Openssl::set_ssl_encrypt($row['id_proyecto_gestionado'])
@@ -1993,8 +2012,8 @@ switch ($_GET['proy']) {
                         break;
                 }
             } else {
-                $sub_array[] = '<span type="button" onclick="ver_hosts_eh(' . $row['id_proyecto_gestionado'] . ')">
-                <i class="text-secondary fs-18 ri-global-line" title="Ver hosts"></i></span>';
+                // $sub_array[] = '<span type="button" onclick="ver_hosts_eh(' . $row['id_proyecto_gestionado'] . ')">
+                // <i class="text-secondary fs-18 ri-global-line" title="Ver hosts"></i></span>';
                 $sub_array[] = '<button class="btn btn-secondary btn-sm py-0" title="Sin permisos" disabled>Pendiente</button>';
             }
 

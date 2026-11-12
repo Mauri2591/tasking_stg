@@ -251,7 +251,7 @@ function cambiar_a_borrador(id_proyecto_gestionado) {
                 "json"
             );
             $.post(
-                "../../../../../../Controller/ctrAuditoria.php?case=insert_audit_estados_proyecto", {
+                "../../../../../Controller/ctrAuditoria.php?case=insert_audit_estados_proyecto", {
                     id_proyecto_gestionado: id_proyecto_gestionado,
                     estados_id: 14
                 }
@@ -303,7 +303,7 @@ function cambiar_a_abierto(id_proyecto_gestionado) {
                 "json"
             );
             $.post(
-                "../../../../../../Controller/ctrAuditoria.php?case=insert_audit_estados_proyecto", {
+                "../../../../../Controller/ctrAuditoria.php?case=insert_audit_estados_proyecto", {
                     id_proyecto_gestionado: id_proyecto_gestionado,
                     estados_id: 2
                 }
@@ -329,8 +329,51 @@ function cambiar_a_abierto(id_proyecto_gestionado) {
     })
 }
 
-function asignar_proyecto(id_proyecto_gestionado) {
+function cerrar_proyecto(id_proyecto_gestionado) {
+    Swal.fire({
+        icon: "info",
+        title: "¿Desea cerrar el proyecto?",
+        showConfirmButton: true,
+        showCancelButton: true
+    }).then((result) => {
+        if (!result.isConfirmed) return;
 
+        $.post("../../../../../Controller/ctrProyectos.php?proy=update_estado_proy", {
+            id: id_proyecto_gestionado,
+            estados_id: 4
+        }, "json")
+        .done(function () {
+            $.post("../../../../../Controller/ctrAuditoria.php?case=insert_audit_estados_proyecto", {
+                id_proyecto_gestionado: id_proyecto_gestionado,
+                estados_id: 4
+            });
+
+            Swal.fire({
+                icon: "success",
+                title: "Bien",
+                text: "Proyecto cerrado correctamente!",
+                timer: 1500,
+                showConfirmButton: false
+            });
+
+            ['#table_proyectos_realizados_eh_incident_response', '#table_proyectos_cerrados_calidad_incident_response']
+                .forEach(tabla => {
+                    if ($.fn.DataTable.isDataTable(tabla)) {
+                        $(tabla).DataTable().ajax.reload(null, false);
+                    }
+                });
+        })
+        .fail(function () {
+            Swal.fire({
+                icon: "error",
+                title: "Error",
+                text: "No se pudo cerrar el proyecto"
+            });
+        });
+    });
+}
+
+function asignar_proyecto(id_proyecto_gestionado) {
     Swal.fire({
         icon: "info",
         title: "Desea tomar este proyecto?",
@@ -338,7 +381,7 @@ function asignar_proyecto(id_proyecto_gestionado) {
         showCancelButton: true
     }).then((result) => {
         if (result.isConfirmed) {
-            $.post("../../../../../../Controller/ctrProyectos.php?proy=tomar_proyecto", {
+            $.post("../../../../../Controller/ctrProyectos.php?proy=tomar_proyecto", {
                     id_proyecto_gestionado: id_proyecto_gestionado
                 },
                 function (data, textStatus, jqXHR) {
@@ -347,7 +390,7 @@ function asignar_proyecto(id_proyecto_gestionado) {
                 "json"
             );
             $.post(
-                "../../../../../../Controller/ctrAuditoria.php?case=insert_audit_estados_proyecto", {
+                "../../../../../Controller/ctrAuditoria.php?case=insert_audit_estados_proyecto", {
                     id_proyecto_gestionado: id_proyecto_gestionado,
                     estados_id: 19
                 }
@@ -371,7 +414,7 @@ function asignar_proyecto(id_proyecto_gestionado) {
 
 function ver_hosts_eh(id_proyecto_gestionado) {
     $("#ModalVerHosts").modal("show");
-    $.post("../../../../../../Controller/ctrProyectos.php?proy=get_hosts_proy_ip", {
+    $.post("../../../../../Controller/ctrProyectos.php?proy=get_hosts_proy_ip", {
             id_proyecto_gestionado: id_proyecto_gestionado
         },
         function (data, textStatus, jqXHR) {
@@ -415,7 +458,7 @@ function cambiar_a_nuevo(id_proyecto_gestionado) {
                 "json"
             );
             $.post(
-                "../../../../../../Controller/ctrAuditoria.php?case=insert_audit_estados_proyecto", {
+                "../../../../../Controller/ctrAuditoria.php?case=insert_audit_estados_proyecto", {
                     id_proyecto_gestionado: id_proyecto_gestionado,
                     estados_id: 1
                 }

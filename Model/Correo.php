@@ -73,34 +73,35 @@ class Correo extends Conexion
         $cliente  = $datos->cliente  ?: 'N/A';
         $refProy  = $datos->refProy  ?: 'N/A';
         $mail = new PHPMailer(true);
-        try {
-            $mail->isSMTP();
-            $mail->Host       = SMTP_HOST;
-            $mail->SMTPAuth   = false;
-            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-            $mail->Port       = (int)SMTP_PORT;
-            $mail->SMTPOptions = [
-                'ssl' => [
-                    'verify_peer'       => false,
-                    'verify_peer_name'  => false,
-                    'allow_self_signed' => true,
-                ],
-            ];
-            $mail->CharSet = 'UTF-8';
-            $mail->setFrom(SMTP_FROM_ARG, SMTP_FROM_NAME_ARG);
-            $mail->addAddress('mssp-calidad@personal.com.ar');
-            // Agregar usuarios en copia
-            if (!empty($datos->usuarios) && $datos->usuarios !== 'Sin usuarios asignados') {
-                $listaUsuarios = array_map('trim', explode(',', $datos->usuarios));
-                foreach ($listaUsuarios as $correo) {
-                    if (filter_var($correo, FILTER_VALIDATE_EMAIL)) {
-                        $mail->addCC($correo);
+        if (SMTP_ENABLED === 'true') {
+            try {
+                $mail->isSMTP();
+                $mail->Host       = SMTP_HOST;
+                $mail->SMTPAuth   = false;
+                $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+                $mail->Port       = (int)SMTP_PORT;
+                $mail->SMTPOptions = [
+                    'ssl' => [
+                        'verify_peer'       => false,
+                        'verify_peer_name'  => false,
+                        'allow_self_signed' => true,
+                    ],
+                ];
+                $mail->CharSet = 'UTF-8';
+                $mail->setFrom(SMTP_FROM_ARG, SMTP_FROM_NAME_ARG);
+                $mail->addAddress('mssp-calidad@personal.com.ar');
+                // Agregar usuarios en copia
+                if (!empty($datos->usuarios) && $datos->usuarios !== 'Sin usuarios asignados') {
+                    $listaUsuarios = array_map('trim', explode(',', $datos->usuarios));
+                    foreach ($listaUsuarios as $correo) {
+                        if (filter_var($correo, FILTER_VALIDATE_EMAIL)) {
+                            $mail->addCC($correo);
+                        }
                     }
                 }
-            }
-            $mail->isHTML(true);
-            $mail->Subject = 'Proyecto finalizado - [CLIENTE] ' . $cliente;
-            $mail->Body = "<p>Estimados,<br><br>
+                $mail->isHTML(true);
+                $mail->Subject = 'Proyecto finalizado - [CLIENTE] ' . $cliente;
+                $mail->Body = "<p>Estimados,<br><br>
                 El presente proyecto se encuentra finalizado correctamente.</p>
                 <p><b>Título:</b> {$datos->titulo}</p>
                 <p><b>Ref:</b> {$refProy}</p>
@@ -116,10 +117,11 @@ class Correo extends Conexion
                 </p>
                 <br>
                 <p>Saludos.</p>";
-            $mail->send();
-            return true;
-        } catch (Exception $e) {
-            return 'ERROR SMTP: ' . $mail->ErrorInfo;
+                $mail->send();
+                return true;
+            } catch (Exception $e) {
+                return 'ERROR SMTP: ' . $mail->ErrorInfo;
+            }
         }
     }
 

@@ -179,6 +179,10 @@
                                             <a href="<?php echo URL . "View/Home/Gestion/Sectores/Platforms&Architecture/"; ?>"
                                                 class="nav-link" data-key="t-mailbox">Platforms Y Architecture</a>
                                         </li>
+                                         <li class="nav-item">
+                                            <a href="<?php echo URL . "View/Home/Gestion/Sectores/IR/"; ?>"
+                                                class="nav-link" data-key="t-mailbox">Incident Response</a>
+                                        </li>
                                     </ul>
                                 </div>
                             </li>
@@ -191,65 +195,9 @@
                                 <div class="menu-dropdown collapse" id="sidebarServicios">
                                     <ul class="nav nav-sm flex-column">
                                         <li class="nav-item">
-                                            <a href="<?php echo URL . "View/Home/Gestion/Sectores/CalidadYProcesos/IR/"; ?>"
-                                                class="nav-link" data-key="t-mailbox">Incident Response</a>
-                                        </li>
-                                        <li class="nav-item">
                                             <a href="<?php echo URL . "View/Home/Gestion/Sectores/CalidadYProcesos/CalidadYProcesos/"; ?>"
                                                 class="nav-link" data-key="t-mailbox">Calidad y Procesos</a>
                                         </li>
-                                        <!-- <li class="nav-item">
-                                            <a href="<?php echo URL . "View/Home/Gestion/Sectores/CalidadYProcesos/CalidadYProcesos/"; ?>"
-                                                class="nav-link" data-key="t-mailbox">SOC</a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a href="<?php echo URL . "View/Home/Gestion/Sectores/CalidadYProcesos/SASE/"; ?>"
-                                                class="nav-link" data-key="t-mailbox">SASE</a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a href="<?php echo URL . "View/Home/Gestion/Sectores/CalidadYProcesos/EH/"; ?>"
-                                                class="nav-link" data-key="t-mailbox">EH</a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a href="<?php echo URL . "View/Home/Gestion/Sectores/CalidadYProcesos/Gestion_Estrategica/"; ?>"
-                                                class="nav-link" data-key="t-mailbox">Gestion Estrategica</a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a href="<?php echo URL . "View/Home/Gestion/Sectores/CalidadYProcesos/Consulting_Grc/"; ?>"
-                                                class="nav-link" data-key="t-mailbox">Consulting GRC</a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a href="<?php echo URL . "View/Home/Gestion/Sectores/CalidadYProcesos/Procesos/"; ?>"
-                                                class="nav-link" data-key="t-mailbox">Procesos</a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a href="<?php echo URL . "View/Home/Gestion/Sectores/CalidadYProcesos/Funtional_Services/"; ?>"
-                                                class="nav-link" data-key="t-mailbox">Funtional Services</a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a href="<?php echo URL . "View/Home/Gestion/Sectores/CalidadYProcesos/Consultoria/"; ?>"
-                                                class="nav-link" data-key="t-mailbox">Consultoria</a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a href="<?php echo URL . "View/Home/Gestion/Sectores/CalidadYProcesos/Platforms_Development/"; ?>"
-                                                class="nav-link" data-key="t-mailbox">Platforms Development</a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a href="<?php echo URL . "View/Home/Gestion/Sectores/CalidadYProcesos/Proyecto_No_Estandar/"; ?>"
-                                                class="nav-link" data-key="t-mailbox">Proyecto no estandar</a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a href="<?php echo URL . "View/Home/Gestion/Sectores/CalidadYProcesos/Desarrollo_Interno/"; ?>"
-                                                class="nav-link" data-key="t-mailbox">Desarrollo Interno</a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a href="<?php echo URL . "View/Home/Gestion/Sectores/CalidadYProcesos/Cloud/"; ?>"
-                                                class="nav-link" data-key="t-mailbox">Cloud</a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a href="<?php echo URL . "View/Home/Gestion/Sectores/CalidadYProcesos/Nuevas_Soluciones/"; ?>"
-                                                class="nav-link" data-key="t-mailbox">Nuevas Soluciones</a>
-                                        </li> -->
                                     </ul>
                                 </div>
                             </li>
@@ -502,7 +450,6 @@
                                         </ul>
                                     </div>
                                 </li>
-
 
                                 <hr style="width: 85%; color:#e0e0e0; margin: 1rem auto;">
                                 <li class="menu-title"><i class="ri-more-fill"></i> <span data-key="t-pages">Apps</span>
