@@ -149,8 +149,8 @@ if (isset($_SESSION['usu_id'])) {
                                     <div id="contenedor_ips_y_descripcion" class="row g-2">
                                         <!-- INICIO COPIAR ACTIVOS -->
                                         <div class="col-lg-7 col-12">
-                                            <div class="d-flex gap-2 py-2 px-3 border rounded-2" style="overflow-x: auto;">
-                                                <?php
+                                            <div class="d-flex gap-2 py-2 px-3 bg-success" style="overflow-x: auto; border:.1rem solid gray; border-radius:.3rem">
+                                               <?php
                                                 usort(
                                                     $activos,
                                                     fn($a, $b) =>
@@ -168,16 +168,16 @@ if (isset($_SESSION['usu_id'])) {
                                                     $lista = $hosts[$tipo] ?? [];
                                                     $tipoE = htmlspecialchars($tipo, ENT_QUOTES, 'UTF-8');
                                                 ?>
-                                                    <div class="text-center" style="flex: 1 0 170px; max-width: 260px;">
+                                                    <div class="text-center bg-light border rounded-3" style="flex: 1 0 170px; max-width: 260px;">
                                                         <span type="button" data-tipo="<?= $tipoE ?>" onclick="copiarActivo(this)"
-                                                            class="btn btn-sm py-0 px-1 btn-outline-success waves-effect waves-light mb-2 text-nowrap">
+                                                            class="btn btn-sm py-0 px-1 btn-outline-success waves-effect waves-light m-1 text-nowrap">
                                                             <?= $tipoE ?> <i class="ri-file-copy-line"></i>
                                                         </span>
-                                                        <div style="height: 220px; overflow: auto; border-radius: 5px;" class="border border-success">
+                                                        <div style="height: 220px; overflow: auto; border-radius: 5px; background-color: #fafafa;" class="border border-success">
                                                             <div class="text-center lista-hosts" style="white-space: nowrap; width: max-content; min-width: 100%;">
                                                                 <?php if ($lista): ?>
                                                                     <?php foreach ($lista as $h): ?>
-                                                                        <div><span class="badge bg-light text-dark"><?= htmlspecialchars($h, ENT_QUOTES, 'UTF-8') ?></span></div>
+                                                                        <div><span class="badge bg-light text-dark border"><?= htmlspecialchars($h, ENT_QUOTES, 'UTF-8') ?></span></div>
                                                                     <?php endforeach; ?>
                                                                 <?php else: ?>
                                                                     <span class="text-muted">No hay activos</span>
