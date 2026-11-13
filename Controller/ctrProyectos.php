@@ -1985,8 +1985,8 @@ switch ($_GET['proy']) {
                             . Openssl::set_ssl_encrypt($row['id_proyecto_gestionado'])
                             . '" target="_blank" title="Ver proyecto">
                         <i class="ri-send-plane-fill text-primary fs-18"></i></a>';
-                        if($_SESSION['sector_id'] == 4){
-                        $sub_array[] = '<div class="btn-group btn-group-sm p-0" role="group" aria-label="Button group with nested dropdown">
+                        if ($_SESSION['sector_id'] == 4) {
+                            $sub_array[] = '<div class="btn-group btn-group-sm p-0" role="group" aria-label="Button group with nested dropdown">
                                 <div class="btn-group p-0" role="group">
                                     <button id="btnGroupDrop1" type="button" class="btn btn-primary btn-sm dropdown-toggle py-0" data-bs-toggle="dropdown" aria-expanded="false">
                                         Estado
@@ -1996,8 +1996,8 @@ switch ($_GET['proy']) {
                                     </ul>
                                 </div>
                             </div>';
-                        }else{
-                            $sub_array[]='';
+                        } else {
+                            $sub_array[] = '';
                         }
                         break;
 
@@ -2182,32 +2182,8 @@ switch ($_GET['proy']) {
         foreach ($datos as $row) {
             $sub_array = array();
             $sub_array[] = $row['titulo'];
-
-            $fecha = $row['fech_inicio'];
-            if ($fecha == '') {
-                $sub_array[] = 'Sin fecha';
-            } else {
-                $hoy = new DateTime('today');
-                $fechaRow = new DateTime($fecha);
-                if ($fechaRow == $hoy) {
-                    if ($row['estados_id'] == 1 || $row['estados_id'] == 2) {
-                        $sub_array[] = '<span class="badge border border-warning text-dark">' . $fecha . '</span>';
-                    } else {
-                        $sub_array[] = '<span class="badge bg-light text-dark">' . $fecha . '</span>';
-                    }
-                } elseif ($fechaRow < $hoy) {
-                    if ($row['estados_id'] == 1 || $row['estados_id'] == 2) {
-                        $sub_array[] = '<span class="badge text-dark" style="border:.13rem solid red">' . $fecha . '</span>';
-                    } else {
-                        $sub_array[] = '<span class="badge bg-light text-dark">' . $fecha . '</span>';
-                    }
-                } else {
-                    $sub_array[] = '<span class="badge bg-light text-dark">' . $fecha . '</span>';
-                }
-            }
-
-
-            $sub_array[] = $row['fech_fin'] == '' ? 'Sin fecha' : '<span class="badge bg-light text-dark">' . $row['fech_fin'] . '</span>';
+            $sub_array[] = Validaciones::badge_fecha($row['fech_inicio']);
+            $sub_array[] = Validaciones::badge_fecha($row['fech_fin']);
             $sub_array[] = '<span class="badge bg-light text-dark">' . $row['creador_proy'] . '</span';
             $sub_array[] = strlen($row['cat_nom']) > 10
                 ? '<span class="badge bg-light text-dark" data-placement="top" title="' . $row['cat_nom'] . '">' . substr($row['cat_nom'], 0, 10) . '...' . '</span>'
@@ -2224,7 +2200,6 @@ switch ($_GET['proy']) {
                     $sub_array[] = isset($row['usu_nom_asignado']) == '' ? '<span class="badge bg-light text-dark">Sin asignar</span>' : '<span class="badge bg-info text-light">' . $row['usu_nom_asignado'] . '</span>';
                     break;
             }
-            $sub_array[] = '<span type="button" onclick="ver_hosts_eh(' . $row['id_proyecto_gestionado'] . ' )"><i class="text-secondary fs-18 ri-global-line" data-placement="top" title="Ver hosts"></i></span>';
             switch ($row['estados_id']) {
                 case '1':
                     $sub_array[] = '<div class="btn-group btn-group-sm p-0" role="group" aria-label="Button group with nested dropdown">
@@ -2260,6 +2235,19 @@ switch ($_GET['proy']) {
 
                 case '4':
                     $sub_array[] = '<a href="' . URL . 'View/Home/Gestion/Sectores/GestionarProy/?p=' . Openssl::set_ssl_encrypt($row['id_proyecto_cantidad_servicios']) . '&pg=' . Openssl::set_ssl_encrypt($row['id_proyecto_gestionado']) . '" rel="noopener noreferrer" title="Trabajar"><i class="ri-send-plane-fill text-primary fs-18"></i></a>';
+                    break;
+                case '26':
+                    $sub_array[] = '<div class="btn-group btn-group-sm p-0" role="group" aria-label="Button group with nested dropdown">
+                                <div class="btn-group p-0" role="group">
+                                    <button id="btnGroupDrop1" type="button" class="btn btn-primary btn-sm dropdown-toggle py-0" data-bs-toggle="dropdown" aria-expanded="false">
+                                        Estado
+                                    </button>
+                                    <ul class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+                                        <li><a class="dropdown-item" type="button" onclick="cambiar_estado_proy_desde_calidad_a_nuevo(' . $row['id_proyecto_gestionado'] . ')">Nuevo</a></li>
+                                                                            <li><a class="dropdown-item" type="button" onclick="cambiar_estado_proy_desde_calidad_a_borrador(' . $row['id_proyecto_gestionado'] . ')">Borrador</a></li>
+                                        </ul>
+                                </div>
+                            </div>';
                     break;
             }
             $data[] = $sub_array;

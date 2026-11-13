@@ -1474,7 +1474,7 @@ GROUP BY
     prio.id,
     prio.prioridad,
     tmc.cat_nom
-ORDER BY id_proyecto_cantidad_servicios ASC";
+    ORDER BY pg.fech_inicio IS NULL, pg.fech_inicio ASC";
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(1, $sector_id, PDO::PARAM_INT);
         $stmt->bindValue(2, $estados_id, PDO::PARAM_INT);

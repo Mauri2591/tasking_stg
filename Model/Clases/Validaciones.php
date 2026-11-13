@@ -125,4 +125,23 @@
                 return null;
             }
         }
+
+        public static function badge_fecha($fecha)
+        {
+            if ($fecha == '' || $fecha === null) {
+                return 'Sin fecha';
+            }
+            $fechaRow = DateTime::createFromFormat('!d-m-Y', $fecha);
+            if (!$fechaRow) {
+                return '<span class="badge bg-light text-dark">' . $fecha . '</span>';
+            }
+            $hoy = new DateTime('today');
+            if ($fechaRow == $hoy) {
+                return '<span class="badge border border-3 border-warning text-dark">' . $fecha . '</span>';
+            }
+            if ($fechaRow < $hoy) {
+                return '<span class="badge border border-3 border-danger text-dark">' . $fecha . '</span>';
+            }
+            return '<span class="badge bg-light text-dark">' . $fecha . '</span>';
+        }
     }

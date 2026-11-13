@@ -30,7 +30,12 @@ if (isset($_SESSION['usu_id'])) {
                         <div class="card-body">
                             <ul class="nav nav-pills arrow-navtabs nav-success bg-light mb-3" role="tablist">
                                 <li class="nav-item">
-                                    <a class="nav-link active" data-bs-toggle="tab" href="#tab_nuevos" role="tab">
+                                    <a class="nav-link active" data-bs-toggle="tab" href="#tab_pre_nuevos" role="tab">
+                                        <span class="d-none d-sm-block">Pre-Nuevos</span>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" data-bs-toggle="tab" href="#tab_nuevos" role="tab">
                                         <span class="d-none d-sm-block">Nuevos</span>
                                     </a>
                                 </li>
@@ -48,8 +53,30 @@ if (isset($_SESSION['usu_id'])) {
 
                             <div class="tab-content text-muted">
 
+                             <!-- PRE-NUEVOS -->
+                                <div class="tab-pane active" id="tab_pre_nuevos" role="tabpanel">
+                                    <div class="card card-body">
+                                        <table id="table_proyectos_pre_nuevos_eh" class="table text-center w-100">
+                                            <thead>
+                                                <tr>
+                                                   <th>TITULO</th>
+                                                    <th>INICIO</th>
+                                                    <th>FIN</th>
+                                                    <th>PM</th>
+                                                    <th>SERVICIO</th>
+                                                    <th>TIPO</th>
+                                                    <th>HS</th>
+                                                    <th>ASIGNADO</th>
+                                                    <th>ESTADO</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody></tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
                                 <!-- NUEVOS -->
-                                <div class="tab-pane active" id="tab_nuevos" role="tabpanel">
+                                <div class="tab-pane" id="tab_nuevos" role="tabpanel">
                                     <div class="card card-body">
                                         <table id="table_proyectos_nuevos_eh" class="table text-center w-100">
                                             <thead>
@@ -62,7 +89,6 @@ if (isset($_SESSION['usu_id'])) {
                                                     <th>TIPO</th>
                                                     <th>HS</th>
                                                     <th>ASIGNADO</th>
-                                                    <th>ACTIVOS</th>
                                                     <th>ESTADO</th>
                                                 </tr>
                                             </thead>
@@ -85,7 +111,6 @@ if (isset($_SESSION['usu_id'])) {
                                                     <th>TIPO</th>
                                                     <th>HS</th>
                                                     <th>ASIGNADO</th>
-                                                    <th>ACTIVOS</th>
                                                     <th>Ver</th>
                                                 </tr>
                                             </thead>
@@ -108,8 +133,7 @@ if (isset($_SESSION['usu_id'])) {
                                                     <th>TIPO</th>
                                                     <th>HS</th>
                                                     <th>ASIGNADO</th>
-                                                    <th>ACTIVOS</th>
-                                                    <th>Ver</th>
+                                                    <th>VER</th>
                                                     <th></th>
                                                 </tr>
                                             </thead>
