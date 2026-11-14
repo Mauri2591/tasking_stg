@@ -76,7 +76,7 @@
             <div class="mt-3 mb-1 mx-2 text-center p-2 border bg-light">
                 <small class="text-danger mt-0 fs-13">
                     Se eliminará la documentación de los proyectos cuya <strong>fecha de contrato</strong> (o de creación si no posee de Contrato) supere la antigüedad seleccionada.<br>
-                    <strong>Esta acción no se puede deshacer.</strong>
+                    <strong class="fs-14">¡Esta acción no se puede deshacer!</strong>
                 </small>
             </div>
         </div>

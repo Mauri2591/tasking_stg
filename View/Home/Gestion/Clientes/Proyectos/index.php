@@ -208,7 +208,7 @@ if (isset($_SESSION['usu_id'])) {
                                     <!-- ELIMINAR DOCUMENTACION -->
                                     <div class="tab-pane border rounded-2 p-2" id="eliminar_documentacion" role="tabpanel">
                                         <div class="d-flex justify-content-end">
-                                            <button id="btn_modal_eliminar_documentacion" class="mb-5 mx-3 btn btn-sm btn-danger">Eliminar Documentacion <i class="ri-delete-bin-2-fill text-light fs-18"></i></button>
+                                            <button id="btn_modal_eliminar_documentacion" class="mb-5 mx-3 btn btn-sm btn-danger">Purgar Proyectos <i class="ri-delete-bin-2-fill text-light fs-18"></i></button>
                                         </div>
                                         <table id="table_purga" class="table table-bordered dt-responsive nowrap table-striped align-middle" style="width:100%">
                                             <thead>
