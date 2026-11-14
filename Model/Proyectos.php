@@ -4016,8 +4016,8 @@ GROUP BY
                     WHERE proyecto_recurrencia.id_proyecto_cantidad_servicios = proyecto_gestionado.id_proyecto_cantidad_servicios
                         AND proyecto_recurrencia.est = 1
                         AND (proyecto_recurrencia.id_proyecto_gestionado IS NULL
-                            OR pg_rec.estados_id NOT IN (3, 4, 15, 16, 17))
-                    ) AS recurrencias_en_curso,
+                            OR pg_rec.estados_id NOT IN (4, 15, 16, 17))
+                ) AS recurrencias_en_curso,
                 DATE_FORMAT(
                     IF(YEAR(proyecto_gestionado.fecha_contrato) >= 2000, proyecto_gestionado.fecha_contrato,
                         IF(YEAR(proyecto_gestionado.fech_inicio) >= 2000, proyecto_gestionado.fech_inicio, proyecto_gestionado.fech_crea)
@@ -4031,11 +4031,17 @@ GROUP BY
                 ON descripciones_proyecto.id_proyecto_gestionado = proyecto_gestionado.id
             LEFT JOIN envio_correo_cliente 
                 ON envio_correo_cliente.id_proyecto_gestionado = proyecto_gestionado.id
-                       WHERE IF(YEAR(proyecto_gestionado.fecha_contrato) >= 2000, proyecto_gestionado.fecha_contrato,
+            WHERE IF(YEAR(proyecto_gestionado.fecha_contrato) >= 2000, proyecto_gestionado.fecha_contrato,
                     IF(YEAR(proyecto_gestionado.fech_inicio) >= 2000, proyecto_gestionado.fech_inicio, proyecto_gestionado.fech_crea)
                   ) <= DATE_SUB(CURDATE(), INTERVAL ? YEAR)
               AND proyecto_gestionado.estados_id IN (4, 15, 16, 17)
-              AND proyecto_gestionado.eliminado = 'NO'";
+              AND (
+                    proyecto_gestionado.eliminado = 'NO'
+                 OR (descripciones_proyecto.eliminado = 'NO'
+                     AND ((descripciones_proyecto.carpeta_documentos_proy IS NOT NULL AND descripciones_proyecto.carpeta_documentos_proy <> '')
+                       OR (descripciones_proyecto.captura_imagen IS NOT NULL AND descripciones_proyecto.captura_imagen <> '')))
+                 OR (envio_correo_cliente.clave_comprimido IS NOT NULL AND envio_correo_cliente.clave_comprimido <> '')
+              )";
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(1, $anios, PDO::PARAM_INT);
         $stmt->execute();
