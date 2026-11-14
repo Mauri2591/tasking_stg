@@ -449,7 +449,7 @@ if (isset($_SESSION['usu_id'])) {
 
                     data.forEach(elem => {
 
-                        const estadoBloqueado = ["3", "4", "14", "15", "16", "17"].includes(String(elem.estados_id));
+                        const estadoBloqueado = ["3", "4", "26", "14", "15", "16", "17"].includes(String(elem.estados_id));
 
                         // Sector 4 siempre puede
                         if (sector_usu_id == "4") {
