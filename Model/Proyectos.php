@@ -4138,7 +4138,10 @@ GROUP BY
     public function get_detalle_purga(int $id_purga)
     {
         $conn = parent::get_conexion();
-        $sql = "SELECT proyectos_purgados.id_proyecto_gestionado, proyecto_gestionado.titulo, proyectos_purgados.detalle
+        $sql = "SELECT proyectos_purgados.id_proyecto_gestionado,
+                   proyecto_gestionado.id_proyecto_cantidad_servicios,
+                   proyecto_gestionado.titulo,
+                   proyectos_purgados.detalle
             FROM proyectos_purgados
             INNER JOIN proyecto_gestionado ON proyecto_gestionado.id = proyectos_purgados.id_proyecto_gestionado
             WHERE proyectos_purgados.id_purga = ?

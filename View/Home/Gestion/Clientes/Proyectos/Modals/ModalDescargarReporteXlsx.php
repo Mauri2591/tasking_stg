@@ -94,7 +94,6 @@
                 <table id="table_detalle_purga" class="table table-bordered dt-responsive table-striped align-middle" style="width:100%">
                     <thead>
                         <tr>
-                            <th>ID</th>
                             <th>PROYECTO</th>
                             <th>CARPETA</th>
                             <th>ZIP</th>
@@ -102,6 +101,7 @@
                             <th>ARCHIVO CALIDAD</th>
                             <th>CAPTURAS</th>
                             <th>HOSTS</th>
+                            <th>VER</th>
                         </tr>
                     </thead>
                     <tbody></tbody>

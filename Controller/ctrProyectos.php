@@ -3692,13 +3692,13 @@ TXT;
         foreach ($datos as $row) {
             $d = json_decode($row['detalle'] ?? '', true) ?: [];
             $sub_array = [];
-            $sub_array[] = (int) $row['id_proyecto_gestionado'];
             $sub_array[] = htmlspecialchars($row['titulo']);
             $sub_array[] = '<span class="text-break fs-11">' . htmlspecialchars($d['carpeta'] ?? '-') . '</span>';            $sub_array[] = htmlspecialchars($d['zip'] ?? '-');
             $sub_array[] = $d['clave'] ?? '-';
             $sub_array[] = $d['archivo'] ?? '-';
             $sub_array[] = $d['captura'] ?? '-';
             $sub_array[] = $d['hosts'] ?? 0;
+            $sub_array[] = '<a href="' . URL . 'View/Home/Gestion/Sectores/GestionarProy/?p=' . Openssl::set_ssl_encrypt($row['id_proyecto_cantidad_servicios']) . '&pg=' . Openssl::set_ssl_encrypt($row['id_proyecto_gestionado']) . '" target="_blank" rel="noopener noreferrer" title="Ver proyecto"><i class="ri-send-plane-fill text-primary fs-18"></i></a>';
             $data[] = $sub_array;
         }
         echo json_encode([
