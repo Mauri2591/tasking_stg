@@ -208,18 +208,20 @@ if (isset($_SESSION['usu_id'])) {
                                     <!-- ELIMINAR DOCUMENTACION -->
                                     <div class="tab-pane border rounded-2 p-2" id="eliminar_documentacion" role="tabpanel">
                                         <div class="d-flex justify-content-end">
-                                        <button id="btn_modal_eliminar_documentacion" class="mb-5 mx-3 btn btn-sm btn-danger">Eliminar Documentacion <i class="ri-delete-bin-2-fill text-light fs-18"></i></button>
+                                            <button id="btn_modal_eliminar_documentacion" class="mb-5 mx-3 btn btn-sm btn-danger">Eliminar Documentacion <i class="ri-delete-bin-2-fill text-light fs-18"></i></button>
                                         </div>
-                                        <table id="table_proyectos_recurrencia" style="text-align: center; width: 100%;">
+                                        <table id="table_purga" class="table table-bordered dt-responsive nowrap table-striped align-middle" style="width:100%">
                                             <thead>
                                                 <tr>
-                                                    <th style="width: 400px;text-align: center;">USUARIO</th>
-                                                    <th style="width: 20px;text-align: center;">ACCION</th>
-                                                    <th style="width: 20px;text-align: center;">FECHA</th>
-                                                    <th style="width: 20px;text-align: center;">CONSULTAR</th>
+                                                    <th>USUARIO</th>
+                                                    <th>SECTOR</th>
+                                                    <th>ESTADO</th>
+                                                    <th class="text-center">AÑOS ANTIGüEDAD<br>APLICADO</th>
+                                                    <th>FECHA</th>
+                                                    <th>VER</th>
                                                 </tr>
                                             </thead>
-                                            <tbody style="text-align: center;"></tbody>
+                                            <tbody></tbody>
                                         </table>
                                         <p style="font-style: italic;" class="text-center mt-5 mx-3 text-danger">Los datos presentes corresponden al historico de acciones de Eliminacion de Documentacion de proyectos realizados a clientes</p>
                                     </div>

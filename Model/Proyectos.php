@@ -4098,4 +4098,21 @@ GROUP BY
         $stmt->bindValue(1, $id_proyecto_gestionado, PDO::PARAM_INT);
         $stmt->execute();
     }
+
+    public function get_purga()
+    {
+        $conn = parent::get_conexion();
+        $sql = "SELECT tm_usuario.usu_correo, audit_estados_proyecto.id_proyecto_gestionado, 
+        tm_estados.estados_nombre, sectores.sector_nombre, 
+        audit_estados_proyecto.id_proyecto_gestionado, audit_estados_proyecto.accion, 
+        audit_estados_proyecto.fecha FROM audit_estados_proyecto INNER JOIN tm_usuario 
+        ON tm_usuario.usu_id=audit_estados_proyecto.usu_id INNER JOIN tm_estados 
+        ON tm_estados.estados_id=audit_estados_proyecto.estados_id INNER JOIN sectores 
+        ON sectores.sector_id=audit_estados_proyecto.sector_id 
+        WHERE audit_estados_proyecto.estados_id=27";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+        $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return count($data) > 0 ? $data : [];
+    }
 }

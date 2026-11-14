@@ -3624,6 +3624,7 @@ TXT;
                 if (!$archivo_sigue) {
                     $proyecto->limpiar_archivo_y_captura_proyecto($row['id']);
                     $proyecto->limpiar_capturas_descripciones($row['id']);
+                    $audit->insert_audit_estados_proyecto($row['id'], 27, $_SESSION['usu_id'], $_SESSION['sector_id'], ["anios_caducados" => $anios]);
                 }
 
                 $proyectos_procesados[$row['id']] = true;
@@ -3638,6 +3639,30 @@ TXT;
             "hosts_eliminados" => $hosts_eliminados,
             "archivos_eliminados" => $archivos_eliminados,
             "bloqueados" => count($bloqueados),
+        ]);
+        break;
+
+    case 'get_purga':
+        $datos = $proyecto->get_purga();
+        $data = [];
+        foreach ($datos as $row) {
+            $accion = json_decode($row['accion'] ?? '', true);
+            $anios = $accion['anios_caducados'] ?? '-';
+
+            $sub_array = [];
+            $sub_array[] = htmlspecialchars($row['usu_correo']);
+            $sub_array[] = htmlspecialchars($row['sector_nombre']);
+            $sub_array[] = '<span class="badge bg-danger">' . htmlspecialchars($row['estados_nombre']) . '</span>';
+            $sub_array[] = '<span class="badge text-light bg-danger fs-12">'.$anios.'</span>';
+            $sub_array[] = date('d-m-Y H:i', strtotime($row['fecha']));
+            $sub_array[] = '<span type="button" onclick="verAccion(' . $row['id_proyecto_gestionado'] . ')" data-placement="top"><i class="ri-send-plane-fill text-primary fs-16"></i></span>';
+            $data[] = $sub_array;
+        }
+        echo json_encode([
+            "sEcho" => 1,
+            "iTotalRecords" => count($data),
+            "iTotalDisplayRecords" => count($data),
+            "aaData" => $data
         ]);
         break;
 

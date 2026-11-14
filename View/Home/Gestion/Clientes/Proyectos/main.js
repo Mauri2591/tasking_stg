@@ -448,6 +448,65 @@ $(document).ready(function () {
         }
     });
 
+    tabla = $("#table_purga").DataTable({
+        "aProcessing": true,
+        "aServerSide": true,
+        dom: 'Bfrtip',
+        "searching": true,
+        lenghtChange: false,
+        colReorder: true,
+        "columnDefs": [{
+    "className": "text-center",
+    "targets": [2, 3, 4, 5]
+}],
+        buttons: [
+            'copyHtml5',
+            'excelHtml5',
+            'csvHtml5',
+            'pdfHtml5'
+        ],
+        "ajax": {
+            url: "../../../../../Controller/ctrProyectos.php?proy=get_purga",
+            type: "post",
+            dataType: "json",
+            data: {
+            },
+            error: function (e) {}
+        },
+        "order": [
+        ], 
+        
+        "bDestroy": true,
+        "responsive": true,
+        "bInfo": true,
+        "iDisplayLength": 7, //cantidad de tuplas o filas a mostrar
+        "autoWith": false,
+        "language": {
+            "sProcessing": "Procesando..",
+            "sLengthMenu": "Mostrar _MENU_ registros",
+            "sZeroRecords": "No se encontraron resultados..",
+            "sEmptyTable": "Ninguna tarea disponible en esta tabla",
+            "sInfo": "Mostrando un total de _TOTAL_ registros",
+            "sInfoEmpty": "Mostrando un total de 0 registros",
+            "sInfoFiltered": "(Filtrado de un total de _MAX_ registros)",
+            "sInfoPostFix": "",
+            "sSearch": "Buscar: ",
+            "sUrl": "",
+            "sInfoThousands": ",",
+            "sLoadingRecords": "Cargando",
+            "oPaginate": {
+                "sFirst": "Primero",
+                "sLast": "Ùltimo",
+                "sNext": "Siguiente",
+                "sPrevious": "Anterior"
+            },
+            "oAria": {
+                "sSortAscending": ":Activar para ordenar la columna de manera ascendiente",
+                "sSortDescending": ":Activar para ordenar la columna de manera descendiente"
+            }
+        }
+    });
+
     const elUsuariosSector = document.getElementById('usuarios_sector');
     if (elUsuariosSector) {
         elUsuariosSector.addEventListener('change', function () {

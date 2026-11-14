@@ -55,21 +55,26 @@ class Auditoria extends Conexion
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-   public function insert_audit_estados_proyecto(int $id_proyecto_gestionado, int $estados_id, int $usu_id, int $sector_id)
-        {
-            $conn = parent::get_conexion();
-            
-            $sql = "INSERT IGNORE INTO audit_estados_proyecto 
-                    (id_proyecto_gestionado, estados_id, usu_id, sector_id, fecha) 
-                    VALUES 
-                    (:id_proyecto_gestionado, :estados_id, :usu_id, :sector_id, NOW())";
-            $stmt = $conn->prepare($sql);
-            $stmt->bindValue(":id_proyecto_gestionado", $id_proyecto_gestionado, PDO::PARAM_INT);
-            $stmt->bindValue(":estados_id", $estados_id, PDO::PARAM_INT);
-            $stmt->bindValue(":usu_id", $usu_id, PDO::PARAM_INT);
-            $stmt->bindValue(":sector_id", $sector_id, PDO::PARAM_INT);
-            $stmt->execute();
-        }
+  public function insert_audit_estados_proyecto(int $id_proyecto_gestionado, int $estados_id, int $usu_id, int $sector_id, $accion = null)
+{
+    $conn = parent::get_conexion();
+
+    if (is_array($accion)) {
+        $accion = json_encode($accion, JSON_UNESCAPED_UNICODE);
+    }
+
+    $sql = "INSERT IGNORE INTO audit_estados_proyecto 
+            (id_proyecto_gestionado, estados_id, usu_id, sector_id, fecha, accion) 
+            VALUES 
+            (:id_proyecto_gestionado, :estados_id, :usu_id, :sector_id, NOW(), :accion)";
+    $stmt = $conn->prepare($sql);
+    $stmt->bindValue(":id_proyecto_gestionado", $id_proyecto_gestionado, PDO::PARAM_INT);
+    $stmt->bindValue(":estados_id", $estados_id, PDO::PARAM_INT);
+    $stmt->bindValue(":usu_id", $usu_id, PDO::PARAM_INT);
+    $stmt->bindValue(":sector_id", $sector_id, PDO::PARAM_INT);
+    $stmt->bindValue(":accion", $accion, $accion === null ? PDO::PARAM_NULL : PDO::PARAM_STR);
+    $stmt->execute();
+}
 
     public function get_auditoria_proyectos()
     {
