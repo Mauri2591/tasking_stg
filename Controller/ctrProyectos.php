@@ -2661,7 +2661,7 @@ switch ($_GET['proy']) {
                         </h6>
                         <?php
                         // Estados donde normalmente no se borra
-                        $estadoNoEditable = in_array($val['estados_id'], [3, 4]);
+                        $estadoNoEditable = in_array($val['estados_id'], [3, 4, 14, 15, 16, 17]);
 
                         // Usuario que creó la descripción
                         $esAutor = ($_SESSION['usu_id'] == $val['usu_crea']);
