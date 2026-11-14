@@ -2660,17 +2660,18 @@ switch ($_GET['proy']) {
                                         class="text-muted fs-12"><?php echo date('d-m-Y H:i', strtotime($val['fech_crea'])) ?></span>)</span></a>
                         </h6>
                         <?php
-                        // Estados donde normalmente no se borra
-                        $estadoNoEditable = in_array($val['estados_id'], [3, 4, 14, 15, 16, 17]);
+                        // Estados donde se puede borrar: NUEVO, ABIERTO, BORRADOR, PRE-NUEVO
+                        $estadoEditable = in_array((int) $val['estados_id'], [1, 2, 14, 26]);
 
                         // Usuario que creó la descripción
                         $esAutor = ($_SESSION['usu_id'] == $val['usu_crea']);
 
-                        // Usuario pertenece al sector 4
-                        $esSector4 = ($_SESSION['sector_id'] == 4);
+                        // Historial: enviada al cliente o ya purgada
+                        $enviadaAlCliente = ($val['envio_correo_cliente'] ?? '') === 'SI';
+                        $purgada = ($val['eliminado'] ?? 'NO') === 'SI';
 
                         // Permiso final
-                        $tienePermiso = $esAutor && (!$estadoNoEditable || $esSector4);
+                        $tienePermiso = $esAutor && $estadoEditable && !$enviadaAlCliente && !$purgada;
 
                         $icono_correo_enviado = '';
                         if ($val['envio_correo_cliente'] == 'SI') {
@@ -3693,7 +3694,8 @@ TXT;
             $d = json_decode($row['detalle'] ?? '', true) ?: [];
             $sub_array = [];
             $sub_array[] = htmlspecialchars($row['titulo']);
-            $sub_array[] = '<span class="text-break fs-11">' . htmlspecialchars($d['carpeta'] ?? '-') . '</span>';            $sub_array[] = htmlspecialchars($d['zip'] ?? '-');
+            $sub_array[] = '<span class="text-break fs-11">' . htmlspecialchars($d['carpeta'] ?? '-') . '</span>';
+            $sub_array[] = htmlspecialchars($d['zip'] ?? '-');
             $sub_array[] = $d['clave'] ?? '-';
             $sub_array[] = $d['archivo'] ?? '-';
             $sub_array[] = $d['captura'] ?? '-';
