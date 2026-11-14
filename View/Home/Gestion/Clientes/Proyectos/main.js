@@ -456,9 +456,9 @@ $(document).ready(function () {
         lenghtChange: false,
         colReorder: true,
         "columnDefs": [{
-    "className": "text-center",
-    "targets": [2, 3, 4, 5]
-}],
+            "className": "text-center",
+            "targets": [2, 3, 4, 5, 6]
+        }],
         buttons: [
             'copyHtml5',
             'excelHtml5',
@@ -469,13 +469,11 @@ $(document).ready(function () {
             url: "../../../../../Controller/ctrProyectos.php?proy=get_purga",
             type: "post",
             dataType: "json",
-            data: {
-            },
+            data: {},
             error: function (e) {}
         },
-        "order": [
-        ], 
-        
+        "order": [],
+
         "bDestroy": true,
         "responsive": true,
         "bInfo": true,
@@ -585,7 +583,8 @@ $(document).ready(function () {
             '#tab_realizados': '#table_proyectos_realizados',
             '#tab_bitacora': '#table_bitacora',
             '#tab_cross_sell_sectores': '#table_cross_sell_sectores',
-            '#tab_total': '#table_proyectos_total_calidad'
+            '#tab_total': '#table_proyectos_total_calidad',
+            '#eliminar_documentacion': '#table_purga'
         };
 
         const tablaId = tablaMap[target];
@@ -625,7 +624,9 @@ $(document).ready(function () {
                         Swal.fire({
                             icon: "info",
                             title: "Sin resultados",
-                            text: "No hay proyectos con más de " + anios + " año(s)."
+                            text: "No hay proyectos con más de " + anios + " año(s).",
+                            timer: 1500,
+                            showConfirmButton: false
                         });
                         return;
                     }
@@ -679,7 +680,9 @@ $(document).ready(function () {
                                     });
                                     return;
                                 }
-                                $("#modalProyectosCaducados").modal("hide");
+                                if ($.fn.DataTable.isDataTable('#table_purga')) {
+                                    $('#table_purga').DataTable().ajax.reload(null, false);
+                                }
                                 Swal.fire({
                                     icon: "success",
                                     title: "Listo",
@@ -4178,5 +4181,37 @@ if (btn_update_parcial) {
                 console.error('Error en la petición:', xhr.responseText);
             }
         });
+    });
+}
+
+$("#modalDetallePurga").on("shown.bs.modal", function () {
+    $("#table_detalle_purga").DataTable().columns.adjust().responsive.recalc();
+});
+
+function verAccion(id_purga) {
+    $("#modalDetallePurga").modal("show");
+
+    $("#table_detalle_purga").DataTable({
+        "ajax": {
+            url: "../../../../../Controller/ctrProyectos.php?proy=get_detalle_purga",
+            type: "post",
+            dataType: "json",
+            data: { id_purga: id_purga }
+        },
+        "order": [],
+        "columnDefs": [{ "className": "text-center", "targets": [0, 4, 5, 6, 7] }],
+        "bDestroy": true,
+        "responsive": true,
+        "iDisplayLength": 10,
+        "autoWidth": false,
+        "initComplete": function () {
+            this.api().columns.adjust().responsive.recalc();
+        },
+        "language": {
+            "sEmptyTable": "Sin proyectos en esta purga",
+            "sSearch": "Buscar: ",
+            "sInfo": "Mostrando un total de _TOTAL_ registros",
+            "oPaginate": { "sNext": "Siguiente", "sPrevious": "Anterior" }
+        }
     });
 }

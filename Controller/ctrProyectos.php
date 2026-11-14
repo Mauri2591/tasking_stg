@@ -3591,6 +3591,8 @@ TXT;
         $zips_eliminados = 0;
         $archivos_eliminados = 0;
         $hosts_eliminados = 0;
+        $id_purga = null;
+        $cant_purgados = 0;
         $proyectos_procesados = [];
         $bloqueados = [];
 
@@ -3624,7 +3626,26 @@ TXT;
                 if (!$archivo_sigue) {
                     $proyecto->limpiar_archivo_y_captura_proyecto($row['id']);
                     $proyecto->limpiar_capturas_descripciones($row['id']);
-                    $audit->insert_audit_estados_proyecto($row['id'], 27, $_SESSION['usu_id'], $_SESSION['sector_id'], ["anios_caducados" => $anios]);
+
+                    if ($id_purga === null) {
+                        $id_purga = $proyecto->insert_purga($_SESSION['usu_id'], $_SESSION['sector_id'], $anios);
+                    }
+                    $proyecto->insert_proyecto_purgado($id_purga, $row['id'], [
+                        "carpeta" => $row['carpeta_documentos_proy'] ?: null,
+                        "zip"     => !empty($row['ruta_comprimido']) ? basename($row['ruta_comprimido']) : null,
+                        "clave"   => !empty($row['clave_comprimido']) ? 'SI' : 'NO',
+                        "archivo" => !empty($row['archivo']) ? 'SI' : 'NO',
+                        "captura" => ($row['tiene_captura'] || $row['desc_tiene_captura']) ? 'SI' : 'NO',
+                        "hosts"   => (int) $row['cant_hosts']
+                    ]);
+                    $audit->insert_audit_estados_proyecto($row['id'], 27, $_SESSION['usu_id'], $_SESSION['sector_id'], [
+                        "id_purga" => $id_purga,
+                        "anios_caducados" => $anios
+                    ]);
+                    $cant_purgados++;
+                }
+                if ($id_purga !== null) {
+                    $proyecto->update_cant_purga($id_purga, $cant_purgados);
                 }
 
                 $proyectos_procesados[$row['id']] = true;
@@ -3646,16 +3667,38 @@ TXT;
         $datos = $proyecto->get_purga();
         $data = [];
         foreach ($datos as $row) {
-            $accion = json_decode($row['accion'] ?? '', true);
-            $anios = $accion['anios_caducados'] ?? '-';
-
             $sub_array = [];
             $sub_array[] = htmlspecialchars($row['usu_correo']);
             $sub_array[] = htmlspecialchars($row['sector_nombre']);
-            $sub_array[] = '<span class="badge bg-danger">' . htmlspecialchars($row['estados_nombre']) . '</span>';
-            $sub_array[] = '<span class="badge text-light bg-danger fs-12">'.$anios.'</span>';
+            $sub_array[] = '<span class="badge bg-danger">PURGA PROYECTOS</span>';
+            $sub_array[] = $row['anios'] . ' año(s)';
+            $sub_array[] = $row['cant_proyectos'];
             $sub_array[] = date('d-m-Y H:i', strtotime($row['fecha']));
-            $sub_array[] = '<span type="button" onclick="verAccion(' . $row['id_proyecto_gestionado'] . ')" data-placement="top"><i class="ri-send-plane-fill text-primary fs-16"></i></span>';
+            $sub_array[] = '<span type="button" onclick="verAccion(' . (int) $row['id'] . ')" title="Ver proyectos"><i class="ri-send-plane-fill text-primary fs-16"></i></span>';
+            $data[] = $sub_array;
+        }
+        echo json_encode([
+            "sEcho" => 1,
+            "iTotalRecords" => count($data),
+            "iTotalDisplayRecords" => count($data),
+            "aaData" => $data
+        ]);
+        break;
+
+    case 'get_detalle_purga':
+        $id_purga = (int) ($_POST['id_purga'] ?? 0);
+        $datos = $proyecto->get_detalle_purga($id_purga);
+        $data = [];
+        foreach ($datos as $row) {
+            $d = json_decode($row['detalle'] ?? '', true) ?: [];
+            $sub_array = [];
+            $sub_array[] = (int) $row['id_proyecto_gestionado'];
+            $sub_array[] = htmlspecialchars($row['titulo']);
+            $sub_array[] = '<span class="text-break fs-11">' . htmlspecialchars($d['carpeta'] ?? '-') . '</span>';            $sub_array[] = htmlspecialchars($d['zip'] ?? '-');
+            $sub_array[] = $d['clave'] ?? '-';
+            $sub_array[] = $d['archivo'] ?? '-';
+            $sub_array[] = $d['captura'] ?? '-';
+            $sub_array[] = $d['hosts'] ?? 0;
             $data[] = $sub_array;
         }
         echo json_encode([

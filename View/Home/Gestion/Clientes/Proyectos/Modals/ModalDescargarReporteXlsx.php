@@ -82,3 +82,31 @@
         </div>
     </div>
 </div>
+
+<div class="modal fade" id="modalDetallePurga" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl" style="max-width: 95vw;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Detalle de la purga</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <table id="table_detalle_purga" class="table table-bordered dt-responsive table-striped align-middle" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>PROYECTO</th>
+                            <th>CARPETA</th>
+                            <th>ZIP</th>
+                            <th>CLAVE ZIP</th>
+                            <th>ARCHIVO CALIDAD</th>
+                            <th>CAPTURAS</th>
+                            <th>HOSTS</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

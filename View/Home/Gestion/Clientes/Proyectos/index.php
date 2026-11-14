@@ -216,14 +216,15 @@ if (isset($_SESSION['usu_id'])) {
                                                     <th>USUARIO</th>
                                                     <th>SECTOR</th>
                                                     <th>ESTADO</th>
-                                                    <th class="text-center">AÑOS ANTIGüEDAD<br>APLICADO</th>
+                                                    <th>AÑOS ANTIGÜEDAD APLICADO</th>
+                                                    <th>PROYECTOS</th>
                                                     <th>FECHA</th>
                                                     <th>VER</th>
                                                 </tr>
                                             </thead>
                                             <tbody></tbody>
                                         </table>
-                                        <p style="font-style: italic;" class="text-center mt-5 mx-3 text-danger">Los datos presentes corresponden al historico de acciones de Eliminacion de Documentacion de proyectos realizados a clientes</p>
+                                        <p class="text-center mt-5 mx-3 text-danger bg-light py-2 fs-14">Los datos presentes corresponden al historico de acciones de Eliminacion de Documentacion de proyectos realizados a clientes</p>
                                     </div>
                                 </div>
                             </div>

@@ -4034,7 +4034,7 @@ GROUP BY
                        WHERE IF(YEAR(proyecto_gestionado.fecha_contrato) >= 2000, proyecto_gestionado.fecha_contrato,
                     IF(YEAR(proyecto_gestionado.fech_inicio) >= 2000, proyecto_gestionado.fech_inicio, proyecto_gestionado.fech_crea)
                   ) <= DATE_SUB(CURDATE(), INTERVAL ? YEAR)
-              AND proyecto_gestionado.estados_id IN (3, 4, 15, 16, 17)
+              AND proyecto_gestionado.estados_id IN (4, 15, 16, 17)
               AND proyecto_gestionado.eliminado = 'NO'";
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(1, $anios, PDO::PARAM_INT);
@@ -4102,17 +4102,59 @@ GROUP BY
     public function get_purga()
     {
         $conn = parent::get_conexion();
-        $sql = "SELECT tm_usuario.usu_correo, audit_estados_proyecto.id_proyecto_gestionado, 
-        tm_estados.estados_nombre, sectores.sector_nombre, 
-        audit_estados_proyecto.id_proyecto_gestionado, audit_estados_proyecto.accion, 
-        audit_estados_proyecto.fecha FROM audit_estados_proyecto INNER JOIN tm_usuario 
-        ON tm_usuario.usu_id=audit_estados_proyecto.usu_id INNER JOIN tm_estados 
-        ON tm_estados.estados_id=audit_estados_proyecto.estados_id INNER JOIN sectores 
-        ON sectores.sector_id=audit_estados_proyecto.sector_id 
-        WHERE audit_estados_proyecto.estados_id=27";
+        $sql = "SELECT purgas.id, tm_usuario.usu_correo, sectores.sector_nombre,
+                   purgas.anios, purgas.cant_proyectos, purgas.fecha
+            FROM purgas
+            INNER JOIN tm_usuario ON tm_usuario.usu_id = purgas.usu_id
+            INNER JOIN sectores ON sectores.sector_id = purgas.sector_id
+            ORDER BY purgas.fecha DESC";
         $stmt = $conn->prepare($sql);
         $stmt->execute();
         $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
         return count($data) > 0 ? $data : [];
+    }
+
+    public function insert_purga(int $usu_id, int $sector_id, int $anios)
+    {
+        $conn = parent::get_conexion();
+        $stmt = $conn->prepare("INSERT INTO purgas (usu_id, sector_id, anios, fecha) VALUES (?, ?, ?, NOW())");
+        $stmt->bindValue(1, $usu_id, PDO::PARAM_INT);
+        $stmt->bindValue(2, $sector_id, PDO::PARAM_INT);
+        $stmt->bindValue(3, $anios, PDO::PARAM_INT);
+        $stmt->execute();
+        return (int) $conn->lastInsertId();
+    }
+
+    public function insert_proyecto_purgado(int $id_purga, int $id_proyecto_gestionado, array $detalle = [])
+    {
+        $conn = parent::get_conexion();
+        $stmt = $conn->prepare("INSERT INTO proyectos_purgados (id_purga, id_proyecto_gestionado, detalle) VALUES (?, ?, ?)");
+        $stmt->bindValue(1, $id_purga, PDO::PARAM_INT);
+        $stmt->bindValue(2, $id_proyecto_gestionado, PDO::PARAM_INT);
+        $stmt->bindValue(3, json_encode($detalle, JSON_UNESCAPED_UNICODE), PDO::PARAM_STR);
+        $stmt->execute();
+    }
+
+    public function get_detalle_purga(int $id_purga)
+    {
+        $conn = parent::get_conexion();
+        $sql = "SELECT proyectos_purgados.id_proyecto_gestionado, proyecto_gestionado.titulo, proyectos_purgados.detalle
+            FROM proyectos_purgados
+            INNER JOIN proyecto_gestionado ON proyecto_gestionado.id = proyectos_purgados.id_proyecto_gestionado
+            WHERE proyectos_purgados.id_purga = ?
+            ORDER BY proyectos_purgados.id_proyecto_gestionado";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue(1, $id_purga, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function update_cant_purga(int $id_purga, int $cant)
+    {
+        $conn = parent::get_conexion();
+        $stmt = $conn->prepare("UPDATE purgas SET cant_proyectos = ? WHERE id = ?");
+        $stmt->bindValue(1, $cant, PDO::PARAM_INT);
+        $stmt->bindValue(2, $id_purga, PDO::PARAM_INT);
+        $stmt->execute();
     }
 }
