@@ -68,7 +68,7 @@
                     </section>
                     <div class="d-flex justify-content-end mt-5 mb-2 me-2">
                         <button type="button" class="btn btn-sm btn-light mx-2" data-bs-dismiss="modal">Cerrar</button>
-                        <button id="btn_eliminar_caducados" type="button" class="btn btn-sm btn-danger">Eliminar</button>
+                        <button id="btn_eliminar_caducados" type="button" class="btn btn-sm btn-danger">Consultar</button>
                     </div>
                 </div>
             </form>

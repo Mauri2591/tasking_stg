@@ -2832,12 +2832,14 @@ function cambiar_a_pausa(id_proyecto_gestionado) {
                 textoCorreo = "Proyecto actualizado, pero la notificación no se envió: " + data.correo;
             }
 
+            const correoFallo = data.correo !== true && data.correo !== null;
+
             Swal.fire({
-                icon: "success",
+                icon: correoFallo ? "warning" : "success",
                 title: "Proyecto pasado a En Pausa",
                 text: textoCorreo,
-                timer: textoCorreo ? 3000 : 1500,
-                showConfirmButton: false
+                timer: correoFallo ? undefined : 1500,
+                showConfirmButton: correoFallo
             });
         } catch (xhr) {
             console.log("Falló:", xhr.status, xhr.responseText);
@@ -4196,10 +4198,15 @@ function verAccion(id_purga) {
             url: "../../../../../Controller/ctrProyectos.php?proy=get_detalle_purga",
             type: "post",
             dataType: "json",
-            data: { id_purga: id_purga }
+            data: {
+                id_purga: id_purga
+            }
         },
         "order": [],
-        "columnDefs": [{ "className": "text-center", "targets": [0, 4, 5, 6, 7] }],
+        "columnDefs": [{
+            "className": "text-center",
+            "targets": [0, 4, 5, 6, 7]
+        }],
         "bDestroy": true,
         "responsive": true,
         "iDisplayLength": 10,
@@ -4211,7 +4218,10 @@ function verAccion(id_purga) {
             "sEmptyTable": "Sin proyectos en esta purga",
             "sSearch": "Buscar: ",
             "sInfo": "Mostrando un total de _TOTAL_ registros",
-            "oPaginate": { "sNext": "Siguiente", "sPrevious": "Anterior" }
+            "oPaginate": {
+                "sNext": "Siguiente",
+                "sPrevious": "Anterior"
+            }
         }
     });
 }

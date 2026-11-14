@@ -192,21 +192,29 @@ class Correo extends Conexion
 
     public function notificarProyectoEstado($id)
     {
+        if (SMTP_ENABLED != true) {
+            return null;
+        }
+
         $datos = $this->getDatosParaCorreoNotificarEstado($id);
-        $usuarioNotificador = $_SESSION['usu_correo'];
         if (!$datos) {
             return 'No se encontraron datos del proyecto';
         }
+
+        $e = fn($v) => htmlspecialchars((string) ($v ?? ''), ENT_QUOTES, 'UTF-8');
+
+        $usuarioNotificador = $_SESSION['usu_correo'] ?? 'N/A';
         $producto = $datos->producto ?: 'N/A';
         $cliente  = $datos->cliente  ?: 'N/A';
         $refProy  = $datos->refProy  ?: 'N/A';
+
         $mail = new PHPMailer(true);
         try {
             $mail->isSMTP();
             $mail->Host       = SMTP_HOST;
             $mail->SMTPAuth   = false;
             $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-            $mail->Port       = (int)SMTP_PORT;
+            $mail->Port       = (int) SMTP_PORT;
             $mail->SMTPOptions = [
                 'ssl' => [
                     'verify_peer'       => false,
@@ -230,9 +238,7 @@ class Correo extends Conexion
             if (!empty($datos->lideres) && $datos->lideres !== 'Sin lider') {
                 foreach (array_map('trim', explode(',', $datos->lideres)) as $correo) {
                     if (filter_var($correo, FILTER_VALIDATE_EMAIL)) {
-                        if (!isset($destinatarios[strtolower($correo)])) {
-                            $destinatarios[strtolower($correo)] = $correo;
-                        }
+                        $destinatarios[strtolower($correo)] = $correo;
                     }
                 }
             }
@@ -253,22 +259,24 @@ class Correo extends Conexion
             $mail->isHTML(true);
             $mail->Subject = 'Proyecto en estado ' . $datos->estado . ' - [CLIENTE] ' . $cliente;
             $mail->Body = "<p>Estimados,<br><br>
-                    El presente proyecto se encuentra en estado <b> {$datos->estado}</b>.
-                    En el caso de reabrirse lo verá reflejado en Tasking.</p>
-                    <p><b>Título:</b> {$datos->titulo}</p>
-                    <p><b>Referencia:</b> {$refProy}</p>
-                    <p><b>Producto:</b> {$producto}</p>
-                    <p><b>Tipo:</b> {$datos->tipo}</p>
-                    <p><b>Usuario/s asignado/s al proyecto:</b><br>{$datos->usuarios}</p>
-                    <p><b>Líder/es del sector:</b><br>{$datos->lideres}</p>
-                    <p><b>Accion generada por:</b> {$usuarioNotificador}</p>
-                    <br>
-                    <p>Saludos.</p>
-                    <p>Equipo de Calidad y Procesos</p>
-                    <p>Delivery Services – Cybersecurity Solutions<p>";
+                El presente proyecto se encuentra en estado <b>{$e($datos->estado)}</b>.
+                En el caso de reabrirse lo verá reflejado en Tasking.</p>
+                <p><b>Título:</b> {$e($datos->titulo)}</p>
+                <p><b>Referencia:</b> {$e($refProy)}</p>
+                <p><b>Producto:</b> {$e($producto)}</p>
+                <p><b>Tipo:</b> {$e($datos->tipo)}</p>
+                <p><b>Usuario/s asignado/s al proyecto:</b><br>{$e($datos->usuarios)}</p>
+                <p><b>Líder/es del sector:</b><br>{$e($datos->lideres)}</p>
+                <p><b>Acción generada por:</b> {$e($usuarioNotificador)}</p>
+                <br>
+                <p>Saludos.</p>
+                <p>Equipo de Calidad y Procesos</p>
+                <p>Delivery Services – Cybersecurity Solutions</p>";
+            $mail->AltBody = strip_tags(str_replace(['<br>', '</p>'], "\n", $mail->Body));
+
             $mail->send();
             return true;
-        } catch (Exception $e) {
+        } catch (Exception $ex) {
             return 'ERROR SMTP: ' . $mail->ErrorInfo;
         }
     }
