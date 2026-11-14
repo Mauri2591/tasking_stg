@@ -534,6 +534,106 @@ $(document).ready(function () {
             $(tablaId).DataTable().ajax.reload(null, false);
         }
     });
+
+    let btn_modal_eliminar_documentacion = document.getElementById("btn_modal_eliminar_documentacion");
+    if (btn_modal_eliminar_documentacion) {
+        btn_modal_eliminar_documentacion.addEventListener("click", function () {
+            $("#modalProyectosCaducados").modal("show");
+        });
+    }
+
+    let btn_eliminar_caducados = document.getElementById("btn_eliminar_caducados");
+    if (btn_eliminar_caducados) {
+        btn_eliminar_caducados.addEventListener("click", function () {
+            const anios = $("#anios_caducados").val();
+            const url = "../../../../../Controller/ctrProyectos.php?proy=get_proyectos_caducados";
+
+            // 1. Contar
+            $.post(url, {
+                    anios_caducados: anios,
+                    accion: "contar"
+                }, null, "json")
+                .done(function (res) {
+                    if (res.status !== "ok") {
+                        Swal.fire({
+                            icon: "error",
+                            title: "Error",
+                            text: res.msg || "No se pudo consultar"
+                        });
+                        return;
+                    }
+                    if (res.proyectos === 0) {
+                        Swal.fire({
+                            icon: "info",
+                            title: "Sin resultados",
+                            text: "No hay proyectos con más de " + anios + " año(s)."
+                        });
+                        return;
+                    }
+                    if (res.con_documentos === 0) {
+                        Swal.fire({
+                            icon: "info",
+                            title: "Sin documentación",
+                            text: "Hay " + res.proyectos + " proyecto(s) vencido(s), pero ninguno tiene documentación para eliminar."
+                        });
+                        return;
+                    }
+
+                    // 2. Confirmar
+                    Swal.fire({
+                        icon: "warning",
+                        title: "¿Eliminar documentación?",
+                        html: "Se encontraron <b>" + res.proyectos + "</b> proyecto(s) vencido(s) con más de " + anios + " año(s).<br>" +
+                            "Se eliminarán los documentos de <b>" + res.con_documentos + "</b> proyecto(s).<br>" +
+                            "Esta acción no se puede deshacer.",
+                        showCancelButton: true,
+                        confirmButtonText: "Sí, eliminar",
+                        cancelButtonText: "Cancelar",
+                        confirmButtonColor: "#d33"
+                    }).then((result) => {
+                        if (!result.isConfirmed) return;
+
+                        // 3. Eliminar
+                        $.post(url, {
+                                anios_caducados: anios
+                            }, null, "json")
+                            .done(function (response) {
+                                if (response.status !== "ok") {
+                                    Swal.fire({
+                                        icon: "error",
+                                        title: "Error",
+                                        text: response.msg || "No se pudo completar la acción"
+                                    });
+                                    return;
+                                }
+                                $("#modalProyectosCaducados").modal("hide");
+                                Swal.fire({
+                                    icon: "success",
+                                    title: "Listo",
+                                    html: "Carpetas eliminadas: <b>" + response.carpetas_eliminadas + "</b><br>" +
+                                        "ZIPs eliminados: <b>" + response.zips_eliminados + "</b>"
+                                });
+                            })
+                            .fail(function (xhr) {
+                                console.error(xhr.responseText);
+                                Swal.fire({
+                                    icon: "error",
+                                    title: "Error",
+                                    text: "Error en la petición"
+                                });
+                            });
+                    });
+                })
+                .fail(function (xhr) {
+                    console.error(xhr.responseText);
+                    Swal.fire({
+                        icon: "error",
+                        title: "Error",
+                        text: "Error en la petición"
+                    });
+                });
+        });
+    }
 });
 
 $("#combo_sector_proy_nuevo").change(function (e) {
@@ -3861,8 +3961,8 @@ function editar_proyecto(id_proyecto_gestionado) {
             $('#correo_envio_cliente_edicion_parcial').val(proyecto.correo_envio_cliente);
             $('#correo_envio_cliente_copias_edicion_parcial').val(proyecto.correo_envio_cliente_copias);
             $('#descripcion').val(proyecto.descripcion);
+            $('#fecha_creacion_update_parcial').val(proyecto.fecha_creacion);
             $('#dimensionamiento_update_parcial').val(proyecto.dimensionamiento);
-
             $('#fecha_contrato_update_parcial').val(proyecto.fecha_contrato);
             $('#plazo_meses_update_parcial').val(proyecto.plazo_meses);
             $('#posee_licencias_update_parcial').val(proyecto.posee_licencias);
@@ -3989,11 +4089,12 @@ if (btn_update_parcial) {
                         $('#mje_update_parcial').css('display', 'none');
                     }, 1300);
                 } else {
-                    console.error('Error al actualizar', {
-                        proyecto_gestionado: response.pg,
-                        dimensionamiento: response.dim,
-                        usuarios: response.usu
+                    Swal.fire({
+                        icon: "error",
+                        title: "Error",
+                        text: response.message || "No se pudo actualizar el proyecto"
                     });
+                    console.error('Error al actualizar', response);
                 }
             },
             error: function (xhr) {

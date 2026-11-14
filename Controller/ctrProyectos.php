@@ -391,6 +391,21 @@ switch ($_GET['proy']) {
         break;
 
     case 'insert_proyecto_gestionado':
+        $fechas = [
+            'fech_inicio'                 => 'fecha de inicio',
+            'fech_fin'                    => 'fecha de fin',
+            'fech_vantive'                => 'fecha Vantive',
+            'fecha_contrato'              => 'fecha de contrato',
+            'fecha_vencimiento_licencias' => 'fecha de vencimiento de licencias'
+        ];
+        foreach ($fechas as $campo => $nombre) {
+            $valor = trim($_POST[$campo] ?? '');
+            if ($valor !== '' && Validaciones::fecha_valida($valor) === null) {
+                echo json_encode(["Status" => "Error", "Message" => "La $nombre es inválida"]);
+                exit;
+            }
+        }
+
         $archivo_subido = (isset($_FILES['archivo']) && $_FILES['archivo']['error'] === 0)
             ? Validaciones::subida_archivo($_FILES['archivo'])
             : null;
@@ -757,6 +772,21 @@ switch ($_GET['proy']) {
                 "message" => "ID de proyecto inválido"
             ]);
             exit;
+        }
+
+        $fechas = [
+            'fech_inicio'                 => 'fecha de inicio',
+            'fech_fin'                    => 'fecha de fin',
+            'fech_vantive'                => 'fecha Vantive',
+            'fecha_contrato'              => 'fecha de contrato',
+            'fecha_vencimiento_licencias' => 'fecha de vencimiento de licencias'
+        ];
+        foreach ($fechas as $campo => $nombre) {
+            $valor = trim($_POST[$campo] ?? '');
+            if ($valor !== '' && $valor !== 'null' && Validaciones::fecha_valida($valor) === null) {
+                echo json_encode(["status" => "error", "message" => "La $nombre es inválida"]);
+                exit;
+            }
         }
         /* =====================================================
             * 1. CREAR CONEXIÓN Y ABRIR TRANSACCIÓN
@@ -2693,13 +2723,17 @@ switch ($_GET['proy']) {
 
             if (!empty($val['carpeta_documentos_proy']) && !empty($val['documento'])) {
                 $archivos = explode(",", $val['documento']);
-                $ruta_base = URL . "View/Home/Public/Uploads/Proyectos/" . $val['carpeta_documentos_proy'] . "/";
+                $ruta_base   = URL . "View/Home/Public/Uploads/Proyectos/" . $val['carpeta_documentos_proy'] . "/";
+                $ruta_fisica = BASE_PATH . "View/Home/Public/Uploads/Proyectos/" . $val['carpeta_documentos_proy'];
 
-                echo '<div class="ms-5">';
+                $existe_carpeta = is_dir($ruta_fisica);
+
+                echo !$existe_carpeta ? '<div class="ms-5 p-2 rounded-2 bg-light" style="border:.1rem solid #f06548">' : '<div class="ms-5">';
+
                 echo '<strong>Archivos subidos:</strong><br>';
-
                 foreach ($archivos as $archivo) {
                     $archivo = trim($archivo);
+
                     if ($archivo === '') continue;
 
                     $ext = strtolower(pathinfo($archivo, PATHINFO_EXTENSION));
@@ -2741,12 +2775,18 @@ switch ($_GET['proy']) {
                     }
 
                     $ruta_completa = $ruta_base . $archivo;
-                    echo "<div class='d-flex align-items-center mb-1'>
+                    echo $existe_carpeta == true ? "<div class='d-flex align-items-center mb-1'>
                 <i class='me-1 $icono $color fs-16'></i>
                 <a href='$ruta_completa' target='_blank'>$archivo</a>
+                </div>" : "<div class='d-flex align-items-center mb-1'>
+                <i class='me-1 $icono $color fs-16'></i>
+                <span>$archivo</span>
                 </div>";
                 }
+                echo $existe_carpeta != true ? '<p style="color:#f06548; margin-top:.5rem; margin-bottom:0">Estos documentos fueron eliminados por la ley de propiedad intelectual</p>' : '';
+
                 $tiene_resumen = in_array($val['id'], $ids_con_resumen);
+
                 $icono_resumen = $tiene_resumen ? '<i class="ri-book-2-fill me-1 text-success mx-2" style="font-size:0.9rem;"></i>' : '';
 
                 if ($_SESSION['usu_id'] == '104') {
@@ -3347,6 +3387,21 @@ TXT;
             exit;
         }
 
+        $fechas = [
+            'inicio'                      => 'fecha de inicio',
+            'fin'                         => 'fecha de fin',
+            'fecha_vantive'               => 'fecha Vantive',
+            'fecha_contrato'              => 'fecha de contrato',
+            'fecha_vencimiento_licencias' => 'fecha de vencimiento de licencias'
+        ];
+        foreach ($fechas as $campo => $nombre) {
+            $valor = trim($_POST[$campo] ?? '');
+            if ($valor !== '' && Validaciones::fecha_valida($valor) === null) {
+                echo json_encode(['success' => false, 'message' => "La $nombre es inválida"]);
+                exit;
+            }
+        }
+
         $datos = [
             'fecha_vantive'               => $_POST['fecha_vantive'] ?? null,
             'inicio'                      => $_POST['inicio'] ?? null,
@@ -3485,6 +3540,64 @@ TXT;
             "iTotalDisplayRecords" => count($data),
             "aaData" => $data
         ));
+        break;
+
+    case 'get_proyectos_caducados':
+        $anios = (int) ($_POST['anios_caducados'] ?? 0);
+        if ($anios < 1 || $anios > 10) {
+            echo json_encode(["status" => "error", "msg" => "Cantidad de años inválida"]);
+            break;
+        }
+
+        $datos = $proyecto->get_proyectos_caducados($anios);
+
+        if (($_POST['accion'] ?? '') === 'contar') {
+            $total = [];
+            $con_documentos = [];
+            foreach ($datos as $row) {
+                $total[$row['id']] = true;
+
+                $existe_carpeta = !empty($row['carpeta_documentos_proy'])
+                    && is_dir(BASE_PATH . "View/Home/Public/Uploads/Proyectos/" . $row['carpeta_documentos_proy']);
+                $existe_zip = !empty($row['ruta_comprimido'])
+                    && is_file(ZIP_PATH . basename($row['ruta_comprimido']));
+
+                if ($existe_carpeta || $existe_zip) {
+                    $con_documentos[$row['id']] = true;
+                }
+            }
+            echo json_encode([
+                "status" => "ok",
+                "proyectos" => count($total),
+                "con_documentos" => count($con_documentos)
+            ]);
+            break;
+        }
+
+        $carpetas_eliminadas = 0;
+        $zips_eliminados = 0;
+
+        foreach ($datos as $row) {
+            if (Validaciones::eliminar_carpeta_proyecto($row['carpeta_documentos_proy'])) {
+                $carpetas_eliminadas++;
+            }
+            if (!empty($row['carpeta_documentos_proy']) && !is_dir(BASE_PATH . "View/Home/Public/Uploads/Proyectos/" . $row['carpeta_documentos_proy'])) {
+                $proyecto->marcar_descripcion_eliminada($row['carpeta_documentos_proy']);
+            }
+            if (Validaciones::eliminar_zip($row['ruta_comprimido'])) {
+                $zips_eliminados++;
+            }
+            if (!empty($row['ruta_comprimido']) && !is_file(ZIP_PATH . basename($row['ruta_comprimido']))) {
+                $proyecto->limpiar_clave_comprimido($row['id'], $row['ruta_comprimido']);
+            }
+        }
+
+        echo json_encode([
+            "status" => "ok",
+            "proyectos" => count(array_unique(array_column($datos, 'id'))),
+            "carpetas_eliminadas" => $carpetas_eliminadas,
+            "zips_eliminados" => $zips_eliminados
+        ]);
         break;
 
     default:

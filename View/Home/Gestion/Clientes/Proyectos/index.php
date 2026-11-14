@@ -169,29 +169,61 @@ if (isset($_SESSION['usu_id'])) {
 
                         <div class="tab-pane" id="tab_total" role="tabpanel">
                             <div class="card card-body">
-                                <table id="table_proyectos_total_calidad" style="text-align: center; width: 100%;">
-                                    <?php if ($_SESSION['sector_id'] != 9): ?>
-                                        <div style="display: flex; justify-content: end; height: 1.5rem;">
-                                            <span class="mb-4"><span class="badge bg-primary fs-12">Reporte Clientes</span><i onclick="mdlDescargarExcelProyectosTotal()" class="ri-file-excel-2-fill text-success fs-22" type="button" title="Descargar documento"></i></span>
-                                        </div>
-                                    <?php endif; ?>
-                                    <thead style="text-align: center;">
-                                        <tr style="text-align: center;">
-                                            <th style="width: 400px;text-align: center;">CLIENTE</th>
-                                            <th style="width: 20px;text-align: center;">PROYECTOS</th>
-                                            <th style="width: 20px;text-align: center;">VER</th>
+                                <ul class="nav nav-pills arrow-navtabs nav-success mb-3" role="tablist">
+                                    <li class="nav-item">
+                                        <a class="nav-link active py-0 px-2" data-bs-toggle="tab" href="#tab_total_clientes" role="tab" aria-selected="true">
+                                            <span class="d-block d-sm-none"><i class="mdi mdi-account"></i></span>
+                                            <span class="d-none d-sm-block">Total Clientes</span>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link py-0 px-2" data-bs-toggle="tab" href="#eliminar_documentacion" role="tab" aria-selected="false">
+                                            <span class="d-block d-sm-none"><i class="mdi mdi-account"></i></span>
+                                            <span class="d-none d-sm-block">Eliminar Documentacion</span>
+                                        </a>
+                                    </li>
+                                </ul>
 
-                                        </tr>
-                                    </thead>
-                                    <tbody style="text-align: center;">
-                                        <tr style="text-align: center;">
-                                            <td style="width: 30px;"></td>
-                                            <td style="width: 30px;"></td>
-                                            <td style="width: 30px;"></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                                <p style="font-style: italic;" class="text-center mt-5 mx-3 text-danger">Los proyectos presentes corresponden a la nueva version de <strong>Tasking</strong></p>
+                                <div class="tab-content">
+                                    <!-- TOTAL CLIENTES -->
+                                    <div class="tab-pane active" id="tab_total_clientes" role="tabpanel">
+                                        <?php if ($_SESSION['sector_id'] != 9): ?>
+                                            <div style="display: flex; justify-content: end; height: 1.5rem;">
+                                                <span class="mb-4"><span class="badge bg-primary fs-12">Reporte Clientes</span><i onclick="mdlDescargarExcelProyectosTotal()" class="ri-file-excel-2-fill text-success fs-22" type="button" title="Descargar documento"></i></span>
+                                            </div>
+                                        <?php endif; ?>
+                                        <table id="table_proyectos_total_calidad" style="text-align: center; width: 100%;">
+                                            <thead>
+                                                <tr>
+                                                    <th style="width: 400px;text-align: center;">CLIENTE</th>
+                                                    <th style="width: 20px;text-align: center;">PROYECTOS</th>
+                                                    <th style="width: 20px;text-align: center;">VER</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody style="text-align: center;"></tbody>
+                                        </table>
+                                        <p style="font-style: italic;" class="text-center mt-5 mx-3 text-danger">Los proyectos presentes corresponden a la nueva version de <strong>Tasking</strong></p>
+                                    </div>
+
+                                    <!-- ELIMINAR DOCUMENTACION -->
+                                    <div class="tab-pane border rounded-2 p-2" id="eliminar_documentacion" role="tabpanel">
+                                        <div class="d-flex justify-content-end">
+                                        <button id="btn_modal_eliminar_documentacion" class="mb-5 mx-3 btn btn-sm btn-danger">Eliminar Documentacion <i class="ri-delete-bin-2-fill text-light fs-18"></i></button>
+                                        </div>
+                                        <table id="table_proyectos_recurrencia" style="text-align: center; width: 100%;">
+                                            <thead>
+                                                <tr>
+                                                    <th style="width: 400px;text-align: center;">USUARIO</th>
+                                                    <th style="width: 20px;text-align: center;">ACCION</th>
+                                                    <th style="width: 20px;text-align: center;">FECHA</th>
+                                                    <th style="width: 20px;text-align: center;">CONSULTAR</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody style="text-align: center;"></tbody>
+                                        </table>
+                                        <p style="font-style: italic;" class="text-center mt-5 mx-3 text-danger">Los datos presentes corresponden al historico de acciones de Eliminacion de Documentacion de proyectos realizados a clientes</p>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 

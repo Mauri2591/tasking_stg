@@ -55,7 +55,7 @@
                                     style="width: 16rem; height: 3rem;"><?= htmlspecialchars($correo_envio_cliente_copias ?? '') ?></textarea>
                             </div>
                             <div class="alert alert-info alert-dismissible fade show" role="alert" style="margin-top: 0.1rem; margin-bottom: 0.1rem; font-size: 0.75rem;">
-                                <strong>Múltiples correos se deben separar con coma (,)</strong> 
+                                <strong>Múltiples correos se deben separar con coma (,)</strong>
                                 <br>
                                 <code style="background: rgba(0,0,0,0.1); padding: 2px 6px; border-radius: 3px; font-size: .9rem;">prueba@gmail.com, prueba2@gmail.com</code>
                                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
@@ -66,12 +66,18 @@
                         $archivos = [];
                         $carpeta  = '';
                         $doc      = null;
+
                         if (!empty($documentos_envio_cliente)) {
                             $doc      = $documentos_envio_cliente[0];
                             $carpeta  = $doc['carpeta_documentos_proy'];
                             $archivos = array_filter(explode(',', $doc['documento']));
                         }
+                        $existe_carpeta = $carpeta !== '' && is_dir(BASE_PATH . "View/Home/Public/Uploads/Proyectos/" . $carpeta);
                         ?>
+
+                        <?php if (!empty($archivos) && !$existe_carpeta): ?>
+                            
+                            <p class="fs-12 px-2 mb-1" style="color:#f06548;">Los Comprimidos y sus claves fueron eliminados por la ley de propiedad intelectual</p> <?php endif; ?>
 
                         <?php if (!empty($archivos)): ?>
                             <span class="badge bg-light text-dark fs-11 px-2 mb-1 mt-1 mx-2"><span class="text-danger">*</span> Fecha de carga de los Docs: <span class="fs-12 border"><?= htmlspecialchars($doc['fech_crea']) ?></span></span>
@@ -117,15 +123,16 @@
                                             <span class="text-muted fs-11"><strong class="text-dark">Fecha: </strong> <?= htmlspecialchars($val['fech_crea']) ?></span><br>
 
                                             <?php if ($_SESSION['sector_id'] == '4'): ?>
-                                                <?php if (!empty($val['ruta_comprimido'])): ?>
+                                                <?php if (!empty($val['ruta_comprimido']) && is_file(ZIP_PATH . basename($val['ruta_comprimido']))): ?>
                                                     <a onclick="ver_id_pg(<?php echo $val['id_proyecto_gestionado'] ?>)" href="<?= htmlspecialchars(ZIP_URL . basename($val['ruta_comprimido'])) ?>" download class="text-decoration-none fs-13">
                                                         <i class="ri-download-2-line"></i> Descargar ZIP
                                                     </a> <i class="fa-solid fa-file-zipper"></i>
                                                     </a><br>
                                                 <?php endif; ?>
-                                                <span class="fs-11"><strong>Clave: </strong><?= htmlspecialchars($val['clave_comprimido']) ?></span><br>
+                                                <?php if (!empty($val['clave_comprimido'])): ?>
+                                                    <span class="fs-11"><strong>Clave: </strong><?= htmlspecialchars($val['clave_comprimido']) ?></span><br>
+                                                <?php endif; ?>
                                             <?php endif; ?>
-
                                             <?php if (!empty($val['fech_actualizacion'])): ?>
                                                 <span class="badge bg-success text-light fs-10 mt-1 d-inline-block">
                                                     <i class="ri-mail-check-line"></i> Enviado por otro medio
@@ -182,7 +189,6 @@
                                             </div>
                                         <?php endif; ?>
                                     </div>
-
                                 <?php endforeach; ?>
                             <?php else: ?>
                                 <p class="fs-13 text-muted">Sin envíos registrados</p>
@@ -193,7 +199,7 @@
 
                     <!-- Previsualizador -->
                     <div class="flex-grow-1" style="overflow-y: auto;">
-                        <?php if (!empty($archivos)): ?>
+                        <?php if (!empty($archivos) && $existe_carpeta): ?>
                             <?php foreach ($archivos as $archivo): ?>
                                 <?php
                                 $ext      = strtolower(pathinfo(trim($archivo), PATHINFO_EXTENSION));
@@ -216,11 +222,15 @@
                                     <?php endif; ?>
                                 </div>
                             <?php endforeach; ?>
+                        <?php elseif (!empty($archivos)): ?>
+                            <div class="d-flex align-items-center justify-content-center h-100 text-center p-4 rounded bg-light" style="border:.1rem solid #f06548;">
+                                <span style="color:#f06548;">Estos documentos fueron eliminados por la ley de propiedad intelectual</span>
+                            </div>
                         <?php endif; ?>
                     </div>
                 </div>
             </div>
-            <?php if ($_SESSION['sector_id'] == '4'  && !empty($archivos)): ?>
+            <?php if ($_SESSION['sector_id'] == '4' && !empty($archivos) && $existe_carpeta): ?>
                 <div class="modal-footer">
                     <input type="hidden" hidden name="pais_id_valor" id="pais_id_valor" value="<?php echo $pais_id ?? 0 ?>">
                     <button class="btn btn-sm btn-primary" id="btn_enviar_correo_cliente">

@@ -150,7 +150,7 @@ if (isset($_SESSION['usu_id'])) {
                                         <!-- INICIO COPIAR ACTIVOS -->
                                         <div class="col-lg-7 col-12">
                                             <div class="d-flex gap-2 py-2 px-3 bg-success" style="overflow-x: auto; border:.1rem solid gray; border-radius:.3rem">
-                                               <?php
+                                                <?php
                                                 usort(
                                                     $activos,
                                                     fn($a, $b) =>
@@ -1369,7 +1369,7 @@ if (isset($_SESSION['usu_id'])) {
                     $('#correo_envio_cliente_copias_edicion_parcial').val(proyecto.correo_envio_cliente_copias);
                     $('#descripcion').val(proyecto.descripcion);
                     $('#dimensionamiento_update_parcial').val(proyecto.dimensionamiento);
-
+                    $('#fecha_creacion_update_parcial').val(proyecto.fecha_creacion);
                     $('#fecha_contrato_update_parcial').val(proyecto.fecha_contrato);
                     $('#plazo_meses_update_parcial').val(proyecto.plazo_meses);
                     $('#posee_licencias_update_parcial').val(proyecto.posee_licencias);
@@ -1495,11 +1495,13 @@ if (isset($_SESSION['usu_id'])) {
                                 $('#mje_update_parcial').css('display', 'none');
                             }, 1300);
                         } else {
-                            console.error('Error al actualizar', {
-                                proyecto_gestionado: response.pg,
-                                dimensionamiento: response.dim,
-                                usuarios: response.usu
+                            bloquear_cierre = true;
+                            Swal.fire({
+                                icon: "error",
+                                title: "Error",
+                                text: response.message || "No se pudo actualizar el proyecto"
                             });
+                            console.error('Error al actualizar', response);
                         }
                     },
                     error: function(xhr) {

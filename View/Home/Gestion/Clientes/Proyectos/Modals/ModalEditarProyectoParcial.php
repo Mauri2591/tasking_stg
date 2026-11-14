@@ -50,6 +50,11 @@
                             </div>
 
                             <div class="col-md-3">
+                                <label class="badge bg-light text-dark mb-1">Fecha Creación</label>
+                                <input type="date" id="fecha_creacion_update_parcial" class="form-control form-control-sm bg-light" readonly tabindex="-1">
+                            </div>
+
+                            <div class="col-md-3">
                                 <label for="fecha_vantive" class="badge bg-light fs-10 mb-1 text-dark">Fecha Vantive</label>
                                 <input autocomplete="off" type="date" class="form-control form-control-sm" id="fecha_vantive" name="fecha_vantive">
                             </div>

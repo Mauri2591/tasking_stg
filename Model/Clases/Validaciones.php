@@ -144,4 +144,55 @@
             }
             return '<span class="badge bg-light text-dark">' . $fecha . '</span>';
         }
+
+        public static function fecha_valida($fecha)
+        {
+            if ($fecha === null) return null;
+            $fecha = trim($fecha);
+            if ($fecha === '' || $fecha === 'null') return null;
+
+            $f = DateTime::createFromFormat('!Y-m-d', $fecha);
+            if (!$f || $f->format('Y-m-d') !== $fecha || (int) $f->format('Y') < 2000) {
+                return null;
+            }
+            return $fecha;
+        }
+
+        public static function eliminar_carpeta_proyecto($carpeta)
+        {
+            $base = realpath(BASE_PATH . "View/Home/Public/Uploads/Proyectos");
+            if (empty($carpeta) || $base === false) {
+                return false;
+            }
+
+            $ruta = realpath($base . DIRECTORY_SEPARATOR . $carpeta);
+            if ($ruta === false || !is_dir($ruta) || strpos($ruta, $base . DIRECTORY_SEPARATOR) !== 0) {
+                return false;
+            }
+
+            $items = new RecursiveIteratorIterator(
+                new RecursiveDirectoryIterator($ruta, FilesystemIterator::SKIP_DOTS),
+                RecursiveIteratorIterator::CHILD_FIRST
+            );
+            foreach ($items as $item) {
+                $item->isDir() ? rmdir($item->getPathname()) : unlink($item->getPathname());
+            }
+
+            return rmdir($ruta);
+        }
+
+        public static function eliminar_zip($nombre_zip)
+        {
+            $base = realpath(ZIP_PATH);
+            if (empty($nombre_zip) || $base === false) {
+                return false;
+            }
+
+            $ruta = realpath($base . DIRECTORY_SEPARATOR . basename($nombre_zip));
+            if ($ruta === false || !is_file($ruta) || strpos($ruta, $base . DIRECTORY_SEPARATOR) !== 0) {
+                return false;
+            }
+
+            return unlink($ruta);
+        }
     }

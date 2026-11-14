@@ -1343,6 +1343,7 @@ WHERE proyecto_gestionado.id = :id_proyecto_gestionado
     descripciones_proyecto.documento,
     descripciones_proyecto.descripcion_proyecto,
     descripciones_proyecto.captura_imagen,
+    descripciones_proyecto.eliminado,
     descripciones_proyecto.usu_crea,
     descripciones_proyecto.fech_crea,
     tm_usuario.usu_nom,
@@ -1365,7 +1366,7 @@ LEFT JOIN sectores ON tm_usuario.sector_id = sectores.sector_id
 LEFT JOIN proyecto_gestionado ON descripciones_proyecto.id_proyecto_gestionado = proyecto_gestionado.id 
 WHERE proyecto_gestionado.id = :id
 GROUP BY descripciones_proyecto.id
-ORDER BY descripciones_proyecto.id ASC;";
+ORDER BY descripciones_proyecto.id ASC";
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(':id', $id, PDO::PARAM_INT);
         $stmt->execute();
@@ -3783,6 +3784,7 @@ ORDER BY producto, mes DESC";
         proyecto_gestionado.fecha_contrato AS fecha_contrato,
         proyecto_gestionado.plazo_meses AS plazo_meses,
         proyecto_gestionado.posee_licencias AS posee_licencias,
+        DATE_FORMAT(proyecto_gestionado.fech_crea, '%Y-%m-%d') AS fecha_creacion,
         proyecto_gestionado.fecha_vencimiento_licencias AS fecha_vencimiento_licencias
         FROM proyecto_gestionado 
         LEFT JOIN dimensionamiento 
@@ -3997,5 +3999,54 @@ GROUP BY
         $stmt->bindValue(":producto_id", $producto_id, PDO::PARAM_INT);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function get_proyectos_caducados($anios)
+    {
+        $conn = parent::get_conexion();
+               $sql = "SELECT 
+                proyecto_gestionado.id,
+                DATE_FORMAT(IF(YEAR(proyecto_gestionado.fecha_contrato) >= 2000, proyecto_gestionado.fecha_contrato, proyecto_gestionado.fech_crea), '%d-%m-%Y') AS fecha_referencia,
+                descripciones_proyecto.captura_imagen,
+                descripciones_proyecto.documento,
+                descripciones_proyecto.carpeta_documentos_proy,
+                envio_correo_cliente.ruta_comprimido,
+                envio_correo_cliente.clave_comprimido
+            FROM proyecto_gestionado
+            LEFT JOIN descripciones_proyecto 
+                ON descripciones_proyecto.id_proyecto_gestionado = proyecto_gestionado.id
+            LEFT JOIN envio_correo_cliente 
+                ON envio_correo_cliente.id_proyecto_gestionado = proyecto_gestionado.id
+            WHERE IF(YEAR(proyecto_gestionado.fecha_contrato) >= 2000, proyecto_gestionado.fecha_contrato, proyecto_gestionado.fech_crea) <= DATE_SUB(CURDATE(), INTERVAL ? YEAR)
+              AND (descripciones_proyecto.id IS NULL OR descripciones_proyecto.eliminado = 'NO')";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue(1, $anios, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function limpiar_clave_comprimido($id_proyecto_gestionado, $ruta_comprimido)
+    {
+        $conn = parent::get_conexion();
+        $sql = "UPDATE envio_correo_cliente 
+            SET clave_comprimido = NULL 
+            WHERE id_proyecto_gestionado = ? 
+              AND ruta_comprimido = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue(1, $id_proyecto_gestionado, PDO::PARAM_INT);
+        $stmt->bindValue(2, $ruta_comprimido, PDO::PARAM_STR);
+        $stmt->execute();
+    }
+
+    public function marcar_descripcion_eliminada($carpeta_documentos_proy)
+    {
+        $conn = parent::get_conexion();
+        $sql = "UPDATE descripciones_proyecto 
+            SET eliminado = 'SI' 
+            WHERE carpeta_documentos_proy = ? 
+              AND eliminado = 'NO'";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue(1, $carpeta_documentos_proy, PDO::PARAM_STR);
+        $stmt->execute();
     }
 }
