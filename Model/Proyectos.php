@@ -4031,9 +4031,10 @@ GROUP BY
                 ON descripciones_proyecto.id_proyecto_gestionado = proyecto_gestionado.id
             LEFT JOIN envio_correo_cliente 
                 ON envio_correo_cliente.id_proyecto_gestionado = proyecto_gestionado.id
-            WHERE IF(YEAR(proyecto_gestionado.fecha_contrato) >= 2000, proyecto_gestionado.fecha_contrato,
+                       WHERE IF(YEAR(proyecto_gestionado.fecha_contrato) >= 2000, proyecto_gestionado.fecha_contrato,
                     IF(YEAR(proyecto_gestionado.fech_inicio) >= 2000, proyecto_gestionado.fech_inicio, proyecto_gestionado.fech_crea)
                   ) <= DATE_SUB(CURDATE(), INTERVAL ? YEAR)
+              AND proyecto_gestionado.estados_id IN (3, 4, 15, 16, 17)
               AND proyecto_gestionado.eliminado = 'NO'";
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(1, $anios, PDO::PARAM_INT);
