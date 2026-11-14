@@ -570,11 +570,24 @@ $(document).ready(function () {
                         });
                         return;
                     }
+
+                    let txt_bloqueados = res.bloqueados > 0 ?
+                        `<br><b>${res.bloqueados}</b> proyecto(s) tienen recurrencias en curso y no se eliminarán.` :
+                        "";
+
+                    if (res.bloqueados === res.proyectos) {
+                        Swal.fire({
+                            icon: "info",
+                            title: "Recurrencias en curso",
+                            html: "Hay <b>" + res.proyectos + "</b> proyecto(s) vencido(s), pero todos tienen recurrencias en curso y no se pueden eliminar."
+                        });
+                        return;
+                    }
                     if (res.con_documentos === 0) {
                         Swal.fire({
                             icon: "info",
                             title: "Sin documentación",
-                            text: "Hay " + res.proyectos + " proyecto(s) vencido(s), pero ninguno tiene documentación para eliminar."
+                            html: "Hay <b>" + res.proyectos + "</b> proyecto(s) vencido(s), pero ninguno tiene documentación para eliminar." + txt_bloqueados
                         });
                         return;
                     }
@@ -584,7 +597,8 @@ $(document).ready(function () {
                         icon: "warning",
                         title: "¿Eliminar documentación?",
                         html: "Se encontraron <b>" + res.proyectos + "</b> proyecto(s) vencido(s) con más de " + anios + " año(s).<br>" +
-                            "Se eliminarán los documentos de <b>" + res.con_documentos + "</b> proyecto(s).<br>" +
+                            "Se eliminarán los documentos de <b>" + res.con_documentos + "</b> proyecto(s)." +
+                            txt_bloqueados + "<br>" +
                             "Esta acción no se puede deshacer.",
                         showCancelButton: true,
                         confirmButtonText: "Sí, eliminar",
@@ -611,7 +625,10 @@ $(document).ready(function () {
                                     icon: "success",
                                     title: "Listo",
                                     html: "Carpetas eliminadas: <b>" + response.carpetas_eliminadas + "</b><br>" +
-                                        "ZIPs eliminados: <b>" + response.zips_eliminados + "</b>"
+                                        "ZIPs eliminados: <b>" + response.zips_eliminados + "</b><br>" +
+                                        "Archivos de calidad eliminados: <b>" + response.archivos_eliminados + "</b><br>" +
+                                        "Hosts eliminados: <b>" + response.hosts_eliminados + "</b>" +
+                                        (response.bloqueados > 0 ? "<br>Omitidos por recurrencia en curso: <b>" + response.bloqueados + "</b>" : "")
                                 });
                             })
                             .fail(function (xhr) {
@@ -1485,7 +1502,7 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
             $("#plazo_meses").val(data.plazo_meses);
             $("#posee_licencias").val(data.posee_licencias);
             $("#fecha_vencimiento_licencias").val(data.fecha_vencimiento_licencias);
-
+            $("#fecha_contrato").val(data.fecha_contrato);
 
             $("#titulo_client_rs_alta_proy")
                 .val(data.titulo)
@@ -2083,6 +2100,7 @@ function gestionar_proy_borrador(proy_id, id_proyecto_cantidad_servicios, id) {
         formData.append('fech_fin', document.getElementById('fech_fin_proy_nuevo').value);
         formData.append('fech_vantive', document.getElementById('fech_vantive').value);
         formData.append('captura_imagen', document.getElementById('captura_imagen').value);
+        formData.append('fecha_contrato', document.getElementById('fecha_contrato').value);
 
         //Ethical Hacking
         formData.append('ips', document.getElementById("ips_proy_nuevo_eh")?.value || "");

@@ -195,4 +195,19 @@
 
             return unlink($ruta);
         }
+
+        public static function eliminar_archivo_calidad($nombre_archivo)
+        {
+            $base = realpath(BASE_PATH . "View/Home/Public/Uploads/Calidad");
+            if (empty($nombre_archivo) || $base === false) {
+                return false;
+            }
+
+            $ruta = realpath($base . DIRECTORY_SEPARATOR . basename($nombre_archivo));
+            if ($ruta === false || !is_file($ruta) || strpos($ruta, $base . DIRECTORY_SEPARATOR) !== 0) {
+                return false;
+            }
+
+            return unlink($ruta);
+        }
     }

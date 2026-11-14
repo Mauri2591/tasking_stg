@@ -3544,6 +3544,7 @@ TXT;
 
     case 'get_proyectos_caducados':
         $anios = (int) ($_POST['anios_caducados'] ?? 0);
+
         if ($anios < 1 || $anios > 10) {
             echo json_encode(["status" => "error", "msg" => "Cantidad de años inválida"]);
             break;
@@ -3554,30 +3555,50 @@ TXT;
         if (($_POST['accion'] ?? '') === 'contar') {
             $total = [];
             $con_documentos = [];
+            $bloqueados = [];
             foreach ($datos as $row) {
                 $total[$row['id']] = true;
+
+                if ($row['recurrencias_en_curso'] > 0) {
+                    $bloqueados[$row['id']] = true;
+                    continue;
+                }
 
                 $existe_carpeta = !empty($row['carpeta_documentos_proy'])
                     && is_dir(BASE_PATH . "View/Home/Public/Uploads/Proyectos/" . $row['carpeta_documentos_proy']);
                 $existe_zip = !empty($row['ruta_comprimido'])
                     && is_file(ZIP_PATH . basename($row['ruta_comprimido']));
+                $existe_archivo = !empty($row['archivo'])
+                    && is_file(BASE_PATH . "View/Home/Public/Uploads/Calidad/" . basename($row['archivo']));
 
-                if ($existe_carpeta || $existe_zip) {
+                if (
+                    $existe_carpeta || $existe_zip || $existe_archivo
+                    || $row['tiene_captura'] || $row['desc_tiene_captura'] || $row['cant_hosts'] > 0
+                ) {
                     $con_documentos[$row['id']] = true;
                 }
             }
             echo json_encode([
                 "status" => "ok",
                 "proyectos" => count($total),
-                "con_documentos" => count($con_documentos)
+                "con_documentos" => count($con_documentos),
+                "bloqueados" => count($bloqueados)
             ]);
             break;
         }
 
         $carpetas_eliminadas = 0;
         $zips_eliminados = 0;
+        $archivos_eliminados = 0;
+        $hosts_eliminados = 0;
+        $proyectos_procesados = [];
+        $bloqueados = [];
 
         foreach ($datos as $row) {
+            if ($row['recurrencias_en_curso'] > 0) {
+                $bloqueados[$row['id']] = true;
+                continue;
+            }
             if (Validaciones::eliminar_carpeta_proyecto($row['carpeta_documentos_proy'])) {
                 $carpetas_eliminadas++;
             }
@@ -3590,13 +3611,33 @@ TXT;
             if (!empty($row['ruta_comprimido']) && !is_file(ZIP_PATH . basename($row['ruta_comprimido']))) {
                 $proyecto->limpiar_clave_comprimido($row['id'], $row['ruta_comprimido']);
             }
+            if (!isset($proyectos_procesados[$row['id']])) {
+                $hosts_eliminados += $proyecto->delete_hosts_x_proyecto_gestionado($row['id']);
+
+                if (Validaciones::eliminar_archivo_calidad($row['archivo'])) {
+                    $archivos_eliminados++;
+                }
+
+                $archivo_sigue = !empty($row['archivo'])
+                    && is_file(BASE_PATH . "View/Home/Public/Uploads/Calidad/" . basename($row['archivo']));
+
+                if (!$archivo_sigue) {
+                    $proyecto->limpiar_archivo_y_captura_proyecto($row['id']);
+                    $proyecto->limpiar_capturas_descripciones($row['id']);
+                }
+
+                $proyectos_procesados[$row['id']] = true;
+            }
         }
 
         echo json_encode([
             "status" => "ok",
-            "proyectos" => count(array_unique(array_column($datos, 'id'))),
+            "proyectos" => count($proyectos_procesados),
             "carpetas_eliminadas" => $carpetas_eliminadas,
-            "zips_eliminados" => $zips_eliminados
+            "zips_eliminados" => $zips_eliminados,
+            "hosts_eliminados" => $hosts_eliminados,
+            "archivos_eliminados" => $archivos_eliminados,
+            "bloqueados" => count($bloqueados),
         ]);
         break;
 

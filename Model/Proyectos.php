@@ -4004,10 +4004,24 @@ GROUP BY
     public function get_proyectos_caducados($anios)
     {
         $conn = parent::get_conexion();
-               $sql = "SELECT 
+        $sql = "SELECT 
                 proyecto_gestionado.id,
-                DATE_FORMAT(IF(YEAR(proyecto_gestionado.fecha_contrato) >= 2000, proyecto_gestionado.fecha_contrato, proyecto_gestionado.fech_crea), '%d-%m-%Y') AS fecha_referencia,
-                descripciones_proyecto.captura_imagen,
+                proyecto_gestionado.archivo,
+                (proyecto_gestionado.captura_imagen IS NOT NULL AND proyecto_gestionado.captura_imagen <> '') AS tiene_captura,
+                (descripciones_proyecto.captura_imagen IS NOT NULL AND descripciones_proyecto.captura_imagen <> '') AS desc_tiene_captura,
+                (SELECT COUNT(*) FROM hosts WHERE hosts.id_proyecto_gestionado = proyecto_gestionado.id) AS cant_hosts,
+                (SELECT COUNT(*)
+                    FROM proyecto_recurrencia
+                    LEFT JOIN proyecto_gestionado AS pg_rec ON pg_rec.id = proyecto_recurrencia.id_proyecto_gestionado
+                    WHERE proyecto_recurrencia.id_proyecto_cantidad_servicios = proyecto_gestionado.id_proyecto_cantidad_servicios
+                        AND proyecto_recurrencia.est = 1
+                        AND (proyecto_recurrencia.id_proyecto_gestionado IS NULL
+                            OR pg_rec.estados_id NOT IN (3, 4, 15, 16, 17))
+                    ) AS recurrencias_en_curso,
+                DATE_FORMAT(
+                    IF(YEAR(proyecto_gestionado.fecha_contrato) >= 2000, proyecto_gestionado.fecha_contrato,
+                        IF(YEAR(proyecto_gestionado.fech_inicio) >= 2000, proyecto_gestionado.fech_inicio, proyecto_gestionado.fech_crea)
+                    ), '%d-%m-%Y') AS fecha_referencia,
                 descripciones_proyecto.documento,
                 descripciones_proyecto.carpeta_documentos_proy,
                 envio_correo_cliente.ruta_comprimido,
@@ -4017,8 +4031,10 @@ GROUP BY
                 ON descripciones_proyecto.id_proyecto_gestionado = proyecto_gestionado.id
             LEFT JOIN envio_correo_cliente 
                 ON envio_correo_cliente.id_proyecto_gestionado = proyecto_gestionado.id
-            WHERE IF(YEAR(proyecto_gestionado.fecha_contrato) >= 2000, proyecto_gestionado.fecha_contrato, proyecto_gestionado.fech_crea) <= DATE_SUB(CURDATE(), INTERVAL ? YEAR)
-              AND (descripciones_proyecto.id IS NULL OR descripciones_proyecto.eliminado = 'NO')";
+            WHERE IF(YEAR(proyecto_gestionado.fecha_contrato) >= 2000, proyecto_gestionado.fecha_contrato,
+                    IF(YEAR(proyecto_gestionado.fech_inicio) >= 2000, proyecto_gestionado.fech_inicio, proyecto_gestionado.fech_crea)
+                  ) <= DATE_SUB(CURDATE(), INTERVAL ? YEAR)
+              AND proyecto_gestionado.eliminado = 'NO'";
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(1, $anios, PDO::PARAM_INT);
         $stmt->execute();
@@ -4047,6 +4063,38 @@ GROUP BY
               AND eliminado = 'NO'";
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(1, $carpeta_documentos_proy, PDO::PARAM_STR);
+        $stmt->execute();
+    }
+
+    public function delete_hosts_x_proyecto_gestionado($id_proyecto_gestionado)
+    {
+        $conn = parent::get_conexion();
+        $sql = "DELETE FROM hosts WHERE id_proyecto_gestionado = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue(1, $id_proyecto_gestionado, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->rowCount();
+    }
+
+    public function limpiar_archivo_y_captura_proyecto($id_proyecto_gestionado)
+    {
+        $conn = parent::get_conexion();
+        $sql = "UPDATE proyecto_gestionado 
+            SET archivo = NULL, captura_imagen = NULL, eliminado = 'SI' 
+            WHERE id = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue(1, $id_proyecto_gestionado, PDO::PARAM_INT);
+        $stmt->execute();
+    }
+
+    public function limpiar_capturas_descripciones($id_proyecto_gestionado)
+    {
+        $conn = parent::get_conexion();
+        $sql = "UPDATE descripciones_proyecto 
+            SET captura_imagen = NULL, eliminado = 'SI' 
+            WHERE id_proyecto_gestionado = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue(1, $id_proyecto_gestionado, PDO::PARAM_INT);
         $stmt->execute();
     }
 }
