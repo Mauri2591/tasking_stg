@@ -635,11 +635,11 @@ $(document).ready(function () {
                         `<br><b>${res.bloqueados}</b> proyecto(s) tienen recurrencias en curso y no se eliminarán.` :
                         "";
 
-                    if (res.bloqueados === res.proyectos) {
+                    if (res.con_documentos === 0) {
                         Swal.fire({
                             icon: "info",
-                            title: "Recurrencias en curso",
-                            html: "Hay <b>" + res.proyectos + "</b> proyecto(s) vencido(s), pero todos tienen recurrencias en curso y no se pueden eliminar."
+                            title: "Sin resultados",
+                            html: "No hay proyectos vencidos con documentación para eliminar con más de " + anios + " año(s)." + txt_bloqueados
                         });
                         return;
                     }
@@ -656,8 +656,7 @@ $(document).ready(function () {
                     Swal.fire({
                         icon: "warning",
                         title: "¿Eliminar documentación?",
-                        html: "Se encontraron <b>" + res.proyectos + "</b> proyecto(s) vencido(s) con más de " + anios + " año(s).<br>" +
-                            "Se eliminarán los documentos de <b>" + res.con_documentos + "</b> proyecto(s)." +
+                        html: "Se encontraron <b>" + res.con_documentos + "</b> proyecto(s) vencido(s) con documentación de más de " + anios + " año(s)." +
                             txt_bloqueados + "<br>" +
                             "Esta acción no se puede deshacer.",
                         showCancelButton: true,
@@ -686,10 +685,7 @@ $(document).ready(function () {
                                 Swal.fire({
                                     icon: "success",
                                     title: "Listo",
-                                    html: "Carpetas eliminadas: <b>" + response.carpetas_eliminadas + "</b><br>" +
-                                        "ZIPs eliminados: <b>" + response.zips_eliminados + "</b><br>" +
-                                        "Archivos de calidad eliminados: <b>" + response.archivos_eliminados + "</b><br>" +
-                                        "Hosts eliminados: <b>" + response.hosts_eliminados + "</b>" +
+                                    html: "<b>" + response.purgados + "</b> proyecto(s) purgado(s) correctamente." +
                                         (response.bloqueados > 0 ? "<br>Omitidos por recurrencia en curso: <b>" + response.bloqueados + "</b>" : "")
                                 });
                             })

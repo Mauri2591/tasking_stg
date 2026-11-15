@@ -3629,7 +3629,7 @@ TXT;
                     $proyecto->limpiar_capturas_descripciones($row['id']);
 
                     if ($id_purga === null) {
-                        $id_purga = $proyecto->insert_purga($_SESSION['usu_id'], $_SESSION['sector_id'], $anios);
+                        $id_purga = $proyecto->insert_purga($_SESSION['usu_id'], $_SESSION['sector_id'], $anios, 27);
                     }
                     $proyecto->insert_proyecto_purgado($id_purga, $row['id'], [
                         "carpeta" => $row['carpeta_documentos_proy'] ?: null,
@@ -3661,6 +3661,7 @@ TXT;
             "hosts_eliminados" => $hosts_eliminados,
             "archivos_eliminados" => $archivos_eliminados,
             "bloqueados" => count($bloqueados),
+            "purgados" => $cant_purgados
         ]);
         break;
 
@@ -3671,7 +3672,7 @@ TXT;
             $sub_array = [];
             $sub_array[] = htmlspecialchars($row['usu_correo']);
             $sub_array[] = htmlspecialchars($row['sector_nombre']);
-            $sub_array[] = '<span class="badge bg-danger">PURGA PROYECTOS</span>';
+            $sub_array[] = '<span class="badge" style="background-color:'.$row['CatColor'].'">'.$row['estados_nombre'].'</span>';
             $sub_array[] = $row['anios'] . ' año(s)';
             $sub_array[] = $row['cant_proyectos'];
             $sub_array[] = date('d-m-Y H:i', strtotime($row['fecha']));

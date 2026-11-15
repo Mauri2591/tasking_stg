@@ -4105,30 +4105,32 @@ GROUP BY
         $stmt->execute();
     }
 
+      public function insert_purga(int $usu_id, int $sector_id, int $anios, int $estados_id)
+    {
+        $conn = parent::get_conexion();
+        $stmt = $conn->prepare("INSERT INTO purgas (usu_id, sector_id, anios, estados_id, fecha) VALUES (?, ?,?, ?, NOW())");
+        $stmt->bindValue(1, $usu_id, PDO::PARAM_INT);
+        $stmt->bindValue(2, $sector_id, PDO::PARAM_INT);
+        $stmt->bindValue(3, $anios, PDO::PARAM_INT);
+        $stmt->bindValue(4, $estados_id, PDO::PARAM_INT);
+        $stmt->execute();
+        return (int) $conn->lastInsertId();
+    }
     public function get_purga()
     {
         $conn = parent::get_conexion();
         $sql = "SELECT purgas.id, tm_usuario.usu_correo, sectores.sector_nombre,
-                   purgas.anios, purgas.cant_proyectos, purgas.fecha
+                   purgas.anios, purgas.cant_proyectos, purgas.fecha,
+                   tm_estados.estados_nombre, tm_estados.CatColor, tm_estados.icono
             FROM purgas
             INNER JOIN tm_usuario ON tm_usuario.usu_id = purgas.usu_id
             INNER JOIN sectores ON sectores.sector_id = purgas.sector_id
+            INNER JOIN tm_estados ON tm_estados.estados_id=purgas.estados_id
             ORDER BY purgas.fecha DESC";
         $stmt = $conn->prepare($sql);
         $stmt->execute();
         $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
         return count($data) > 0 ? $data : [];
-    }
-
-    public function insert_purga(int $usu_id, int $sector_id, int $anios)
-    {
-        $conn = parent::get_conexion();
-        $stmt = $conn->prepare("INSERT INTO purgas (usu_id, sector_id, anios, fecha) VALUES (?, ?, ?, NOW())");
-        $stmt->bindValue(1, $usu_id, PDO::PARAM_INT);
-        $stmt->bindValue(2, $sector_id, PDO::PARAM_INT);
-        $stmt->bindValue(3, $anios, PDO::PARAM_INT);
-        $stmt->execute();
-        return (int) $conn->lastInsertId();
     }
 
     public function insert_proyecto_purgado(int $id_purga, int $id_proyecto_gestionado, array $detalle = [])
