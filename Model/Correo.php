@@ -73,7 +73,7 @@ class Correo extends Conexion
         $cliente  = $datos->cliente  ?: 'N/A';
         $refProy  = $datos->refProy  ?: 'N/A';
         $mail = new PHPMailer(true);
-        if (SMTP_ENABLED === 'true') {
+        if (SMTP_ENABLED) {
             try {
                 $mail->isSMTP();
                 $mail->Host       = SMTP_HOST;
@@ -465,7 +465,7 @@ class Correo extends Conexion
         try {
             // ========== CORREO 1: AL CLIENTE CON ZIP + CC a TODOS ==========
             $mailCliente = new PHPMailer(true);
-            if (SMTP_ENABLED === 'true') {
+            if (SMTP_ENABLED) {
                 $smtpConfig($mailCliente);
                 $mailCliente->addAddress($correo_destino); // Destinatario principal
 
@@ -495,7 +495,7 @@ class Correo extends Conexion
 
             // ========== CORREO 2: SOLO AL CLIENTE CON CLAVE ==========
             $mailClave = new PHPMailer(true);
-            if (SMTP_ENABLED === 'true') {
+            if (SMTP_ENABLED) {
                 $smtpConfig($mailClave);
                 $mailClave->addAddress($correo_destino); // SOLO al cliente
                 $mailClave->Subject = 'Clave de acceso - Documentos del Servicio ' . $doc['producto'];
