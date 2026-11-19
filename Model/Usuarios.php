@@ -133,15 +133,13 @@ class Usuarios extends Conexion
         $stmt->bindValue(':rol_id', $rol_id, PDO::PARAM_INT);
         return $stmt->execute();
     }
-
     public function getUsuarioPorCorreo(string $usu_correo)
     {
         $conn = parent::get_conexion();
-        $sql = "SELECT usu_correo FROM tm_usuario WHERE usu_correo = :usu_correo AND est=1";
+        $sql = "SELECT usu_correo, sector_id, est FROM tm_usuario WHERE usu_correo = :usu_correo";
         $stmt = $conn->prepare($sql);
         $stmt->bindValue("usu_correo", $usu_correo, PDO::PARAM_STR);
         $stmt->execute();
-        $data = $stmt->fetch(PDO::FETCH_ASSOC);
-        return is_array($data) ? $data : [];
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }

@@ -106,8 +106,6 @@ switch ($_GET['usuarios']) {
         $usu_ape    = $_POST['usu_ape']    ?? '';
         $usu_tel    = $_POST['usu_tel']    ?? '';
         $sector_id  = $_POST['sector_id']  ?? 0;
-
-        // 1) Validar primero
         if ($usu_nom === '' || $usu_correo === '') {
             http_response_code(400);
             echo json_encode(["error" => "Datos vacios"]);
@@ -118,15 +116,20 @@ switch ($_GET['usuarios']) {
             echo json_encode(["error" => "Correo invalido"]);
             exit;
         }
-
-        // 2) Si YA existe -> error (lógica corregida)
-        if ($usuarios->getUsuarioPorCorreo($usu_correo)) {
-            http_response_code(400);
-            echo json_encode(["error" => "Ya existe el usuario"]);
-            exit;
+        $existentes = $usuarios->getUsuarioPorCorreo($usu_correo);
+        foreach ($existentes as $u) {
+            if ((int)$u['est'] === 1) {
+                http_response_code(400);
+                echo json_encode(["error" => "Ya existe un usuario activo con ese correo"]);
+                exit;
+            }
+            // inactivo pero en el MISMO sector -> bloquear (reactivarlo, no recrearlo)
+            if ((int)$u['sector_id'] === (int)$sector_id) {
+                http_response_code(400);
+                echo json_encode(["error" => "El usuario ya existe en ese sector (inactivo). Reactívelo en lugar de crearlo"]);
+                exit;
+            }
         }
-
-        // 3) Insertar
         $usuarios->insert_usuario(
             $_SESSION['usu_id'],
             $usu_nom,
@@ -139,7 +142,6 @@ switch ($_GET['usuarios']) {
         );
         echo json_encode(["Success" => "OK"]);
         break;
-
     default:
         break;
 }

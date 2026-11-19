@@ -73,6 +73,30 @@ document.addEventListener("DOMContentLoaded", function () {
         return formData;
     }
 
+    document.getElementById("correo").addEventListener("input", function () {
+        let valor = this.value.trim();
+        let tablaApi = $('#table_usuarios').DataTable();
+        tablaApi.search(valor).draw();
+
+        let existeActivo = false;
+        if (valor !== "") {
+            tablaApi.rows({
+                search: 'applied'
+            }).every(function () {
+                let fila = this.data();
+                let correo = $('<div>').html(fila[1]).text().trim().toLowerCase(); // col 1 = CORREO
+                let estado = $('<div>').html(fila[4]).text().trim().toLowerCase(); // col 4 = ESTADO
+                if (correo === valor.toLowerCase() && estado === "activo") {
+                    existeActivo = true;
+                }
+            });
+        }
+
+        let input = this;
+        input.classList.toggle("is-invalid", existeActivo); // rojo solo si existe ACTIVO
+        input.classList.toggle("is-valid", valor !== "" && !existeActivo); // verde si libre o solo inactivo
+    });
+
     $("#btnIngresarUsuario").on("click", function (e) {
         e.preventDefault();
         let formData = get_datos_ajax();
@@ -91,10 +115,29 @@ document.addEventListener("DOMContentLoaded", function () {
                     showConfirmButton: false
                 });
                 document.getElementById("form_insert_usuario").reset();
+
+                // limpiar estado visual y filtro
+                let correo = document.getElementById("correo");
+                correo.classList.remove("is-valid", "is-invalid");
+                $('#table_usuarios').DataTable().search('').draw();
             },
             error: function (xhr) {
-                let msg = xhr.responseJSON?.error || "Ocurrió un error inesperado";
-                Swal.fire("Error", msg, "error");
+                let mje = "Datos vacios!";
+                try {
+                    let resp = xhr.responseJSON || JSON.parse(xhr.responseText);
+                    if (resp && resp.error) mje = resp.error; // usuarios usa la clave "error"
+                } catch (e) {}
+
+                let htmlmje = `<div id="mje_campos_obligatorios_vacios_insert_usuario" class="alert alert-warning text-center" role="alert">
+                            <a class="alert-link">Error! <br></a>${mje}
+                        </div>`;
+
+                document.getElementById("cont_mje_campos_obligatorios_vacios_insert_usuario").innerHTML = htmlmje;
+                document.getElementById("correo").focus();
+                setTimeout(() => {
+                    let el = document.getElementById("mje_campos_obligatorios_vacios_insert_usuario");
+                    if (el) el.remove();
+                }, 2000);
             }
         });
     });

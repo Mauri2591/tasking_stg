@@ -16,7 +16,7 @@ switch ($_GET['cliente']) {
             $sub_array[] = strlen($row['client_rs']) > 40
                 ? '<span class="badge bg-light text-primary border border-primary" data-placement="top" title="' . $row['client_rs'] . '">' . substr($row['client_rs'], 0, 38) . '...</span>'
                 : '<span class="badge bg-light text-primary border border-primary" data-placement="top" title="' . $row['client_rs'] . '">' . $row['client_rs'] . '</span>';
-                            $sub_array[] = strlen($row['client_rs']) > 40
+            $sub_array[] = strlen($row['client_rs']) > 40
                 ? '<span class="badge bg-light text-primary border border-primary" data-placement="top" title="' . $row['pais'] . '">' . substr($row['pais'], 0, 38) . '...</span>'
                 : '<span class="badge bg-light text-primary border border-primary" data-placement="top" title="' . $row['pais'] . '">' . $row['pais'] . '</span>';
             $sub_array[] = strlen($row['client_cuit']) > 10
@@ -42,14 +42,28 @@ switch ($_GET['cliente']) {
         break;
 
     case 'insert_cliente':
-        if (empty($_POST['client_rs'])) {
+        header('Content-Type: application/json');
+
+        $client_rs = trim($_POST['client_rs'] ?? '');
+
+        // 1) Validar vacío
+        if ($client_rs === '') {
+            http_response_code(400);                       // el code VA antes del echo
             echo json_encode(["messaje" => "Campo vacio"]);
-            http_response_code(400);
             exit();
-        } else {
-            $clientes->insert_cliente($_POST['client_rs'], $_POST['pais_id'], $_POST['client_cuit'], $_POST['client_correo'], $_POST['client_tel']);
-            http_response_code(200);
         }
+
+        // 2) Si ya existe -> error
+        if ($clientes->getClientePorNombre($client_rs)) {
+            http_response_code(400);
+            echo json_encode(["messaje" => "El cliente ya existe"]);
+            exit();
+        }
+
+        // 3) Insertar
+        $clientes->insert_cliente($client_rs, $_POST['pais_id'], $_POST['client_cuit'], $_POST['client_correo'], $_POST['client_tel']);
+        http_response_code(200);
+        echo json_encode(["Success" => "OK"]);
         break;
 
     case 'get_paise_x_id':
@@ -60,9 +74,9 @@ switch ($_GET['cliente']) {
         echo json_encode($clientes->get_datos_cliente($_POST['client_id']));
         break;
 
-        case 'get_paises':
-    echo json_encode($clientes->get_paises());
-    break;
+    case 'get_paises':
+        echo json_encode($clientes->get_paises());
+        break;
 
     case 'update_datos_cliente':
         if (empty($_POST['client_rs'])) {

@@ -101,9 +101,6 @@ $(document).ready(function () {
             true
         );
         xhr.onload = () => {
-            let htmlmje = `<div id="mje_campos_obligatorios_vacios_insert_cliente" class="alert alert-warning text-center" role="alert">
-                            <a class="alert-link">Error! <br></a>Datos vacios!
-                        </div>`;
             if (xhr.status == 200) {
                 Swal.fire({
                     icon: "success",
@@ -120,15 +117,48 @@ $(document).ready(function () {
                 }, 500);
 
             } else if (xhr.status == 400) {
+                // leer el mensaje real del backend
+                let mje = "Datos vacios!";
+                try {
+                    let resp = JSON.parse(xhr.responseText);
+                    if (resp && resp.messaje) mje = resp.messaje;
+                } catch (e) {}
+
+                let htmlmje = `<div id="mje_campos_obligatorios_vacios_insert_cliente" class="alert alert-warning text-center" role="alert">
+                            <a class="alert-link">Error! <br></a>${mje}
+                        </div>`;
+
                 document.getElementById("cont_mje_campos_obligatorios_vacios_insert_cliente").innerHTML = htmlmje;
                 document.getElementById("client_rs").focus();
                 setTimeout(() => {
-                    document.getElementById("mje_campos_obligatorios_vacios_insert_cliente").remove();
+                    let el = document.getElementById("mje_campos_obligatorios_vacios_insert_cliente");
+                    if (el) el.remove();
                 }, 2000);
             }
         }
         xhr.send(data);
     }
+    document.getElementById("client_rs").addEventListener("input", function () {
+        let valor = this.value.trim();
+        let tablaApi = $('#table_clientes').DataTable();
+        tablaApi.search(valor).draw();
+
+        let existe = false;
+        if (valor !== "") {
+            tablaApi.column(0, {
+                search: 'applied'
+            }).data().each(function (celda) {
+                // quitar etiquetas HTML y normalizar
+                let nombre = $('<div>').html(celda).text().trim().toLowerCase();
+                if (nombre === valor.toLowerCase()) existe = true;
+            });
+        }
+
+        let input = this;
+        input.classList.toggle("is-invalid", existe); // rojo si ya existe
+        input.classList.toggle("is-valid", valor !== "" && !existe); // verde si está libre
+    });
+    
     document.getElementById("btnIngresarCliente").addEventListener("click", function () {
         let data = get_datos_insert_cliente();
         ajax_insert_cliente(data);

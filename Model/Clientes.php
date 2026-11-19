@@ -11,6 +11,7 @@ class Clientes extends Conexion
         return $resul;
     }
 
+
     public function get_paise_x_id(int $client_id)
     {
         $conn = parent::get_conexion();
@@ -21,6 +22,19 @@ class Clientes extends Conexion
         $stmt->bindValue(1, htmlspecialchars($client_id, ENT_QUOTES), PDO::PARAM_INT);
         $stmt->execute();
         return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    public function getClientePorNombre($client_rs)
+    {
+        $conn = parent::get_conexion();
+        $sql = "SELECT clientes.client_rs, clientes.client_correo, clientes.client_cuit, clientes.pais_id
+            FROM `clientes`
+            WHERE LOWER(TRIM(clientes.client_rs)) = LOWER(TRIM(:client_rs))";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue("client_rs", $client_rs, PDO::PARAM_STR);
+        $stmt->execute();
+        $data = $stmt->fetch(PDO::FETCH_ASSOC);
+        return is_array($data) ? $data : [];
     }
 
     public function insert_cliente(string $client_rs, int $pais_id, string $client_cuit, string $client_correo, string $client_tel)
@@ -61,13 +75,13 @@ class Clientes extends Conexion
     }
 
     public function get_paises()
-{
-    $conn = parent::get_conexion();
-    $sql = "SELECT pais_id, pais_nombre FROM tm_pais ORDER BY pais_nombre ASC";
-    $stmt = $conn->prepare($sql);
-    $stmt->execute();
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);
-}
+    {
+        $conn = parent::get_conexion();
+        $sql = "SELECT pais_id, pais_nombre FROM tm_pais ORDER BY pais_nombre ASC";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 
     public function get_sectores()
     {
