@@ -84,7 +84,7 @@ class Usuarios extends Conexion
                 $stmt->bindValue(":usu_nom", $usu_nom, PDO::PARAM_STR);
                 $stmt->bindValue(":usu_ape", $usu_ape, PDO::PARAM_STR);
                 $stmt->bindValue(":usu_correo", $usu_correo, PDO::PARAM_STR);
-                $stmt->bindValue(":usu_pass", password_hash($usu_pass,PASSWORD_DEFAULT), PDO::PARAM_STR);
+                $stmt->bindValue(":usu_pass", password_hash($usu_pass, PASSWORD_DEFAULT), PDO::PARAM_STR);
                 $stmt->bindValue(":usu_id", $usu_id, PDO::PARAM_INT);
                 $stmt->bindValue(":est", $est, PDO::PARAM_INT);
             } else {
@@ -132,5 +132,16 @@ class Usuarios extends Conexion
         $stmt->bindValue(':sector_id', (int)$sector_id, PDO::PARAM_INT);
         $stmt->bindValue(':rol_id', $rol_id, PDO::PARAM_INT);
         return $stmt->execute();
+    }
+
+    public function getUsuarioPorCorreo(string $usu_correo)
+    {
+        $conn = parent::get_conexion();
+        $sql = "SELECT usu_correo FROM tm_usuario WHERE usu_correo = :usu_correo AND est=1";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue("usu_correo", $usu_correo, PDO::PARAM_STR);
+        $stmt->execute();
+        $data = $stmt->fetch(PDO::FETCH_ASSOC);
+        return is_array($data) ? $data : [];
     }
 }

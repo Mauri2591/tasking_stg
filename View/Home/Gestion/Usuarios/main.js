@@ -93,7 +93,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 document.getElementById("form_insert_usuario").reset();
             },
             error: function (xhr) {
-                Swal.fire("Error", "Datos vacios", "error");
+                let msg = xhr.responseJSON?.error || "Ocurrió un error inesperado";
+                Swal.fire("Error", msg, "error");
             }
         });
     });

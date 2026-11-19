@@ -2,7 +2,6 @@
 require_once __DIR__ . "/../../../../Config/Conexion.php";
 require_once __DIR__ . "/../../../../Config/Config.php";
 if (isset($_SESSION['usu_id'])) {
-    require_once __DIR__ . "/../../../../Config/Config.php";
     require_once __DIR__ . "/../../../../Model/Clases/Headers.php";
 
     Headers::get_cors();
@@ -10,8 +9,8 @@ if (isset($_SESSION['usu_id'])) {
 
     <?php
     include_once __DIR__ . "/../../Public/Template/head.php";
-    include_once __DIR__ . "/../../Public/Template/head.php";
     include_once __DIR__ . "/../../Public/Template/main_content.php";
+    include_once __DIR__."/../../../../Model/Usuarios.php";
     ?>
     <div class="page-content">
         <div class="container-fluid">
@@ -116,7 +115,6 @@ if (isset($_SESSION['usu_id'])) {
                         <div id="cont_mje_campos_obligatorios_vacios_insert_usuario"></div>
 
                     </form>
-
 
                 </div>
                 <div class="col-lg-10" style="margin-left: 5px;">

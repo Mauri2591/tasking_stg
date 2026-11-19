@@ -2,7 +2,7 @@
 require_once __DIR__ . "/../Config/Conexion.php";
 require_once __DIR__ . "/../Config/Config.php";
 require_once __DIR__ . "/../Model/Usuarios.php";
-require_once __DIR__."/../Model/Clases/Headers.php";
+require_once __DIR__ . "/../Model/Clases/Headers.php";
 
 Headers::validar_sesion();
 
@@ -35,7 +35,7 @@ switch ($_GET['usuarios']) {
         break;
 
     case 'editar_usuario_desde_calidad':
-        $result=$usuarios->editar_usuario_desde_calidad($_POST['usu_nom'], $_POST['usu_ape'], $_POST['usu_correo'], $_POST['usu_id'], $_POST['usu_pass'], $_POST['est']);
+        $result = $usuarios->editar_usuario_desde_calidad($_POST['usu_nom'], $_POST['usu_ape'], $_POST['usu_correo'], $_POST['usu_id'], $_POST['usu_pass'], $_POST['est']);
         echo json_encode($result);
         break;
 
@@ -100,25 +100,43 @@ switch ($_GET['usuarios']) {
         break;
 
     case 'insert_usuario':
+        header('Content-Type: application/json');
+        $usu_correo = $_POST['usu_correo'] ?? '';
         $usu_nom    = $_POST['usu_nom']    ?? '';
         $usu_ape    = $_POST['usu_ape']    ?? '';
-        $usu_correo = $_POST['usu_correo'] ?? '';
         $usu_tel    = $_POST['usu_tel']    ?? '';
         $sector_id  = $_POST['sector_id']  ?? 0;
 
+        // 1) Validar primero
         if ($usu_nom === '' || $usu_correo === '') {
             http_response_code(400);
             echo json_encode(["error" => "Datos vacios"]);
             exit;
         }
+        if (!filter_var($usu_correo, FILTER_VALIDATE_EMAIL)) {
+            http_response_code(400);
+            echo json_encode(["error" => "Correo invalido"]);
+            exit;
+        }
+
+        // 2) Si YA existe -> error (lógica corregida)
+        if ($usuarios->getUsuarioPorCorreo($usu_correo)) {
+            http_response_code(400);
+            echo json_encode(["error" => "Ya existe el usuario"]);
+            exit;
+        }
+
+        // 3) Insertar
         $usuarios->insert_usuario(
             $_SESSION['usu_id'],
             $usu_nom,
             $usu_ape,
             $usu_correo,
-            password_hash("111", PASSWORD_DEFAULT),
+            password_hash("111", PASSWORD_DEFAULT), // pass temporal fija
             $usu_tel,
-            (int)$sector_id, 2);
+            (int)$sector_id,
+            2
+        );
         echo json_encode(["Success" => "OK"]);
         break;
 
