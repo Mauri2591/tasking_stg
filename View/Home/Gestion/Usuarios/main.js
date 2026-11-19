@@ -73,29 +73,29 @@ document.addEventListener("DOMContentLoaded", function () {
         return formData;
     }
 
-    document.getElementById("correo").addEventListener("input", function () {
-        let valor = this.value.trim();
-        let tablaApi = $('#table_usuarios').DataTable();
-        tablaApi.search(valor).draw();
+  document.getElementById("correo").addEventListener("input", function () {
+    let valor = this.value.trim().toLowerCase();
+    let tablaApi = $('#table_usuarios').DataTable();
+    tablaApi.search(this.value.trim()).draw();
 
-        let existeActivo = false;
-        if (valor !== "") {
-            tablaApi.rows({
-                search: 'applied'
-            }).every(function () {
-                let fila = this.data();
-                let correo = $('<div>').html(fila[1]).text().trim().toLowerCase(); // col 1 = CORREO
-                let estado = $('<div>').html(fila[4]).text().trim().toLowerCase(); // col 4 = ESTADO
-                if (correo === valor.toLowerCase() && estado === "activo") {
-                    existeActivo = true;
-                }
-            });
-        }
+    let existeActivo = false;
+    if (valor !== "") {
+        tablaApi.rows({
+            search: 'applied'
+        }).every(function () {
+            let fila = this.data();
+            let correo = $('<div>').html(fila[1]).text().trim().toLowerCase(); // col 1 = CORREO
+            let estado = $('<div>').html(fila[4]).text().trim().toLowerCase(); // col 4 = ESTADO
+            if (correo === valor && estado === "activo") {   // <-- exacto
+                existeActivo = true;
+            }
+        });
+    }
 
-        let input = this;
-        input.classList.toggle("is-invalid", existeActivo); // rojo solo si existe ACTIVO
-        input.classList.toggle("is-valid", valor !== "" && !existeActivo); // verde si libre o solo inactivo
-    });
+    let input = this;
+    input.classList.toggle("is-invalid", existeActivo); // rojo si hay coincidencia exacta activa
+    input.classList.toggle("is-valid", valor !== "" && !existeActivo); // verde si no
+});
 
     $("#btnIngresarUsuario").on("click", function (e) {
         e.preventDefault();
