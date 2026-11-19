@@ -171,15 +171,15 @@ if (isset($_SESSION['usu_id'])) {
                             <div class="card card-body">
                                 <ul class="nav nav-pills arrow-navtabs nav-success mb-3" role="tablist">
                                     <li class="nav-item">
-                                        <a class="nav-link active py-0 px-2" data-bs-toggle="tab" href="#tab_total_clientes" role="tab" aria-selected="true">
+                                        <a class="nav-link active py-1 px-2" data-bs-toggle="tab" href="#tab_total_clientes" role="tab" aria-selected="true">
                                             <span class="d-block d-sm-none"><i class="mdi mdi-account"></i></span>
                                             <span class="d-none d-sm-block">Total Clientes</span>
                                         </a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link py-0 px-2" data-bs-toggle="tab" href="#eliminar_documentacion" role="tab" aria-selected="false">
+                                        <a class="nav-link py-1 px-2" data-bs-toggle="tab" href="#eliminar_documentacion" role="tab" aria-selected="false">
                                             <span class="d-block d-sm-none"><i class="mdi mdi-account"></i></span>
-                                            <span class="d-none d-sm-block">Eliminar Documentacion</span>
+                                            <span class="d-none d-sm-block">Purgar Proyectos</span>
                                         </a>
                                     </li>
                                 </ul>
@@ -208,7 +208,7 @@ if (isset($_SESSION['usu_id'])) {
                                     <!-- ELIMINAR DOCUMENTACION -->
                                     <div class="tab-pane border rounded-2 p-2" id="eliminar_documentacion" role="tabpanel">
                                         <div class="d-flex justify-content-end">
-                                            <button id="btn_modal_eliminar_documentacion" class="mb-5 mx-3 btn btn-sm btn-danger">Purgar Proyectos <i class="ri-delete-bin-2-fill text-light fs-18"></i></button>
+                                            <button id="btn_modal_eliminar_documentacion" class="mb-5 mx-3 btn btn-sm btn-danger">Proyectos <i class="ri-delete-bin-2-fill text-light fs-18"></i></button>
                                         </div>
                                         <table id="table_purga" class="table table-bordered dt-responsive nowrap table-striped align-middle" style="width:100%">
                                             <thead>
