@@ -1,11 +1,11 @@
 <?php
-require_once __DIR__ . "/../../../../Config/Conexion.php";
-require_once __DIR__ . "/../../../../Config/Config.php";
+require_once __DIR__ . "/../../../Config/Conexion.php";
+require_once __DIR__ . "/../../../Config/Config.php";
 if (isset($_SESSION['usu_id'])) {
-    require_once __DIR__ . "/../../../../Model/Clases/Headers.php";
+    require_once __DIR__ . "/../../../Model/Clases/Headers.php";
     Headers::get_cors();
-    include_once __DIR__ . "/../../Public/Template/head.php";
-    include_once __DIR__ . "/../../Public/Template/main_content.php";
+    include_once __DIR__ . "/../Public/Template/head.php";
+    include_once __DIR__ . "/../Public/Template/main_content.php";
 
 
 ?>
@@ -49,7 +49,7 @@ if (isset($_SESSION['usu_id'])) {
     </div>
     <?php include_once __DIR__ . "/Modals/mdlSesiones.php"; ?>
     <?php
-    include_once __DIR__ . "/../../Public/Template/footer.php";
+    include_once __DIR__ . "/../Public/Template/footer.php";
     ?>
 <?php } else {
     header("Location:" . URL);
