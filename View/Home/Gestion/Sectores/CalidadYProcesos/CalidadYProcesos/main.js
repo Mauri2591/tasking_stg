@@ -13,19 +13,18 @@ $(document).ready(function () {
             'pdfHtml5'
         ],
         "ajax": {
-            url: "../../../../../../Controller/ctrProyectos.php?proy=get_proyectos_eh",
+            url: "../../../../../../Controller/ctrProyectos.php?proy=get_proyectos_calidad_y_procesos",
             type: "post",
             dataType: "json",
             data: {
                 sector_id: 4, // calidad
                 estados_id: 1, //nuevos
-                cat_id: 59 //Calidad y procesos
+                cat_id: 126 //Calidad y procesos
             },
             error: function (e) {}
         },
         "order": [
-            [0, "asc"]
-        ], //Ordenar descendentemente
+        ], 
         "bDestroy": true,
         "responsive": true,
         "bInfo": true,
@@ -71,19 +70,18 @@ $(document).ready(function () {
             'pdfHtml5'
         ],
         "ajax": {
-            url: "../../../../../../Controller/ctrProyectos.php?proy=get_proyectos_eh",
+            url: "../../../../../../Controller/ctrProyectos.php?proy=get_proyectos_calidad_y_procesos",
             type: "post",
             dataType: "json",
             data: {
                 sector_id: 4, // calidad
                 estados_id: 2, //nuevos
-                cat_id: 59 //Calidad y procesos
+                cat_id: 126 //Calidad y procesos
             },
             error: function (e) {}
         },
         "order": [
-            [0, "asc"]
-        ], //Ordenar descendentemente
+        ], 
         "bDestroy": true,
         "responsive": true,
         "bInfo": true,
@@ -129,19 +127,18 @@ $(document).ready(function () {
             'pdfHtml5'
         ],
         "ajax": {
-            url: "../../../../../../Controller/ctrProyectos.php?proy=get_proyectos_eh",
+            url: "../../../../../../Controller/ctrProyectos.php?proy=get_proyectos_calidad_y_procesos",
             type: "post",
             dataType: "json",
             data: {
                 sector_id: 4, // calidad
                 estados_id: 3, //nuevos
-                cat_id: 59 //Calidad y procesos
+                cat_id: 126 //Calidad y procesos
             },
             error: function (e) {}
         },
         "order": [
-            [0, "asc"]
-        ], //Ordenar descendentemente
+        ],
         "bDestroy": true,
         "responsive": true,
         "bInfo": true,
@@ -187,19 +184,18 @@ $(document).ready(function () {
             'pdfHtml5'
         ],
         "ajax": {
-            url: "../../../../../../Controller/ctrProyectos.php?proy=get_proyectos_eh",
+            url: "../../../../../../Controller/ctrProyectos.php?proy=get_proyectos_calidad_y_procesos",
             type: "post",
             dataType: "json",
             data: {
                 sector_id: 4, // calidad
                 estados_id: 4, //nuevos
-                cat_id: 59 //Calidad y procesos
+                cat_id: 126 //Calidad y procesos
             },
             error: function (e) {}
         },
         "order": [
-            [0, "asc"]
-        ], //Ordenar descendentemente
+        ], 
         "bDestroy": true,
         "responsive": true,
         "bInfo": true,
@@ -340,27 +336,42 @@ function asignar_proyecto(id_proyecto_gestionado) {
                 },
                 function (data, textStatus, jqXHR) {
 
+                    if (data.status === 'duplicado') {
+                        Swal.fire({
+                            icon: "warning",
+                            title: data.msg,
+                            showConfirmButton: true
+                        });
+                        return;
+                    }
+
+                    $.post(
+                        "../../../../../../Controller/ctrAuditoria.php?case=insert_audit_estados_proyecto", {
+                            id_proyecto_gestionado: id_proyecto_gestionado,
+                            estados_id: 19
+                        }
+                    );
+                    Swal.fire({
+                        icon: "success",
+                        title: "Proyecto tomado correctamente",
+                        showConfirmButton: false,
+                        showCancelButton: false,
+                        timer: 1300
+                    });
+                    setTimeout(() => {
+                        if ($.fn.DataTable.isDataTable('#table_proyectos_calidad_calidad_y_procesos')) {
+                            $('#table_proyectos_calidad_calidad_y_procesos').DataTable().ajax.reload(null, false);
+                        }
+                    }, 500);
                 },
                 "json"
-            );
-            $.post(
-                "../../../../../../Controller/ctrAuditoria.php?case=insert_audit_estados_proyecto", {
-                    id_proyecto_gestionado: id_proyecto_gestionado,
-                    estados_id: 19
-                }
-            );
-            Swal.fire({
-                icon: "success",
-                title: "Proyecto tomado correctamente",
-                showConfirmButton: false,
-                showCancelButton: false,
-                timer: 1300
+            ).fail(function () {
+                Swal.fire({
+                    icon: "error",
+                    title: "Error al tomar el proyecto",
+                    showConfirmButton: true
+                });
             });
-            setTimeout(() => {
-                if ($.fn.DataTable.isDataTable('#table_proyectos_calidad_calidad_y_procesos')) {
-                    $('#table_proyectos_calidad_calidad_y_procesos').DataTable().ajax.reload(null, false);
-                }
-            }, 500);
         }
     })
 

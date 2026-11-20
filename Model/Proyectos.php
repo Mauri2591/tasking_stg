@@ -2718,11 +2718,20 @@ GROUP BY
         $stmt->execute();
     }
 
+    function get_pm($usu_crea)
+    {
+        $conn = parent::get_conexion();
+        $sql = "SELECT usu_crea FROM pm_calidad WHERE usu_crea = :usu_crea";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue(':usu_crea', $usu_crea, PDO::PARAM_INT);
+        $stmt->execute();
+    }
+
     function tomar_proyecto($usu_id, $id_proyecto_gestionado)
     {
         $conn = parent::get_conexion();
         $sql = "INSERT INTO usuario_proyecto (id_proyecto_gestionado, usu_asignado) 
-            VALUES (:id_proyecto_gestionado, :usu_asignado)";
+        VALUES (:id_proyecto_gestionado, :usu_asignado)";
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(':id_proyecto_gestionado', $id_proyecto_gestionado, PDO::PARAM_INT);
         $stmt->bindValue(':usu_asignado', $usu_id, PDO::PARAM_INT);
@@ -4105,7 +4114,7 @@ GROUP BY
         $stmt->execute();
     }
 
-      public function insert_purga(int $usu_id, int $sector_id, int $anios, int $estados_id)
+    public function insert_purga(int $usu_id, int $sector_id, int $anios, int $estados_id)
     {
         $conn = parent::get_conexion();
         $stmt = $conn->prepare("INSERT INTO purgas (usu_id, sector_id, anios, estados_id, fecha) VALUES (?, ?,?, ?, NOW())");
