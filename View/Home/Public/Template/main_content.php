@@ -397,39 +397,39 @@
                                     <div class="menu-dropdown collapse" id="sidebarEmail">
                                         <ul class="nav nav-sm flex-column">
                                             <li class="nav-item">
-                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/SOC/SOC/"; ?>"
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/Soc/SOC/"; ?>"
                                                     class="nav-link" data-key="t-mailbox">SOC</a>
                                             </li>
                                             <li class="nav-item">
-                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/SOC/CBI/"; ?>"
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/Soc/CBI/"; ?>"
                                                     class="nav-link" data-key="t-mailbox">CBI</a>
                                             </li>
                                             <li class="nav-item">
-                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/SOC/Consultoria_SSPP/"; ?>"
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/Soc/Consultoria_SSPP/"; ?>"
                                                     class="nav-link" data-key="t-mailbox">Consultoria - SSPP</a>
                                             </li>
                                             <li class="nav-item">
-                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/SOC/CyberScoring/"; ?>"
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/Soc/CyberScoring/"; ?>"
                                                     class="nav-link" data-key="t-mailbox">Cyber Scoring</a>
                                             </li>
                                             <li class="nav-item">
-                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/SOC/Soar/"; ?>"
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/Soc/Soar/"; ?>"
                                                     class="nav-link" data-key="t-mailbox">SOAR</a>
                                             </li>
                                             <li class="nav-item">
-                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/SOC/EDR/"; ?>"
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/Soc/EDR/"; ?>"
                                                     class="nav-link" data-key="t-mailbox">EDR</a>
                                             </li>
                                             <li class="nav-item">
-                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/SOC/DesarrolloInterno/"; ?>"
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/Soc/DesarrolloInterno/"; ?>"
                                                     class="nav-link" data-key="t-mailbox">Desarrollo Interno</a>
                                             </li>
                                             <li class="nav-item">
-                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/SOC/PROYECTO_NO_ESTANDAR/"; ?>"
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/Soc/PROYECTO_NO_ESTANDAR/"; ?>"
                                                     class="nav-link" data-key="t-mailbox">Proyecto no Estandar</a>
                                             </li>
                                             <li class="nav-item">
-                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/SOC/IR/"; ?>"
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/Soc/IR/"; ?>"
                                                     class="nav-link" data-key="t-mailbox">Incident Response</a>
                                             </li>
                                             <li class="nav-item">
