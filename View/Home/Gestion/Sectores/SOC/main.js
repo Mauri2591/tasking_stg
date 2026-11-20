@@ -368,7 +368,7 @@ function cerrar_proyecto(id_proyecto_gestionado) {
             Swal.fire({
                 icon: "success",
                 title: "Bien",
-                text: "Proyecto pasado a Nuevo!",
+                text: "Proyecto Cerrado Correctamente!",
                 timer: 1500,
                 showConfirmButton: false
             });

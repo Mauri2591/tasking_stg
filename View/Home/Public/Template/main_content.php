@@ -150,7 +150,7 @@
                             <li class="nav-item">
                                 <?php if ($_SESSION['sector_id'] != 9): ?>
                                     <a href="#sidebarSector" class="nav-link collapsed" data-bs-toggle="collapse" role="button"
-                                        aria-expanded="false" aria-controls="sidebarSector" data-key="t-email">Sector</a>
+                                        aria-expanded="false" aria-controls="sidebarSector" data-key="t-email">Sectores</a>
                                 <?php endif; ?>
                                 <div class="menu-dropdown collapse" id="sidebarSector">
                                     <ul class="nav nav-sm flex-column">
@@ -179,24 +179,13 @@
                                             <a href="<?php echo URL . "View/Home/Gestion/Sectores/Platforms&Architecture/"; ?>"
                                                 class="nav-link" data-key="t-mailbox">Platforms Y Architecture</a>
                                         </li>
-                                         <li class="nav-item">
+                                        <li class="nav-item">
+                                            <a href="<?php echo URL . "View/Home/Gestion/Sectores/CalidadYProcesos/"; ?>"
+                                                class="nav-link" data-key="t-mailbox">Calidad y Procesos</a>
+                                        </li>
+                                        <li class="nav-item">
                                             <a href="<?php echo URL . "View/Home/Gestion/Sectores/IR/"; ?>"
                                                 class="nav-link" data-key="t-mailbox">Incident Response</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </li>
-                            <li class="nav-item">
-                                <?php if ($_SESSION['sector_id'] != 9): ?>
-                                    <a class="nav-link collapsed" href="#sidebarServicios" data-bs-toggle="collapse"
-                                        role="button" aria-expanded="false" aria-controls="sidebarServicios"
-                                        data-key="t-email">Productos</a>
-                                <?php endif; ?>
-                                <div class="menu-dropdown collapse" id="sidebarServicios">
-                                    <ul class="nav nav-sm flex-column">
-                                        <li class="nav-item">
-                                            <a href="<?php echo URL . "View/Home/Gestion/Sectores/CalidadYProcesos/CalidadYProcesos/"; ?>"
-                                                class="nav-link" data-key="t-mailbox">Calidad y Procesos</a>
                                         </li>
                                     </ul>
                                 </div>

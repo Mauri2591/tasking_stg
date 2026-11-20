@@ -1331,6 +1331,7 @@ switch ($_GET['proy']) {
             }
 
             $sub_array[] = '<span class="badge bg-light text-dark">' . $row['creador_proy'] . '</span>';
+            $sub_array[] = '<span class="badge bg-light text-dark">' . $row['cat_nom'] . '</span>';
             $sub_array[] = '<span class="badge bg-light text-dark">' . $row['cats_nom'] . '</span>';
             $sub_array[] = $row['hs_dimensionadas'] == ""
                 ? "Sin hs"
@@ -1389,9 +1390,16 @@ switch ($_GET['proy']) {
                     case '3':
                         $sub_array[] = '<div class="btn-group btn-group-sm p-0" role="group">
                         <button class="btn btn-primary btn-sm dropdown-toggle py-0" data-bs-toggle="dropdown" aria-expanded="false">Estado</button>
+                       <ul class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+                                        <li><a class="dropdown-item" type="button" onclick="cerrar_proyecto(' . $row['id_proyecto_gestionado'] . ')">Cerrar proyecto</a></li>
+                                    </ul>
+                    </div>';
+                    case '26':
+                        $sub_array[] = '<div class="btn-group btn-group-sm p-0" role="group">
+                        <button class="btn btn-primary btn-sm dropdown-toggle py-0" data-bs-toggle="dropdown" aria-expanded="false">Estado</button>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" onclick="cambiar_a_abierto('
-                            . $row['id_proyecto_gestionado'] . ')">Abierto</a></li>
+                            <li><a class="dropdown-item" onclick="cambiar_a_nuevo('
+                            . $row['id_proyecto_gestionado'] . ')">Nuevo</a></li>
                         </ul>
                     </div>';
                         break;
