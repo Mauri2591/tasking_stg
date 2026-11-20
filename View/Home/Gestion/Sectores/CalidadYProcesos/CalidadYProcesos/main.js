@@ -19,7 +19,7 @@ $(document).ready(function () {
             data: {
                 sector_id: 4, // calidad
                 estados_id: 1, //nuevos
-                cat_id: 126 //Calidad y procesos
+                cat_id: 59 //Calidad y procesos
             },
             error: function (e) {}
         },
@@ -76,7 +76,7 @@ $(document).ready(function () {
             data: {
                 sector_id: 4, // calidad
                 estados_id: 2, //nuevos
-                cat_id: 126 //Calidad y procesos
+                cat_id: 59 //Calidad y procesos
             },
             error: function (e) {}
         },
@@ -133,7 +133,7 @@ $(document).ready(function () {
             data: {
                 sector_id: 4, // calidad
                 estados_id: 3, //nuevos
-                cat_id: 126 //Calidad y procesos
+                cat_id: 59 //Calidad y procesos
             },
             error: function (e) {}
         },
@@ -190,7 +190,7 @@ $(document).ready(function () {
             data: {
                 sector_id: 4, // calidad
                 estados_id: 4, //nuevos
-                cat_id: 126 //Calidad y procesos
+                cat_id: 59 //Calidad y procesos
             },
             error: function (e) {}
         },
