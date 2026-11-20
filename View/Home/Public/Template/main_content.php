@@ -425,7 +425,7 @@
                                                     class="nav-link" data-key="t-mailbox">Desarrollo Interno</a>
                                             </li>
                                             <li class="nav-item">
-                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/Soc/PROYECTO_NO_ESTANDAR/"; ?>"
+                                                <a href="<?php echo URL . "View/Home/Gestion/Sectores/Soc/ProyectoNoEstandar/"; ?>"
                                                     class="nav-link" data-key="t-mailbox">Proyecto no Estandar</a>
                                             </li>
                                             <li class="nav-item">
