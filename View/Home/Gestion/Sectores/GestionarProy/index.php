@@ -145,7 +145,7 @@ if (isset($_SESSION['usu_id'])) {
                                 <div class="border-top border-top-dashed">
                                 </div>
 
-                                <div class="col-lg-12 p-2 mt-1">
+                                <div class="col-lg-12 p-2">
                                     <div id="contenedor_ips_y_descripcion" class="row g-2">
                                         <!-- INICIO COPIAR ACTIVOS -->
                                         <div class="col-lg-7 col-12">
