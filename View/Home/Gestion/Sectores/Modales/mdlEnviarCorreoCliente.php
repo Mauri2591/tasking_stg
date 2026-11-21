@@ -120,7 +120,7 @@
                                             </span><br>
                                             <span class="text-muted fs-11"><strong class="text-dark">Remitente: </strong><?= htmlspecialchars($val['smtp_user']) ?></span><br>
                                             <span class="text-muted fs-11"><strong class="text-dark">Send: </strong><?= htmlspecialchars($val['usu_nom']) ?> - <?= htmlspecialchars($val['sector_nombre']) ?></span><br>
-                                            <span class="text-muted fs-11"><strong class="text-dark">Fecha: </strong> <?= htmlspecialchars(date('d-m-Y', strtotime($val['fech_crea']))) ?></span><br>
+                                            <span class="text-muted fs-11"><strong class="text-dark">Fecha: </strong> <?= htmlspecialchars(date('d-m-Y H:i', strtotime($val['fech_crea']))) ?></span><br>
 
                                             <?php if ($_SESSION['sector_id'] == '4'): ?>
                                                 <?php if (!empty($val['ruta_comprimido']) && is_file(ZIP_PATH . basename($val['ruta_comprimido']))): ?>
@@ -137,7 +137,7 @@
                                                 <span class="badge bg-success text-light fs-10 mt-1 d-inline-block">
                                                     <i class="ri-mail-check-line"></i> Enviado por otro medio
                                                 </span>
-                                                <span class="text-muted fs-10"><?= htmlspecialchars(date("d-m-Y", strtotime($val['fech_actualizacion'])) . " " . date("H:m", strtotime($val['fech_actualizacion'])) . "hs") ?></span> <?php elseif ($_SESSION['sector_id'] == '4' && $val['status_envio'] == 'ERROR'): ?>
+                                                <span class="text-muted fs-10"><?= htmlspecialchars(date("d-m-Y H:i", strtotime($val['fech_actualizacion'])) . " " . date("H:m", strtotime($val['fech_actualizacion'])) . "hs") ?></span> <?php elseif ($_SESSION['sector_id'] == '4' && $val['status_envio'] == 'ERROR'): ?>
                                                 <span><strong class="fs-11">Reenviar por otro medio: </strong>
                                                     <i class="ri-mail-send-line"
                                                         type="button"
@@ -172,7 +172,7 @@
                                                         <span class="badge_status_interno_<?= intval($copia['id']) ?> <?= $copia['status_envio'] == 'OK' ? 'badge bg-success text-light' : ($copia['status_envio'] == 'PENDIENTE' ? 'badge bg-warning text-dark' : 'badge bg-danger text-light') ?> fs-10">
                                                             <?= htmlspecialchars($copia['status_envio']) ?>
                                                         </span><br>
-                                                        <span class="text-muted fs-10">Fecha: <?= htmlspecialchars(date('d-m-Y', strtotime($copia['fech_crea']))) ?></span>
+                                                        <span class="text-muted fs-10">Fecha: <?= htmlspecialchars(date('d-m-Y H:i', strtotime($copia['fech_crea']))) ?></span>
                                                     </div>
                                                 <?php endforeach; ?>
                                                 <?php if ($_SESSION['sector_id'] == '4' && !empty($ids_pendientes)): ?>
