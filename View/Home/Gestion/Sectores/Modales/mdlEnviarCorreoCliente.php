@@ -120,7 +120,7 @@
                                             </span><br>
                                             <span class="text-muted fs-11"><strong class="text-dark">Remitente: </strong><?= htmlspecialchars($val['smtp_user']) ?></span><br>
                                             <span class="text-muted fs-11"><strong class="text-dark">Send: </strong><?= htmlspecialchars($val['usu_nom']) ?> - <?= htmlspecialchars($val['sector_nombre']) ?></span><br>
-                                            <span class="text-muted fs-11"><strong class="text-dark">Fecha: </strong> <?= htmlspecialchars($val['fech_crea']) ?></span><br>
+                                            <span class="text-muted fs-11"><strong class="text-dark">Fecha: </strong> <?= htmlspecialchars(date('d-m-Y', strtotime($val['fech_crea']))) ?></span><br>
 
                                             <?php if ($_SESSION['sector_id'] == '4'): ?>
                                                 <?php if (!empty($val['ruta_comprimido']) && is_file(ZIP_PATH . basename($val['ruta_comprimido']))): ?>
@@ -172,7 +172,7 @@
                                                         <span class="badge_status_interno_<?= intval($copia['id']) ?> <?= $copia['status_envio'] == 'OK' ? 'badge bg-success text-light' : ($copia['status_envio'] == 'PENDIENTE' ? 'badge bg-warning text-dark' : 'badge bg-danger text-light') ?> fs-10">
                                                             <?= htmlspecialchars($copia['status_envio']) ?>
                                                         </span><br>
-                                                        <span class="text-muted fs-10">Fecha: <?= htmlspecialchars($copia['fech_crea']) ?></span>
+                                                        <span class="text-muted fs-10">Fecha: <?= htmlspecialchars(date('d-m-Y', strtotime($copia['fech_crea']))) ?></span>
                                                     </div>
                                                 <?php endforeach; ?>
                                                 <?php if ($_SESSION['sector_id'] == '4' && !empty($ids_pendientes)): ?>
