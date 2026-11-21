@@ -131,6 +131,28 @@ if (isset($_SESSION['usu_id'])) {
                     transform: rotate(360deg);
                 }
             }
+
+            .scroll-moderno {
+                scrollbar-width: thin;
+                scrollbar-color: #ffffff transparent;
+            }
+
+            .scroll-moderno:hover {
+                scrollbar-color: #d0d0d0 transparent;
+            }
+
+            .scroll-moderno::-webkit-scrollbar {
+                height: 8px;
+            }
+
+            .scroll-moderno::-webkit-scrollbar-thumb {
+                background: #ffffff;
+                border-radius: 10px;
+            }
+
+            .scroll-moderno:hover::-webkit-scrollbar-thumb {
+                background: #d0d0d0;
+            }
         </style>
 
         <!-- container-fluid -->
@@ -149,16 +171,15 @@ if (isset($_SESSION['usu_id'])) {
                                     <div id="contenedor_ips_y_descripcion" class="row g-2">
                                         <!-- INICIO COPIAR ACTIVOS -->
                                         <div class="col-lg-7 col-12">
-                                            <div class="d-flex gap-2 py-2 px-3 bg-success" style="overflow-x: auto; border:.1rem solid gray; border-radius:.3rem">
-                                                <?php
-                                                usort(
-                                                    $activos,
-                                                    fn($a, $b) =>
-                                                    [empty($hosts[$a['tipo_activo']]), $a['tipo_activo'] === 'OTROS']
-                                                        <=>
-                                                        [empty($hosts[$b['tipo_activo']]), $b['tipo_activo'] === 'OTROS']
-                                                );
-                                                ?>
+                                            <div class="d-flex gap-2 py-2 px-3 bg-success scroll-moderno" style="overflow-x: auto; border:.1rem solid gray; border-radius:.3rem"> <?php
+                                                                                                                                                                                    usort(
+                                                                                                                                                                                        $activos,
+                                                                                                                                                                                        fn($a, $b) =>
+                                                                                                                                                                                        [empty($hosts[$a['tipo_activo']]), $a['tipo_activo'] === 'OTROS']
+                                                                                                                                                                                            <=>
+                                                                                                                                                                                            [empty($hosts[$b['tipo_activo']]), $b['tipo_activo'] === 'OTROS']
+                                                                                                                                                                                    );
+                                                                                                                                                                                    ?>
                                                 <?php if (empty($activos)): ?>
                                                     <div class="w-100 text-center">NO POSEE HOSTS</div>
                                                 <?php endif; ?>
@@ -449,7 +470,7 @@ if (isset($_SESSION['usu_id'])) {
 
                     data.forEach(elem => {
 
-                        const estadoBloqueado = ["3", "4", "14", "15", "16", "17","25"].includes(String(elem.estados_id));
+                        const estadoBloqueado = ["3", "4", "14", "15", "16", "17", "25"].includes(String(elem.estados_id));
 
                         // Sector 4 siempre puede
                         if (sector_usu_id == "4") {
